@@ -97,7 +97,7 @@ export default function ManageSellerListingsPage() {
     const fetchListings = async () => {
       try {
         setIsLoading(true);
-        const listingsResponse = await fetch('/api/user/listings?limit=50&sort_by=updated_at&sort_order=desc');
+        const listingsResponse = await fetch('/api/user/listings?sort_by=updated_at&sort_order=desc');
         if (listingsResponse.ok) {
           const data = await listingsResponse.json();
           setListings(data.listings || []);

@@ -132,14 +132,6 @@ export function Filters() {
         <div className="flex items-center space-x-2">
           <Filter className="h-5 w-5 text-brand-dark-blue" />
           <h3 className="text-lg font-semibold text-brand-dark-blue">Filter Listings</h3>
-          {hasActiveFilters && (
-            <Badge variant="secondary" className="ml-2">
-              {Object.values(appliedFilters).filter(v =>
-                v !== undefined && v !== '' &&
-                (Array.isArray(v) ? v.length > 0 : true)
-              ).length} active
-            </Badge>
-          )}
         </div>
         {hasActiveFilters && (
           <Button

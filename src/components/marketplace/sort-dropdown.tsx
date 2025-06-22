@@ -68,8 +68,6 @@ export function SortDropdown() {
  */
 function getSortOptionLabel(option: string): string {
   const labels: Record<string, string> = {
-    newest: 'Newest',
-    oldest: 'Oldest',
     'price-low-high': 'Asking Price: Low to High',
     'price-high-low': 'Asking Price: High to Low',
     'revenue-low-high': 'Revenue Range: Low to High',

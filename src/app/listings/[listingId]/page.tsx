@@ -40,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { ConversationButton } from "@/components/marketplace/ConversationButton";
+import { CurrencyConverter } from '@/components/shared/currency-converter';
 
 // Type definitions for the listing data
 interface ListingData {
@@ -443,14 +444,18 @@ export default function ListingDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Asking Price</p>
-                  <p className="text-2xl font-bold text-primary">{formatCurrency(listing.asking_price)}</p>
+                  {listing.asking_price > 0 ? (
+                    <CurrencyConverter usdAmount={listing.asking_price} />
+                  ) : (
+                    <p className="text-2xl font-bold text-primary">Contact for Price</p>
+                  )}
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Annual Revenue</p>
                   <p className="text-lg font-semibold text-primary">{listing.annual_revenue_range || formatCurrency(listing.verified_annual_revenue) || 'N/A'}</p>
                 </div>
                 {(listing.adjusted_cash_flow || listing.verified_cash_flow) && (
-                  <div>
+                 <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Adj. Cash Flow (TTM)</p>
                     <p className="text-lg font-semibold text-primary">{formatCurrency(listing.adjusted_cash_flow || listing.verified_cash_flow)}</p>
                   </div>
@@ -461,7 +466,7 @@ export default function ListingDetailPage() {
                     <p className="text-lg font-semibold text-primary">{cfMultiple}</p>
                   </div>
                 )}
-              </div>
+                  </div>
             </Card>
         </CardHeader>
         <CardContent className="p-6 md:p-8 pt-6 grid lg:grid-cols-12 gap-8">
@@ -495,7 +500,7 @@ export default function ListingDetailPage() {
                         <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><FileText className="h-5 w-5"/>Supporting Documents</h3><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><div><p className="text-xs font-medium text-slate-800 mb-1">Financial Documents</p><DocumentLink href={listing.financial_documents_url}>Financial Statements (P&L, Balance Sheet)</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Business Metrics</p><DocumentLink href={listing.key_metrics_report_url}>Key Performance Indicators Report</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Ownership Documents</p><DocumentLink href={listing.ownership_documents_url}>Company Registration & Certificates</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Financial Summary</p><DocumentLink href={listing.financial_snapshot_url}>Recent Financial Summary</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Ownership Details</p><DocumentLink href={listing.ownership_details_url}>Detailed Ownership Structure</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Location & Assets</p><DocumentLink href={listing.location_real_estate_info_url}>Real Estate & Location Info</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Digital Presence</p><DocumentLink href={listing.web_presence_info_url}>Website Analytics & SEO Data</DocumentLink></div>{listing.secure_data_room_link && (<div className="md:col-span-2"><p className="text-xs font-medium text-slate-800 mb-1">Additional Documents</p><DocumentLink href={listing.secure_data_room_link}>Secure Data Room Access</DocumentLink></div>)}</div></div>
                     </div>
                 </section>
-            </div>
+          </div>
             <aside className="lg:col-span-4 space-y-6 md:sticky md:top-24 h-fit">
                 {/* Moved Image Gallery to top of sidebar */}
                 <ImageGallery
@@ -534,7 +539,7 @@ export default function ListingDetailPage() {
                             {!isSubmittingInquiry && !isCheckingInquiry && <MessageSquare className="h-4 w-4 ml-2"/>}
                         </Button>
                         {inquirySent && (
-                          <ConversationButton
+                       <ConversationButton
                             listingId={listing.id}
                             buyerId={currentUser?.id}
                             sellerName="the seller"
@@ -545,49 +550,49 @@ export default function ListingDetailPage() {
                             className="w-full border-primary text-primary hover:bg-primary/10"
                           />
                         )}
-                    </CardFooter>
-                </Card>
+                </CardFooter>
+            </Card>
                 {!currentUser && (<Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30"><CardContent className="p-4 text-center"><p className="text-sm text-brand-dark-blue mb-2">Want to learn more or see verified details?</p><Button variant="outline" asChild className="border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5"><Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login or Register to Inquire</Link></Button></CardContent></Card>)}
                 {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
             </aside>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
 
-      <AlertDialog open={showVerificationPopup} onOpenChange={setShowVerificationPopup}>
+       <AlertDialog open={showVerificationPopup} onOpenChange={setShowVerificationPopup}>
         <AlertDialogContent>
           <AlertDialogHeader><AlertDialogTitle>Business Verification Pending</AlertDialogTitle><AlertDialogDescription>This business is currently undergoing our verification due diligence process. We&apos;ll notify you once they are ready for direct communication.</AlertDialogDescription></AlertDialogHeader>
           <AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={showInquiryDialog} onOpenChange={setShowInquiryDialog}>
-        <DialogContent>
-          <DialogHeader>
+       <Dialog open={showInquiryDialog} onOpenChange={setShowInquiryDialog}>
+          <DialogContent>
+            <DialogHeader>
             <DialogTitle>Confirm Your Interest: {listing.title}</DialogTitle>
-            <DialogDescription>
+              <DialogDescription>
               You are about to send an inquiry for this business. You can optionally add a message below.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Textarea
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Textarea
               placeholder="Optional: Add a brief message to the seller or ask an initial question..."
-              value={inquiryMessage}
-              onChange={(e) => setInquiryMessage(e.target.value)}
+                value={inquiryMessage}
+                onChange={(e) => setInquiryMessage(e.target.value)}
               rows={3}
-            />
+              />
             <p className="text-xs text-muted-foreground mt-2">
               Nobridge will facilitate further communication upon mutual interest and verification.
             </p>
-          </div>
-          <DialogFooter>
+            </div>
+            <DialogFooter>
             <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-            <Button onClick={handleInquirySubmit} disabled={isSubmittingInquiry}>
+              <Button onClick={handleInquirySubmit} disabled={isSubmittingInquiry}>
               {isSubmittingInquiry && <Loader2 className="h-4 w-4 mr-2 animate-spin"/>}
               {isSubmittingInquiry ? "Submitting..." : "Submit Inquiry"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+       </Dialog>
 
     </div>
   );

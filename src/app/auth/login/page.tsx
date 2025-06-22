@@ -135,22 +135,7 @@ export default function LoginPage() {
           toast({
             variant: "destructive",
             title: "Account Not Found",
-            description: (
-              <div className="space-y-2">
-                <p>No account exists with this email address.</p>
-                <p className="text-sm">Would you like to create a new account instead?</p>
-              </div>
-            ) as any,
-            action: (
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => router.push('/auth/register/buyer')}>
-                  Sign Up as Buyer
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => router.push('/auth/register/seller')}>
-                  Sign Up as Seller
-                </Button>
-              </div>
-            ) as any
+            description: "No account exists with this email address. Would you like to create a new account instead?"
           });
           return;
         }
@@ -160,17 +145,7 @@ export default function LoginPage() {
           toast({
             variant: "destructive",
             title: "Incorrect Password",
-            description: (
-              <div className="space-y-2">
-                <p>The password you entered is incorrect.</p>
-                <p className="text-sm">Forgot your password?</p>
-              </div>
-            ) as any,
-            action: (
-              <Button size="sm" variant="outline" onClick={() => router.push('/auth/forgot-password')}>
-                Reset Password
-              </Button>
-            ) as any
+            description: "The password you entered is incorrect. Try the 'Forgot Password' link if you need to reset it."
           });
           return;
         }

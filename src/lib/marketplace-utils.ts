@@ -58,8 +58,6 @@ export const COUNTRIES = {
 
 // Sort option mappings
 export const SORT_OPTIONS = {
-  newest: { sortBy: 'created_at', sortOrder: 'desc' as const },
-  oldest: { sortBy: 'created_at', sortOrder: 'asc' as const },
   'price-low-high': { sortBy: 'asking_price', sortOrder: 'asc' as const },
   'price-high-low': { sortBy: 'asking_price', sortOrder: 'desc' as const },
   'revenue-low-high': { sortBy: 'specific_annual_revenue_last_year', sortOrder: 'asc' as const },
@@ -77,8 +75,8 @@ export function sortOptionToAPI(sortOption: string): { sortBy: string; sortOrder
     return { sortBy: option.sortBy, sortOrder: option.sortOrder };
   }
 
-  // Fallback to default sorting
-  return { sortBy: 'created_at', sortOrder: 'desc' };
+  // Fallback to default sorting (price high to low)
+  return { sortBy: 'asking_price', sortOrder: 'desc' };
 }
 
 /**
@@ -93,8 +91,8 @@ export function apiToSortOption(sortBy: string, sortOrder: string): SortOption {
     }
   }
 
-  // Fallback to newest
-  return 'newest';
+  // Fallback to price high to low
+  return 'price-high-low';
 }
 
 /**
@@ -392,8 +390,6 @@ export function createFilterSummary(filters: {
   if (filters.sortBy && filters.sortOrder) {
     const sortOption = apiToSortOption(filters.sortBy, filters.sortOrder);
     const sortLabels: Record<SortOption, string> = {
-      newest: 'newest first',
-      oldest: 'oldest first',
       'price-low-high': 'price: low to high',
       'price-high-low': 'price: high to low',
       'revenue-low-high': 'revenue: low to high',

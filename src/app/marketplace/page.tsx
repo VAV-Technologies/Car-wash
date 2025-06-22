@@ -1,4 +1,3 @@
-
 'use client';
 
 // Force dynamic rendering due to client-side interactivity
@@ -168,8 +167,11 @@ function MarketplaceContent() {
           ) : (
             <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-muted/20 rounded-md border border-dashed">
               <Briefcase className="h-16 w-16 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground font-semibold">No listings found matching your criteria.</p>
-              <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or check back later.</p>
+              <p className="text-xl text-muted-foreground font-semibold">No listings available, but we can help.</p>
+              <div className="text-sm text-muted-foreground mt-2 max-w-md leading-relaxed">
+                <p>If you have a buyer mandate, please reach out to <a href="mailto:business@nobridge.co" className="text-brand-sky-blue hover:underline">business@nobridge.co</a>.</p>
+                <p className="mt-1">We have the most advanced systems to find and reach out to any company that meet your criteria.</p>
+              </div>
               <Button variant="link" asChild className="mt-4 text-brand-dark-blue hover:text-brand-sky-blue">
                 <Link href="/marketplace">Clear all filters</Link>
               </Button>

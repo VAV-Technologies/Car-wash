@@ -26,29 +26,18 @@ if (fs.existsSync(assetsDir)) {
 fs.mkdirSync(assetsDir, { recursive: true });
 console.log('   ✅ Created clean listing-assets directory');
 
-// Restore original seed.sql (use clean template)
-console.log('   📄 Restoring original seed.sql...');
+// Create a clean seed.sql to avoid foreign key issues
 const seedPath = './supabase/seed.sql';
-const cleanSeedPath = './supabase/seed_original_clean.sql';
-let originalSeed = '';
+const cleanSeedSQL = `-- Clean seed.sql
+-- This file is intentionally minimal.
+-- The seller user and listings are created dynamically by the complete-clean-rebuild.cjs script.
+-- This prevents foreign key constraint errors during the initial database reset.
 
-if (fs.existsSync(cleanSeedPath)) {
-  originalSeed = fs.readFileSync(cleanSeedPath, 'utf-8');
-  console.log('   ✅ Using clean seed template (1 demo listing only)');
-} else {
-  console.log('   ❌ Clean seed template not found!');
-  console.log('   📄 Creating minimal seed template...');
-  originalSeed = `-- Clean seed.sql - minimal demo data
-DELETE FROM listings;
-DELETE FROM user_profiles WHERE email = 'seller@nobridge.co';
-
--- Create demo seller
-INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, role)
-VALUES (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', 'seller@nobridge.co', crypt('100%Seller', gen_salt('bf')), NOW(), NOW(), NOW(), '{"provider": "email", "providers": ["email"]}', '{"full_name": "Demo Seller"}', false, 'authenticated');
-
-UPDATE user_profiles SET full_name = 'Demo Seller', role = 'seller', is_email_verified = true, verification_status = 'verified' WHERE email = 'seller@nobridge.co';
+SELECT 'Minimal seed executed' as status;
 `;
-}
+fs.writeFileSync(seedPath, cleanSeedSQL);
+console.log('   ✅ Wrote clean, minimal seed.sql');
+
 
 // Clear storage bucket
 console.log('   🪣 Clearing storage bucket...');
@@ -62,10 +51,84 @@ try {
 console.log('✅ Step 1 Complete: Everything cleaned\n');
 
 // =====================================================
-// STEP 2: PROCESS CSV AND DOWNLOAD IMAGES
+// STEP 2: RESET THE DATABASE
 // =====================================================
 
-console.log('📥 Step 2: Processing CSV and downloading images...');
+console.log('🔄 Step 2: Resetting database with minimal seed...');
+try {
+  execSync('npx supabase db reset --linked', { stdio: 'inherit' });
+  console.log('✅ Database reset complete');
+} catch (error) {
+  console.log('❌ Database reset failed');
+  process.exit(1);
+}
+console.log('✅ Step 2 Complete: Database reset\n');
+
+// =====================================================
+// STEP 3: CREATE THE SELLER USER
+// =====================================================
+
+console.log('👤 Step 3: Creating seller user via API...');
+let sellerUserId = null;
+try {
+    const { createClient } = require('@supabase/supabase-js');
+    const supabaseUrl = 'https://kktmizfxgtkodtujursv.supabase.co';
+    const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdG1pemZ4Z3Rrb2R0dWp1cnN2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU4NjAwMSwiZXhwIjoyMDY0MTYyMDAxfQ.EComR2_5PS_fdW2XzOTPjSfOjBacve0nrblAEHUsLwk';
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+        auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    // First, try to delete the user if they exist to ensure a clean slate
+    try {
+        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
+        const existingUser = users.find(u => u.email === 'seller@nobridge.co');
+        if (existingUser) {
+            await supabaseAdmin.auth.admin.deleteUser(existingUser.id);
+            console.log('   🗑️  Deleted existing "seller@nobridge.co" user.');
+        }
+    } catch (e) {
+        // Ignore errors if user doesn't exist
+    }
+
+    const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: 'seller@nobridge.co',
+        password: '100%Seller',
+        email_confirm: true,
+        user_metadata: {
+            full_name: 'Demo Seller',
+            role: 'seller'
+        }
+    });
+
+    if (createError) throw createError;
+
+    sellerUserId = authUser.user.id;
+
+    // Also update the profile that the trigger created
+    await supabaseAdmin
+        .from('user_profiles')
+        .update({
+          full_name: 'Demo Seller',
+          role: 'seller',
+          is_email_verified: true,
+          verification_status: 'verified'
+        })
+        .eq('id', sellerUserId);
+
+    console.log(`   ✅ Successfully created seller user with ID: ${sellerUserId}`);
+
+} catch (error) {
+    console.error('   ❌ Failed to create seller user:', error.message);
+    process.exit(1);
+}
+console.log('✅ Step 3 Complete: Seller user created\n');
+
+
+// =====================================================
+// STEP 4: PROCESS CSV AND DOWNLOAD IMAGES
+// =====================================================
+
+console.log('📥 Step 4: Processing CSV and downloading images...');
 
 // Utility functions
 function generateHash(data) {
@@ -74,44 +137,29 @@ function generateHash(data) {
 
 async function downloadImage(url, outputPath) {
   return new Promise((resolve, reject) => {
-    // Validate URL
     let validUrl;
     try {
       validUrl = new URL(url);
     } catch (error) {
-      reject(new Error('Invalid URL format'));
+      reject(new Error(`Invalid URL: ${url}`));
       return;
     }
-
     const client = validUrl.protocol === 'https:' ? https : http;
-
     const req = client.get(validUrl.href, (res) => {
       if (res.statusCode === 200) {
         const writeStream = fs.createWriteStream(outputPath);
         res.pipe(writeStream);
-
-        writeStream.on('finish', () => {
-          writeStream.close();
-          resolve(true);
-        });
-
+        writeStream.on('finish', () => writeStream.close(resolve));
         writeStream.on('error', (err) => {
-          fs.unlink(outputPath, () => {}); // Clean up partial file
+          fs.unlink(outputPath, () => {});
           reject(err);
         });
       } else {
         reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
       }
     });
-
-    req.on('error', (err) => {
-      reject(err);
-    });
-
-    req.setTimeout(15000, () => {
-      req.destroy();
-      reject(new Error('Download timeout'));
-    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => req.destroy(new Error('Download timeout')));
   });
 }
 
@@ -122,23 +170,13 @@ function extractBusinessData(csvRow) {
     industry: (csvRow['Industry']?.trim() || 'General Business').substring(0, 80),
     businessModel: (csvRow['Business Model']?.trim() || 'Business').substring(0, 80),
     location: (csvRow['Location (Country)']?.trim() || 'United States').substring(0, 80),
+    city: (csvRow['Location (City)']?.trim() || null),
     askingPrice: parseFloat(csvRow['Asking Price']?.replace(/[^0-9.]/g, '') || '0'),
     revenue: parseFloat(csvRow['Halved Revenue']?.replace(/[^0-9.]/g, '') || '0'),
     employees: (csvRow['Employees']?.trim() || '1-10').substring(0, 40),
     yearEstablished: parseInt(csvRow['Year Established']) || null,
     imageUrl: csvRow['Image Link']?.trim() || ''
   };
-}
-
-function sqlEscape(str) {
-  if (!str) return 'NULL';
-  if (typeof str === 'number') return str.toString();
-  return `'${str.toString().replace(/'/g, "''").replace(/\\/g, '\\\\').replace(/\r?\n/g, ' ').trim()}'`;
-}
-
-function formatPrice(value) {
-  const num = parseFloat(value);
-  return isNaN(num) ? 'NULL' : num.toString();
 }
 
 // Read and process CSV
@@ -158,182 +196,93 @@ const successfulListings = [];
 let downloadedCount = 0;
 let skippedCount = 0;
 
-// Process each CSV row
 for (let i = 1; i < lines.length; i++) {
   const values = lines[i].split(',').map(v => v.replace(/"/g, '').trim());
-
-  // Skip incomplete rows
   if (values.length < headers.length / 2) {
-    console.log(`⚠️  Row ${i}: Incomplete row, skipping`);
     skippedCount++;
     continue;
   }
-
-  // Create business object
   const rawBusiness = {};
   headers.forEach((header, idx) => {
     rawBusiness[header] = values[idx] || '';
   });
-
   const business = extractBusinessData(rawBusiness);
-
-  // Skip if no title or image URL
   if (!business.title || !business.imageUrl) {
-    console.log(`⚠️  Row ${i}: Missing title or image URL, skipping`);
     skippedCount++;
     continue;
   }
-
-  // Generate image filename
   const listingId = String(downloadedCount + 1).padStart(3, '0');
   const imageHash = generateHash(business.imageUrl + business.title);
   const imageExtension = business.imageUrl.includes('.png') ? 'png' : 'jpg';
   const imageFilename = `listing-${listingId}-${imageHash}.${imageExtension}`;
   const imagePath = path.join(assetsDir, imageFilename);
 
-  console.log(`📥 [${i}/${lines.length - 1}] Processing: ${business.title}`);
-
   try {
-    // Check if image already exists
-    if (fs.existsSync(imagePath)) {
-      const stats = fs.statSync(imagePath);
-      if (stats.size > 0) {
-        console.log(`♻️  [${i}/${lines.length - 1}] Already exists (${stats.size} bytes) - skipping download`);
-      } else {
-        // File exists but is empty, re-download
-        await downloadImage(business.imageUrl, imagePath);
-        const newStats = fs.statSync(imagePath);
-        if (newStats.size === 0) {
-          throw new Error('Downloaded file is empty');
-        }
-        console.log(`✅ [${i}/${lines.length - 1}] Re-downloaded (${newStats.size} bytes)`);
-      }
-    } else {
-      // Download image
+    if (!fs.existsSync(imagePath) || fs.statSync(imagePath).size === 0) {
       await downloadImage(business.imageUrl, imagePath);
-
-      // Verify download
-      const stats = fs.statSync(imagePath);
-      if (stats.size === 0) {
-        throw new Error('Downloaded file is empty');
-      }
-
-      console.log(`✅ [${i}/${lines.length - 1}] Downloaded (${stats.size} bytes)`);
     }
-
-    // Add to successful listings
     successfulListings.push({
       ...business,
-      listingId,
-      imageFilename,
       imagePath: `/assets/listing-assets/${imageFilename}`
     });
-
     downloadedCount++;
-
   } catch (error) {
-    console.log(`❌ [${i}/${lines.length - 1}] Failed: ${error.message}`);
-    // Clean up failed download
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
     skippedCount++;
   }
 }
 
 console.log(`\n📊 Download Summary:`);
-console.log(`   ✅ Successfully downloaded: ${downloadedCount}`);
+console.log(`   ✅ Successfully processed: ${downloadedCount}`);
 console.log(`   ❌ Skipped/Failed: ${skippedCount}`);
-console.log(`   📸 Images in directory: ${fs.readdirSync(assetsDir).length}`);
-
-if (successfulListings.length === 0) {
-  console.log('❌ No images were successfully downloaded. Exiting.');
-  process.exit(1);
-}
-
-console.log('✅ Step 2 Complete: Images downloaded\n');
+console.log('✅ Step 4 Complete: CSV processed and images downloaded\n');
 
 // =====================================================
-// STEP 3: GENERATE SEED.SQL
+// STEP 5: INSERT LISTINGS
 // =====================================================
-
-console.log('📄 Step 3: Generating seed.sql...');
-
-let sqlContent = originalSeed + '\n\n';
-sqlContent += '-- Business listings from CSV data\n';
-sqlContent += `-- Generated: ${new Date().toISOString()}\n`;
-sqlContent += `-- Successfully processed ${successfulListings.length} listings with images\n\n`;
-
-for (const business of successfulListings) {
-  const description = (business.description || `A ${business.businessModel} business in the ${business.industry} industry located in ${business.location}. Established business with strong fundamentals and growth potential.`).substring(0, 400);
-
-  sqlContent += `-- Listing ${business.listingId}: ${business.title}\n`;
-  sqlContent += `WITH seller_info AS (\n`;
-  sqlContent += `    SELECT id as seller_id FROM user_profiles WHERE email = 'seller@nobridge.co'\n`;
-  sqlContent += `)\n`;
-  sqlContent += `INSERT INTO listings (\n`;
-  sqlContent += `    id,\n`;
-  sqlContent += `    seller_id,\n`;
-  sqlContent += `    listing_title_anonymous,\n`;
-  sqlContent += `    industry,\n`;
-  sqlContent += `    business_model,\n`;
-  sqlContent += `    location_country,\n`;
-  sqlContent += `    anonymous_business_description,\n`;
-  sqlContent += `    asking_price,\n`;
-  sqlContent += `    annual_revenue_range,\n`;
-  sqlContent += `    number_of_employees,\n`;
-  sqlContent += `    year_established,\n`;
-  sqlContent += `    image_urls,\n`;
-  sqlContent += `    status,\n`;
-  sqlContent += `    created_at,\n`;
-  sqlContent += `    updated_at\n`;
-  sqlContent += `)\n`;
-  sqlContent += `SELECT\n`;
-  sqlContent += `    gen_random_uuid(),\n`;
-  sqlContent += `    seller_id,\n`;
-  sqlContent += `    ${sqlEscape(business.title)},\n`;
-  sqlContent += `    ${sqlEscape(business.industry)},\n`;
-  sqlContent += `    ${sqlEscape(business.businessModel)},\n`;
-  sqlContent += `    ${sqlEscape(business.location)},\n`;
-  sqlContent += `    ${sqlEscape(description)},\n`;
-  sqlContent += `    ${formatPrice(business.askingPrice)},\n`;
-  sqlContent += `    '$1M - $5M USD',\n`;
-  sqlContent += `    ${sqlEscape(business.employees)},\n`;
-  sqlContent += `    ${business.yearEstablished || 'NULL'},\n`;
-  sqlContent += `    ${sqlEscape(`["${business.imagePath}"]`)},\n`;
-  sqlContent += `    'active',\n`;
-  sqlContent += `    NOW() - INTERVAL '${Math.floor(Math.random() * 30)} days',\n`;
-  sqlContent += `    NOW()\n`;
-  sqlContent += `FROM seller_info;\n\n`;
-}
-
-// Write new seed.sql
-fs.writeFileSync(seedPath, sqlContent);
-console.log(`✅ Generated seed.sql with ${successfulListings.length} listings`);
-console.log('✅ Step 3 Complete: seed.sql generated\n');
-
-// =====================================================
-// STEP 4: RESET DATABASE
-// =====================================================
-
-console.log('🔄 Step 4: Resetting database...');
+console.log('✍️ Step 5: Inserting listings into the database...');
 
 try {
-  execSync('npx supabase db reset --linked', { stdio: 'inherit' });
-  console.log('✅ Database reset complete');
-} catch (error) {
-  console.log('❌ Database reset failed');
-  process.exit(1);
+    const { createClient } = require('@supabase/supabase-js');
+    const supabaseUrl = 'https://kktmizfxgtkodtujursv.supabase.co';
+    const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdG1pemZ4Z3Rrb2R0dWp1cnN2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU4NjAwMSwiZXhwIjoyMDY0MTYyMDAxfQ.EComR2_5PS_fdW2XzOTPjSfOjBacve0nrblAEHUsLwk';
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const listingsToInsert = successfulListings.map(business => {
+      const description = (business.description || `A ${business.businessModel} business in the ${business.industry} industry located in ${business.location}. Established business with strong fundamentals and growth potential.`).substring(0, 400);
+      return {
+        seller_id: sellerUserId,
+        listing_title_anonymous: business.title,
+        industry: business.industry,
+        business_model: business.businessModel,
+        location_country: business.location,
+        location_city_region_general: business.city,
+        anonymous_business_description: description,
+        asking_price: business.askingPrice,
+        annual_revenue_range: '$1M - $5M USD',
+        number_of_employees: business.employees,
+        year_established: business.yearEstablished,
+        image_urls: [business.imagePath],
+        status: 'active',
+        created_at: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString()
+      };
+    });
+
+    const { error } = await supabase.from('listings').insert(listingsToInsert);
+    if (error) throw error;
+
+    console.log(`   ✅ Successfully inserted ${successfulListings.length} listings.`);
+} catch(error) {
+    console.error('   ❌ Failed to insert listings:', error.message);
+    process.exit(1);
 }
-
-console.log('✅ Step 4 Complete: Database reset\n');
+console.log('✅ Step 5 Complete: Listings inserted\n');
 
 // =====================================================
-// STEP 5: UPLOAD IMAGES TO STORAGE
+// STEP 6: UPLOAD IMAGES TO STORAGE
 // =====================================================
 
-console.log('📸 Step 5: Uploading images to storage...');
-
+console.log('📸 Step 6: Uploading images to storage...');
 try {
   execSync('npm run migrate-images', { stdio: 'inherit' });
   console.log('✅ Images uploaded to storage');
@@ -341,15 +290,47 @@ try {
   console.log('❌ Image upload failed');
   process.exit(1);
 }
+console.log('✅ Step 6 Complete: Images uploaded\n');
 
-console.log('✅ Step 5 Complete: Images uploaded\n');
+// =====================================================
+// STEP 7: UPDATE IMAGE URLS TO SUPABASE STORAGE
+// =====================================================
+console.log('🔗 Step 7: Updating image URLs to use Supabase storage...');
+
+try {
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseUrl = 'https://kktmizfxgtkodtujursv.supabase.co';
+  const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdG1pemZ4Z3Rrb2R0dWp1cnN2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU4NjAwMSwiZXhwIjoyMDY0MTYyMDAxfQ.EComR2_5PS_fdW2XzOTPjSfOjBacve0nrblAEHUsLwk';
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const { data: listings, error: fetchError } = await supabase.from('listings').select('id, image_urls');
+  if (fetchError) throw fetchError;
+  let updateCount = 0;
+  for (const listing of listings) {
+    if (!listing.image_urls || !Array.isArray(listing.image_urls)) continue;
+    const updatedUrls = listing.image_urls.map(url => {
+      if (typeof url === 'string' && url.startsWith('/assets/listing-assets/')) {
+        const filename = url.replace('/assets/listing-assets/', '');
+        return `${supabaseUrl}/storage/v1/object/public/listing-images/listing-assets/${filename}`;
+      }
+      return url;
+    });
+    if (JSON.stringify(listing.image_urls) !== JSON.stringify(updatedUrls)) {
+      const { error: updateError } = await supabase.from('listings').update({ image_urls: updatedUrls }).eq('id', listing.id);
+      if (!updateError) updateCount++;
+    }
+  }
+  console.log(`   ✅ Updated URLs for ${updateCount} listings.`);
+} catch (error) {
+  console.log('   ❌ Image URL update failed:', error.message);
+}
+console.log('✅ Step 7 Complete: Image URLs updated\n');
+
 
 // =====================================================
 // FINAL VERIFICATION
 // =====================================================
 
 console.log('🔍 Final Verification...');
-
 try {
   const result = execSync(`psql $(npx supabase status --output env | grep 'DB_URL=' | cut -d'=' -f2-) -c "SELECT COUNT(*) as total_listings FROM listings;"`, { encoding: 'utf-8' });
   console.log('Database count result:', result);
@@ -359,16 +340,16 @@ try {
 
 console.log('\n🎉 COMPLETE CLEAN REBUILD FINISHED!');
 console.log('======================================');
+console.log(`✅ Seller user created: seller@nobridge.co`);
 console.log(`✅ Images downloaded: ${downloadedCount}`);
-console.log(`✅ Listings in database: ${successfulListings.length + 5} (${successfulListings.length} CSV + 5 original)`);
+console.log(`✅ Listings in database: ${successfulListings.length}`);
 console.log(`✅ Images in storage: ${downloadedCount}`);
-console.log('✅ Perfect 1:1 mapping between images and listings');
+console.log('✅ All data should be correct! :)');
 console.log('======================================');
-console.log('🌐 Your marketplace should now show all images correctly!');
+console.log('🌐 Your marketplace should now show all images and data correctly!');
 
 }
 
-// Run the main function
 main().catch(error => {
   console.error('❌ Script failed:', error.message);
   process.exit(1);

@@ -20,7 +20,7 @@ const DEFAULT_FILTERS: MarketplaceFilters = {
   page: 1,
   limit: 9,
   keywords: [],
-  sortBy: 'created_at',
+  sortBy: 'asking_price',
   sortOrder: 'desc',
 };
 

@@ -139,7 +139,7 @@ export function buildKeywordQuery(keywords: string[]): string[] {
           fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
         } else {
           // For single words, add word boundary considerations
-          fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
+        fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
         }
       }
     }

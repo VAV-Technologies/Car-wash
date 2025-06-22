@@ -154,6 +154,7 @@ export function useSellerDashboard(): DashboardData {
 
       // Handle errors gracefully - use empty data instead of crashing
       const listings = (listingsData.error || !listingsResponse.ok) ? [] : (listingsData.listings || [])
+      const summary = (listingsData.error || !listingsResponse.ok) ? {} : (listingsData.summary || {})
 
       const inquiriesResponse = await fetchWithRetry('/api/inquiries?role=seller&limit=100')
       const inquiriesData = await inquiriesResponse.json()
@@ -162,10 +163,8 @@ export function useSellerDashboard(): DashboardData {
       const inquiries = (inquiriesData.error || !inquiriesResponse.ok) ? [] : (inquiriesData.inquiries || [])
 
       // For dashboard stats, count only active listings (not rejected/inactive)
-      const activeStatuses = ['active', 'verified_anonymous', 'verified_public', 'pending_verification', 'under_review', 'pending_approval']
-      const activeListingsCount = listings.filter(
-        (listing: any) => activeStatuses.includes(listing.status)
-      ).length
+      const activeListingsCount = summary.active || 0;
+
       // Fix: Use actual inquiries array length since API doesn't return pagination.total
       const totalInquiriesReceived = inquiries.length || 0
       const inquiriesAwaitingEngagement = inquiries.filter(
