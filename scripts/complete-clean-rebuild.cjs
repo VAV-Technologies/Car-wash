@@ -26,24 +26,28 @@ if (fs.existsSync(assetsDir)) {
 fs.mkdirSync(assetsDir, { recursive: true });
 console.log('   ✅ Created clean listing-assets directory');
 
-// Restore original seed.sql (before CSV data)
+// Restore original seed.sql (use clean template)
 console.log('   📄 Restoring original seed.sql...');
 const seedPath = './supabase/seed.sql';
+const cleanSeedPath = './supabase/seed_original_clean.sql';
 let originalSeed = '';
 
-if (fs.existsSync(seedPath)) {
-  const fullSeed = fs.readFileSync(seedPath, 'utf-8');
-  const csvSectionStart = fullSeed.indexOf('-- Business listings from CSV data');
-  if (csvSectionStart !== -1) {
-    originalSeed = fullSeed.substring(0, csvSectionStart).trim();
-    console.log('   ✅ Extracted original seed.sql (5 listings only)');
-  } else {
-    originalSeed = fullSeed;
-    console.log('   ⚠️  No CSV section found, keeping current seed.sql');
-  }
+if (fs.existsSync(cleanSeedPath)) {
+  originalSeed = fs.readFileSync(cleanSeedPath, 'utf-8');
+  console.log('   ✅ Using clean seed template (1 demo listing only)');
 } else {
-  console.log('   ❌ seed.sql not found!');
-  process.exit(1);
+  console.log('   ❌ Clean seed template not found!');
+  console.log('   📄 Creating minimal seed template...');
+  originalSeed = `-- Clean seed.sql - minimal demo data
+DELETE FROM listings;
+DELETE FROM user_profiles WHERE email = 'seller@nobridge.co';
+
+-- Create demo seller
+INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, is_super_admin, role)
+VALUES (gen_random_uuid(), '00000000-0000-0000-0000-000000000000', 'seller@nobridge.co', crypt('100%Seller', gen_salt('bf')), NOW(), NOW(), NOW(), '{"provider": "email", "providers": ["email"]}', '{"full_name": "Demo Seller"}', false, 'authenticated');
+
+UPDATE user_profiles SET full_name = 'Demo Seller', role = 'seller', is_email_verified = true, verification_status = 'verified' WHERE email = 'seller@nobridge.co';
+`;
 }
 
 // Clear storage bucket
@@ -187,19 +191,35 @@ for (let i = 1; i < lines.length; i++) {
   const imageFilename = `listing-${listingId}-${imageHash}.${imageExtension}`;
   const imagePath = path.join(assetsDir, imageFilename);
 
-  console.log(`📥 [${i}/${lines.length - 1}] Downloading: ${business.title}`);
+  console.log(`📥 [${i}/${lines.length - 1}] Processing: ${business.title}`);
 
   try {
-    // Download image
-    await downloadImage(business.imageUrl, imagePath);
+    // Check if image already exists
+    if (fs.existsSync(imagePath)) {
+      const stats = fs.statSync(imagePath);
+      if (stats.size > 0) {
+        console.log(`♻️  [${i}/${lines.length - 1}] Already exists (${stats.size} bytes) - skipping download`);
+      } else {
+        // File exists but is empty, re-download
+        await downloadImage(business.imageUrl, imagePath);
+        const newStats = fs.statSync(imagePath);
+        if (newStats.size === 0) {
+          throw new Error('Downloaded file is empty');
+        }
+        console.log(`✅ [${i}/${lines.length - 1}] Re-downloaded (${newStats.size} bytes)`);
+      }
+    } else {
+      // Download image
+      await downloadImage(business.imageUrl, imagePath);
 
-    // Verify download
-    const stats = fs.statSync(imagePath);
-    if (stats.size === 0) {
-      throw new Error('Downloaded file is empty');
+      // Verify download
+      const stats = fs.statSync(imagePath);
+      if (stats.size === 0) {
+        throw new Error('Downloaded file is empty');
+      }
+
+      console.log(`✅ [${i}/${lines.length - 1}] Downloaded (${stats.size} bytes)`);
     }
-
-    console.log(`✅ [${i}/${lines.length - 1}] Success (${stats.size} bytes)`);
 
     // Add to successful listings
     successfulListings.push({
