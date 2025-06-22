@@ -47,3 +47,5 @@ firestore-debug.log
 /.clerk/
 # prototyper
 /context_backup
+
+/python-scripts
