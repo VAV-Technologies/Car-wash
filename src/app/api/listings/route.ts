@@ -1,8 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { authServer } from '@/lib/auth-server'
-import { getOptimizedKeywordQuery, describeKeywordFilters } from '@/lib/keyword-mapping'
 import { normalizeIndustryValue, normalizeCountryValue } from '@/lib/marketplace-utils'
 
 // GET /api/listings - Get all listings with filtering, search, and pagination
@@ -100,61 +98,34 @@ export async function GET(request: NextRequest) {
 
     // Note: General text search is now handled entirely through the keywords system
 
-    // Handle keyword filtering - both predefined (with intelligent mapping) and custom keywords
+    // Handle keyword filtering with exact matching approach
     if (predefinedKeywords.length > 0) {
-      // Separate predefined keywords from custom keywords
-      const { isValidKeyword } = await import('@/lib/keyword-mapping');
-      const predefinedKeywordsList: string[] = [];
-      const customKeywordsList: string[] = [];
+      console.log(`[LISTINGS-API] Applying exact keyword search for: ${predefinedKeywords.join(', ')}`);
 
+      // Search fields for keyword matching
+      const keywordSearchFields = [
+        'listing_title_anonymous', 'anonymous_business_description',
+        'key_strength_1', 'key_strength_2', 'key_strength_3',
+        'growth_opportunity_1', 'growth_opportunity_2', 'growth_opportunity_3',
+        'industry', 'location_country', 'location_city_region_general'
+      ];
+
+      // Build exact keyword search conditions
+      const keywordConditions: string[] = [];
       for (const keyword of predefinedKeywords) {
-        if (isValidKeyword(keyword)) {
-          predefinedKeywordsList.push(keyword);
-        } else {
-          customKeywordsList.push(keyword);
-        }
+        // For each keyword, search across all relevant fields
+        const fieldConditions = keywordSearchFields.map(field =>
+          `${field}.ilike.%${keyword}%`
+        ).join(',');
+        keywordConditions.push(fieldConditions);
       }
 
-      // Apply predefined keyword filtering (intelligent mapping)
-      if (predefinedKeywordsList.length > 0) {
-        const keywordQueryParts = getOptimizedKeywordQuery(predefinedKeywordsList);
-        if (keywordQueryParts.conditions.length > 0) {
-          // For multiple keywords, we want to OR them together (any keyword match)
-          // Each condition is already a flat OR string of field searches
-          if (keywordQueryParts.conditions.length === 1) {
-            // Single keyword: apply directly
-            query = query.or(keywordQueryParts.conditions[0]);
-          } else {
-            // Multiple keywords: combine all conditions into one large OR
-            const combinedConditions = keywordQueryParts.conditions.join(',');
-            query = query.or(combinedConditions);
-          }
-          console.log(`[LISTINGS-API] Predefined Keyword filtering: ${describeKeywordFilters(predefinedKeywordsList)}`);
-        }
-      }
-
-      // Apply custom keyword filtering (direct text search across key fields)
-      if (customKeywordsList.length > 0) {
-        const customKeywordFields = [
-          'listing_title_anonymous', 'anonymous_business_description',
-          'key_strength_1', 'key_strength_2', 'key_strength_3',
-          'growth_opportunity_1', 'growth_opportunity_2', 'growth_opportunity_3',
-          'industry', 'location_country', 'location_city_region_general'
-        ];
-
-        // For custom keywords, search for any keyword in any of the key fields
-        const customKeywordConditions: string[] = [];
-        for (const customKeyword of customKeywordsList) {
-          const fieldConditions = customKeywordFields.map(field => `${field}.ilike.%${customKeyword}%`).join(',');
-          customKeywordConditions.push(fieldConditions);
-        }
-
-        if (customKeywordConditions.length > 0) {
-          // Combine all custom keyword conditions with OR logic
-          const combinedCustomConditions = customKeywordConditions.join(',');
-          query = query.or(combinedCustomConditions);
-          console.log(`[LISTINGS-API] Custom Keyword filtering applied for: ${customKeywordsList.join(', ')}`);
-        }
+      if (keywordConditions.length > 0) {
+        // Combine all keyword conditions with OR logic
+        // This means: (keyword1 in any field) OR (keyword2 in any field) OR ...
+        const combinedConditions = keywordConditions.join(',');
+        query = query.or(combinedConditions);
+        console.log(`[LISTINGS-API] Exact keyword filtering applied for: ${predefinedKeywords.join(', ')}`);
       }
     }
 

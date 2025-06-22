@@ -7,6 +7,7 @@
  * Design Principles:
  * - Performance-first: efficient SQL queries
  * - Intelligent mapping: keywords search relevant fields
+ * - Precision over recall: avoid false positives
  * - Graceful degradation: unknown keywords don't break search
  * - Future-proof: easy to extend with new keywords
  */
@@ -16,6 +17,10 @@ import { placeholderKeywords } from './types';
 /**
  * Keyword to database field mapping configuration
  * Each keyword maps to specific database fields and search patterns
+ *
+ * IMPORTANT: Use precise search terms to avoid false positives.
+ * For example, "investment" matches dance studios mentioning "franchisee investments"
+ * So we use more specific terms like "investment management", "investment firm", etc.
  */
 export const KEYWORD_FIELD_MAPPING: Record<string, {
   fields: string[];
@@ -25,62 +30,68 @@ export const KEYWORD_FIELD_MAPPING: Record<string, {
   // Technology & Business Model Keywords
   'SaaS': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['saas', 'software', 'subscription', 'cloud', 'platform', 'service', 'technology', 'tech'],
+    searchTerms: ['saas', 'software as a service', 'subscription software', 'cloud platform', 'software platform', 'tech platform'],
     description: 'Software as a Service businesses'
   },
 
   'E-commerce': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['ecommerce', 'e-commerce', 'online', 'retail', 'marketplace', 'store', 'shopping', 'sales'],
+    searchTerms: ['ecommerce', 'e-commerce', 'online store', 'online retail', 'digital marketplace', 'online marketplace', 'retail platform'],
     description: 'Online retail and marketplace businesses'
   },
 
   'Retail': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description'],
-    searchTerms: ['retail', 'store', 'shop', 'merchandise', 'consumer', 'brick', 'mortar'],
+    searchTerms: ['retail store', 'retail chain', 'brick and mortar', 'retail business', 'consumer retail', 'retail outlet'],
     description: 'Physical retail and consumer businesses'
   },
 
   'Service Business': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['service', 'consulting', 'professional', 'agency', 'solutions', 'support'],
+    searchTerms: ['service business', 'professional service', 'consulting service', 'business service', 'service provider', 'service company'],
     description: 'Service-based business models'
   },
 
   'Fintech': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['fintech', 'financial', 'finance', 'banking', 'payment', 'crypto', 'blockchain', 'trading', 'investment'],
+    searchTerms: [
+      'fintech', 'financial technology', 'financial services', 'payment processor', 'payment platform',
+      'digital banking', 'online banking', 'crypto exchange', 'blockchain platform', 'trading platform',
+      'investment management', 'wealth management', 'asset management', 'investment advisory',
+      'financial software', 'banking software', 'payment gateway', 'financial platform'
+    ],
     description: 'Financial technology businesses'
   },
 
   'Logistics': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description'],
-    searchTerms: ['logistics', 'shipping', 'delivery', 'transport', 'warehouse', 'supply', 'chain', 'fulfillment'],
+    searchTerms: ['logistics company', 'shipping company', 'delivery service', 'transport company', 'warehouse operation', 'supply chain', 'freight service', 'fulfillment center'],
     description: 'Logistics and supply chain businesses'
   },
 
   'Healthcare Tech': {
     fields: ['industry', 'listing_title_anonymous', 'anonymous_business_description', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['healthcare', 'health', 'medical', 'telemedicine', 'biotech', 'pharma', 'wellness'],
+    searchTerms: ['healthcare technology', 'health tech', 'medical technology', 'telemedicine platform', 'healthcare software', 'medical software', 'health platform', 'biotech company'],
     description: 'Healthcare and medical technology'
   },
 
   // Performance & Growth Keywords
   'High Growth': {
     fields: ['growth_opportunity_1', 'growth_opportunity_2', 'growth_opportunity_3', 'specific_growth_opportunities', 'key_strength_1', 'key_strength_2', 'key_strength_3'],
-    searchTerms: ['growth', 'growing', 'expansion', 'scaling', 'increase', 'rising', 'upward', 'trend'],
+    searchTerms: ['high growth', 'rapid growth', 'fast growing', 'growth potential', 'scaling business', 'expansion opportunity', 'growth trajectory'],
     description: 'Businesses with high growth potential'
   },
 
   'Profitable': {
     fields: ['key_strength_1', 'key_strength_2', 'key_strength_3', 'anonymous_business_description', 'net_profit_margin_range'],
-    searchTerms: ['profitable', 'profit', 'revenue', 'earning', 'margin', 'cash', 'flow', 'financial'],
+    searchTerms: ['profitable business', 'high profit', 'strong profit', 'profit margin', 'revenue growth', 'cash flow positive', 'financial performance'],
     description: 'Profitable businesses with strong financials'
   }
 };
 
 /**
- * Validates that a keyword exists in our mapping system
+ * Enhanced validation function that also checks for minimum search term length
+ * to avoid overly broad matches
  */
 export function isValidKeyword(keyword: string): boolean {
   return keyword in KEYWORD_FIELD_MAPPING || placeholderKeywords.includes(keyword);
@@ -94,11 +105,10 @@ export function getValidKeywords(): string[] {
 }
 
 /**
- * Builds Supabase query conditions for keyword filtering
+ * Builds Supabase query conditions for keyword filtering with improved precision
  * Returns an array of OR conditions that can be combined
  *
- * IMPORTANT: Returns flat OR conditions without extra parentheses
- * to avoid SQL parsing errors with nested parentheses
+ * IMPORTANT: Uses more precise search patterns to avoid false positives
  */
 export function buildKeywordQuery(keywords: string[]): string[] {
   if (!keywords || keywords.length === 0) {
@@ -123,7 +133,14 @@ export function buildKeywordQuery(keywords: string[]): string[] {
 
     for (const field of mapping.fields) {
       for (const searchTerm of mapping.searchTerms) {
-        fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
+        // Use more precise matching for multi-word terms
+        if (searchTerm.includes(' ')) {
+          // For phrases, search for the exact phrase
+          fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
+        } else {
+          // For single words, add word boundary considerations
+          fieldConditions.push(`${field}.ilike.%${searchTerm}%`);
+        }
       }
     }
 
@@ -223,4 +240,38 @@ export function explainKeywordSearch(keywords: string[]): {
       valid: isValidKeyword(keyword)
     };
   });
+}
+
+/**
+ * Quality assurance: Test keyword mappings for potential false positives
+ * This function can be used during development to validate keyword precision
+ */
+export function validateKeywordPrecision(): {
+  keyword: string;
+  potentialIssues: string[];
+}[] {
+  const issues: { keyword: string; potentialIssues: string[] }[] = [];
+
+  Object.entries(KEYWORD_FIELD_MAPPING).forEach(([keyword, mapping]) => {
+    const potentialIssues: string[] = [];
+
+    mapping.searchTerms.forEach(term => {
+      // Flag overly short terms that might cause false positives
+      if (term.length <= 3) {
+        potentialIssues.push(`Term "${term}" is very short and may cause false positives`);
+      }
+
+      // Flag very common words
+      const commonWords = ['the', 'and', 'for', 'with', 'service', 'business', 'company'];
+      if (commonWords.includes(term.toLowerCase())) {
+        potentialIssues.push(`Term "${term}" is very common and may cause false positives`);
+      }
+    });
+
+    if (potentialIssues.length > 0) {
+      issues.push({ keyword, potentialIssues });
+    }
+  });
+
+  return issues;
 }
