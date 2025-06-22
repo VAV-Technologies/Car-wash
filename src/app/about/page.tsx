@@ -23,7 +23,7 @@ export default function AboutPage() {
               alt="Team discussing business strategy in a modern office"
               width={1000}
               height={500}
-              className="rounded-lg shadow-lg w-full max-w-4xl mx-auto h-auto"
+              className="rounded-lg w-full max-w-4xl mx-auto h-auto"
               data-ai-hint="team business strategy"
             />
           </div>
@@ -41,7 +41,7 @@ export default function AboutPage() {
               alt="Two professionals shaking hands, finalizing a deal"
               width={1000}
               height={500}
-              className="rounded-lg shadow-lg w-full max-w-4xl mx-auto h-auto"
+              className="rounded-lg w-full max-w-4xl mx-auto h-auto"
               data-ai-hint="handshake deal business"
             />
           </div>
