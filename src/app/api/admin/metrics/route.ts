@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
   const now = new Date()
   const ts24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
   const ts7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
   // Helper to count rows
   async function countUserProfiles(filter: Record<string, any>) {
@@ -46,6 +47,48 @@ export async function GET(req: NextRequest) {
   // Helper to count listings
   async function countListings(filter: Record<string, any> = {}) {
     let query = supabase.from('listings').select('id', { count: 'exact', head: true })
+    for (const [col, val] of Object.entries(filter)) {
+      if (Array.isArray(val)) {
+        query = query.in(col, val)
+      } else {
+        query = query.eq(col, val)
+      }
+    }
+    const { count } = await query
+    return count ?? 0
+  }
+
+  // Helper to count inquiries
+  async function countInquiries(filter: Record<string, any> = {}) {
+    let query = supabase.from('inquiries').select('id', { count: 'exact', head: true })
+    for (const [col, val] of Object.entries(filter)) {
+      if (Array.isArray(val)) {
+        query = query.in(col, val)
+      } else {
+        query = query.eq(col, val)
+      }
+    }
+    const { count } = await query
+    return count ?? 0
+  }
+
+  // Helper to count conversations
+  async function countConversations(filter: Record<string, any> = {}) {
+    let query = supabase.from('conversations').select('id', { count: 'exact', head: true })
+    for (const [col, val] of Object.entries(filter)) {
+      if (Array.isArray(val)) {
+        query = query.in(col, val)
+      } else {
+        query = query.eq(col, val)
+      }
+    }
+    const { count } = await query
+    return count ?? 0
+  }
+
+  // Helper to count verification requests
+  async function countVerificationRequests(filter: Record<string, any> = {}) {
+    let query = supabase.from('verification_requests').select('id', { count: 'exact', head: true })
     for (const [col, val] of Object.entries(filter)) {
       if (Array.isArray(val)) {
         query = query.in(col, val)
@@ -98,6 +141,97 @@ export async function GET(req: NextRequest) {
   const [buyerVerificationQueue, sellerVerificationQueue] = await Promise.all([
     countUserProfiles({ role: 'buyer', verification_status: 'pending_verification' }),
     countUserProfiles({ role: 'seller', verification_status: 'pending_verification' }),
+  ])
+
+  // Verification requests from verification_requests table
+  const [
+    verificationRequestsPending,
+    buyerVerificationRequests,
+    sellerVerificationRequests
+  ] = await Promise.all([
+    // Total pending verification requests
+    countVerificationRequests({ status: ['New Request', 'Contacted', 'Docs Under Review', 'More Info Requested'] }),
+
+    // Buyer verification requests pending
+    supabase
+      .from('verification_requests')
+      .select('id', { count: 'exact', head: true })
+      .eq('request_type', 'user_verification')
+      .in('status', ['New Request', 'Contacted', 'Docs Under Review', 'More Info Requested'])
+      .then(async ({ count }) => {
+        if (!count) return 0;
+        // Filter by buyer role
+        const { data } = await supabase
+          .from('verification_requests')
+          .select('user_id')
+          .eq('request_type', 'user_verification')
+          .in('status', ['New Request', 'Contacted', 'Docs Under Review', 'More Info Requested']);
+
+        if (!data) return 0;
+
+        const { count: buyerCount } = await supabase
+          .from('user_profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('role', 'buyer')
+          .in('id', data.map(r => r.user_id));
+
+        return buyerCount ?? 0;
+      }),
+
+    // Seller verification requests pending
+    supabase
+      .from('verification_requests')
+      .select('id', { count: 'exact', head: true })
+      .eq('request_type', 'user_verification')
+      .in('status', ['New Request', 'Contacted', 'Docs Under Review', 'More Info Requested'])
+      .then(async ({ count }) => {
+        if (!count) return 0;
+        // Filter by seller role
+        const { data } = await supabase
+          .from('verification_requests')
+          .select('user_id')
+          .eq('request_type', 'user_verification')
+          .in('status', ['New Request', 'Contacted', 'Docs Under Review', 'More Info Requested']);
+
+        if (!data) return 0;
+
+        const { count: sellerCount } = await supabase
+          .from('user_profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('role', 'seller')
+          .in('id', data.map(r => r.user_id));
+
+        return sellerCount ?? 0;
+      }),
+  ])
+
+  // Engagement and connection metrics - now using real data from inquiries and conversations
+  const [
+    readyToEngageQueue,
+    totalFacilitatedConnections,
+    activeFacilitatedConnections,
+    facilitatedConnectionsThisMonth,
+    archivedConnections
+  ] = await Promise.all([
+    // Inquiries ready for admin connection facilitation
+    countInquiries({ status: 'ready_for_admin_connection' }),
+
+    // Total facilitated chat connections (all time)
+    countInquiries({ status: 'connection_facilitated_in_app_chat_opened' }),
+
+    // Active conversations (ongoing connections)
+    countConversations({ status: 'ACTIVE' }),
+
+    // Facilitated connections this month
+    supabase
+      .from('inquiries')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'connection_facilitated_in_app_chat_opened')
+      .gte('updated_at', monthStart)
+      .then(({ count }) => count ?? 0),
+
+    // Archived/closed conversations
+    countConversations({ status: ['ARCHIVED_BY_ADMIN', 'CLOSED_BY_PARTICIPANT'] })
   ])
 
   // Listing metrics - replacing hardcoded placeholders with actual database queries
@@ -161,18 +295,18 @@ export async function GET(req: NextRequest) {
     totalListingsAllStatuses: totalListingsAllStatuses,
     closedOrDeactivatedListings: closedOrDeactivatedListings,
 
-    // Verification queues
-    buyerVerificationQueueCount: buyerVerificationQueue,
-    sellerVerificationQueueCount: sellerVerificationQueue,
+    // Verification queues - now using real data
+    buyerVerificationQueueCount: buyerVerificationQueue + buyerVerificationRequests,
+    sellerVerificationQueueCount: sellerVerificationQueue + sellerVerificationRequests,
 
-    // Engagement placeholders
-    readyToEngageQueueCount: 0,
-    successfulConnectionsMTD: 0,
-    activeSuccessfulConnections: 0,
-    closedSuccessfulConnections: 0,
-    dealsClosedMTD: 0,
+    // Engagement metrics - now using real data from inquiries and conversations
+    readyToEngageQueueCount: readyToEngageQueue,
+    successfulConnectionsMTD: facilitatedConnectionsThisMonth,
+    activeSuccessfulConnections: activeFacilitatedConnections,
+    closedSuccessfulConnections: archivedConnections,
+    dealsClosedMTD: archivedConnections, // Same as closed connections for now
 
-    // Revenue placeholders
+    // Revenue placeholders (not implemented yet)
     revenueFromBuyers: 0,
     revenueFromSellers: 0,
     totalRevenueMTD: 0,

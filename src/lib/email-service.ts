@@ -45,7 +45,7 @@ export interface SendEmailOptions {
 export class EmailService {
   private static instance: EmailService;
   private maxRetries = 3;
-  private retryDelay = 1000; // ms
+  private retryDelay = 1000; // 1 second
 
   static getInstance(): EmailService {
     if (!this.instance) {
@@ -61,7 +61,7 @@ export class EmailService {
     if (process.env.VERCEL_URL) {
       return `https://${process.env.VERCEL_URL}`;
     }
-    return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
+    return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   }
 
   /**
@@ -69,6 +69,73 @@ export class EmailService {
    */
   private async sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Enhanced email templates that match app design principles (no emojis)
+   */
+  private getVerificationTemplate(verificationUrl: string): string {
+    return `
+      <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F4F6FC; padding: 20px;">
+        <div style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0D0D39; margin: 0; font-size: 24px; font-weight: 600;">Welcome to Nobridge!</h1>
+            <p style="color: #666; font-size: 16px; line-height: 1.5;">Please verify your email address to complete your registration.</p>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${verificationUrl}" style="background-color: #0D0D39; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+              Verify Email Address
+            </a>
+          </div>
+
+          <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #3B82F6;">
+            <p style="margin: 0; color: #0D0D39;"><strong>What happens next:</strong></p>
+            <p style="margin: 8px 0 0 0; color: #666;">Click the button above to verify your email and gain full access to the Nobridge platform.</p>
+          </div>
+
+          <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 14px;">
+            <p style="margin: 0;">If you didn't create an account with Nobridge, you can safely ignore this email.</p>
+            <p style="margin: 5px 0 0 0;">&copy; 2024 Nobridge. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private getPasswordResetTemplate(resetUrl: string): string {
+    return `
+      <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F4F6FC; padding: 20px;">
+        <div style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0D0D39; margin: 0; font-size: 24px; font-weight: 600;">Reset Your Nobridge Password</h1>
+            <p style="color: #666; font-size: 16px; line-height: 1.5;">We received a request to reset your password. Click the button below to create a new password.</p>
+          </div>
+
+          <div style="background: #FEF3C7; padding: 32px; border-radius: 8px; margin: 32px 0; text-align: center;">
+            <h2 style="color: #0D0D39; margin: 0 0 16px 0;">Reset Your Password</h2>
+            <a href="${resetUrl}" style="background-color: #EF4444; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; margin: 16px 0;">
+              Reset My Password
+            </a>
+            <p style="margin: 16px 0 0 0; color: #666; font-size: 14px;">This link will expire in 1 hour for security</p>
+          </div>
+
+          <div style="background: #FEF2F2; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #EF4444;">
+            <p style="margin: 0 0 8px 0; color: #0D0D39;"><strong>Security Notice:</strong></p>
+            <ul style="margin: 0; padding-left: 20px; color: #666;">
+              <li>If you didn't request this password reset, please ignore this email</li>
+              <li>Your current password remains unchanged until you complete the reset</li>
+              <li>This link can only be used once and expires in 1 hour</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 14px;">
+            <p style="margin: 0;">Need help? Contact our support team if you're having trouble accessing your account.</p>
+            <p style="margin: 5px 0 0 0;">&copy; 2024 Nobridge. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -111,29 +178,29 @@ export class EmailService {
           if (error) throw error;
 
           console.log(`[EMAIL-SERVICE] SUCCESS (Supabase Dev): ${subject} sent to ${to} via Mailpit`);
-      return {
+          return {
             success: true,
             message: 'Email sent successfully via Supabase (Mailpit)',
             service: 'supabase-dev',
             attempts: attempt,
             debug: { data, attempt, viewAt: 'http://localhost:54324' }
-      };
+          };
         }
-    } catch (error) {
+      } catch (error) {
         console.error(`[EMAIL-SERVICE] Attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-      return {
-        success: false,
+          return {
+            success: false,
             error: `Failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
             debug: { finalError: error }
-      };
+          };
         }
 
         await this.sleep(this.retryDelay * attempt); // Exponential backoff
+      }
     }
-  }
 
     return {
       success: false,
@@ -218,46 +285,43 @@ export class EmailService {
   }
 
   /**
-   * Send password reset email with retry logic and fallbacks
-   * CRITICAL FIX: This was previously unreliable
+   * Send password reset email with enhanced reliability
    */
   async sendPasswordResetEmail(email: string): Promise<EmailResult> {
-      console.log(`[EMAIL-SERVICE] Sending password reset email to ${email}`);
+    console.log(`[EMAIL-SERVICE] Sending password reset email to ${email}`);
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         console.log(`[EMAIL-SERVICE] Password reset attempt ${attempt}/${this.maxRetries} for ${email}`);
 
-      // Use the standard Supabase password reset method
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${this.getBaseUrl()}/auth/update-password`
-      });
+        // Primary method: Use Supabase auth password reset
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${this.getBaseUrl()}/auth/update-password`
+        });
 
-      if (error) {
-          // Handle specific errors with better messaging
-        if (error.message?.includes('User not found')) {
-            // Don't retry for non-existent users - return immediately for security
-          return {
-            success: false,
-            error: 'No account found with this email address',
+        if (error) {
+          // Handle specific errors
+          if (error.message?.includes('User not found')) {
+            return {
+              success: false,
+              error: 'No account found with this email address',
               attempts: attempt,
-            debug: {
-              method: 'auth.resetPasswordForEmail',
+              debug: {
+                method: 'auth.resetPasswordForEmail',
                 note: 'User not found - no retry needed',
-              supabaseError: error
-            }
-          };
-        }
+                supabaseError: error
+              }
+            };
+          }
 
-          // For other errors, retry with fallback
-          if (attempt === this.maxRetries && process.env.NODE_ENV === 'production' && resend) {
+          // For other errors, try Resend fallback if available
+          if (attempt === this.maxRetries && resend) {
             console.log(`[EMAIL-SERVICE] Fallback to Resend for password reset: ${email}`);
 
-            // Fallback to custom Resend email
             const resetUrl = `${this.getBaseUrl()}/auth/update-password`;
             const result = await this.sendCustomEmail({
               to: email,
-              subject: 'Reset Your Password',
+              subject: 'Reset Your Nobridge Password',
               html: this.getPasswordResetTemplate(resetUrl)
             });
 
@@ -276,128 +340,146 @@ export class EmailService {
         console.log(`[EMAIL-SERVICE] Password reset email sent successfully to ${email}`);
         return {
           success: true,
-          message: 'Password reset email sent successfully. Check your inbox or Mailpit at http://localhost:54324',
+          message: 'Password reset email sent successfully',
           service: 'supabase-auth',
           attempts: attempt,
           debug: {
-            recipient: email,
             method: 'auth.resetPasswordForEmail',
-            viewAt: process.env.NODE_ENV === 'development' ? 'http://localhost:54324' : 'email inbox'
+            recipient: email
           }
         };
+
       } catch (error) {
         console.error(`[EMAIL-SERVICE] Password reset attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-      return {
+          return {
             success: false,
             error: `Password reset failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
-        debug: {
+            debug: {
               method: 'auth.resetPasswordForEmail',
               finalError: error
-        }
-      };
+            }
+          };
         }
 
         await this.sleep(this.retryDelay * attempt);
       }
     }
 
-      return {
-        success: false,
+    return {
+      success: false,
       error: 'Unexpected retry loop exit',
       attempts: this.maxRetries
-      };
+    };
   }
 
   /**
-   * Resend verification email with improved reliability
-   * CRITICAL FIX: This was previously extremely unreliable
+   * Resend verification email with enhanced reliability
    */
   async resendVerificationEmail(email: string): Promise<EmailResult> {
-      console.log(`[EMAIL-SERVICE] Resending verification email to ${email}`);
+    console.log(`[EMAIL-SERVICE] Resending verification email to ${email}`);
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         console.log(`[EMAIL-SERVICE] Verification resend attempt ${attempt}/${this.maxRetries} for ${email}`);
 
-      // First check if user exists using admin client
-      const { data: users, error: listError } = await supabaseAdmin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000
-      });
+        // Check if user exists using admin client
+        const { data: users, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000
+        });
 
-      if (listError) {
+        if (listError) {
           throw new Error(`User lookup failed: ${listError.message}`);
-      }
+        }
 
-      const user = users?.users?.find(u => u.email === email);
+        const user = users?.users?.find(u => u.email === email);
 
-      if (!user) {
-        // For security, return success even if user doesn't exist
-        console.log(`[EMAIL-SERVICE] User ${email} not found - returning success for security`);
-        return {
-          success: true,
-          message: 'If this email exists in our system, a verification email has been sent.',
+        if (!user) {
+          // For security, return success even if user doesn't exist
+          console.log(`[EMAIL-SERVICE] User ${email} not found - returning success for security`);
+          return {
+            success: true,
+            message: 'If this email exists in our system, a verification email has been sent.',
             service: 'security-response',
             attempts: attempt,
-          debug: {
-            note: 'User not found, but returning success for security reasons',
-            suggestion: 'Make sure the user exists in your Supabase auth.users table'
-          }
-        };
-      }
+            debug: {
+              note: 'User not found, but returning success for security reasons'
+            }
+          };
+        }
 
         // User exists, use the resend method
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-        options: {
-          emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
-        }
-      });
+        const { error } = await supabase.auth.resend({
+          type: 'signup',
+          email: email,
+          options: {
+            emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
+          }
+        });
 
-      if (error) {
+        if (error) {
           // Handle rate limiting specifically
           if (error.message?.includes('rate limit') || error.message?.includes('too many')) {
-        return {
-          success: false,
+            return {
+              success: false,
               error: 'Rate limit exceeded. Please wait a moment before requesting another verification email.',
               attempts: attempt,
-          debug: {
-            method: 'auth.resend',
+              debug: {
+                method: 'auth.resend',
                 rateLimited: true,
                 suggestion: 'Wait 60 seconds before retrying',
-            supabaseError: error
+                supabaseError: error
+              }
+            };
           }
-        };
-      }
+
+          // Try Resend fallback if available
+          if (attempt === this.maxRetries && resend) {
+            console.log(`[EMAIL-SERVICE] Fallback to Resend for verification: ${email}`);
+
+            const verificationUrl = `${this.getBaseUrl()}/auth/callback`;
+            const result = await this.sendCustomEmail({
+              to: email,
+              subject: 'Welcome to Nobridge - Verify Your Email',
+              html: this.getVerificationTemplate(verificationUrl)
+            });
+
+            if (result.success) {
+              return {
+                ...result,
+                message: 'Verification email sent via Resend fallback',
+                service: 'resend-fallback'
+              };
+            }
+          }
 
           throw error;
         }
 
         console.log(`[EMAIL-SERVICE] Verification email resent successfully to ${email}`);
-      return {
-        success: true,
-          message: 'Verification email resent successfully. Check your inbox or Mailpit at http://localhost:54324',
+        return {
+          success: true,
+          message: 'Verification email resent successfully',
           service: 'supabase-auth',
           attempts: attempt,
           debug: {
             recipient: email,
-          userExists: true,
-          userId: user.id,
-          emailConfirmed: user.email_confirmed_at ? 'already confirmed' : 'pending',
-            method: 'auth.resend',
-            viewAt: process.env.NODE_ENV === 'development' ? 'http://localhost:54324' : 'email inbox'
-        }
-      };
-    } catch (error) {
+            userExists: true,
+            userId: user.id,
+            emailConfirmed: user.email_confirmed_at ? 'already confirmed' : 'pending',
+            method: 'auth.resend'
+          }
+        };
+
+      } catch (error) {
         console.error(`[EMAIL-SERVICE] Verification resend attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-      return {
-        success: false,
+          return {
+            success: false,
             error: `Verification email resend failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
             debug: {
@@ -434,45 +516,73 @@ export class EmailService {
         note: 'Verification emails are automatically sent during user signup',
         suggestion: 'Create a user first, then use resendVerificationEmail()'
       }
-      };
-    }
+    };
+  }
 
   /**
    * Send signup confirmation email (delegates to verification flow)
    */
   async sendSignupConfirmationEmail(email: string): Promise<EmailResult> {
-    console.log(`[EMAIL-SERVICE] Signup confirmation emails are sent automatically during signup`);
+    console.log(`[EMAIL-SERVICE] Sending signup confirmation email to ${email}`);
+
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        console.log(`[EMAIL-SERVICE] Signup confirmation attempt ${attempt}/${this.maxRetries} for ${email}`);
+
+        // Use Supabase auth signup with email confirmation
+        const { error } = await supabase.auth.signUp({
+          email: email,
+          password: 'temp_password_will_be_reset', // User will set real password via email link
+          options: {
+            emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
+          }
+        });
+
+        if (error) {
+          // If user already exists, try resend instead
+          if (error.message?.includes('already registered')) {
+            return await this.resendVerificationEmail(email);
+          }
+
+          throw error;
+        }
+
+        console.log(`[EMAIL-SERVICE] Signup confirmation email sent successfully to ${email}`);
+        return {
+          success: true,
+          message: 'Signup confirmation email sent successfully',
+          service: 'supabase-auth',
+          attempts: attempt,
+          debug: {
+            method: 'auth.signUp',
+            recipient: email
+          }
+        };
+
+      } catch (error) {
+        console.error(`[EMAIL-SERVICE] Signup confirmation attempt ${attempt}/${this.maxRetries} failed:`, error);
+
+        if (attempt === this.maxRetries) {
+          return {
+            success: false,
+            error: `Signup confirmation failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            attempts: attempt,
+            debug: {
+              method: 'auth.signUp',
+              finalError: error
+            }
+          };
+        }
+
+        await this.sleep(this.retryDelay * attempt);
+      }
+    }
+
     return {
       success: false,
-      error: 'Signup confirmation emails are sent automatically when using auth.signUp()',
-      debug: {
-        note: 'Use auth.signUp() to create a user and trigger confirmation email',
-        suggestion: 'For testing existing users, use resendVerificationEmail() instead'
-      }
+      error: 'Unexpected retry loop exit',
+      attempts: this.maxRetries
     };
-  }
-
-  /**
-   * Password reset email template
-   */
-  private getPasswordResetTemplate(resetUrl: string): string {
-    return `
-      <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <h1 style="color: #333; text-align: center;">Reset Your Password</h1>
-        <p style="color: #666; font-size: 16px; line-height: 1.5;">
-          Click the button below to reset your password. This link will expire in 1 hour.
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetUrl}"
-             style="background-color: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-            Reset Password
-          </a>
-        </div>
-        <p style="color: #888; font-size: 14px;">
-          If you didn't request a password reset, you can safely ignore this email.
-        </p>
-      </div>
-    `;
   }
 
   /**
