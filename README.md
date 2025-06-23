@@ -3,8 +3,16 @@
 Nobridge is a comprehensive marketplace platform connecting SME owners looking to sell their businesses with motivated buyers and investors across Asia. Built with modern web technologies for security, scalability, and excellent user experience.
 
 > **🚀 Status**: Live and deployed! [Visit Nobridge →](https://nobridge.vercel.app)
+>
+> **🔒 Repository**: Successfully deployed from private repository ✨
 
 ## 🚀 Recent Updates (Latest Version)
+
+### 🎨 **Modern UI Redesign** *(Latest)*
+- **Sidebar Enhancement**: All dashboard sidebars now feature modern rounded corners, smooth animations, and curved edges
+- **Consistent Design**: Admin, Seller, and Buyer dashboards share the same polished sidebar design
+- **Real-time Metrics**: Admin dashboard now displays accurate engagement metrics instead of placeholder data
+- **Brand Colors**: Consistent use of Nobridge brand colors throughout all interfaces
 
 ### ✨ Complete Branding Update
 - **Rebranded from BizMatch Asia to Nobridge** across all components and pages
