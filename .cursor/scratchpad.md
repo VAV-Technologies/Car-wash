@@ -13,6 +13,7 @@ The user has identified serious issues with the current data processing scripts 
 5. **Poor Error Handling**: Scripts don't provide clear feedback when things go wrong
 6. **No Unified Architecture**: Multiple scripts with different approaches and inconsistent outputs
 7. **Image Upload Issues**: Even after running upload scripts, images don't appear in production deployment
+8. **Admin Panel Data Issue**: Admin dashboard shows 0 listings when there are actually ~205 listings (hardcoded placeholders in API)
 
 **User Requirements:**
 - No "duct tape" fixes - only systematic, robust solutions
@@ -134,6 +135,14 @@ console.log(`Created business listings: ${listings.length}`); // Only counts see
   - **Success Criteria**: Remove confusing elements and improve error messages
   - **Solution**: Multiple UI improvements implemented
   - **Result**: Cleaner, more professional interface
+
+### Phase 5: Admin Panel Data Accuracy
+- [🔄] **Task 5.1**: Fix admin panel listing count showing 0 instead of ~205 listings **IN PROGRESS**
+  - **Success Criteria**: Admin dashboard shows accurate listing counts from database
+  - **Issue**: API endpoint `/api/admin/metrics` had hardcoded placeholder values (0) instead of database queries
+  - **Solution**: Replaced placeholders with real Supabase queries for all listing metrics
+  - **Status**: Code updated, needs testing to verify fix works
+  - **Expected Result**: Admin dashboard should now show accurate listing counts
 
 ## Current Status / Progress Tracking
 
@@ -272,6 +281,14 @@ The user reported that their Vercel deployment wasn't triggering after pushing c
   - **Solution**: Multiple UI improvements implemented
   - **Result**: Cleaner, more professional interface
 
+### Phase 5: Admin Panel Data Accuracy
+- [🔄] **Task 5.1**: Fix admin panel listing count showing 0 instead of ~205 listings **IN PROGRESS**
+  - **Success Criteria**: Admin dashboard shows accurate listing counts from database
+  - **Issue**: API endpoint `/api/admin/metrics` had hardcoded placeholder values (0) instead of database queries
+  - **Solution**: Replaced placeholders with real Supabase queries for all listing metrics
+  - **Status**: Code updated, needs testing to verify fix works
+  - **Expected Result**: Admin dashboard should now show accurate listing counts
+
 ## Current Status / Progress Tracking
 
 ### Project Status Board
@@ -353,72 +370,4 @@ The system is fully ready for production deployment:
 5. **Error Handling**: Include storage operations in timeout and retry logic
 
 ### Debug Information
-- **Production Supabase URL**: `https://kktmizfxgtkodtujursv.supabase.co`
-- **Storage Bucket**: `listing-images` with subdirectories `original/` and `listing-assets/`
-- **Image Count**: 608 total (5 demo + 603 listing assets)
-- **URL Format**: Full production URLs with `/storage/v1/object/public/` path
-
-# Nobridge Project Scratchpad
-
-## Background and Motivation
-
-The user wants to add a currency converter to the Nobridge marketplace application to make it more accessible for international investors. The primary goal is to allow users to see an estimated asking price in various currencies directly on the listing pages.
-
-This feature requires integrating a third-party API for exchange rates, creating a new backend route to handle the data securely, and building a frontend component that is seamlessly integrated into the existing UI.
-
-## Key Challenges and Analysis
-
-1.  **Data Source:** Using static, hardcoded exchange rates is not viable as they become outdated. The best approach is to use a free, real-time exchange rate API. This ensures the displayed conversions are accurate and trustworthy.
-2.  **API Key Security:** Exposing a third-party API key on the client side is a security risk. A dedicated backend route must be created to act as a proxy, securely handling the API key and fetching data on behalf of the client.
-3.  **User Experience:** The converter should be intuitive and non-intrusive. Placing it directly next to the USD asking price on the listing pages offers the best usability, avoiding the need for users to navigate to a separate calculator.
-4.  **Performance:** To avoid hitting API rate limits and to ensure a fast user experience, the exchange rate data should be cached on the server. Rates do not need to be fetched on every single request.
-
-## High-level Task Breakdown
-
-### Phase 1: Backend & API Integration
-- **Task 1.1: Research & Select a Currency API.**
-  - **Description:** Find a free and reliable API for fetching real-time currency exchange rates with USD as the base.
-  - **Success Criteria:** A suitable API is chosen and its documentation is reviewed. I will start by investigating `exchangerate-api.com`.
-- **Task 1.2: Create a new API route for currency conversion.**
-  - **Description:** Implement a new server-side API route (e.g., `/api/currency/rates`) that fetches data from the chosen external API. This route will handle the API key securely.
-  - **Success Criteria:** The endpoint `/api/currency/rates` is created and successfully returns a JSON object with exchange rates relative to USD.
-
-### Phase 2: Frontend Implementation
-- **Task 2.1: Create a Currency Configuration File.**
-  - **Description:** Create a file (e.g., `src/lib/currency-config.ts`) that exports a list of all supported currencies, including their name, code, and symbol.
-  - **Success Criteria:** The configuration file is created and populated with the agreed-upon list of currencies.
-- **Task 2.2: Build the Currency Converter Component.**
-  - **Description:** Develop a new reusable React component (`src/components/shared/currency-converter.tsx`) that accepts a USD value. The component will feature a dropdown of currencies and will use our new API route to display the converted amount. It must also handle loading and error states.
-  - **Success Criteria:** The component is built and can successfully display a converted price based on user selection.
-- **Task 2.3: Integrate the Converter into the Listing Page.**
-  - **Description:** Add the new `CurrencyConverter` component to the main listing details page (`src/app/listings/[listingId]/page.tsx`), positioning it next to the `asking_price`.
-  - **Success Criteria:** The currency converter is visible and fully functional on the public listing pages.
-
-### Phase 3: Refinement & Testing
-- **Task 3.1: Implement Server-Side Caching.**
-  - **Description:** Add caching to the `/api/currency/rates` route to reduce the number of calls to the external API and improve performance.
-  - **Success Criteria:** The API route's responses are cached for a reasonable duration (e.g., several hours).
-- **Task 3.2: Manual End-to-End Testing.**
-  - **Description:** Thoroughly test the feature on the live site. Verify that all currencies convert correctly, the UI is responsive, and error states are handled gracefully.
-  - **Success Criteria:** The feature is confirmed to be working as expected without any bugs or UI issues.
-
-## Project Status Board
-
-- [ ] **Phase 1: Backend & API Integration**
-  - [ ] Task 1.1: Research & Select a Currency API
-  - [ ] Task 1.2: Create a new API route for currency conversion
-- [ ] **Phase 2: Frontend Implementation**
-  - [ ] Task 2.1: Create a Currency Configuration File
-  - [ ] Task 2.2: Build the Currency Converter Component
-  - [ ] Task 2.3: Integrate the Converter into the Listing Page
-- [ ] **Phase 3: Refinement & Testing**
-  - [ ] Task 3.1: Implement Server-Side Caching
-  - [ ] Task 3.2: Manual End-to-End Testing
-
-## Executor's Feedback or Assistance Requests
-
-*Waiting for user approval to begin.*
-
-## Lessons
-
-*(No lessons yet.)*
+- **Production Supabase URL**: `

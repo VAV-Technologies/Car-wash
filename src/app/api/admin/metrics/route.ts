@@ -43,6 +43,20 @@ export async function GET(req: NextRequest) {
     return count ?? 0
   }
 
+  // Helper to count listings
+  async function countListings(filter: Record<string, any> = {}) {
+    let query = supabase.from('listings').select('id', { count: 'exact', head: true })
+    for (const [col, val] of Object.entries(filter)) {
+      if (Array.isArray(val)) {
+        query = query.in(col, val)
+      } else {
+        query = query.eq(col, val)
+      }
+    }
+    const { count } = await query
+    return count ?? 0
+  }
+
   // User registration metrics
   const [newSellers24h, newBuyers24h, newSellers7d, newBuyers7d] = await Promise.all([
     supabase
@@ -86,6 +100,42 @@ export async function GET(req: NextRequest) {
     countUserProfiles({ role: 'seller', verification_status: 'pending_verification' }),
   ])
 
+  // Listing metrics - replacing hardcoded placeholders with actual database queries
+  const [
+    newListings24h,
+    newListings7d,
+    totalListingsAllStatuses,
+    totalActiveListingsAnonymous,
+    totalActiveListingsVerified,
+    closedOrDeactivatedListings
+  ] = await Promise.all([
+    // New listings in last 24 hours
+    supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', ts24h)
+      .then(({ count }) => count ?? 0),
+
+    // New listings in last 7 days
+    supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', ts7d)
+      .then(({ count }) => count ?? 0),
+
+    // Total listings (all statuses)
+    countListings(),
+
+    // Active anonymous listings (active status but not verified public)
+    countListings({ status: ['active', 'verified_anonymous'] }),
+
+    // Active verified public listings
+    countListings({ status: 'verified_public' }),
+
+    // Closed/deactivated listings
+    countListings({ status: ['inactive', 'closed_deal', 'rejected_by_admin'] })
+  ])
+
   const metrics: AdminDashboardMetrics = {
     // Users
     newUserRegistrations24hSellers: newSellers24h,
@@ -93,9 +143,9 @@ export async function GET(req: NextRequest) {
     newUserRegistrations7dSellers: newSellers7d,
     newUserRegistrations7dBuyers: newBuyers7d,
 
-    // Placeholder zeros for not-yet-implemented listing metrics
-    newListingsCreated24h: 0,
-    newListingsCreated7d: 0,
+    // Listings - now using real data
+    newListingsCreated24h: newListings24h,
+    newListingsCreated7d: newListings7d,
 
     // Totals
     totalActiveSellers: totalSellers,
@@ -105,11 +155,11 @@ export async function GET(req: NextRequest) {
     totalPaidBuyers: 0,
     totalFreeBuyers: totalBuyers,
 
-    // Listing counts placeholders
-    totalActiveListingsAnonymous: 0,
-    totalActiveListingsVerified: 0,
-    totalListingsAllStatuses: 0,
-    closedOrDeactivatedListings: 0,
+    // Listing counts - now using real data
+    totalActiveListingsAnonymous: totalActiveListingsAnonymous,
+    totalActiveListingsVerified: totalActiveListingsVerified,
+    totalListingsAllStatuses: totalListingsAllStatuses,
+    closedOrDeactivatedListings: closedOrDeactivatedListings,
 
     // Verification queues
     buyerVerificationQueueCount: buyerVerificationQueue,
