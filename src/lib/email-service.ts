@@ -178,29 +178,29 @@ export class EmailService {
           if (error) throw error;
 
           console.log(`[EMAIL-SERVICE] SUCCESS (Supabase Dev): ${subject} sent to ${to} via Mailpit`);
-          return {
+      return {
             success: true,
             message: 'Email sent successfully via Supabase (Mailpit)',
             service: 'supabase-dev',
             attempts: attempt,
             debug: { data, attempt, viewAt: 'http://localhost:54324' }
-          };
+      };
         }
-      } catch (error) {
+    } catch (error) {
         console.error(`[EMAIL-SERVICE] Attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-          return {
-            success: false,
+      return {
+        success: false,
             error: `Failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
             debug: { finalError: error }
-          };
+      };
         }
 
         await this.sleep(this.retryDelay * attempt); // Exponential backoff
-      }
     }
+  }
 
     return {
       success: false,
@@ -288,31 +288,31 @@ export class EmailService {
    * Send password reset email with enhanced reliability
    */
   async sendPasswordResetEmail(email: string): Promise<EmailResult> {
-    console.log(`[EMAIL-SERVICE] Sending password reset email to ${email}`);
+      console.log(`[EMAIL-SERVICE] Sending password reset email to ${email}`);
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         console.log(`[EMAIL-SERVICE] Password reset attempt ${attempt}/${this.maxRetries} for ${email}`);
 
         // Primary method: Use Supabase auth password reset
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${this.getBaseUrl()}/auth/update-password`
-        });
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${this.getBaseUrl()}/auth/update-password`
+      });
 
-        if (error) {
+      if (error) {
           // Handle specific errors
-          if (error.message?.includes('User not found')) {
-            return {
-              success: false,
-              error: 'No account found with this email address',
+        if (error.message?.includes('User not found')) {
+          return {
+            success: false,
+            error: 'No account found with this email address',
               attempts: attempt,
-              debug: {
-                method: 'auth.resetPasswordForEmail',
+            debug: {
+              method: 'auth.resetPasswordForEmail',
                 note: 'User not found - no retry needed',
-                supabaseError: error
-              }
-            };
-          }
+              supabaseError: error
+            }
+          };
+        }
 
           // For other errors, try Resend fallback if available
           if (attempt === this.maxRetries && resend) {
@@ -353,88 +353,88 @@ export class EmailService {
         console.error(`[EMAIL-SERVICE] Password reset attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-          return {
+      return {
             success: false,
             error: `Password reset failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
-            debug: {
+        debug: {
               method: 'auth.resetPasswordForEmail',
               finalError: error
-            }
-          };
+        }
+      };
         }
 
         await this.sleep(this.retryDelay * attempt);
       }
     }
 
-    return {
-      success: false,
+      return {
+        success: false,
       error: 'Unexpected retry loop exit',
       attempts: this.maxRetries
-    };
+      };
   }
 
   /**
    * Resend verification email with enhanced reliability
    */
   async resendVerificationEmail(email: string): Promise<EmailResult> {
-    console.log(`[EMAIL-SERVICE] Resending verification email to ${email}`);
+      console.log(`[EMAIL-SERVICE] Resending verification email to ${email}`);
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
         console.log(`[EMAIL-SERVICE] Verification resend attempt ${attempt}/${this.maxRetries} for ${email}`);
 
         // Check if user exists using admin client
-        const { data: users, error: listError } = await supabaseAdmin.auth.admin.listUsers({
-          page: 1,
-          perPage: 1000
-        });
+      const { data: users, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+        page: 1,
+        perPage: 1000
+      });
 
-        if (listError) {
+      if (listError) {
           throw new Error(`User lookup failed: ${listError.message}`);
-        }
+      }
 
-        const user = users?.users?.find(u => u.email === email);
+      const user = users?.users?.find(u => u.email === email);
 
-        if (!user) {
-          // For security, return success even if user doesn't exist
-          console.log(`[EMAIL-SERVICE] User ${email} not found - returning success for security`);
-          return {
-            success: true,
-            message: 'If this email exists in our system, a verification email has been sent.',
+      if (!user) {
+        // For security, return success even if user doesn't exist
+        console.log(`[EMAIL-SERVICE] User ${email} not found - returning success for security`);
+        return {
+          success: true,
+          message: 'If this email exists in our system, a verification email has been sent.',
             service: 'security-response',
             attempts: attempt,
-            debug: {
+          debug: {
               note: 'User not found, but returning success for security reasons'
-            }
-          };
-        }
+          }
+        };
+      }
 
         // User exists, use the resend method
-        const { error } = await supabase.auth.resend({
-          type: 'signup',
-          email: email,
-          options: {
-            emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
-          }
-        });
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
+        }
+      });
 
-        if (error) {
+      if (error) {
           // Handle rate limiting specifically
           if (error.message?.includes('rate limit') || error.message?.includes('too many')) {
-            return {
-              success: false,
+        return {
+          success: false,
               error: 'Rate limit exceeded. Please wait a moment before requesting another verification email.',
               attempts: attempt,
-              debug: {
-                method: 'auth.resend',
+          debug: {
+            method: 'auth.resend',
                 rateLimited: true,
                 suggestion: 'Wait 60 seconds before retrying',
-                supabaseError: error
-              }
-            };
+            supabaseError: error
           }
+        };
+      }
 
           // Try Resend fallback if available
           if (attempt === this.maxRetries && resend) {
@@ -460,26 +460,26 @@ export class EmailService {
         }
 
         console.log(`[EMAIL-SERVICE] Verification email resent successfully to ${email}`);
-        return {
-          success: true,
+      return {
+        success: true,
           message: 'Verification email resent successfully',
           service: 'supabase-auth',
           attempts: attempt,
           debug: {
             recipient: email,
-            userExists: true,
-            userId: user.id,
-            emailConfirmed: user.email_confirmed_at ? 'already confirmed' : 'pending',
+          userExists: true,
+          userId: user.id,
+          emailConfirmed: user.email_confirmed_at ? 'already confirmed' : 'pending',
             method: 'auth.resend'
-          }
-        };
+        }
+      };
 
-      } catch (error) {
+    } catch (error) {
         console.error(`[EMAIL-SERVICE] Verification resend attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         if (attempt === this.maxRetries) {
-          return {
-            success: false,
+      return {
+        success: false,
             error: `Verification email resend failed after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`,
             attempts: attempt,
             debug: {
@@ -516,8 +516,8 @@ export class EmailService {
         note: 'Verification emails are automatically sent during user signup',
         suggestion: 'Create a user first, then use resendVerificationEmail()'
       }
-    };
-  }
+      };
+    }
 
   /**
    * Send signup confirmation email (delegates to verification flow)
