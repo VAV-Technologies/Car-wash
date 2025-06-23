@@ -1,5 +1,3 @@
-'use client';
-
 import type { Metadata } from 'next';
 import StructuredData from '@/components/seo/StructuredData';
 
@@ -57,6 +55,8 @@ async function getMarketplaceListings(
     totalListings: data.pagination?.total || 0
   };
 }
+
+'use client';
 
 function MarketplaceContent() {
   const { toast } = useToast();
