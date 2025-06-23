@@ -1,0 +1,1823 @@
+2025-06-22 00:10:17,795 - INFO - 🚀 NOBRIDGE MARKETPLACE DATA PROCESSOR - Starting...
+2025-06-22 00:10:17,795 - INFO - 🧹 STEP 1: Cleaning previous data...
+2025-06-22 00:10:17,833 - INFO -    🗑️  Removed existing assets directory
+2025-06-22 00:10:17,834 - INFO -    ✅ Created clean assets directory
+2025-06-22 00:17:01,457 - INFO - 🚀 NOBRIDGE MARKETPLACE DATA PROCESSOR - Starting...
+2025-06-22 00:17:01,458 - INFO - 🧹 STEP 1: Cleaning previous data...
+2025-06-22 00:17:01,458 - INFO -    🗑️  Removed existing assets directory
+2025-06-22 00:17:01,458 - INFO -    ✅ Created clean assets directory
+2025-06-22 00:34:09,782 - INFO - 🚀 ROBUST MARKETPLACE PROCESSOR - Starting...
+2025-06-22 00:34:09,783 - INFO - ============================================================
+2025-06-22 00:34:09,783 - INFO - 🔧 Preparing environment...
+2025-06-22 00:34:09,783 - INFO -    ✅ Assets directory ready: /Users/macintosh/Developer/studio/public/assets/listing-assets
+2025-06-22 00:34:09,783 - INFO - 📋 Reading CSV file: /Users/macintosh/Developer/studio/more_data.csv
+2025-06-22 00:34:09,795 - INFO -    ✅ Successfully read with encoding=utf-8, delimiter=','
+2025-06-22 00:34:09,795 - INFO -    📊 Dataset: 210 rows × 25 columns
+2025-06-22 00:34:09,796 - INFO - 📥 Processing 210 listings...
+2025-06-22 00:34:09,798 - INFO - 📋 [1/210] Processing: Commercial & Industrial Painting Contractor
+2025-06-22 00:34:09,798 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:34:11,365 - INFO - ✅ Downloaded: listing-001-96a3120e.jpg (47,962 bytes)
+2025-06-22 00:34:11,365 - INFO -     ✅ Success! Total processed: 1
+2025-06-22 00:34:11,366 - INFO - 📋 [2/210] Processing: Multi-Location Auto Service Center
+2025-06-22 00:34:11,366 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:34:13,630 - INFO - ✅ Downloaded: listing-002-587e49c9.jpg (596,330 bytes)
+2025-06-22 00:34:13,630 - INFO -     ✅ Success! Total processed: 2
+2025-06-22 00:34:13,632 - INFO - 📋 [3/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 00:34:13,632 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 00:34:16,621 - INFO - ✅ Downloaded: listing-003-426d314a.jpg (657,992 bytes)
+2025-06-22 00:34:16,623 - INFO -     ✅ Success! Total processed: 3
+2025-06-22 00:34:16,658 - INFO - 📋 [4/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 00:34:16,659 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 00:34:17,432 - INFO - ✅ Downloaded: listing-004-304e275b.jpg (336,744 bytes)
+2025-06-22 00:34:17,432 - INFO -     ✅ Success! Total processed: 4
+2025-06-22 00:34:17,433 - INFO - 📋 [5/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 00:34:17,433 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:34:18,444 - WARNING - Download attempt 1 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:20,386 - WARNING - Download attempt 2 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:23,198 - WARNING - Download attempt 3 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:23,213 - ERROR - ❌ Failed to download: Mechanical & Plumbing Contractors
+2025-06-22 00:34:23,213 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:34:23,222 - INFO - 📋 [6/210] Processing: Third-Party Logistics (3PL) Provider
+2025-06-22 00:34:23,222 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 00:34:23,554 - INFO - ✅ Downloaded: listing-005-7d30fd0a.jpg (310,598 bytes)
+2025-06-22 00:34:23,554 - INFO -     ✅ Success! Total processed: 5
+2025-06-22 00:34:23,555 - INFO - 📋 [7/210] Processing: Regional Pizza Chain
+2025-06-22 00:34:23,555 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:34:24,357 - INFO - ✅ Downloaded: listing-006-d923d2f1.jpg (184,983 bytes)
+2025-06-22 00:34:24,357 - INFO -     ✅ Success! Total processed: 6
+2025-06-22 00:34:24,358 - INFO - 📋 [8/210] Processing: Cybersecurity Solutions Provider
+2025-06-22 00:34:24,358 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:34:25,167 - WARNING - Download attempt 1 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:34:26,595 - WARNING - Download attempt 2 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:34:28,902 - WARNING - Download attempt 3 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:34:28,904 - ERROR - ❌ Failed to download: Cybersecurity Solutions Provider
+2025-06-22 00:34:28,904 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:34:28,906 - INFO - 📋 [9/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 00:34:28,906 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:34:30,160 - INFO - ✅ Downloaded: listing-007-9126df6d.jpg (15,489 bytes)
+2025-06-22 00:34:30,160 - INFO -     ✅ Success! Total processed: 7
+2025-06-22 00:34:30,163 - INFO - 📋 [10/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 00:34:30,163 - INFO -     🌍 Location: Lucknow, India
+2025-06-22 00:34:30,643 - INFO - ✅ Downloaded: listing-008-cce581dc.png (1,147,978 bytes)
+2025-06-22 00:34:30,643 - INFO -     ✅ Success! Total processed: 8
+2025-06-22 00:34:30,644 - INFO - 📋 [11/210] Processing: Commercial Electrical Contractors
+2025-06-22 00:34:30,644 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:34:31,479 - WARNING - Download attempt 1 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:33,072 - WARNING - Download attempt 2 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:35,636 - WARNING - Download attempt 3 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 00:34:35,638 - ERROR - ❌ Failed to download: Commercial Electrical Contractors
+2025-06-22 00:34:35,639 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:34:35,651 - INFO - 📋 [12/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 00:34:35,651 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:34:35,897 - INFO - ✅ Downloaded: listing-009-f3d96db1.jpg (290,214 bytes)
+2025-06-22 00:34:35,898 - INFO -     ✅ Success! Total processed: 9
+2025-06-22 00:34:35,900 - INFO - 📋 [13/210] Processing: Commercial General Contractor
+2025-06-22 00:34:35,901 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:34:38,382 - INFO - ✅ Downloaded: listing-010-71f5618f.jpg (220,451 bytes)
+2025-06-22 00:34:38,384 - INFO -     ✅ Success! Total processed: 10
+2025-06-22 00:34:38,394 - INFO - 📋 [14/210] Processing: Multi-Location Auto Service Center
+2025-06-22 00:34:38,394 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:34:41,043 - INFO - ✅ Downloaded: listing-011-f6d6f0e8.png (144,906 bytes)
+2025-06-22 00:34:41,044 - INFO -     ✅ Success! Total processed: 11
+2025-06-22 00:34:41,054 - INFO - 📋 [15/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 00:34:41,054 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:34:41,475 - WARNING - Download attempt 1 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 00:34:43,221 - WARNING - Download attempt 2 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 00:34:45,351 - WARNING - Download attempt 3 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 00:34:45,352 - ERROR - ❌ Failed to download: Janitorial Services & Facilities Management
+2025-06-22 00:34:45,352 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:34:45,363 - INFO - 📋 [16/210] Processing: Freight Forwarding Company
+2025-06-22 00:34:45,363 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:34:47,835 - INFO - ✅ Downloaded: listing-012-f04132cb.jpg (102,150 bytes)
+2025-06-22 00:34:47,836 - INFO -     ✅ Success! Total processed: 12
+2025-06-22 00:34:47,839 - INFO - 📋 [17/210] Processing: Corporate Childcare Center Operator
+2025-06-22 00:34:47,839 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:34:48,000 - INFO - ✅ Downloaded: listing-013-c44fe762.jpg (68,131 bytes)
+2025-06-22 00:34:48,000 - INFO -     ✅ Success! Total processed: 13
+2025-06-22 00:34:48,000 - INFO - 📋 [18/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 00:34:48,000 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:34:48,162 - INFO - ✅ Downloaded: listing-014-4b68ffa6.jpg (98,115 bytes)
+2025-06-22 00:34:48,162 - INFO -     ✅ Success! Total processed: 14
+2025-06-22 00:34:48,162 - INFO - 📋 [19/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 00:34:48,162 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:34:51,434 - INFO - ✅ Downloaded: listing-015-e5fef8f4.png (3,158,642 bytes)
+2025-06-22 00:34:51,434 - INFO -     ✅ Success! Total processed: 15
+2025-06-22 00:34:51,446 - INFO - 📋 [20/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 00:34:51,446 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:34:53,720 - INFO - ✅ Downloaded: listing-016-a83f3271.jpg (121,423 bytes)
+2025-06-22 00:34:53,790 - INFO -     ✅ Success! Total processed: 16
+2025-06-22 00:34:53,922 - INFO - 📋 [21/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 00:34:53,922 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 00:34:54,724 - INFO - ✅ Downloaded: listing-017-7ab6712a.jpg (65,937 bytes)
+2025-06-22 00:34:54,724 - INFO -     ✅ Success! Total processed: 17
+2025-06-22 00:34:54,725 - INFO - 📋 [22/210] Processing: Enterprise Resource Planning (ERP) Software Provider
+2025-06-22 00:34:54,725 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:34:55,231 - INFO - ✅ Downloaded: listing-018-a608a4a8.jpg (317,412 bytes)
+2025-06-22 00:34:55,231 - INFO -     ✅ Success! Total processed: 18
+2025-06-22 00:34:55,232 - INFO - 📋 [23/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 00:34:55,232 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:34:56,140 - INFO - ✅ Downloaded: listing-019-addd8f8b.jpg (37,826 bytes)
+2025-06-22 00:34:56,140 - INFO -     ✅ Success! Total processed: 19
+2025-06-22 00:34:56,142 - INFO - 📋 [24/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 00:34:56,142 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:34:58,686 - INFO - ✅ Downloaded: listing-020-f3ac86cc.jpg (74,385 bytes)
+2025-06-22 00:34:58,687 - INFO -     ✅ Success! Total processed: 20
+2025-06-22 00:34:58,692 - INFO - 📋 [25/210] Processing: Commercial Electrical Contractors
+2025-06-22 00:34:58,692 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:34:59,952 - WARNING - Download attempt 1 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:35:02,407 - WARNING - Download attempt 2 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:35:06,382 - WARNING - Download attempt 3 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 00:35:06,386 - ERROR - ❌ Failed to download: Commercial Electrical Contractors
+2025-06-22 00:35:06,386 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:35:06,393 - INFO - 📋 [26/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 00:35:06,393 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:06,649 - INFO - ✅ Downloaded: listing-021-c5021cf0.jpg (62,399 bytes)
+2025-06-22 00:35:06,649 - INFO -     ✅ Success! Total processed: 21
+2025-06-22 00:35:06,649 - INFO - 📋 [27/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 00:35:06,649 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:09,547 - INFO - ✅ Downloaded: listing-022-b8033f1f.jpg (638,917 bytes)
+2025-06-22 00:35:09,548 - INFO -     ✅ Success! Total processed: 22
+2025-06-22 00:35:09,555 - INFO - 📋 [28/210] Processing: Multi-Location Auto Service Center
+2025-06-22 00:35:09,555 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:09,742 - INFO - ✅ Downloaded: listing-023-2d7cdb4f.jpg (37,760 bytes)
+2025-06-22 00:35:09,742 - INFO -     ✅ Success! Total processed: 23
+2025-06-22 00:35:09,743 - INFO - 📋 [29/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 00:35:09,743 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:10,670 - INFO - ✅ Downloaded: listing-024-dc6785a7.jpg (231,046 bytes)
+2025-06-22 00:35:10,671 - INFO -     ✅ Success! Total processed: 24
+2025-06-22 00:35:10,684 - INFO - 📋 [30/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 00:35:10,684 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:35:11,234 - INFO - ✅ Downloaded: listing-025-1a69a004.jpg (101,754 bytes)
+2025-06-22 00:35:11,234 - INFO -     ✅ Success! Total processed: 25
+2025-06-22 00:35:11,235 - INFO - 📋 [31/210] Processing: Cloud Migration & Managed Services
+2025-06-22 00:35:11,235 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:35:11,456 - INFO - ✅ Downloaded: listing-026-a46d876c.png (66,679 bytes)
+2025-06-22 00:35:11,456 - INFO -     ✅ Success! Total processed: 26
+2025-06-22 00:35:11,457 - INFO - 📋 [32/210] Processing: Regional Pizza Chain
+2025-06-22 00:35:11,457 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:35:11,601 - INFO - ✅ Downloaded: listing-027-98cb4d17.jpg (65,338 bytes)
+2025-06-22 00:35:11,601 - INFO -     ✅ Success! Total processed: 27
+2025-06-22 00:35:11,602 - INFO - 📋 [33/210] Processing: Building Materials & Hardware Supplier
+2025-06-22 00:35:11,602 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:35:11,713 - WARNING - Download attempt 1 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 00:35:12,837 - WARNING - Download attempt 2 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 00:35:14,930 - WARNING - Download attempt 3 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 00:35:14,931 - ERROR - ❌ Failed to download: Building Materials & Hardware Supplier
+2025-06-22 00:35:14,931 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 00:35:14,934 - INFO - 📋 [34/210] Processing: Commercial General Contractor
+2025-06-22 00:35:14,934 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:16,204 - INFO - ✅ Downloaded: listing-028-4f4aed38.jpg (37,456 bytes)
+2025-06-22 00:35:16,204 - INFO -     ✅ Success! Total processed: 28
+2025-06-22 00:35:16,205 - INFO - 📋 [35/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 00:35:16,205 - INFO -     🌍 Location: Davao City, Philippines
+2025-06-22 00:35:16,429 - INFO - ✅ Downloaded: listing-029-20eb8edd.jpg (421,452 bytes)
+2025-06-22 00:35:16,429 - INFO -     ✅ Success! Total processed: 29
+2025-06-22 00:35:16,429 - INFO - 📋 [36/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 00:35:16,429 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:16,964 - INFO - ✅ Downloaded: listing-030-d93e32d3.jpg (1,197,744 bytes)
+2025-06-22 00:35:16,964 - INFO -     ✅ Success! Total processed: 30
+2025-06-22 00:35:16,965 - INFO - 📋 [37/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 00:35:16,965 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:35:17,488 - INFO - ✅ Downloaded: listing-031-0d7c7001.jpg (1,197,744 bytes)
+2025-06-22 00:35:17,488 - INFO -     ✅ Success! Total processed: 31
+2025-06-22 00:35:17,489 - INFO - 📋 [38/210] Processing: Multi-Location Auto Service Center
+2025-06-22 00:35:17,489 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:35:18,084 - INFO - ✅ Downloaded: listing-032-f0b79d59.jpg (1,197,744 bytes)
+2025-06-22 00:35:18,085 - INFO -     ✅ Success! Total processed: 32
+2025-06-22 00:35:18,111 - INFO - 📋 [39/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 00:35:18,112 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:19,254 - INFO - ✅ Downloaded: listing-033-4147f873.jpg (1,197,744 bytes)
+2025-06-22 00:35:19,255 - INFO -     ✅ Success! Total processed: 33
+2025-06-22 00:35:19,263 - INFO - 📋 [40/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 00:35:19,263 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:35:19,707 - INFO - ✅ Downloaded: listing-034-f1e3f5c0.jpg (1,197,744 bytes)
+2025-06-22 00:35:19,707 - INFO -     ✅ Success! Total processed: 34
+2025-06-22 00:35:19,707 - INFO - 📋 [41/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 00:35:19,707 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:35:20,218 - INFO - ✅ Downloaded: listing-035-0c14df50.jpg (1,197,744 bytes)
+2025-06-22 00:35:20,219 - INFO -     ✅ Success! Total processed: 35
+2025-06-22 00:35:20,221 - INFO - 📋 [42/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 00:35:20,221 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:20,778 - INFO - ✅ Downloaded: listing-036-8d293bb3.jpg (1,197,744 bytes)
+2025-06-22 00:35:20,778 - INFO -     ✅ Success! Total processed: 36
+2025-06-22 00:35:20,778 - INFO - 📋 [43/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 00:35:20,778 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:21,196 - INFO - ✅ Downloaded: listing-037-03eec51a.jpg (1,197,744 bytes)
+2025-06-22 00:35:21,196 - INFO -     ✅ Success! Total processed: 37
+2025-06-22 00:35:21,196 - INFO - 📋 [44/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 00:35:21,197 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:21,655 - INFO - ✅ Downloaded: listing-038-0d7c7001.jpg (1,197,744 bytes)
+2025-06-22 00:35:21,661 - INFO -     ✅ Success! Total processed: 38
+2025-06-22 00:35:21,688 - INFO - 📋 [45/210] Processing: Customer Relationship Management (CRM) SaaS
+2025-06-22 00:35:21,690 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:22,189 - INFO - ✅ Downloaded: listing-039-f1699e84.jpg (1,197,744 bytes)
+2025-06-22 00:35:22,190 - INFO -     ✅ Success! Total processed: 39
+2025-06-22 00:35:22,190 - INFO - 📋 [46/210] Processing: Educational & Tutoring Center Franchise
+2025-06-22 00:35:22,190 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:23,167 - INFO - ✅ Downloaded: listing-040-33b93d3b.jpg (1,197,744 bytes)
+2025-06-22 00:35:23,167 - INFO -     ✅ Success! Total processed: 40
+2025-06-22 00:35:23,177 - INFO - 📋 [47/210] Processing: Commercial Electrical Contractors
+2025-06-22 00:35:23,178 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:23,659 - INFO - ✅ Downloaded: listing-041-eb7366e9.jpg (1,197,744 bytes)
+2025-06-22 00:35:23,659 - INFO -     ✅ Success! Total processed: 41
+2025-06-22 00:35:23,659 - INFO - 📋 [48/210] Processing: Regional Pizza Chain
+2025-06-22 00:35:23,659 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:35:24,218 - INFO - ✅ Downloaded: listing-042-2926e3dd.jpg (1,197,744 bytes)
+2025-06-22 00:35:24,221 - INFO -     ✅ Success! Total processed: 42
+2025-06-22 00:35:24,233 - INFO - 📋 [49/210] Processing: Multi-Location Auto Service Center
+2025-06-22 00:35:24,237 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:24,676 - INFO - ✅ Downloaded: listing-043-f0b79d59.jpg (1,197,744 bytes)
+2025-06-22 00:35:24,676 - INFO -     ✅ Success! Total processed: 43
+2025-06-22 00:35:24,677 - INFO - 📋 [50/210] Processing: Temperature-Controlled Warehousing
+2025-06-22 00:35:24,677 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:35:25,168 - INFO - ✅ Downloaded: listing-044-0ff45624.jpg (1,197,744 bytes)
+2025-06-22 00:35:25,169 - INFO -     ✅ Success! Total processed: 44
+2025-06-22 00:35:25,170 - INFO - 📋 [51/210] Processing: Multi-Chain Nail Salon & Spa
+2025-06-22 00:35:25,170 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:35:25,659 - INFO - ✅ Downloaded: listing-045-a3309b90.jpg (1,197,744 bytes)
+2025-06-22 00:35:25,659 - INFO -     ✅ Success! Total processed: 45
+2025-06-22 00:35:25,660 - INFO - 📋 [52/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 00:35:25,660 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:35:26,201 - INFO - ✅ Downloaded: listing-046-d93e32d3.jpg (1,197,744 bytes)
+2025-06-22 00:35:26,201 - INFO -     ✅ Success! Total processed: 46
+2025-06-22 00:35:26,202 - INFO - 📋 [53/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 00:35:26,202 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:35:26,726 - INFO - ✅ Downloaded: listing-047-0d7c7001.jpg (1,197,744 bytes)
+2025-06-22 00:35:26,726 - INFO -     ✅ Success! Total processed: 47
+2025-06-22 00:35:26,728 - INFO - 📋 [54/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 00:35:26,728 - INFO -     🌍 Location: Da Nang, Vietnam
+2025-06-22 00:35:27,305 - INFO - ✅ Downloaded: listing-048-d5214a2d.jpg (1,197,744 bytes)
+2025-06-22 00:35:27,314 - INFO -     ✅ Success! Total processed: 48
+2025-06-22 00:35:27,315 - INFO - 📋 [55/210] Processing: Clinical Research Organization (CRO)
+2025-06-22 00:35:27,321 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:28,340 - INFO - ✅ Downloaded: listing-049-a3d207b7.jpg (1,197,744 bytes)
+2025-06-22 00:35:28,341 - INFO -     ✅ Success! Total processed: 49
+2025-06-22 00:35:28,347 - INFO - 📋 [56/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 00:35:28,347 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:28,868 - INFO - ✅ Downloaded: listing-050-0c14df50.jpg (1,197,744 bytes)
+2025-06-22 00:35:28,868 - INFO -     ✅ Success! Total processed: 50
+2025-06-22 00:35:28,868 - INFO - 📋 [57/210] Processing: Multi-Chain Automated Car Wash
+2025-06-22 00:35:28,868 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 00:35:29,286 - INFO - ✅ Downloaded: listing-051-24670771.jpg (1,197,744 bytes)
+2025-06-22 00:35:29,286 - INFO -     ✅ Success! Total processed: 51
+2025-06-22 00:35:29,287 - INFO - 📋 [58/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 00:35:29,287 - INFO -     🌍 Location: Bhopal, India
+2025-06-22 00:35:29,887 - INFO - ✅ Downloaded: listing-052-03eec51a.jpg (1,197,744 bytes)
+2025-06-22 00:35:29,887 - INFO -     ✅ Success! Total processed: 52
+2025-06-22 00:35:29,887 - INFO - 📋 [59/210] Processing: Regional Pizza Chain
+2025-06-22 00:35:29,887 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:35:30,486 - INFO - ✅ Downloaded: listing-053-2926e3dd.jpg (1,197,744 bytes)
+2025-06-22 00:35:30,486 - INFO -     ✅ Success! Total processed: 53
+2025-06-22 00:35:30,496 - INFO - 📋 [60/210] Processing: Boutique Apparel Chain
+2025-06-22 00:35:30,497 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 00:35:30,972 - INFO - ✅ Downloaded: listing-054-6044b45a.jpg (1,197,744 bytes)
+2025-06-22 00:35:30,972 - INFO -     ✅ Success! Total processed: 54
+2025-06-22 00:35:30,974 - INFO - 📋 [61/210] Processing: Corporate Childcare Center Operator
+2025-06-22 00:35:30,974 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:31,470 - INFO - ✅ Downloaded: listing-055-5597ead1.jpg (1,197,744 bytes)
+2025-06-22 00:35:31,470 - INFO -     ✅ Success! Total processed: 55
+2025-06-22 00:35:31,473 - INFO - 📋 [62/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 00:35:31,474 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:33,355 - INFO - ✅ Downloaded: listing-056-8d293bb3.jpg (1,197,744 bytes)
+2025-06-22 00:35:33,356 - INFO -     ✅ Success! Total processed: 56
+2025-06-22 00:35:33,359 - INFO - 📋 [63/210] Processing: Private Equity Firm (SME-focused)
+2025-06-22 00:35:33,360 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:35:33,979 - INFO - ✅ Downloaded: listing-057-32830a1f.jpg (1,197,744 bytes)
+2025-06-22 00:35:33,979 - INFO -     ✅ Success! Total processed: 57
+2025-06-22 00:35:33,979 - INFO - 📋 [64/210] Processing: Educational & Tutoring Center Franchise
+2025-06-22 00:35:33,979 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:34,501 - INFO - ✅ Downloaded: listing-058-33b93d3b.jpg (1,197,744 bytes)
+2025-06-22 00:35:34,502 - INFO -     ✅ Success! Total processed: 58
+2025-06-22 00:35:34,506 - INFO - 📋 [65/210] Processing: Commercial General Contractor
+2025-06-22 00:35:34,506 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:35,098 - INFO - ✅ Downloaded: listing-059-1e20d02f.jpg (1,197,744 bytes)
+2025-06-22 00:35:35,099 - INFO -     ✅ Success! Total processed: 59
+2025-06-22 00:35:35,099 - INFO - 📋 [66/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 00:35:35,099 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:35:35,979 - INFO - ✅ Downloaded: listing-060-bc010e9c.jpg (1,197,744 bytes)
+2025-06-22 00:35:35,981 - INFO -     ✅ Success! Total processed: 60
+2025-06-22 00:35:36,024 - INFO - 📋 [67/210] Processing: Customs Brokerage Firm
+2025-06-22 00:35:36,030 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:36,631 - INFO - ✅ Downloaded: listing-061-61e1f27e.jpg (1,197,744 bytes)
+2025-06-22 00:35:36,632 - INFO -     ✅ Success! Total processed: 61
+2025-06-22 00:35:36,633 - INFO - 📋 [68/210] Processing: Wholesale & Commercial Bakery
+2025-06-22 00:35:36,633 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:35:37,597 - INFO - ✅ Downloaded: listing-062-c417d038.jpg (1,197,744 bytes)
+2025-06-22 00:35:37,598 - INFO -     ✅ Success! Total processed: 62
+2025-06-22 00:35:37,841 - INFO - 📋 [69/210] Processing: Large-Scale Commercial Florist & Wholesaler
+2025-06-22 00:35:37,841 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 00:35:38,869 - INFO - ✅ Downloaded: listing-063-9d738ad9.jpg (1,197,744 bytes)
+2025-06-22 00:35:38,869 - INFO -     ✅ Success! Total processed: 63
+2025-06-22 00:35:38,873 - INFO - 📋 [70/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 00:35:38,874 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 00:35:39,868 - INFO - ✅ Downloaded: listing-064-d93e32d3.jpg (1,197,744 bytes)
+2025-06-22 00:35:39,869 - INFO -     ✅ Success! Total processed: 64
+2025-06-22 00:35:39,870 - INFO - 📋 [71/210] Processing: Custom Metal Fabrication & Welding
+2025-06-22 00:35:39,870 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:40,706 - INFO - ✅ Downloaded: listing-065-1340d2d5.jpg (1,197,744 bytes)
+2025-06-22 00:35:40,707 - INFO -     ✅ Success! Total processed: 65
+2025-06-22 00:35:40,707 - INFO - 📋 [72/210] Processing: Property Maintenance & Handyman Services Corp.
+2025-06-22 00:35:40,707 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:35:42,120 - INFO - ✅ Downloaded: listing-066-88697317.jpg (1,197,744 bytes)
+2025-06-22 00:35:42,123 - INFO -     ✅ Success! Total processed: 66
+2025-06-22 00:35:42,140 - INFO - 📋 [73/210] Processing: Supply Chain Management (SCM) Software
+2025-06-22 00:35:42,141 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:35:43,603 - INFO - ✅ Downloaded: listing-067-0f08f279.jpg (1,197,744 bytes)
+2025-06-22 00:35:43,603 - INFO -     ✅ Success! Total processed: 67
+2025-06-22 00:35:43,605 - INFO - 📋 [74/210] Processing: Brewery with Regional Distribution
+2025-06-22 00:35:43,606 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:35:44,065 - INFO - ✅ Downloaded: listing-068-fe7805f1.jpg (1,197,744 bytes)
+2025-06-22 00:35:44,065 - INFO -     ✅ Success! Total processed: 68
+2025-06-22 00:35:44,065 - INFO - 📋 [75/210] Processing: Diagnostic Imaging Centers
+2025-06-22 00:35:44,065 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:35:44,663 - INFO - ✅ Downloaded: listing-069-d639235b.jpg (1,197,744 bytes)
+2025-06-22 00:35:44,664 - INFO -     ✅ Success! Total processed: 69
+2025-06-22 00:35:44,665 - INFO - 📋 [76/210] Processing: High-End Custom Home Builder
+2025-06-22 00:35:44,665 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:45,318 - INFO - ✅ Downloaded: listing-070-7421663b.jpg (1,197,744 bytes)
+2025-06-22 00:35:45,318 - INFO -     ✅ Success! Total processed: 70
+2025-06-22 00:35:45,318 - INFO - 📋 [77/210] Processing: Furniture & Home Goods Retail Chain
+2025-06-22 00:35:45,318 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:46,643 - INFO - ✅ Downloaded: listing-071-d1c57fab.jpg (1,197,744 bytes)
+2025-06-22 00:35:46,644 - INFO -     ✅ Success! Total processed: 71
+2025-06-22 00:35:46,719 - INFO - 📋 [78/210] Processing: Plastic Injection Molding Facility
+2025-06-22 00:35:46,719 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:35:48,403 - INFO - ✅ Downloaded: listing-072-eb589d72.jpg (1,197,744 bytes)
+2025-06-22 00:35:48,404 - INFO -     ✅ Success! Total processed: 72
+2025-06-22 00:35:48,409 - INFO - 📋 [79/210] Processing: Intermodal Freight Transport
+2025-06-22 00:35:48,409 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:49,246 - INFO - ✅ Downloaded: listing-073-1141ecfb.jpg (1,197,744 bytes)
+2025-06-22 00:35:49,246 - INFO -     ✅ Success! Total processed: 73
+2025-06-22 00:35:49,249 - INFO - 📋 [80/210] Processing: E-commerce Fulfillment Center
+2025-06-22 00:35:49,249 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:49,823 - INFO - ✅ Downloaded: listing-074-323bf6e7.jpg (1,197,744 bytes)
+2025-06-22 00:35:49,825 - INFO -     ✅ Success! Total processed: 74
+2025-06-22 00:35:49,827 - INFO - 📋 [81/210] Processing: Human Resources (HR) Tech Platform
+2025-06-22 00:35:49,827 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:50,259 - INFO - ✅ Downloaded: listing-075-991fe5b9.jpg (1,197,744 bytes)
+2025-06-22 00:35:50,259 - INFO -     ✅ Success! Total processed: 75
+2025-06-22 00:35:50,265 - INFO - 📋 [82/210] Processing: Home Healthcare Agency
+2025-06-22 00:35:50,265 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:50,971 - INFO - ✅ Downloaded: listing-076-a792fe97.jpg (1,197,744 bytes)
+2025-06-22 00:35:50,971 - INFO -     ✅ Success! Total processed: 76
+2025-06-22 00:35:50,979 - INFO - 📋 [83/210] Processing: Structural Engineering Firm
+2025-06-22 00:35:50,979 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 00:35:51,787 - INFO - ✅ Downloaded: listing-077-282e2651.jpg (1,197,744 bytes)
+2025-06-22 00:35:51,787 - INFO -     ✅ Success! Total processed: 77
+2025-06-22 00:35:51,791 - INFO - 📋 [84/210] Processing: Heavy Haulage & Trucking Company
+2025-06-22 00:35:51,791 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:52,218 - INFO - ✅ Downloaded: listing-078-7be8814a.jpg (1,197,744 bytes)
+2025-06-22 00:35:52,218 - INFO -     ✅ Success! Total processed: 78
+2025-06-22 00:35:52,218 - INFO - 📋 [85/210] Processing: Surgical Center
+2025-06-22 00:35:52,218 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:35:53,171 - INFO - ✅ Downloaded: listing-079-4fe912da.jpg (1,197,744 bytes)
+2025-06-22 00:35:53,173 - INFO -     ✅ Success! Total processed: 79
+2025-06-22 00:35:53,183 - INFO - 📋 [86/210] Processing: Air Cargo Handling Service
+2025-06-22 00:35:53,183 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:35:55,190 - INFO - ✅ Downloaded: listing-080-5ade75ad.jpg (1,197,744 bytes)
+2025-06-22 00:35:55,192 - INFO -     ✅ Success! Total processed: 80
+2025-06-22 00:35:55,200 - INFO - 📋 [87/210] Processing: Specialty Pharmaceutical Distributor
+2025-06-22 00:35:55,200 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:35:55,720 - INFO - ✅ Downloaded: listing-081-1da702bc.jpg (1,197,744 bytes)
+2025-06-22 00:35:55,720 - INFO -     ✅ Success! Total processed: 81
+2025-06-22 00:35:55,721 - INFO - 📋 [88/210] Processing: Forensic Accounting & Investigation Agency
+2025-06-22 00:35:55,721 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:56,273 - INFO - ✅ Downloaded: listing-082-51520348.jpg (1,197,744 bytes)
+2025-06-22 00:35:56,276 - INFO -     ✅ Success! Total processed: 82
+2025-06-22 00:35:56,291 - INFO - 📋 [89/210] Processing: Private Jet Charter Company
+2025-06-22 00:35:56,291 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:35:56,812 - INFO - ✅ Downloaded: listing-083-8d69af3c.jpg (1,197,744 bytes)
+2025-06-22 00:35:56,812 - INFO -     ✅ Success! Total processed: 83
+2025-06-22 00:35:56,812 - INFO - 📋 [90/210] Processing: Medical Billing and Coding Service
+2025-06-22 00:35:56,812 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:35:57,207 - INFO - ✅ Downloaded: listing-084-c0476235.jpg (1,197,744 bytes)
+2025-06-22 00:35:57,207 - INFO -     ✅ Success! Total processed: 84
+2025-06-22 00:35:57,208 - INFO - 📋 [91/210] Processing: Aerospace Component Manufacturer
+2025-06-22 00:35:57,208 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:57,625 - INFO - ✅ Downloaded: listing-085-713a7f8c.jpg (1,197,744 bytes)
+2025-06-22 00:35:57,625 - INFO -     ✅ Success! Total processed: 85
+2025-06-22 00:35:57,626 - INFO - 📋 [92/210] Processing: International Tax & Audit Firm
+2025-06-22 00:35:57,626 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:35:58,200 - INFO - ✅ Downloaded: listing-086-ef399dc8.jpg (1,197,744 bytes)
+2025-06-22 00:35:58,204 - INFO -     ✅ Success! Total processed: 86
+2025-06-22 00:35:58,206 - INFO - 📋 [93/210] Processing: Reverse Logistics & Returns Processing
+2025-06-22 00:35:58,207 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:35:58,741 - INFO - ✅ Downloaded: listing-087-a83ade1d.jpg (1,197,744 bytes)
+2025-06-22 00:35:58,741 - INFO -     ✅ Success! Total processed: 87
+2025-06-22 00:35:58,745 - INFO - 📋 [94/210] Processing: Corporate Law Firm
+2025-06-22 00:35:58,745 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:35:59,467 - INFO - ✅ Downloaded: listing-088-737ae4be.jpg (1,197,744 bytes)
+2025-06-22 00:35:59,469 - INFO -     ✅ Success! Total processed: 88
+2025-06-22 00:35:59,488 - INFO - 📋 [95/210] Processing: Telehealth Platform Provider
+2025-06-22 00:35:59,527 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:00,229 - INFO - ✅ Downloaded: listing-089-bf32e80c.jpg (1,197,744 bytes)
+2025-06-22 00:36:00,230 - INFO -     ✅ Success! Total processed: 89
+2025-06-22 00:36:00,230 - INFO - 📋 [96/210] Processing: Inventory Management & Auditing Firm
+2025-06-22 00:36:00,230 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:36:00,780 - INFO - ✅ Downloaded: listing-090-e97680ca.jpg (1,197,744 bytes)
+2025-06-22 00:36:00,780 - INFO -     ✅ Success! Total processed: 90
+2025-06-22 00:36:00,784 - INFO - 📋 [97/210] Processing: Contract Research & Manufacturing (CRAMS) for Pharma
+2025-06-22 00:36:00,784 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:01,228 - INFO - ✅ Downloaded: listing-091-6473894e.jpg (1,197,744 bytes)
+2025-06-22 00:36:01,228 - INFO -     ✅ Success! Total processed: 91
+2025-06-22 00:36:01,229 - INFO - 📋 [98/210] Processing: Intellectual Property (IP) Law Firm
+2025-06-22 00:36:01,229 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 00:36:01,883 - INFO - ✅ Downloaded: listing-092-7786b082.jpg (1,197,744 bytes)
+2025-06-22 00:36:01,884 - INFO -     ✅ Success! Total processed: 92
+2025-06-22 00:36:01,886 - INFO - 📋 [99/210] Processing: Biotechnology Research Lab
+2025-06-22 00:36:01,887 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:02,388 - INFO - ✅ Downloaded: listing-093-098a4650.jpg (1,197,744 bytes)
+2025-06-22 00:36:02,389 - INFO -     ✅ Success! Total processed: 93
+2025-06-22 00:36:02,389 - INFO - 📋 [100/210] Processing: Genetic Testing Laboratory
+2025-06-22 00:36:02,389 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:02,807 - INFO - ✅ Downloaded: listing-094-dec5c3ff.jpg (1,197,744 bytes)
+2025-06-22 00:36:02,807 - INFO -     ✅ Success! Total processed: 94
+2025-06-22 00:36:02,808 - INFO - 📋 [101/210] Processing: Power Generation Equipment Manufacturer
+2025-06-22 00:36:02,808 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 00:36:03,529 - INFO - ✅ Downloaded: listing-095-581a2a36.jpg (1,197,744 bytes)
+2025-06-22 00:36:03,529 - INFO -     ✅ Success! Total processed: 95
+2025-06-22 00:36:03,535 - INFO - 📋 [102/210] Processing: Industrial Packaging Solutions
+2025-06-22 00:36:03,535 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:04,253 - INFO - ✅ Downloaded: listing-096-bc8c0e63.jpg (1,197,744 bytes)
+2025-06-22 00:36:04,253 - INFO -     ✅ Success! Total processed: 96
+2025-06-22 00:36:04,500 - INFO - 📋 [103/210] Processing: Assisted Living Facility Operator
+2025-06-22 00:36:04,501 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:05,436 - INFO - ✅ Downloaded: listing-097-f54cc208.jpg (1,197,744 bytes)
+2025-06-22 00:36:05,436 - INFO -     ✅ Success! Total processed: 97
+2025-06-22 00:36:05,439 - INFO - 📋 [104/210] Processing: High-End Interior Design Firm
+2025-06-22 00:36:05,439 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:36:06,071 - INFO - ✅ Downloaded: listing-098-dd44c303.jpg (1,197,744 bytes)
+2025-06-22 00:36:06,071 - INFO -     ✅ Success! Total processed: 98
+2025-06-22 00:36:06,072 - INFO - 📋 [105/210] Processing: Water Treatment & Purification System Manufacturer
+2025-06-22 00:36:06,072 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:36:06,550 - INFO - ✅ Downloaded: listing-099-31fd8406.jpg (1,197,744 bytes)
+2025-06-22 00:36:06,550 - INFO -     ✅ Success! Total processed: 99
+2025-06-22 00:36:06,556 - INFO - 📋 [106/210] Processing: Supply Chain Consulting Firm
+2025-06-22 00:36:06,556 - INFO -     🌍 Location: Da Nang, Vietnam
+2025-06-22 00:36:07,097 - INFO - ✅ Downloaded: listing-100-823d5354.jpg (1,197,744 bytes)
+2025-06-22 00:36:07,097 - INFO -     ✅ Success! Total processed: 100
+2025-06-22 00:36:07,097 - INFO - 📋 [107/210] Processing: IT & Technology Recruitment Agency
+2025-06-22 00:36:07,097 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:07,668 - INFO - ✅ Downloaded: listing-101-b5ada651.jpg (1,197,744 bytes)
+2025-06-22 00:36:07,669 - INFO -     ✅ Success! Total processed: 101
+2025-06-22 00:36:07,669 - INFO - 📋 [108/210] Processing: Mental Health & Addiction Treatment Center
+2025-06-22 00:36:07,670 - INFO -     🌍 Location: Bali, Indonesia
+2025-06-22 00:36:08,225 - INFO - ✅ Downloaded: listing-102-b41f4837.jpg (1,197,744 bytes)
+2025-06-22 00:36:08,231 - INFO -     ✅ Success! Total processed: 102
+2025-06-22 00:36:08,235 - INFO - 📋 [109/210] Processing: Bespoke Jewelry Manufacturer
+2025-06-22 00:36:08,235 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:36:08,762 - INFO - ✅ Downloaded: listing-103-34eb725b.jpg (1,197,744 bytes)
+2025-06-22 00:36:08,762 - INFO -     ✅ Success! Total processed: 103
+2025-06-22 00:36:08,763 - INFO - 📋 [110/210] Processing: Real Estate Development Firm
+2025-06-22 00:36:08,763 - INFO -     🌍 Location: Lucknow, India
+2025-06-22 00:36:09,879 - INFO - ✅ Downloaded: listing-104-d3673ccc.jpg (1,197,744 bytes)
+2025-06-22 00:36:09,890 - INFO -     ✅ Success! Total processed: 104
+2025-06-22 00:36:09,894 - INFO - 📋 [111/210] Processing: Medical Equipment & Supplies Distributor
+2025-06-22 00:36:09,894 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:10,508 - INFO - ✅ Downloaded: listing-105-53743786.jpg (1,197,744 bytes)
+2025-06-22 00:36:10,508 - INFO -     ✅ Success! Total processed: 105
+2025-06-22 00:36:10,509 - INFO - 📋 [112/210] Processing: Veterinary Specialty & Emergency Hospital
+2025-06-22 00:36:10,509 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:11,282 - INFO - ✅ Downloaded: listing-106-5ce7338a.jpg (1,197,744 bytes)
+2025-06-22 00:36:11,283 - INFO -     ✅ Success! Total processed: 106
+2025-06-22 00:36:11,290 - INFO - 📋 [113/210] Processing: Testing and Certification Laboratory
+2025-06-22 00:36:11,291 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:12,133 - INFO - ✅ Downloaded: listing-107-e8993f53.jpg (1,197,744 bytes)
+2025-06-22 00:36:12,134 - INFO -     ✅ Success! Total processed: 107
+2025-06-22 00:36:12,135 - INFO - 📋 [114/210] Processing: Gourmet Food Importer & Distributor
+2025-06-22 00:36:12,135 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:13,797 - INFO - ✅ Downloaded: listing-108-65d2ad81.jpg (1,197,744 bytes)
+2025-06-22 00:36:13,800 - INFO -     ✅ Success! Total processed: 108
+2025-06-22 00:36:13,816 - INFO - 📋 [115/210] Processing: Freight Bill Auditing & Payment Service
+2025-06-22 00:36:13,816 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:36:15,877 - INFO - ✅ Downloaded: listing-109-a22834a5.jpg (1,197,744 bytes)
+2025-06-22 00:36:15,877 - INFO -     ✅ Success! Total processed: 109
+2025-06-22 00:36:15,887 - INFO - 📋 [116/210] Processing: Wealth Management Firm
+2025-06-22 00:36:15,887 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:17,625 - INFO - ✅ Downloaded: listing-110-439ab934.jpg (1,197,744 bytes)
+2025-06-22 00:36:17,627 - INFO -     ✅ Success! Total processed: 110
+2025-06-22 00:36:17,638 - INFO - 📋 [117/210] Processing: Multi-Unit Restaurant Group (Fine Dining)
+2025-06-22 00:36:17,638 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:36:18,215 - INFO - ✅ Downloaded: listing-111-31812c51.jpg (1,197,744 bytes)
+2025-06-22 00:36:18,215 - INFO -     ✅ Success! Total processed: 111
+2025-06-22 00:36:18,215 - INFO - 📋 [118/210] Processing: Corporate Event & Experiential Marketing Agency
+2025-06-22 00:36:18,215 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:18,943 - INFO - ✅ Downloaded: listing-112-c0d4095a.jpg (1,197,744 bytes)
+2025-06-22 00:36:18,943 - INFO -     ✅ Success! Total processed: 112
+2025-06-22 00:36:18,944 - INFO - 📋 [119/210] Processing: Business Valuation Services
+2025-06-22 00:36:18,944 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:19,377 - INFO - ✅ Downloaded: listing-113-f46ff876.jpg (1,197,744 bytes)
+2025-06-22 00:36:19,377 - INFO -     ✅ Success! Total processed: 113
+2025-06-22 00:36:19,378 - INFO - 📋 [120/210] Processing: Art Gallery & Auction House
+2025-06-22 00:36:19,378 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:36:19,888 - INFO - ✅ Downloaded: listing-114-6e4e048d.jpg (1,197,744 bytes)
+2025-06-22 00:36:19,888 - INFO -     ✅ Success! Total processed: 114
+2025-06-22 00:36:19,889 - INFO - 📋 [121/210] Processing: Government Contract Consulting
+2025-06-22 00:36:19,889 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:20,663 - INFO - ✅ Downloaded: listing-115-a2acc168.jpg (1,197,744 bytes)
+2025-06-22 00:36:20,663 - INFO -     ✅ Success! Total processed: 115
+2025-06-22 00:36:20,664 - INFO - 📋 [122/210] Processing: High-End Security Services Provider
+2025-06-22 00:36:20,664 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:21,210 - INFO - ✅ Downloaded: listing-116-77c6d909.jpg (1,197,744 bytes)
+2025-06-22 00:36:21,211 - INFO -     ✅ Success! Total processed: 116
+2025-06-22 00:36:21,211 - INFO - 📋 [123/210] Processing: Private Golf & Country Club Management
+2025-06-22 00:36:21,211 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:22,293 - INFO - ✅ Downloaded: listing-117-bc03f332.jpg (1,197,744 bytes)
+2025-06-22 00:36:22,295 - INFO -     ✅ Success! Total processed: 117
+2025-06-22 00:36:22,305 - INFO - 📋 [124/210] Processing: Investor Relations Agency
+2025-06-22 00:36:22,305 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:36:22,750 - INFO - ✅ Downloaded: listing-118-3c90890d.jpg (1,197,744 bytes)
+2025-06-22 00:36:22,750 - INFO -     ✅ Success! Total processed: 118
+2025-06-22 00:36:22,750 - INFO - 📋 [125/210] Processing: Branded Apparel & Merchandise Manufacturer
+2025-06-22 00:36:22,750 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:23,394 - INFO - ✅ Downloaded: listing-119-4c124514.jpg (1,197,744 bytes)
+2025-06-22 00:36:23,395 - INFO -     ✅ Success! Total processed: 119
+2025-06-22 00:36:23,399 - INFO - 📋 [126/210] Processing: National Moving & Storage Company
+2025-06-22 00:36:23,399 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:23,841 - INFO - ✅ Downloaded: listing-120-f0a6d7ec.jpg (1,197,744 bytes)
+2025-06-22 00:36:23,842 - INFO -     ✅ Success! Total processed: 120
+2025-06-22 00:36:23,844 - INFO - 📋 [127/210] Processing: Industrial Equipment Rental
+2025-06-22 00:36:23,844 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:36:24,382 - INFO - ✅ Downloaded: listing-121-ca09213c.jpg (1,197,744 bytes)
+2025-06-22 00:36:24,382 - INFO -     ✅ Success! Total processed: 121
+2025-06-22 00:36:24,383 - INFO - 📋 [128/210] Processing: Renewable Energy Installation (Solar Farm)
+2025-06-22 00:36:24,383 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 00:36:24,901 - INFO - ✅ Downloaded: listing-122-155954b0.jpg (1,197,744 bytes)
+2025-06-22 00:36:24,901 - INFO -     ✅ Success! Total processed: 122
+2025-06-22 00:36:24,903 - INFO - 📋 [129/210] Processing: Data Center Services Provider
+2025-06-22 00:36:24,903 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:25,481 - INFO - ✅ Downloaded: listing-123-2946bb93.jpg (1,197,744 bytes)
+2025-06-22 00:36:25,482 - INFO -     ✅ Success! Total processed: 123
+2025-06-22 00:36:25,484 - INFO - 📋 [130/210] Processing: Commercial Printing Press
+2025-06-22 00:36:25,484 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:36:25,996 - INFO - ✅ Downloaded: listing-124-0a5b46f1.jpg (1,197,744 bytes)
+2025-06-22 00:36:25,997 - INFO -     ✅ Success! Total processed: 124
+2025-06-22 00:36:26,000 - INFO - 📋 [131/210] Processing: Public Relations (PR) Firm
+2025-06-22 00:36:26,006 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:26,755 - INFO - ✅ Downloaded: listing-125-f0abdd6a.jpg (1,197,744 bytes)
+2025-06-22 00:36:26,757 - INFO -     ✅ Success! Total processed: 125
+2025-06-22 00:36:26,771 - INFO - 📋 [132/210] Processing: Architectural Firm (Large-Scale Projects)
+2025-06-22 00:36:26,771 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 00:36:27,353 - INFO - ✅ Downloaded: listing-126-04316b24.jpg (1,197,744 bytes)
+2025-06-22 00:36:27,353 - INFO -     ✅ Success! Total processed: 126
+2025-06-22 00:36:27,353 - INFO - 📋 [133/210] Processing: Executive Recruitment Firm
+2025-06-22 00:36:27,353 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 00:36:27,849 - INFO - ✅ Downloaded: listing-127-3c2f5006.jpg (1,197,744 bytes)
+2025-06-22 00:36:27,849 - INFO -     ✅ Success! Total processed: 127
+2025-06-22 00:36:27,854 - INFO - 📋 [134/210] Processing: Automotive Tire & Service Center Chain
+2025-06-22 00:36:27,854 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:28,416 - INFO - ✅ Downloaded: listing-128-445a69b8.jpg (1,197,744 bytes)
+2025-06-22 00:36:28,416 - INFO -     ✅ Success! Total processed: 128
+2025-06-22 00:36:28,416 - INFO - 📋 [135/210] Processing: Regional Convenience Store Chain
+2025-06-22 00:36:28,416 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:36:28,967 - INFO - ✅ Downloaded: listing-129-9b9295f0.jpg (1,197,744 bytes)
+2025-06-22 00:36:28,967 - INFO -     ✅ Success! Total processed: 129
+2025-06-22 00:36:28,968 - INFO - 📋 [136/210] Processing: Commercial Dry Cleaning & Laundry Service
+2025-06-22 00:36:28,968 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:36:29,501 - INFO - ✅ Downloaded: listing-130-847336a6.jpg (1,197,744 bytes)
+2025-06-22 00:36:29,501 - INFO -     ✅ Success! Total processed: 130
+2025-06-22 00:36:29,502 - INFO - 📋 [137/210] Processing: Corporate Event Planning & Management Firm
+2025-06-22 00:36:29,502 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:30,104 - INFO - ✅ Downloaded: listing-131-eaeb551e.jpg (1,197,744 bytes)
+2025-06-22 00:36:30,104 - INFO -     ✅ Success! Total processed: 131
+2025-06-22 00:36:30,112 - INFO - 📋 [138/210] Processing: Creative & Branding Agency
+2025-06-22 00:36:30,113 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:31,195 - INFO - ✅ Downloaded: listing-132-0f99e664.jpg (1,197,744 bytes)
+2025-06-22 00:36:31,197 - INFO -     ✅ Success! Total processed: 132
+2025-06-22 00:36:31,222 - INFO - 📋 [139/210] Processing: Home & Commercial Inspection Service Group
+2025-06-22 00:36:31,222 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:36:31,827 - INFO - ✅ Downloaded: listing-133-a2408e0e.jpg (1,197,744 bytes)
+2025-06-22 00:36:31,827 - INFO -     ✅ Success! Total processed: 133
+2025-06-22 00:36:31,827 - INFO - 📋 [140/210] Processing: Regional Insurance Brokerage
+2025-06-22 00:36:31,828 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:32,425 - INFO - ✅ Downloaded: listing-134-1673beb3.jpg (1,197,744 bytes)
+2025-06-22 00:36:32,426 - INFO -     ✅ Success! Total processed: 134
+2025-06-22 00:36:32,432 - INFO - 📋 [141/210] Processing: High-Value Jewelry & Watch Retailer
+2025-06-22 00:36:32,432 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:33,180 - INFO - ✅ Downloaded: listing-135-e1ffa8f7.jpg (1,197,744 bytes)
+2025-06-22 00:36:33,180 - INFO -     ✅ Success! Total processed: 135
+2025-06-22 00:36:33,183 - INFO - 📋 [142/210] Processing: Regional Locksmith & Security Solutions
+2025-06-22 00:36:33,183 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:36:33,872 - INFO - ✅ Downloaded: listing-136-246f762d.jpg (1,197,744 bytes)
+2025-06-22 00:36:33,872 - INFO -     ✅ Success! Total processed: 136
+2025-06-22 00:36:33,877 - INFO - 📋 [143/210] Processing: Corporate Massage & Wellness Services
+2025-06-22 00:36:33,877 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:34,431 - INFO - ✅ Downloaded: listing-137-922bcb7d.jpg (1,197,744 bytes)
+2025-06-22 00:36:34,432 - INFO -     ✅ Success! Total processed: 137
+2025-06-22 00:36:34,432 - INFO - 📋 [144/210] Processing: Multi-State Optometry & Eyewear Chain
+2025-06-22 00:36:34,432 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:35,123 - INFO - ✅ Downloaded: listing-138-5070ca80.jpg (1,197,744 bytes)
+2025-06-22 00:36:35,123 - INFO -     ✅ Success! Total processed: 138
+2025-06-22 00:36:35,124 - INFO - 📋 [145/210] Processing: Personal Training & Fitness Franchise
+2025-06-22 00:36:35,124 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:36,250 - INFO - ✅ Downloaded: listing-139-25911a9f.jpg (1,197,744 bytes)
+2025-06-22 00:36:36,251 - INFO -     ✅ Success! Total processed: 139
+2025-06-22 00:36:36,263 - INFO - 📋 [146/210] Processing: Commercial Pest Control Services
+2025-06-22 00:36:36,263 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:36:36,979 - INFO - ✅ Downloaded: listing-140-0c9e17db.jpg (1,197,744 bytes)
+2025-06-22 00:36:36,979 - INFO -     ✅ Success! Total processed: 140
+2025-06-22 00:36:36,985 - INFO - 📋 [147/210] Processing: Regional Property Management Firm
+2025-06-22 00:36:36,985 - INFO -     🌍 Location: Jakarta, Indonesia
+2025-06-22 00:36:37,764 - INFO - ✅ Downloaded: listing-141-2ff6b431.jpg (1,197,744 bytes)
+2025-06-22 00:36:37,765 - INFO -     ✅ Success! Total processed: 141
+2025-06-22 00:36:37,771 - INFO - 📋 [148/210] Processing: Commercial & Industrial Roofing Contractor
+2025-06-22 00:36:37,772 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:36:38,734 - INFO - ✅ Downloaded: listing-142-4d26d0c0.jpg (1,197,744 bytes)
+2025-06-22 00:36:38,735 - INFO -     ✅ Success! Total processed: 142
+2025-06-22 00:36:38,736 - INFO - 📋 [149/210] Processing: Custom Tailoring & Formalwear Chain
+2025-06-22 00:36:38,736 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:40,172 - INFO - ✅ Downloaded: listing-143-3881a186.jpg (1,197,744 bytes)
+2025-06-22 00:36:40,172 - INFO -     ✅ Success! Total processed: 143
+2025-06-22 00:36:40,179 - INFO - 📋 [150/210] Processing: Fleet Taxi & Livery Service
+2025-06-22 00:36:40,179 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:41,644 - INFO - ✅ Downloaded: listing-144-e1b12aba.jpg (1,197,744 bytes)
+2025-06-22 00:36:41,644 - INFO -     ✅ Success! Total processed: 144
+2025-06-22 00:36:41,645 - INFO - 📋 [151/210] Processing: Commercial & Structural Welding Services
+2025-06-22 00:36:41,645 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:36:43,678 - INFO - ✅ Downloaded: listing-145-4b8b5bdd.jpg (1,197,744 bytes)
+2025-06-22 00:36:43,679 - INFO -     ✅ Success! Total processed: 145
+2025-06-22 00:36:43,690 - INFO - 📋 [152/210] Processing: Used Car Dealership Network
+2025-06-22 00:36:43,690 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:36:44,256 - INFO - ✅ Downloaded: listing-146-1735ea32.jpg (1,197,744 bytes)
+2025-06-22 00:36:44,256 - INFO -     ✅ Success! Total processed: 146
+2025-06-22 00:36:44,256 - INFO - 📋 [153/210] Processing: Frozen Yogurt & Dessert Chain
+2025-06-22 00:36:44,256 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:36:44,809 - INFO - ✅ Downloaded: listing-147-4b8d794e.jpg (1,197,744 bytes)
+2025-06-22 00:36:44,811 - INFO -     ✅ Success! Total processed: 147
+2025-06-22 00:36:44,828 - INFO - 📋 [154/210] Processing: Regional Sandwich Shop Franchise
+2025-06-22 00:36:44,828 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:45,322 - INFO - ✅ Downloaded: listing-148-b0cb4a26.jpg (1,197,744 bytes)
+2025-06-22 00:36:45,322 - INFO -     ✅ Success! Total processed: 148
+2025-06-22 00:36:45,322 - INFO - 📋 [155/210] Processing: Cold-Pressed Juice & Health Food Chain
+2025-06-22 00:36:45,322 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:36:45,823 - INFO - ✅ Downloaded: listing-149-3583edb7.jpg (1,197,744 bytes)
+2025-06-22 00:36:45,823 - INFO -     ✅ Success! Total processed: 149
+2025-06-22 00:36:45,824 - INFO - 📋 [156/210] Processing: Large-Scale Catering & Events Company
+2025-06-22 00:36:45,824 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:46,317 - INFO - ✅ Downloaded: listing-150-ceed868a.jpg (1,197,744 bytes)
+2025-06-22 00:36:46,317 - INFO -     ✅ Success! Total processed: 150
+2025-06-22 00:36:46,326 - INFO - 📋 [157/210] Processing: Multi-State Liquor Store Chain
+2025-06-22 00:36:46,334 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:36:47,254 - INFO - ✅ Downloaded: listing-151-4a2a874c.jpg (1,197,744 bytes)
+2025-06-22 00:36:47,255 - INFO -     ✅ Success! Total processed: 151
+2025-06-22 00:36:47,259 - INFO - 📋 [158/210] Processing: Sporting Goods Retail Chain
+2025-06-22 00:36:47,259 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:47,782 - INFO - ✅ Downloaded: listing-152-398e17a9.jpg (1,197,744 bytes)
+2025-06-22 00:36:47,782 - INFO -     ✅ Success! Total processed: 152
+2025-06-22 00:36:47,782 - INFO - 📋 [159/210] Processing: Footwear Retail Chain
+2025-06-22 00:36:47,782 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:48,253 - INFO - ✅ Downloaded: listing-153-5b8b0986.jpg (1,197,744 bytes)
+2025-06-22 00:36:48,254 - INFO -     ✅ Success! Total processed: 153
+2025-06-22 00:36:48,259 - INFO - 📋 [160/210] Processing: Children's Toy & Game Retailer
+2025-06-22 00:36:48,259 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:48,819 - INFO - ✅ Downloaded: listing-154-5236701c.jpg (1,197,744 bytes)
+2025-06-22 00:36:48,819 - INFO -     ✅ Success! Total processed: 154
+2025-06-22 00:36:48,819 - INFO - 📋 [161/210] Processing: Automotive Parts Distributor
+2025-06-22 00:36:48,819 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:36:49,258 - INFO - ✅ Downloaded: listing-155-4391a514.jpg (1,197,744 bytes)
+2025-06-22 00:36:49,258 - INFO -     ✅ Success! Total processed: 155
+2025-06-22 00:36:49,259 - INFO - 📋 [162/210] Processing: National Dance Studio Franchise
+2025-06-22 00:36:49,260 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:36:49,820 - INFO - ✅ Downloaded: listing-156-4f0a3178.jpg (1,197,744 bytes)
+2025-06-22 00:36:49,820 - INFO -     ✅ Success! Total processed: 156
+2025-06-22 00:36:49,832 - INFO - 📋 [163/210] Processing: Martial Arts School Chain
+2025-06-22 00:36:49,833 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:50,383 - INFO - ✅ Downloaded: listing-157-24d026bf.jpg (1,197,744 bytes)
+2025-06-22 00:36:50,383 - INFO -     ✅ Success! Total processed: 157
+2025-06-22 00:36:50,384 - INFO - 📋 [164/210] Processing: Commercial Driving & Fleet Training School
+2025-06-22 00:36:50,384 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 00:36:50,805 - INFO - ✅ Downloaded: listing-158-a1337ed7.jpg (1,197,744 bytes)
+2025-06-22 00:36:50,805 - INFO -     ✅ Success! Total processed: 158
+2025-06-22 00:36:50,805 - INFO - 📋 [165/210] Processing: Tanning Salon Franchise
+2025-06-22 00:36:50,805 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 00:36:51,602 - INFO - ✅ Downloaded: listing-159-58395ab6.jpg (1,197,744 bytes)
+2025-06-22 00:36:51,604 - INFO -     ✅ Success! Total processed: 159
+2025-06-22 00:36:51,606 - INFO - 📋 [166/210] Processing: Commercial & Fleet Bicycle Supplier
+2025-06-22 00:36:51,607 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:36:52,149 - INFO - ✅ Downloaded: listing-160-71231be7.jpg (1,197,744 bytes)
+2025-06-22 00:36:52,150 - INFO -     ✅ Success! Total processed: 160
+2025-06-22 00:36:52,150 - INFO - 📋 [167/210] Processing: Bridal & Formalwear Retail Group
+2025-06-22 00:36:52,150 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:52,680 - INFO - ✅ Downloaded: listing-161-94b333d9.jpg (1,197,744 bytes)
+2025-06-22 00:36:52,682 - INFO -     ✅ Success! Total processed: 161
+2025-06-22 00:36:52,696 - INFO - 📋 [168/210] Processing: Professional Photography Equipment Retailer
+2025-06-22 00:36:52,696 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 00:36:53,269 - INFO - ✅ Downloaded: listing-162-6642af88.jpg (1,197,744 bytes)
+2025-06-22 00:36:53,269 - INFO -     ✅ Success! Total processed: 162
+2025-06-22 00:36:53,269 - INFO - 📋 [169/210] Processing: Commercial Signage & Graphics Company
+2025-06-22 00:36:53,270 - INFO -     🌍 Location: Yogyakarta, Indonesia
+2025-06-22 00:36:53,781 - INFO - ✅ Downloaded: listing-163-59df6eb8.jpg (1,197,744 bytes)
+2025-06-22 00:36:53,785 - INFO -     ✅ Success! Total processed: 163
+2025-06-22 00:36:53,792 - INFO - 📋 [170/210] Processing: Fleet Graphics & Vehicle Wrap Installer
+2025-06-22 00:36:53,792 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:54,453 - INFO - ✅ Downloaded: listing-164-f916eccb.jpg (1,197,744 bytes)
+2025-06-22 00:36:54,454 - INFO -     ✅ Success! Total processed: 164
+2025-06-22 00:36:54,454 - INFO - 📋 [171/210] Processing: Office Furniture Dealership
+2025-06-22 00:36:54,454 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:54,914 - INFO - ✅ Downloaded: listing-165-b181908f.jpg (1,197,744 bytes)
+2025-06-22 00:36:54,914 - INFO -     ✅ Success! Total processed: 165
+2025-06-22 00:36:54,919 - INFO - 📋 [172/210] Processing: Copier & Managed Print Services
+2025-06-22 00:36:54,919 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:36:55,460 - INFO - ✅ Downloaded: listing-166-3b15fc82.jpg (1,197,744 bytes)
+2025-06-22 00:36:55,460 - INFO -     ✅ Success! Total processed: 166
+2025-06-22 00:36:55,461 - INFO - 📋 [173/210] Processing: IT Hardware Reseller (VAR)
+2025-06-22 00:36:55,461 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:36:55,889 - INFO - ✅ Downloaded: listing-167-51975616.jpg (1,197,744 bytes)
+2025-06-22 00:36:55,889 - INFO -     ✅ Success! Total processed: 167
+2025-06-22 00:36:55,890 - INFO - 📋 [174/210] Processing: Telecommunications Contractor
+2025-06-22 00:36:55,890 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:36:57,008 - INFO - ✅ Downloaded: listing-168-6d0025c5.jpg (1,197,744 bytes)
+2025-06-22 00:36:57,009 - INFO -     ✅ Success! Total processed: 168
+2025-06-22 00:36:57,026 - INFO - 📋 [175/210] Processing: Fiber Optic Installation Company
+2025-06-22 00:36:57,026 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 00:36:57,508 - INFO - ✅ Downloaded: listing-169-ce76fc76.jpg (1,197,744 bytes)
+2025-06-22 00:36:57,508 - INFO -     ✅ Success! Total processed: 169
+2025-06-22 00:36:57,509 - INFO - 📋 [176/210] Processing: Cell Tower Maintenance Service
+2025-06-22 00:36:57,509 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:57,888 - INFO - ✅ Downloaded: listing-170-3ab094dd.jpg (1,197,744 bytes)
+2025-06-22 00:36:57,888 - INFO -     ✅ Success! Total processed: 170
+2025-06-22 00:36:57,889 - INFO - 📋 [177/210] Processing: Broadcast Engineering Services
+2025-06-22 00:36:57,889 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 00:36:58,326 - INFO - ✅ Downloaded: listing-171-15446292.jpg (1,197,744 bytes)
+2025-06-22 00:36:58,326 - INFO -     ✅ Success! Total processed: 171
+2025-06-22 00:36:58,329 - INFO - 📋 [178/210] Processing: Satellite Communications Provider
+2025-06-22 00:36:58,330 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:36:58,715 - INFO - ✅ Downloaded: listing-172-5d1d9408.jpg (1,197,744 bytes)
+2025-06-22 00:36:58,715 - INFO -     ✅ Success! Total processed: 172
+2025-06-22 00:36:58,716 - INFO - 📋 [179/210] Processing: Environmental Consulting Firm
+2025-06-22 00:36:58,716 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:36:59,223 - INFO - ✅ Downloaded: listing-173-ce6240e7.jpg (1,197,744 bytes)
+2025-06-22 00:36:59,223 - INFO -     ✅ Success! Total processed: 173
+2025-06-22 00:36:59,224 - INFO - 📋 [180/210] Processing: Air Quality Monitoring Service
+2025-06-22 00:36:59,224 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 00:36:59,765 - INFO - ✅ Downloaded: listing-174-d3f8c3cc.jpg (1,197,744 bytes)
+2025-06-22 00:36:59,765 - INFO -     ✅ Success! Total processed: 174
+2025-06-22 00:36:59,766 - INFO - 📋 [181/210] Processing: Soil & Groundwater Testing Laboratory
+2025-06-22 00:36:59,766 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:37:00,664 - INFO - ✅ Downloaded: listing-175-29862084.jpg (1,197,744 bytes)
+2025-06-22 00:37:00,722 - INFO -     ✅ Success! Total processed: 175
+2025-06-22 00:37:00,738 - INFO - 📋 [182/210] Processing: Renewable Energy Credit (REC) Brokerage
+2025-06-22 00:37:00,738 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:37:01,282 - INFO - ✅ Downloaded: listing-176-70087c69.jpg (1,197,744 bytes)
+2025-06-22 00:37:01,282 - INFO -     ✅ Success! Total processed: 176
+2025-06-22 00:37:01,283 - INFO - 📋 [183/210] Processing: Carbon Offset Project Developer
+2025-06-22 00:37:01,283 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:37:01,784 - INFO - ✅ Downloaded: listing-177-74eef72e.jpg (1,197,744 bytes)
+2025-06-22 00:37:01,784 - INFO -     ✅ Success! Total processed: 177
+2025-06-22 00:37:01,787 - INFO - 📋 [184/210] Processing: Sustainable Building (LEED) Consulting
+2025-06-22 00:37:01,787 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 00:37:02,335 - INFO - ✅ Downloaded: listing-178-a712bfbe.jpg (1,197,744 bytes)
+2025-06-22 00:37:02,336 - INFO -     ✅ Success! Total processed: 178
+2025-06-22 00:37:02,336 - INFO - 📋 [185/210] Processing: Energy Auditing Firm
+2025-06-22 00:37:02,336 - INFO -     🌍 Location: Kota Bharu, Malaysia
+2025-06-22 00:37:02,792 - INFO - ✅ Downloaded: listing-179-31893ad0.jpg (1,197,744 bytes)
+2025-06-22 00:37:02,792 - INFO -     ✅ Success! Total processed: 179
+2025-06-22 00:37:02,795 - INFO - 📋 [186/210] Processing: Wind Turbine Maintenance Service
+2025-06-22 00:37:02,795 - INFO -     🌍 Location: Iloilo City, Philippines
+2025-06-22 00:37:03,271 - INFO - ✅ Downloaded: listing-180-cbba1b62.jpg (1,197,744 bytes)
+2025-06-22 00:37:03,271 - INFO -     ✅ Success! Total processed: 180
+2025-06-22 00:37:03,272 - INFO - 📋 [187/210] Processing: Hydroelectric Power Plant Operator
+2025-06-22 00:37:03,272 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 00:37:03,915 - INFO - ✅ Downloaded: listing-181-dfcde40b.jpg (1,197,744 bytes)
+2025-06-22 00:37:03,916 - INFO -     ✅ Success! Total processed: 181
+2025-06-22 00:37:03,917 - INFO - 📋 [188/210] Processing: Geothermal Energy Exploration
+2025-06-22 00:37:03,917 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:37:05,603 - INFO - ✅ Downloaded: listing-182-65861b45.jpg (1,197,744 bytes)
+2025-06-22 00:37:05,604 - INFO -     ✅ Success! Total processed: 182
+2025-06-22 00:37:05,609 - INFO - 📋 [189/210] Processing: EV Charging Network Operator
+2025-06-22 00:37:05,609 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:37:06,183 - INFO - ✅ Downloaded: listing-183-5a938c97.jpg (1,197,744 bytes)
+2025-06-22 00:37:06,184 - INFO -     ✅ Success! Total processed: 183
+2025-06-22 00:37:06,185 - INFO - 📋 [190/210] Processing: Machine Learning (ML) Consulting
+2025-06-22 00:37:06,185 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:37:06,794 - INFO - ✅ Downloaded: listing-184-53ced230.jpg (1,197,744 bytes)
+2025-06-22 00:37:06,795 - INFO -     ✅ Success! Total processed: 184
+2025-06-22 00:37:06,801 - INFO - 📋 [191/210] Processing: Cloud Cost Management Platform
+2025-06-22 00:37:06,801 - INFO -     🌍 Location: Pune, India
+2025-06-22 00:37:07,387 - INFO - ✅ Downloaded: listing-185-ddd42ab8.jpg (1,197,744 bytes)
+2025-06-22 00:37:07,387 - INFO -     ✅ Success! Total processed: 185
+2025-06-22 00:37:07,389 - INFO - 📋 [192/210] Processing: Penetration Testing as a Service (PtaaS)
+2025-06-22 00:37:07,389 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:37:08,065 - INFO - ✅ Downloaded: listing-186-ad4a6a8e.jpg (1,197,744 bytes)
+2025-06-22 00:37:08,066 - INFO -     ✅ Success! Total processed: 186
+2025-06-22 00:37:08,072 - INFO - 📋 [193/210] Processing: Threat Intelligence Platform
+2025-06-22 00:37:08,073 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:37:08,853 - INFO - ✅ Downloaded: listing-187-9561c5c6.jpg (1,197,744 bytes)
+2025-06-22 00:37:08,858 - INFO -     ✅ Success! Total processed: 187
+2025-06-22 00:37:08,869 - INFO - 📋 [194/210] Processing: Digital Forensics & Incident Response Firm
+2025-06-22 00:37:08,870 - INFO -     🌍 Location: Chennai, India
+2025-06-22 00:37:10,574 - INFO - ✅ Downloaded: listing-188-e12f5f67.jpg (1,197,744 bytes)
+2025-06-22 00:37:10,575 - INFO -     ✅ Success! Total processed: 188
+2025-06-22 00:37:10,581 - INFO - 📋 [195/210] Processing: Contact Center as a Service (CCaaS)
+2025-06-22 00:37:10,581 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 00:37:12,033 - INFO - ✅ Downloaded: listing-189-7eec8fb0.jpg (1,197,744 bytes)
+2025-06-22 00:37:12,043 - INFO -     ✅ Success! Total processed: 189
+2025-06-22 00:37:12,071 - INFO - 📋 [196/210] Processing: Waste Management & Recycling Corporation
+2025-06-22 00:37:12,071 - INFO -     🌍 Location: Iloilo City, Philippines
+2025-06-22 00:37:13,582 - INFO - ✅ Downloaded: listing-190-746d90ea.jpg (1,197,744 bytes)
+2025-06-22 00:37:13,582 - INFO -     ✅ Success! Total processed: 190
+2025-06-22 00:37:13,584 - INFO - 📋 [197/210] Processing: Quarry & Aggregate Supplier
+2025-06-22 00:37:13,584 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 00:37:14,083 - INFO - ✅ Downloaded: listing-191-d3a08288.jpg (1,197,744 bytes)
+2025-06-22 00:37:14,083 - INFO -     ✅ Success! Total processed: 191
+2025-06-22 00:37:14,084 - INFO - 📋 [198/210] Processing: Steel Fabrication and Erection Company
+2025-06-22 00:37:14,084 - INFO -     🌍 Location: Kota Bharu, Malaysia
+2025-06-22 00:37:14,753 - INFO - ✅ Downloaded: listing-192-54ff79b4.jpg (1,197,744 bytes)
+2025-06-22 00:37:14,756 - INFO -     ✅ Success! Total processed: 192
+2025-06-22 00:37:14,807 - INFO - 📋 [199/210] Processing: Uniform & Linen Supply Service
+2025-06-22 00:37:14,828 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:37:15,497 - INFO - ✅ Downloaded: listing-193-8cd1693c.jpg (1,197,744 bytes)
+2025-06-22 00:37:15,509 - INFO -     ✅ Success! Total processed: 193
+2025-06-22 00:37:15,550 - INFO - 📋 [200/210] Processing: Blasting Services (Mining & Construction)
+2025-06-22 00:37:15,550 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:37:17,325 - INFO - ✅ Downloaded: listing-194-55ba4be2.jpg (1,197,744 bytes)
+2025-06-22 00:37:17,341 - INFO -     ✅ Success! Total processed: 194
+2025-06-22 00:37:17,370 - INFO - 📋 [201/210] Processing: Traffic Control Services
+2025-06-22 00:37:17,370 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 00:37:18,036 - INFO - ✅ Downloaded: listing-195-883a1abc.jpg (1,197,744 bytes)
+2025-06-22 00:37:18,036 - INFO -     ✅ Success! Total processed: 195
+2025-06-22 00:37:18,036 - INFO - 📋 [202/210] Processing: Geomatics & Land Surveying Firm
+2025-06-22 00:37:18,036 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 00:37:18,519 - INFO - ✅ Downloaded: listing-196-73664412.jpg (1,197,744 bytes)
+2025-06-22 00:37:18,520 - INFO -     ✅ Success! Total processed: 196
+2025-06-22 00:37:18,524 - INFO - 📋 [203/210] Processing: Nutraceutical & Supplement Manufacturer
+2025-06-22 00:37:18,524 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 00:37:18,954 - INFO - ✅ Downloaded: listing-197-8196d1f8.jpg (1,197,744 bytes)
+2025-06-22 00:37:18,954 - INFO -     ✅ Success! Total processed: 197
+2025-06-22 00:37:18,954 - INFO - 📋 [204/210] Processing: Pet Food Manufacturer
+2025-06-22 00:37:18,954 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 00:37:19,561 - INFO - ✅ Downloaded: listing-198-6ef132dc.jpg (1,197,744 bytes)
+2025-06-22 00:37:19,561 - INFO -     ✅ Success! Total processed: 198
+2025-06-22 00:37:19,563 - INFO - 📋 [205/210] Processing: Beverage Bottling and Canning Plant
+2025-06-22 00:37:19,563 - INFO -     🌍 Location: Bhopal, India
+2025-06-22 00:37:20,141 - INFO - ✅ Downloaded: listing-199-a6234d3d.jpg (1,197,744 bytes)
+2025-06-22 00:37:20,141 - INFO -     ✅ Success! Total processed: 199
+2025-06-22 00:37:20,141 - INFO - 📋 [206/210] Processing: E-Learning & Corporate Training Platform
+2025-06-22 00:37:20,141 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 00:37:20,758 - INFO - ✅ Downloaded: listing-200-112a5117.jpg (1,197,744 bytes)
+2025-06-22 00:37:20,764 - INFO -     ✅ Success! Total processed: 200
+2025-06-22 00:37:20,800 - INFO - 📋 [207/210] Processing: Game Development Studio
+2025-06-22 00:37:20,806 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 00:37:22,281 - INFO - ✅ Downloaded: listing-201-94fb470f.jpg (1,197,744 bytes)
+2025-06-22 00:37:22,285 - INFO -     ✅ Success! Total processed: 201
+2025-06-22 00:37:22,313 - INFO - 📋 [208/210] Processing: Music Licensing Platform
+2025-06-22 00:37:22,314 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 00:37:22,828 - INFO - ✅ Downloaded: listing-202-d0f69807.jpg (1,197,744 bytes)
+2025-06-22 00:37:22,828 - INFO -     ✅ Success! Total processed: 202
+2025-06-22 00:37:22,829 - INFO - 📋 [209/210] Processing: Online Auction Platform
+2025-06-22 00:37:22,829 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 00:37:23,451 - INFO - ✅ Downloaded: listing-203-775a52a4.jpg (1,197,744 bytes)
+2025-06-22 00:37:23,455 - INFO -     ✅ Success! Total processed: 203
+2025-06-22 00:37:23,487 - INFO - 📋 [210/210] Processing: ATM Fleet Operator
+2025-06-22 00:37:23,487 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 00:37:24,064 - INFO - ✅ Downloaded: listing-204-1b79c94e.jpg (1,197,744 bytes)
+2025-06-22 00:37:24,064 - INFO -     ✅ Success! Total processed: 204
+2025-06-22 00:37:24,092 - INFO - 📄 Generating seed.sql...
+2025-06-22 00:37:24,099 - INFO -    ✅ Using original clean seed template
+2025-06-22 00:37:24,178 - INFO - 
+🎉 PROCESSING COMPLETED SUCCESSFULLY!
+2025-06-22 00:37:24,178 - INFO - ============================================================
+2025-06-22 00:37:24,178 - INFO - ✅ Total listings processed: 204
+2025-06-22 00:37:24,178 - INFO - 📥 Images downloaded: 204
+2025-06-22 00:37:24,183 - INFO - ♻️  Images skipped (existing): 0
+2025-06-22 00:37:24,183 - INFO - ❌ Images failed: 6
+2025-06-22 00:37:24,183 - INFO - 📄 Generated seed.sql: /Users/macintosh/Developer/studio/supabase/seed.sql
+2025-06-22 00:37:24,183 - INFO - ⏱️  Processing time: 194.4 seconds
+2025-06-22 00:37:24,183 - INFO - ============================================================
+2025-06-22 00:37:24,183 - INFO - 🌐 Ready for database import!
+2025-06-22 00:37:24,183 - INFO - 
+📋 Sample processed listings:
+2025-06-22 00:37:24,183 - INFO -    1. Commercial & Industrial Painting Contractor (Medan, Indonesia)
+2025-06-22 00:37:24,183 - INFO -    2. Multi-Location Auto Service Center (Pune, India)
+2025-06-22 00:37:24,183 - INFO -    3. Commercial Landscaping & Groundskeeping Corp. (Banjarmasin, Indonesia)
+2025-06-22 17:21:49,141 - INFO - 🚀 ROBUST MARKETPLACE PROCESSOR - Starting...
+2025-06-22 17:21:49,141 - INFO - ============================================================
+2025-06-22 17:21:49,141 - INFO - 🔧 Preparing environment...
+2025-06-22 17:21:49,141 - INFO -    ✅ Assets directory ready: /Users/macintosh/Developer/studio/public/assets/listing-assets
+2025-06-22 17:21:49,141 - INFO - 🗑️  Attempting to clear storage bucket...
+2025-06-22 17:21:50,888 - WARNING -    ⚠️  Storage empty failed: Usage:
+  supabase storage [command]
+
+Available Commands:
+  cp          Copy objects from src to dst path
+  ls          List objects by path prefix
+  mv          Move objects from src to dst path
+  rm          Remove objects by file path
+
+Flags:
+  -h, --help     help for storage
+      --linked   Connects to Storage API of the linked project. (default true)
+      --local    Connects to Storage API of the local database.
+
+Global Flags:
+      --create-ticket                                  create a support ticket for any CLI error
+      --debug                                          output debug logs to stderr
+      --dns-resolver [ native | https ]                lookup domain names using the specified resolver (default native)
+      --experimental                                   enable experimental features
+      --network-id string                              use the specified docker network instead of a generated one
+  -o, --output [ env | pretty | json | toml | yaml ]   output format of status variables (default pretty)
+      --workdir string                                 path to a Supabase project directory
+
+Use "supabase storage [command] --help" for more information about a command.
+
+unknown flag: --force
+Try rerunning the command with --debug to troubleshoot the error.
+
+2025-06-22 17:21:50,888 - INFO -    📋 Continuing without storage cleanup - images will be reused if they exist
+2025-06-22 17:21:50,889 - INFO - 📋 Reading CSV file: /Users/macintosh/Developer/studio/more_data.csv
+2025-06-22 17:21:50,900 - INFO -    ✅ Successfully read with encoding=utf-8, delimiter=','
+2025-06-22 17:21:50,900 - INFO -    📊 Dataset: 210 rows × 25 columns
+2025-06-22 17:21:50,902 - INFO - 📥 Processing 210 listings...
+2025-06-22 17:21:50,904 - INFO - 📋 [1/210] Processing: Commercial & Industrial Painting Contractor
+2025-06-22 17:21:50,904 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:21:50,905 - INFO - ♻️  Image already exists: listing-001-96a3120e.jpg
+2025-06-22 17:21:50,905 - INFO -     ✅ Success! Total processed: 1
+2025-06-22 17:21:50,905 - INFO - 📋 [2/210] Processing: Multi-Location Auto Service Center
+2025-06-22 17:21:50,905 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:21:50,905 - INFO - ♻️  Image already exists: listing-002-587e49c9.jpg
+2025-06-22 17:21:50,905 - INFO -     ✅ Success! Total processed: 2
+2025-06-22 17:21:50,905 - INFO - 📋 [3/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 17:21:50,905 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 17:21:50,905 - INFO - ♻️  Image already exists: listing-003-426d314a.jpg
+2025-06-22 17:21:50,905 - INFO -     ✅ Success! Total processed: 3
+2025-06-22 17:21:50,905 - INFO - 📋 [4/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 17:21:50,905 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 17:21:50,905 - INFO - ♻️  Image already exists: listing-004-304e275b.jpg
+2025-06-22 17:21:50,905 - INFO -     ✅ Success! Total processed: 4
+2025-06-22 17:21:50,905 - INFO - 📋 [5/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 17:21:50,906 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:21:52,033 - WARNING - Download attempt 1 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:21:53,785 - WARNING - Download attempt 2 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:21:56,774 - WARNING - Download attempt 3 failed: HTTPSConnectionPool(host='www.mckimcreed.com', port=443): Max retries exceeded with url: /wp-content/uploads/2024/09/WakeTechPublicSafety_Completed_61-1.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:21:56,776 - ERROR - ❌ Failed to download: Mechanical & Plumbing Contractors
+2025-06-22 17:21:56,776 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:21:56,776 - INFO - 📋 [6/210] Processing: Third-Party Logistics (3PL) Provider
+2025-06-22 17:21:56,776 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 17:21:56,776 - INFO - ♻️  Image already exists: listing-005-7d30fd0a.jpg
+2025-06-22 17:21:56,777 - INFO -     ✅ Success! Total processed: 5
+2025-06-22 17:21:56,777 - INFO - 📋 [7/210] Processing: Regional Pizza Chain
+2025-06-22 17:21:56,777 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:21:56,777 - INFO - ♻️  Image already exists: listing-006-d923d2f1.jpg
+2025-06-22 17:21:56,777 - INFO -     ✅ Success! Total processed: 6
+2025-06-22 17:21:56,777 - INFO - 📋 [8/210] Processing: Cybersecurity Solutions Provider
+2025-06-22 17:21:56,777 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:21:57,382 - WARNING - Download attempt 1 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:21:58,755 - WARNING - Download attempt 2 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:22:01,117 - WARNING - Download attempt 3 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:22:01,117 - ERROR - ❌ Failed to download: Cybersecurity Solutions Provider
+2025-06-22 17:22:01,117 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:22:01,118 - INFO - 📋 [9/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 17:22:01,118 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:01,118 - INFO - ♻️  Image already exists: listing-007-9126df6d.jpg
+2025-06-22 17:22:01,118 - INFO -     ✅ Success! Total processed: 7
+2025-06-22 17:22:01,118 - INFO - 📋 [10/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 17:22:01,118 - INFO -     🌍 Location: Lucknow, India
+2025-06-22 17:22:01,118 - INFO - ♻️  Image already exists: listing-008-cce581dc.png
+2025-06-22 17:22:01,118 - INFO -     ✅ Success! Total processed: 8
+2025-06-22 17:22:01,119 - INFO - 📋 [11/210] Processing: Commercial Electrical Contractors
+2025-06-22 17:22:01,119 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:02,002 - WARNING - Download attempt 1 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:22:03,561 - WARNING - Download attempt 2 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:22:06,248 - WARNING - Download attempt 3 failed: HTTPSConnectionPool(host='www.cve.com', port=443): Max retries exceeded with url: /wp-content/uploads/2022/05/industrial-electrician-background.jpg (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1006)')))
+2025-06-22 17:22:06,249 - ERROR - ❌ Failed to download: Commercial Electrical Contractors
+2025-06-22 17:22:06,249 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:22:06,250 - INFO - 📋 [12/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 17:22:06,251 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:06,251 - INFO - ♻️  Image already exists: listing-009-f3d96db1.jpg
+2025-06-22 17:22:06,251 - INFO -     ✅ Success! Total processed: 9
+2025-06-22 17:22:06,251 - INFO - 📋 [13/210] Processing: Commercial General Contractor
+2025-06-22 17:22:06,251 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:06,251 - INFO - ♻️  Image already exists: listing-010-71f5618f.jpg
+2025-06-22 17:22:06,251 - INFO -     ✅ Success! Total processed: 10
+2025-06-22 17:22:06,252 - INFO - 📋 [14/210] Processing: Multi-Location Auto Service Center
+2025-06-22 17:22:06,252 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:06,252 - INFO - ♻️  Image already exists: listing-011-f6d6f0e8.png
+2025-06-22 17:22:06,252 - INFO -     ✅ Success! Total processed: 11
+2025-06-22 17:22:06,252 - INFO - 📋 [15/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 17:22:06,252 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:06,611 - WARNING - Download attempt 1 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 17:22:07,727 - WARNING - Download attempt 2 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 17:22:09,858 - WARNING - Download attempt 3 failed: 403 Client Error: Forbidden for url: https://www.nsg-inc.com/wp-content/uploads/2020/09/Why-Should-I-Change-My-Commercial-Janitorial-Service.jpg
+2025-06-22 17:22:09,860 - ERROR - ❌ Failed to download: Janitorial Services & Facilities Management
+2025-06-22 17:22:09,860 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:22:09,860 - INFO - 📋 [16/210] Processing: Freight Forwarding Company
+2025-06-22 17:22:09,860 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:09,860 - INFO - ♻️  Image already exists: listing-012-f04132cb.jpg
+2025-06-22 17:22:09,861 - INFO -     ✅ Success! Total processed: 12
+2025-06-22 17:22:09,861 - INFO - 📋 [17/210] Processing: Corporate Childcare Center Operator
+2025-06-22 17:22:09,861 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:09,861 - INFO - ♻️  Image already exists: listing-013-c44fe762.jpg
+2025-06-22 17:22:09,861 - INFO -     ✅ Success! Total processed: 13
+2025-06-22 17:22:09,861 - INFO - 📋 [18/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 17:22:09,861 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:09,861 - INFO - ♻️  Image already exists: listing-014-4b68ffa6.jpg
+2025-06-22 17:22:09,861 - INFO -     ✅ Success! Total processed: 14
+2025-06-22 17:22:09,862 - INFO - 📋 [19/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 17:22:09,862 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:09,862 - INFO - ♻️  Image already exists: listing-015-e5fef8f4.png
+2025-06-22 17:22:09,862 - INFO -     ✅ Success! Total processed: 15
+2025-06-22 17:22:09,862 - INFO - 📋 [20/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 17:22:09,862 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:09,862 - INFO - ♻️  Image already exists: listing-016-a83f3271.jpg
+2025-06-22 17:22:09,862 - INFO -     ✅ Success! Total processed: 16
+2025-06-22 17:22:09,862 - INFO - 📋 [21/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 17:22:09,862 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 17:22:09,862 - INFO - ♻️  Image already exists: listing-017-7ab6712a.jpg
+2025-06-22 17:22:09,862 - INFO -     ✅ Success! Total processed: 17
+2025-06-22 17:22:09,863 - INFO - 📋 [22/210] Processing: Enterprise Resource Planning (ERP) Software Provider
+2025-06-22 17:22:09,863 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:09,863 - INFO - ♻️  Image already exists: listing-018-a608a4a8.jpg
+2025-06-22 17:22:09,863 - INFO -     ✅ Success! Total processed: 18
+2025-06-22 17:22:09,863 - INFO - 📋 [23/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 17:22:09,863 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:09,863 - INFO - ♻️  Image already exists: listing-019-addd8f8b.jpg
+2025-06-22 17:22:09,863 - INFO -     ✅ Success! Total processed: 19
+2025-06-22 17:22:09,863 - INFO - 📋 [24/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 17:22:09,863 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:09,863 - INFO - ♻️  Image already exists: listing-020-f3ac86cc.jpg
+2025-06-22 17:22:09,863 - INFO -     ✅ Success! Total processed: 20
+2025-06-22 17:22:09,864 - INFO - 📋 [25/210] Processing: Commercial Electrical Contractors
+2025-06-22 17:22:09,864 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:11,287 - WARNING - Download attempt 1 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:22:13,444 - WARNING - Download attempt 2 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:22:16,690 - WARNING - Download attempt 3 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2025-06-22 17:22:16,690 - ERROR - ❌ Failed to download: Commercial Electrical Contractors
+2025-06-22 17:22:16,690 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:22:16,691 - INFO - 📋 [26/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 17:22:16,691 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:16,692 - INFO - ♻️  Image already exists: listing-021-c5021cf0.jpg
+2025-06-22 17:22:16,692 - INFO -     ✅ Success! Total processed: 21
+2025-06-22 17:22:16,692 - INFO - 📋 [27/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 17:22:16,692 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:16,692 - INFO - ♻️  Image already exists: listing-022-b8033f1f.jpg
+2025-06-22 17:22:16,692 - INFO -     ✅ Success! Total processed: 22
+2025-06-22 17:22:16,693 - INFO - 📋 [28/210] Processing: Multi-Location Auto Service Center
+2025-06-22 17:22:16,693 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:16,693 - INFO - ♻️  Image already exists: listing-023-2d7cdb4f.jpg
+2025-06-22 17:22:16,693 - INFO -     ✅ Success! Total processed: 23
+2025-06-22 17:22:16,693 - INFO - 📋 [29/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 17:22:16,693 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:16,693 - INFO - ♻️  Image already exists: listing-024-dc6785a7.jpg
+2025-06-22 17:22:16,693 - INFO -     ✅ Success! Total processed: 24
+2025-06-22 17:22:16,694 - INFO - 📋 [30/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 17:22:16,694 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:16,694 - INFO - ♻️  Image already exists: listing-025-1a69a004.jpg
+2025-06-22 17:22:16,694 - INFO -     ✅ Success! Total processed: 25
+2025-06-22 17:22:16,694 - INFO - 📋 [31/210] Processing: Cloud Migration & Managed Services
+2025-06-22 17:22:16,694 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:16,694 - INFO - ♻️  Image already exists: listing-026-a46d876c.png
+2025-06-22 17:22:16,695 - INFO -     ✅ Success! Total processed: 26
+2025-06-22 17:22:16,695 - INFO - 📋 [32/210] Processing: Regional Pizza Chain
+2025-06-22 17:22:16,695 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:16,695 - INFO - ♻️  Image already exists: listing-027-98cb4d17.jpg
+2025-06-22 17:22:16,695 - INFO -     ✅ Success! Total processed: 27
+2025-06-22 17:22:16,695 - INFO - 📋 [33/210] Processing: Building Materials & Hardware Supplier
+2025-06-22 17:22:16,695 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:16,832 - WARNING - Download attempt 1 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 17:22:17,966 - WARNING - Download attempt 2 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 17:22:20,083 - WARNING - Download attempt 3 failed: 403 Client Error: Forbidden for url: https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/07/steel-conmon-construction-material.jpg
+2025-06-22 17:22:20,084 - ERROR - ❌ Failed to download: Building Materials & Hardware Supplier
+2025-06-22 17:22:20,084 - WARNING -     ❌ Failed - skipping listing
+2025-06-22 17:22:20,085 - INFO - 📋 [34/210] Processing: Commercial General Contractor
+2025-06-22 17:22:20,085 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,086 - INFO - ♻️  Image already exists: listing-028-4f4aed38.jpg
+2025-06-22 17:22:20,086 - INFO -     ✅ Success! Total processed: 28
+2025-06-22 17:22:20,086 - INFO - 📋 [35/210] Processing: Commercial Real Estate Brokerage
+2025-06-22 17:22:20,086 - INFO -     🌍 Location: Davao City, Philippines
+2025-06-22 17:22:20,086 - INFO - ♻️  Image already exists: listing-029-20eb8edd.jpg
+2025-06-22 17:22:20,086 - INFO -     ✅ Success! Total processed: 29
+2025-06-22 17:22:20,087 - INFO - 📋 [36/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 17:22:20,087 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,087 - INFO - ♻️  Image already exists: listing-030-d93e32d3.jpg
+2025-06-22 17:22:20,087 - INFO -     ✅ Success! Total processed: 30
+2025-06-22 17:22:20,087 - INFO - 📋 [37/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 17:22:20,087 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,087 - INFO - ♻️  Image already exists: listing-031-0d7c7001.jpg
+2025-06-22 17:22:20,087 - INFO -     ✅ Success! Total processed: 31
+2025-06-22 17:22:20,087 - INFO - 📋 [38/210] Processing: Multi-Location Auto Service Center
+2025-06-22 17:22:20,087 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,087 - INFO - ♻️  Image already exists: listing-032-f0b79d59.jpg
+2025-06-22 17:22:20,087 - INFO -     ✅ Success! Total processed: 32
+2025-06-22 17:22:20,087 - INFO - 📋 [39/210] Processing: Commercial Landscaping & Groundskeeping Corp.
+2025-06-22 17:22:20,088 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,088 - INFO - ♻️  Image already exists: listing-033-4147f873.jpg
+2025-06-22 17:22:20,088 - INFO -     ✅ Success! Total processed: 33
+2025-06-22 17:22:20,088 - INFO - 📋 [40/210] Processing: Digital Marketing & Advertising Agency
+2025-06-22 17:22:20,088 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,088 - INFO - ♻️  Image already exists: listing-034-f1e3f5c0.jpg
+2025-06-22 17:22:20,088 - INFO -     ✅ Success! Total processed: 34
+2025-06-22 17:22:20,088 - INFO - 📋 [41/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 17:22:20,092 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,092 - INFO - ♻️  Image already exists: listing-035-0c14df50.jpg
+2025-06-22 17:22:20,092 - INFO -     ✅ Success! Total processed: 35
+2025-06-22 17:22:20,092 - INFO - 📋 [42/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 17:22:20,092 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,092 - INFO - ♻️  Image already exists: listing-036-8d293bb3.jpg
+2025-06-22 17:22:20,092 - INFO -     ✅ Success! Total processed: 36
+2025-06-22 17:22:20,093 - INFO - 📋 [43/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 17:22:20,093 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,093 - INFO - ♻️  Image already exists: listing-037-03eec51a.jpg
+2025-06-22 17:22:20,093 - INFO -     ✅ Success! Total processed: 37
+2025-06-22 17:22:20,093 - INFO - 📋 [44/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 17:22:20,093 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,093 - INFO - ♻️  Image already exists: listing-038-0d7c7001.jpg
+2025-06-22 17:22:20,093 - INFO -     ✅ Success! Total processed: 38
+2025-06-22 17:22:20,093 - INFO - 📋 [45/210] Processing: Customer Relationship Management (CRM) SaaS
+2025-06-22 17:22:20,093 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,093 - INFO - ♻️  Image already exists: listing-039-f1699e84.jpg
+2025-06-22 17:22:20,093 - INFO -     ✅ Success! Total processed: 39
+2025-06-22 17:22:20,094 - INFO - 📋 [46/210] Processing: Educational & Tutoring Center Franchise
+2025-06-22 17:22:20,094 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,094 - INFO - ♻️  Image already exists: listing-040-33b93d3b.jpg
+2025-06-22 17:22:20,094 - INFO -     ✅ Success! Total processed: 40
+2025-06-22 17:22:20,094 - INFO - 📋 [47/210] Processing: Commercial Electrical Contractors
+2025-06-22 17:22:20,094 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,094 - INFO - ♻️  Image already exists: listing-041-eb7366e9.jpg
+2025-06-22 17:22:20,094 - INFO -     ✅ Success! Total processed: 41
+2025-06-22 17:22:20,094 - INFO - 📋 [48/210] Processing: Regional Pizza Chain
+2025-06-22 17:22:20,094 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,094 - INFO - ♻️  Image already exists: listing-042-2926e3dd.jpg
+2025-06-22 17:22:20,094 - INFO -     ✅ Success! Total processed: 42
+2025-06-22 17:22:20,094 - INFO - 📋 [49/210] Processing: Multi-Location Auto Service Center
+2025-06-22 17:22:20,094 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,094 - INFO - ♻️  Image already exists: listing-043-f0b79d59.jpg
+2025-06-22 17:22:20,095 - INFO -     ✅ Success! Total processed: 43
+2025-06-22 17:22:20,095 - INFO - 📋 [50/210] Processing: Temperature-Controlled Warehousing
+2025-06-22 17:22:20,095 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,095 - INFO - ♻️  Image already exists: listing-044-0ff45624.jpg
+2025-06-22 17:22:20,095 - INFO -     ✅ Success! Total processed: 44
+2025-06-22 17:22:20,095 - INFO - 📋 [51/210] Processing: Multi-Chain Nail Salon & Spa
+2025-06-22 17:22:20,095 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,095 - INFO - ♻️  Image already exists: listing-045-a3309b90.jpg
+2025-06-22 17:22:20,095 - INFO -     ✅ Success! Total processed: 45
+2025-06-22 17:22:20,095 - INFO - 📋 [52/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 17:22:20,095 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,095 - INFO - ♻️  Image already exists: listing-046-d93e32d3.jpg
+2025-06-22 17:22:20,095 - INFO -     ✅ Success! Total processed: 46
+2025-06-22 17:22:20,095 - INFO - 📋 [53/210] Processing: Regional Coffee Roaster & Cafe Chain
+2025-06-22 17:22:20,096 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,096 - INFO - ♻️  Image already exists: listing-047-0d7c7001.jpg
+2025-06-22 17:22:20,096 - INFO -     ✅ Success! Total processed: 47
+2025-06-22 17:22:20,096 - INFO - 📋 [54/210] Processing: Janitorial Services & Facilities Management
+2025-06-22 17:22:20,096 - INFO -     🌍 Location: Da Nang, Vietnam
+2025-06-22 17:22:20,096 - INFO - ♻️  Image already exists: listing-048-d5214a2d.jpg
+2025-06-22 17:22:20,096 - INFO -     ✅ Success! Total processed: 48
+2025-06-22 17:22:20,096 - INFO - 📋 [55/210] Processing: Clinical Research Organization (CRO)
+2025-06-22 17:22:20,096 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,097 - INFO - ♻️  Image already exists: listing-049-a3d207b7.jpg
+2025-06-22 17:22:20,097 - INFO -     ✅ Success! Total processed: 49
+2025-06-22 17:22:20,097 - INFO - 📋 [56/210] Processing: Restaurant Group (Casual Dining Chain)
+2025-06-22 17:22:20,097 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,097 - INFO - ♻️  Image already exists: listing-050-0c14df50.jpg
+2025-06-22 17:22:20,097 - INFO -     ✅ Success! Total processed: 50
+2025-06-22 17:22:20,097 - INFO - 📋 [57/210] Processing: Multi-Chain Automated Car Wash
+2025-06-22 17:22:20,097 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 17:22:20,097 - INFO - ♻️  Image already exists: listing-051-24670771.jpg
+2025-06-22 17:22:20,097 - INFO -     ✅ Success! Total processed: 51
+2025-06-22 17:22:20,098 - INFO - 📋 [58/210] Processing: Corporate & Commercial Law Firm
+2025-06-22 17:22:20,098 - INFO -     🌍 Location: Bhopal, India
+2025-06-22 17:22:20,098 - INFO - ♻️  Image already exists: listing-052-03eec51a.jpg
+2025-06-22 17:22:20,098 - INFO -     ✅ Success! Total processed: 52
+2025-06-22 17:22:20,098 - INFO - 📋 [59/210] Processing: Regional Pizza Chain
+2025-06-22 17:22:20,098 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,098 - INFO - ♻️  Image already exists: listing-053-2926e3dd.jpg
+2025-06-22 17:22:20,098 - INFO -     ✅ Success! Total processed: 53
+2025-06-22 17:22:20,099 - INFO - 📋 [60/210] Processing: Boutique Apparel Chain
+2025-06-22 17:22:20,099 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 17:22:20,099 - INFO - ♻️  Image already exists: listing-054-6044b45a.jpg
+2025-06-22 17:22:20,099 - INFO -     ✅ Success! Total processed: 54
+2025-06-22 17:22:20,099 - INFO - 📋 [61/210] Processing: Corporate Childcare Center Operator
+2025-06-22 17:22:20,099 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,099 - INFO - ♻️  Image already exists: listing-055-5597ead1.jpg
+2025-06-22 17:22:20,099 - INFO -     ✅ Success! Total processed: 55
+2025-06-22 17:22:20,099 - INFO - 📋 [62/210] Processing: High-End Fitness Center & Health Club Chain
+2025-06-22 17:22:20,099 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,099 - INFO - ♻️  Image already exists: listing-056-8d293bb3.jpg
+2025-06-22 17:22:20,099 - INFO -     ✅ Success! Total processed: 56
+2025-06-22 17:22:20,100 - INFO - 📋 [63/210] Processing: Private Equity Firm (SME-focused)
+2025-06-22 17:22:20,100 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,100 - INFO - ♻️  Image already exists: listing-057-32830a1f.jpg
+2025-06-22 17:22:20,100 - INFO -     ✅ Success! Total processed: 57
+2025-06-22 17:22:20,100 - INFO - 📋 [64/210] Processing: Educational & Tutoring Center Franchise
+2025-06-22 17:22:20,100 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,100 - INFO - ♻️  Image already exists: listing-058-33b93d3b.jpg
+2025-06-22 17:22:20,100 - INFO -     ✅ Success! Total processed: 58
+2025-06-22 17:22:20,100 - INFO - 📋 [65/210] Processing: Commercial General Contractor
+2025-06-22 17:22:20,100 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,100 - INFO - ♻️  Image already exists: listing-059-1e20d02f.jpg
+2025-06-22 17:22:20,100 - INFO -     ✅ Success! Total processed: 59
+2025-06-22 17:22:20,100 - INFO - 📋 [66/210] Processing: Mechanical & Plumbing Contractors
+2025-06-22 17:22:20,100 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,100 - INFO - ♻️  Image already exists: listing-060-bc010e9c.jpg
+2025-06-22 17:22:20,100 - INFO -     ✅ Success! Total processed: 60
+2025-06-22 17:22:20,101 - INFO - 📋 [67/210] Processing: Customs Brokerage Firm
+2025-06-22 17:22:20,101 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,101 - INFO - ♻️  Image already exists: listing-061-61e1f27e.jpg
+2025-06-22 17:22:20,101 - INFO -     ✅ Success! Total processed: 61
+2025-06-22 17:22:20,101 - INFO - 📋 [68/210] Processing: Wholesale & Commercial Bakery
+2025-06-22 17:22:20,101 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,101 - INFO - ♻️  Image already exists: listing-062-c417d038.jpg
+2025-06-22 17:22:20,101 - INFO -     ✅ Success! Total processed: 62
+2025-06-22 17:22:20,101 - INFO - 📋 [69/210] Processing: Large-Scale Commercial Florist & Wholesaler
+2025-06-22 17:22:20,101 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 17:22:20,101 - INFO - ♻️  Image already exists: listing-063-9d738ad9.jpg
+2025-06-22 17:22:20,101 - INFO -     ✅ Success! Total processed: 63
+2025-06-22 17:22:20,101 - INFO - 📋 [70/210] Processing: Managed IT Services Provider (MSP)
+2025-06-22 17:22:20,101 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 17:22:20,101 - INFO - ♻️  Image already exists: listing-064-d93e32d3.jpg
+2025-06-22 17:22:20,101 - INFO -     ✅ Success! Total processed: 64
+2025-06-22 17:22:20,101 - INFO - 📋 [71/210] Processing: Custom Metal Fabrication & Welding
+2025-06-22 17:22:20,101 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,102 - INFO - ♻️  Image already exists: listing-065-1340d2d5.jpg
+2025-06-22 17:22:20,102 - INFO -     ✅ Success! Total processed: 65
+2025-06-22 17:22:20,102 - INFO - 📋 [72/210] Processing: Property Maintenance & Handyman Services Corp.
+2025-06-22 17:22:20,102 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,102 - INFO - ♻️  Image already exists: listing-066-88697317.jpg
+2025-06-22 17:22:20,102 - INFO -     ✅ Success! Total processed: 66
+2025-06-22 17:22:20,102 - INFO - 📋 [73/210] Processing: Supply Chain Management (SCM) Software
+2025-06-22 17:22:20,102 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:20,102 - INFO - ♻️  Image already exists: listing-067-0f08f279.jpg
+2025-06-22 17:22:20,102 - INFO -     ✅ Success! Total processed: 67
+2025-06-22 17:22:20,102 - INFO - 📋 [74/210] Processing: Brewery with Regional Distribution
+2025-06-22 17:22:20,102 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,102 - INFO - ♻️  Image already exists: listing-068-fe7805f1.jpg
+2025-06-22 17:22:20,102 - INFO -     ✅ Success! Total processed: 68
+2025-06-22 17:22:20,102 - INFO - 📋 [75/210] Processing: Diagnostic Imaging Centers
+2025-06-22 17:22:20,102 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,102 - INFO - ♻️  Image already exists: listing-069-d639235b.jpg
+2025-06-22 17:22:20,102 - INFO -     ✅ Success! Total processed: 69
+2025-06-22 17:22:20,103 - INFO - 📋 [76/210] Processing: High-End Custom Home Builder
+2025-06-22 17:22:20,103 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,103 - INFO - ♻️  Image already exists: listing-070-7421663b.jpg
+2025-06-22 17:22:20,103 - INFO -     ✅ Success! Total processed: 70
+2025-06-22 17:22:20,103 - INFO - 📋 [77/210] Processing: Furniture & Home Goods Retail Chain
+2025-06-22 17:22:20,103 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,103 - INFO - ♻️  Image already exists: listing-071-d1c57fab.jpg
+2025-06-22 17:22:20,103 - INFO -     ✅ Success! Total processed: 71
+2025-06-22 17:22:20,103 - INFO - 📋 [78/210] Processing: Plastic Injection Molding Facility
+2025-06-22 17:22:20,103 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,103 - INFO - ♻️  Image already exists: listing-072-eb589d72.jpg
+2025-06-22 17:22:20,103 - INFO -     ✅ Success! Total processed: 72
+2025-06-22 17:22:20,103 - INFO - 📋 [79/210] Processing: Intermodal Freight Transport
+2025-06-22 17:22:20,103 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,103 - INFO - ♻️  Image already exists: listing-073-1141ecfb.jpg
+2025-06-22 17:22:20,103 - INFO -     ✅ Success! Total processed: 73
+2025-06-22 17:22:20,103 - INFO - 📋 [80/210] Processing: E-commerce Fulfillment Center
+2025-06-22 17:22:20,103 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,104 - INFO - ♻️  Image already exists: listing-074-323bf6e7.jpg
+2025-06-22 17:22:20,104 - INFO -     ✅ Success! Total processed: 74
+2025-06-22 17:22:20,104 - INFO - 📋 [81/210] Processing: Human Resources (HR) Tech Platform
+2025-06-22 17:22:20,104 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,104 - INFO - ♻️  Image already exists: listing-075-991fe5b9.jpg
+2025-06-22 17:22:20,104 - INFO -     ✅ Success! Total processed: 75
+2025-06-22 17:22:20,104 - INFO - 📋 [82/210] Processing: Home Healthcare Agency
+2025-06-22 17:22:20,104 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,104 - INFO - ♻️  Image already exists: listing-076-a792fe97.jpg
+2025-06-22 17:22:20,104 - INFO -     ✅ Success! Total processed: 76
+2025-06-22 17:22:20,104 - INFO - 📋 [83/210] Processing: Structural Engineering Firm
+2025-06-22 17:22:20,104 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 17:22:20,104 - INFO - ♻️  Image already exists: listing-077-282e2651.jpg
+2025-06-22 17:22:20,104 - INFO -     ✅ Success! Total processed: 77
+2025-06-22 17:22:20,104 - INFO - 📋 [84/210] Processing: Heavy Haulage & Trucking Company
+2025-06-22 17:22:20,104 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,104 - INFO - ♻️  Image already exists: listing-078-7be8814a.jpg
+2025-06-22 17:22:20,104 - INFO -     ✅ Success! Total processed: 78
+2025-06-22 17:22:20,105 - INFO - 📋 [85/210] Processing: Surgical Center
+2025-06-22 17:22:20,105 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,105 - INFO - ♻️  Image already exists: listing-079-4fe912da.jpg
+2025-06-22 17:22:20,105 - INFO -     ✅ Success! Total processed: 79
+2025-06-22 17:22:20,105 - INFO - 📋 [86/210] Processing: Air Cargo Handling Service
+2025-06-22 17:22:20,105 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,105 - INFO - ♻️  Image already exists: listing-080-5ade75ad.jpg
+2025-06-22 17:22:20,105 - INFO -     ✅ Success! Total processed: 80
+2025-06-22 17:22:20,105 - INFO - 📋 [87/210] Processing: Specialty Pharmaceutical Distributor
+2025-06-22 17:22:20,105 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:20,105 - INFO - ♻️  Image already exists: listing-081-1da702bc.jpg
+2025-06-22 17:22:20,105 - INFO -     ✅ Success! Total processed: 81
+2025-06-22 17:22:20,105 - INFO - 📋 [88/210] Processing: Forensic Accounting & Investigation Agency
+2025-06-22 17:22:20,105 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,105 - INFO - ♻️  Image already exists: listing-082-51520348.jpg
+2025-06-22 17:22:20,105 - INFO -     ✅ Success! Total processed: 82
+2025-06-22 17:22:20,105 - INFO - 📋 [89/210] Processing: Private Jet Charter Company
+2025-06-22 17:22:20,105 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,105 - INFO - ♻️  Image already exists: listing-083-8d69af3c.jpg
+2025-06-22 17:22:20,106 - INFO -     ✅ Success! Total processed: 83
+2025-06-22 17:22:20,106 - INFO - 📋 [90/210] Processing: Medical Billing and Coding Service
+2025-06-22 17:22:20,106 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,106 - INFO - ♻️  Image already exists: listing-084-c0476235.jpg
+2025-06-22 17:22:20,106 - INFO -     ✅ Success! Total processed: 84
+2025-06-22 17:22:20,106 - INFO - 📋 [91/210] Processing: Aerospace Component Manufacturer
+2025-06-22 17:22:20,106 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,106 - INFO - ♻️  Image already exists: listing-085-713a7f8c.jpg
+2025-06-22 17:22:20,106 - INFO -     ✅ Success! Total processed: 85
+2025-06-22 17:22:20,106 - INFO - 📋 [92/210] Processing: International Tax & Audit Firm
+2025-06-22 17:22:20,106 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,106 - INFO - ♻️  Image already exists: listing-086-ef399dc8.jpg
+2025-06-22 17:22:20,106 - INFO -     ✅ Success! Total processed: 86
+2025-06-22 17:22:20,106 - INFO - 📋 [93/210] Processing: Reverse Logistics & Returns Processing
+2025-06-22 17:22:20,106 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,106 - INFO - ♻️  Image already exists: listing-087-a83ade1d.jpg
+2025-06-22 17:22:20,106 - INFO -     ✅ Success! Total processed: 87
+2025-06-22 17:22:20,107 - INFO - 📋 [94/210] Processing: Corporate Law Firm
+2025-06-22 17:22:20,107 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,107 - INFO - ♻️  Image already exists: listing-088-737ae4be.jpg
+2025-06-22 17:22:20,107 - INFO -     ✅ Success! Total processed: 88
+2025-06-22 17:22:20,107 - INFO - 📋 [95/210] Processing: Telehealth Platform Provider
+2025-06-22 17:22:20,107 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,107 - INFO - ♻️  Image already exists: listing-089-bf32e80c.jpg
+2025-06-22 17:22:20,107 - INFO -     ✅ Success! Total processed: 89
+2025-06-22 17:22:20,107 - INFO - 📋 [96/210] Processing: Inventory Management & Auditing Firm
+2025-06-22 17:22:20,107 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,107 - INFO - ♻️  Image already exists: listing-090-e97680ca.jpg
+2025-06-22 17:22:20,107 - INFO -     ✅ Success! Total processed: 90
+2025-06-22 17:22:20,107 - INFO - 📋 [97/210] Processing: Contract Research & Manufacturing (CRAMS) for Pharma
+2025-06-22 17:22:20,107 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,107 - INFO - ♻️  Image already exists: listing-091-6473894e.jpg
+2025-06-22 17:22:20,107 - INFO -     ✅ Success! Total processed: 91
+2025-06-22 17:22:20,108 - INFO - 📋 [98/210] Processing: Intellectual Property (IP) Law Firm
+2025-06-22 17:22:20,108 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 17:22:20,108 - INFO - ♻️  Image already exists: listing-092-7786b082.jpg
+2025-06-22 17:22:20,108 - INFO -     ✅ Success! Total processed: 92
+2025-06-22 17:22:20,108 - INFO - 📋 [99/210] Processing: Biotechnology Research Lab
+2025-06-22 17:22:20,108 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,108 - INFO - ♻️  Image already exists: listing-093-098a4650.jpg
+2025-06-22 17:22:20,108 - INFO -     ✅ Success! Total processed: 93
+2025-06-22 17:22:20,108 - INFO - 📋 [100/210] Processing: Genetic Testing Laboratory
+2025-06-22 17:22:20,109 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,109 - INFO - ♻️  Image already exists: listing-094-dec5c3ff.jpg
+2025-06-22 17:22:20,109 - INFO -     ✅ Success! Total processed: 94
+2025-06-22 17:22:20,109 - INFO - 📋 [101/210] Processing: Power Generation Equipment Manufacturer
+2025-06-22 17:22:20,109 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 17:22:20,109 - INFO - ♻️  Image already exists: listing-095-581a2a36.jpg
+2025-06-22 17:22:20,109 - INFO -     ✅ Success! Total processed: 95
+2025-06-22 17:22:20,109 - INFO - 📋 [102/210] Processing: Industrial Packaging Solutions
+2025-06-22 17:22:20,109 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,109 - INFO - ♻️  Image already exists: listing-096-bc8c0e63.jpg
+2025-06-22 17:22:20,109 - INFO -     ✅ Success! Total processed: 96
+2025-06-22 17:22:20,109 - INFO - 📋 [103/210] Processing: Assisted Living Facility Operator
+2025-06-22 17:22:20,109 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,109 - INFO - ♻️  Image already exists: listing-097-f54cc208.jpg
+2025-06-22 17:22:20,109 - INFO -     ✅ Success! Total processed: 97
+2025-06-22 17:22:20,109 - INFO - 📋 [104/210] Processing: High-End Interior Design Firm
+2025-06-22 17:22:20,109 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,109 - INFO - ♻️  Image already exists: listing-098-dd44c303.jpg
+2025-06-22 17:22:20,109 - INFO -     ✅ Success! Total processed: 98
+2025-06-22 17:22:20,110 - INFO - 📋 [105/210] Processing: Water Treatment & Purification System Manufacturer
+2025-06-22 17:22:20,110 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,110 - INFO - ♻️  Image already exists: listing-099-31fd8406.jpg
+2025-06-22 17:22:20,110 - INFO -     ✅ Success! Total processed: 99
+2025-06-22 17:22:20,110 - INFO - 📋 [106/210] Processing: Supply Chain Consulting Firm
+2025-06-22 17:22:20,110 - INFO -     🌍 Location: Da Nang, Vietnam
+2025-06-22 17:22:20,110 - INFO - ♻️  Image already exists: listing-100-823d5354.jpg
+2025-06-22 17:22:20,110 - INFO -     ✅ Success! Total processed: 100
+2025-06-22 17:22:20,110 - INFO - 📋 [107/210] Processing: IT & Technology Recruitment Agency
+2025-06-22 17:22:20,110 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,110 - INFO - ♻️  Image already exists: listing-101-b5ada651.jpg
+2025-06-22 17:22:20,110 - INFO -     ✅ Success! Total processed: 101
+2025-06-22 17:22:20,110 - INFO - 📋 [108/210] Processing: Mental Health & Addiction Treatment Center
+2025-06-22 17:22:20,110 - INFO -     🌍 Location: Bali, Indonesia
+2025-06-22 17:22:20,110 - INFO - ♻️  Image already exists: listing-102-b41f4837.jpg
+2025-06-22 17:22:20,110 - INFO -     ✅ Success! Total processed: 102
+2025-06-22 17:22:20,110 - INFO - 📋 [109/210] Processing: Bespoke Jewelry Manufacturer
+2025-06-22 17:22:20,110 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,111 - INFO - ♻️  Image already exists: listing-103-34eb725b.jpg
+2025-06-22 17:22:20,111 - INFO -     ✅ Success! Total processed: 103
+2025-06-22 17:22:20,111 - INFO - 📋 [110/210] Processing: Real Estate Development Firm
+2025-06-22 17:22:20,111 - INFO -     🌍 Location: Lucknow, India
+2025-06-22 17:22:20,111 - INFO - ♻️  Image already exists: listing-104-d3673ccc.jpg
+2025-06-22 17:22:20,111 - INFO -     ✅ Success! Total processed: 104
+2025-06-22 17:22:20,111 - INFO - 📋 [111/210] Processing: Medical Equipment & Supplies Distributor
+2025-06-22 17:22:20,111 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,111 - INFO - ♻️  Image already exists: listing-105-53743786.jpg
+2025-06-22 17:22:20,111 - INFO -     ✅ Success! Total processed: 105
+2025-06-22 17:22:20,111 - INFO - 📋 [112/210] Processing: Veterinary Specialty & Emergency Hospital
+2025-06-22 17:22:20,111 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,111 - INFO - ♻️  Image already exists: listing-106-5ce7338a.jpg
+2025-06-22 17:22:20,111 - INFO -     ✅ Success! Total processed: 106
+2025-06-22 17:22:20,111 - INFO - 📋 [113/210] Processing: Testing and Certification Laboratory
+2025-06-22 17:22:20,111 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,111 - INFO - ♻️  Image already exists: listing-107-e8993f53.jpg
+2025-06-22 17:22:20,111 - INFO -     ✅ Success! Total processed: 107
+2025-06-22 17:22:20,112 - INFO - 📋 [114/210] Processing: Gourmet Food Importer & Distributor
+2025-06-22 17:22:20,112 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,112 - INFO - ♻️  Image already exists: listing-108-65d2ad81.jpg
+2025-06-22 17:22:20,112 - INFO -     ✅ Success! Total processed: 108
+2025-06-22 17:22:20,112 - INFO - 📋 [115/210] Processing: Freight Bill Auditing & Payment Service
+2025-06-22 17:22:20,112 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,112 - INFO - ♻️  Image already exists: listing-109-a22834a5.jpg
+2025-06-22 17:22:20,112 - INFO -     ✅ Success! Total processed: 109
+2025-06-22 17:22:20,112 - INFO - 📋 [116/210] Processing: Wealth Management Firm
+2025-06-22 17:22:20,112 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,112 - INFO - ♻️  Image already exists: listing-110-439ab934.jpg
+2025-06-22 17:22:20,112 - INFO -     ✅ Success! Total processed: 110
+2025-06-22 17:22:20,112 - INFO - 📋 [117/210] Processing: Multi-Unit Restaurant Group (Fine Dining)
+2025-06-22 17:22:20,112 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,112 - INFO - ♻️  Image already exists: listing-111-31812c51.jpg
+2025-06-22 17:22:20,112 - INFO -     ✅ Success! Total processed: 111
+2025-06-22 17:22:20,112 - INFO - 📋 [118/210] Processing: Corporate Event & Experiential Marketing Agency
+2025-06-22 17:22:20,112 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,112 - INFO - ♻️  Image already exists: listing-112-c0d4095a.jpg
+2025-06-22 17:22:20,112 - INFO -     ✅ Success! Total processed: 112
+2025-06-22 17:22:20,113 - INFO - 📋 [119/210] Processing: Business Valuation Services
+2025-06-22 17:22:20,113 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,113 - INFO - ♻️  Image already exists: listing-113-f46ff876.jpg
+2025-06-22 17:22:20,113 - INFO -     ✅ Success! Total processed: 113
+2025-06-22 17:22:20,113 - INFO - 📋 [120/210] Processing: Art Gallery & Auction House
+2025-06-22 17:22:20,113 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,113 - INFO - ♻️  Image already exists: listing-114-6e4e048d.jpg
+2025-06-22 17:22:20,113 - INFO -     ✅ Success! Total processed: 114
+2025-06-22 17:22:20,113 - INFO - 📋 [121/210] Processing: Government Contract Consulting
+2025-06-22 17:22:20,113 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,113 - INFO - ♻️  Image already exists: listing-115-a2acc168.jpg
+2025-06-22 17:22:20,113 - INFO -     ✅ Success! Total processed: 115
+2025-06-22 17:22:20,113 - INFO - 📋 [122/210] Processing: High-End Security Services Provider
+2025-06-22 17:22:20,113 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,113 - INFO - ♻️  Image already exists: listing-116-77c6d909.jpg
+2025-06-22 17:22:20,113 - INFO -     ✅ Success! Total processed: 116
+2025-06-22 17:22:20,113 - INFO - 📋 [123/210] Processing: Private Golf & Country Club Management
+2025-06-22 17:22:20,113 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,113 - INFO - ♻️  Image already exists: listing-117-bc03f332.jpg
+2025-06-22 17:22:20,113 - INFO -     ✅ Success! Total processed: 117
+2025-06-22 17:22:20,114 - INFO - 📋 [124/210] Processing: Investor Relations Agency
+2025-06-22 17:22:20,114 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,114 - INFO - ♻️  Image already exists: listing-118-3c90890d.jpg
+2025-06-22 17:22:20,114 - INFO -     ✅ Success! Total processed: 118
+2025-06-22 17:22:20,114 - INFO - 📋 [125/210] Processing: Branded Apparel & Merchandise Manufacturer
+2025-06-22 17:22:20,114 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,114 - INFO - ♻️  Image already exists: listing-119-4c124514.jpg
+2025-06-22 17:22:20,114 - INFO -     ✅ Success! Total processed: 119
+2025-06-22 17:22:20,114 - INFO - 📋 [126/210] Processing: National Moving & Storage Company
+2025-06-22 17:22:20,114 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,114 - INFO - ♻️  Image already exists: listing-120-f0a6d7ec.jpg
+2025-06-22 17:22:20,114 - INFO -     ✅ Success! Total processed: 120
+2025-06-22 17:22:20,114 - INFO - 📋 [127/210] Processing: Industrial Equipment Rental
+2025-06-22 17:22:20,114 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,114 - INFO - ♻️  Image already exists: listing-121-ca09213c.jpg
+2025-06-22 17:22:20,114 - INFO -     ✅ Success! Total processed: 121
+2025-06-22 17:22:20,114 - INFO - 📋 [128/210] Processing: Renewable Energy Installation (Solar Farm)
+2025-06-22 17:22:20,114 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 17:22:20,114 - INFO - ♻️  Image already exists: listing-122-155954b0.jpg
+2025-06-22 17:22:20,115 - INFO -     ✅ Success! Total processed: 122
+2025-06-22 17:22:20,115 - INFO - 📋 [129/210] Processing: Data Center Services Provider
+2025-06-22 17:22:20,115 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,115 - INFO - ♻️  Image already exists: listing-123-2946bb93.jpg
+2025-06-22 17:22:20,115 - INFO -     ✅ Success! Total processed: 123
+2025-06-22 17:22:20,115 - INFO - 📋 [130/210] Processing: Commercial Printing Press
+2025-06-22 17:22:20,115 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,115 - INFO - ♻️  Image already exists: listing-124-0a5b46f1.jpg
+2025-06-22 17:22:20,115 - INFO -     ✅ Success! Total processed: 124
+2025-06-22 17:22:20,115 - INFO - 📋 [131/210] Processing: Public Relations (PR) Firm
+2025-06-22 17:22:20,115 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,115 - INFO - ♻️  Image already exists: listing-125-f0abdd6a.jpg
+2025-06-22 17:22:20,115 - INFO -     ✅ Success! Total processed: 125
+2025-06-22 17:22:20,115 - INFO - 📋 [132/210] Processing: Architectural Firm (Large-Scale Projects)
+2025-06-22 17:22:20,115 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 17:22:20,115 - INFO - ♻️  Image already exists: listing-126-04316b24.jpg
+2025-06-22 17:22:20,115 - INFO -     ✅ Success! Total processed: 126
+2025-06-22 17:22:20,115 - INFO - 📋 [133/210] Processing: Executive Recruitment Firm
+2025-06-22 17:22:20,115 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 17:22:20,116 - INFO - ♻️  Image already exists: listing-127-3c2f5006.jpg
+2025-06-22 17:22:20,116 - INFO -     ✅ Success! Total processed: 127
+2025-06-22 17:22:20,116 - INFO - 📋 [134/210] Processing: Automotive Tire & Service Center Chain
+2025-06-22 17:22:20,116 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,116 - INFO - ♻️  Image already exists: listing-128-445a69b8.jpg
+2025-06-22 17:22:20,116 - INFO -     ✅ Success! Total processed: 128
+2025-06-22 17:22:20,116 - INFO - 📋 [135/210] Processing: Regional Convenience Store Chain
+2025-06-22 17:22:20,116 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:20,116 - INFO - ♻️  Image already exists: listing-129-9b9295f0.jpg
+2025-06-22 17:22:20,116 - INFO -     ✅ Success! Total processed: 129
+2025-06-22 17:22:20,116 - INFO - 📋 [136/210] Processing: Commercial Dry Cleaning & Laundry Service
+2025-06-22 17:22:20,116 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,116 - INFO - ♻️  Image already exists: listing-130-847336a6.jpg
+2025-06-22 17:22:20,116 - INFO -     ✅ Success! Total processed: 130
+2025-06-22 17:22:20,116 - INFO - 📋 [137/210] Processing: Corporate Event Planning & Management Firm
+2025-06-22 17:22:20,116 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,116 - INFO - ♻️  Image already exists: listing-131-eaeb551e.jpg
+2025-06-22 17:22:20,116 - INFO -     ✅ Success! Total processed: 131
+2025-06-22 17:22:20,117 - INFO - 📋 [138/210] Processing: Creative & Branding Agency
+2025-06-22 17:22:20,117 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,117 - INFO - ♻️  Image already exists: listing-132-0f99e664.jpg
+2025-06-22 17:22:20,117 - INFO -     ✅ Success! Total processed: 132
+2025-06-22 17:22:20,117 - INFO - 📋 [139/210] Processing: Home & Commercial Inspection Service Group
+2025-06-22 17:22:20,117 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,117 - INFO - ♻️  Image already exists: listing-133-a2408e0e.jpg
+2025-06-22 17:22:20,117 - INFO -     ✅ Success! Total processed: 133
+2025-06-22 17:22:20,117 - INFO - 📋 [140/210] Processing: Regional Insurance Brokerage
+2025-06-22 17:22:20,117 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,117 - INFO - ♻️  Image already exists: listing-134-1673beb3.jpg
+2025-06-22 17:22:20,117 - INFO -     ✅ Success! Total processed: 134
+2025-06-22 17:22:20,117 - INFO - 📋 [141/210] Processing: High-Value Jewelry & Watch Retailer
+2025-06-22 17:22:20,117 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,118 - INFO - ♻️  Image already exists: listing-135-e1ffa8f7.jpg
+2025-06-22 17:22:20,118 - INFO -     ✅ Success! Total processed: 135
+2025-06-22 17:22:20,118 - INFO - 📋 [142/210] Processing: Regional Locksmith & Security Solutions
+2025-06-22 17:22:20,118 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,118 - INFO - ♻️  Image already exists: listing-136-246f762d.jpg
+2025-06-22 17:22:20,118 - INFO -     ✅ Success! Total processed: 136
+2025-06-22 17:22:20,118 - INFO - 📋 [143/210] Processing: Corporate Massage & Wellness Services
+2025-06-22 17:22:20,118 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,118 - INFO - ♻️  Image already exists: listing-137-922bcb7d.jpg
+2025-06-22 17:22:20,118 - INFO -     ✅ Success! Total processed: 137
+2025-06-22 17:22:20,118 - INFO - 📋 [144/210] Processing: Multi-State Optometry & Eyewear Chain
+2025-06-22 17:22:20,118 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,118 - INFO - ♻️  Image already exists: listing-138-5070ca80.jpg
+2025-06-22 17:22:20,118 - INFO -     ✅ Success! Total processed: 138
+2025-06-22 17:22:20,118 - INFO - 📋 [145/210] Processing: Personal Training & Fitness Franchise
+2025-06-22 17:22:20,118 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,118 - INFO - ♻️  Image already exists: listing-139-25911a9f.jpg
+2025-06-22 17:22:20,118 - INFO -     ✅ Success! Total processed: 139
+2025-06-22 17:22:20,119 - INFO - 📋 [146/210] Processing: Commercial Pest Control Services
+2025-06-22 17:22:20,119 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,119 - INFO - ♻️  Image already exists: listing-140-0c9e17db.jpg
+2025-06-22 17:22:20,119 - INFO -     ✅ Success! Total processed: 140
+2025-06-22 17:22:20,119 - INFO - 📋 [147/210] Processing: Regional Property Management Firm
+2025-06-22 17:22:20,119 - INFO -     🌍 Location: Jakarta, Indonesia
+2025-06-22 17:22:20,119 - INFO - ♻️  Image already exists: listing-141-2ff6b431.jpg
+2025-06-22 17:22:20,119 - INFO -     ✅ Success! Total processed: 141
+2025-06-22 17:22:20,119 - INFO - 📋 [148/210] Processing: Commercial & Industrial Roofing Contractor
+2025-06-22 17:22:20,119 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,119 - INFO - ♻️  Image already exists: listing-142-4d26d0c0.jpg
+2025-06-22 17:22:20,119 - INFO -     ✅ Success! Total processed: 142
+2025-06-22 17:22:20,119 - INFO - 📋 [149/210] Processing: Custom Tailoring & Formalwear Chain
+2025-06-22 17:22:20,120 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,120 - INFO - ♻️  Image already exists: listing-143-3881a186.jpg
+2025-06-22 17:22:20,120 - INFO -     ✅ Success! Total processed: 143
+2025-06-22 17:22:20,120 - INFO - 📋 [150/210] Processing: Fleet Taxi & Livery Service
+2025-06-22 17:22:20,120 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,120 - INFO - ♻️  Image already exists: listing-144-e1b12aba.jpg
+2025-06-22 17:22:20,120 - INFO -     ✅ Success! Total processed: 144
+2025-06-22 17:22:20,120 - INFO - 📋 [151/210] Processing: Commercial & Structural Welding Services
+2025-06-22 17:22:20,120 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,120 - INFO - ♻️  Image already exists: listing-145-4b8b5bdd.jpg
+2025-06-22 17:22:20,120 - INFO -     ✅ Success! Total processed: 145
+2025-06-22 17:22:20,120 - INFO - 📋 [152/210] Processing: Used Car Dealership Network
+2025-06-22 17:22:20,120 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:20,120 - INFO - ♻️  Image already exists: listing-146-1735ea32.jpg
+2025-06-22 17:22:20,120 - INFO -     ✅ Success! Total processed: 146
+2025-06-22 17:22:20,120 - INFO - 📋 [153/210] Processing: Frozen Yogurt & Dessert Chain
+2025-06-22 17:22:20,120 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:20,120 - INFO - ♻️  Image already exists: listing-147-4b8d794e.jpg
+2025-06-22 17:22:20,120 - INFO -     ✅ Success! Total processed: 147
+2025-06-22 17:22:20,121 - INFO - 📋 [154/210] Processing: Regional Sandwich Shop Franchise
+2025-06-22 17:22:20,121 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,121 - INFO - ♻️  Image already exists: listing-148-b0cb4a26.jpg
+2025-06-22 17:22:20,121 - INFO -     ✅ Success! Total processed: 148
+2025-06-22 17:22:20,121 - INFO - 📋 [155/210] Processing: Cold-Pressed Juice & Health Food Chain
+2025-06-22 17:22:20,121 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,121 - INFO - ♻️  Image already exists: listing-149-3583edb7.jpg
+2025-06-22 17:22:20,121 - INFO -     ✅ Success! Total processed: 149
+2025-06-22 17:22:20,121 - INFO - 📋 [156/210] Processing: Large-Scale Catering & Events Company
+2025-06-22 17:22:20,121 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,121 - INFO - ♻️  Image already exists: listing-150-ceed868a.jpg
+2025-06-22 17:22:20,121 - INFO -     ✅ Success! Total processed: 150
+2025-06-22 17:22:20,121 - INFO - 📋 [157/210] Processing: Multi-State Liquor Store Chain
+2025-06-22 17:22:20,121 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,121 - INFO - ♻️  Image already exists: listing-151-4a2a874c.jpg
+2025-06-22 17:22:20,121 - INFO -     ✅ Success! Total processed: 151
+2025-06-22 17:22:20,121 - INFO - 📋 [158/210] Processing: Sporting Goods Retail Chain
+2025-06-22 17:22:20,121 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,122 - INFO - ♻️  Image already exists: listing-152-398e17a9.jpg
+2025-06-22 17:22:20,122 - INFO -     ✅ Success! Total processed: 152
+2025-06-22 17:22:20,122 - INFO - 📋 [159/210] Processing: Footwear Retail Chain
+2025-06-22 17:22:20,122 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,122 - INFO - ♻️  Image already exists: listing-153-5b8b0986.jpg
+2025-06-22 17:22:20,122 - INFO -     ✅ Success! Total processed: 153
+2025-06-22 17:22:20,122 - INFO - 📋 [160/210] Processing: Children's Toy & Game Retailer
+2025-06-22 17:22:20,122 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,122 - INFO - ♻️  Image already exists: listing-154-5236701c.jpg
+2025-06-22 17:22:20,122 - INFO -     ✅ Success! Total processed: 154
+2025-06-22 17:22:20,122 - INFO - 📋 [161/210] Processing: Automotive Parts Distributor
+2025-06-22 17:22:20,122 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,122 - INFO - ♻️  Image already exists: listing-155-4391a514.jpg
+2025-06-22 17:22:20,122 - INFO -     ✅ Success! Total processed: 155
+2025-06-22 17:22:20,123 - INFO - 📋 [162/210] Processing: National Dance Studio Franchise
+2025-06-22 17:22:20,123 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,123 - INFO - ♻️  Image already exists: listing-156-4f0a3178.jpg
+2025-06-22 17:22:20,123 - INFO -     ✅ Success! Total processed: 156
+2025-06-22 17:22:20,123 - INFO - 📋 [163/210] Processing: Martial Arts School Chain
+2025-06-22 17:22:20,123 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,123 - INFO - ♻️  Image already exists: listing-157-24d026bf.jpg
+2025-06-22 17:22:20,123 - INFO -     ✅ Success! Total processed: 157
+2025-06-22 17:22:20,123 - INFO - 📋 [164/210] Processing: Commercial Driving & Fleet Training School
+2025-06-22 17:22:20,123 - INFO -     🌍 Location: Bengaluru, India
+2025-06-22 17:22:20,123 - INFO - ♻️  Image already exists: listing-158-a1337ed7.jpg
+2025-06-22 17:22:20,123 - INFO -     ✅ Success! Total processed: 158
+2025-06-22 17:22:20,123 - INFO - 📋 [165/210] Processing: Tanning Salon Franchise
+2025-06-22 17:22:20,123 - INFO -     🌍 Location: Hanoi, Vietnam
+2025-06-22 17:22:20,124 - INFO - ♻️  Image already exists: listing-159-58395ab6.jpg
+2025-06-22 17:22:20,124 - INFO -     ✅ Success! Total processed: 159
+2025-06-22 17:22:20,124 - INFO - 📋 [166/210] Processing: Commercial & Fleet Bicycle Supplier
+2025-06-22 17:22:20,124 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,124 - INFO - ♻️  Image already exists: listing-160-71231be7.jpg
+2025-06-22 17:22:20,124 - INFO -     ✅ Success! Total processed: 160
+2025-06-22 17:22:20,124 - INFO - 📋 [167/210] Processing: Bridal & Formalwear Retail Group
+2025-06-22 17:22:20,124 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,124 - INFO - ♻️  Image already exists: listing-161-94b333d9.jpg
+2025-06-22 17:22:20,124 - INFO -     ✅ Success! Total processed: 161
+2025-06-22 17:22:20,124 - INFO - 📋 [168/210] Processing: Professional Photography Equipment Retailer
+2025-06-22 17:22:20,124 - INFO -     🌍 Location: Khon Kaen, Thailand
+2025-06-22 17:22:20,124 - INFO - ♻️  Image already exists: listing-162-6642af88.jpg
+2025-06-22 17:22:20,124 - INFO -     ✅ Success! Total processed: 162
+2025-06-22 17:22:20,124 - INFO - 📋 [169/210] Processing: Commercial Signage & Graphics Company
+2025-06-22 17:22:20,124 - INFO -     🌍 Location: Yogyakarta, Indonesia
+2025-06-22 17:22:20,124 - INFO - ♻️  Image already exists: listing-163-59df6eb8.jpg
+2025-06-22 17:22:20,124 - INFO -     ✅ Success! Total processed: 163
+2025-06-22 17:22:20,124 - INFO - 📋 [170/210] Processing: Fleet Graphics & Vehicle Wrap Installer
+2025-06-22 17:22:20,125 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,125 - INFO - ♻️  Image already exists: listing-164-f916eccb.jpg
+2025-06-22 17:22:20,125 - INFO -     ✅ Success! Total processed: 164
+2025-06-22 17:22:20,125 - INFO - 📋 [171/210] Processing: Office Furniture Dealership
+2025-06-22 17:22:20,125 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,125 - INFO - ♻️  Image already exists: listing-165-b181908f.jpg
+2025-06-22 17:22:20,125 - INFO -     ✅ Success! Total processed: 165
+2025-06-22 17:22:20,125 - INFO - 📋 [172/210] Processing: Copier & Managed Print Services
+2025-06-22 17:22:20,125 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,125 - INFO - ♻️  Image already exists: listing-166-3b15fc82.jpg
+2025-06-22 17:22:20,125 - INFO -     ✅ Success! Total processed: 166
+2025-06-22 17:22:20,125 - INFO - 📋 [173/210] Processing: IT Hardware Reseller (VAR)
+2025-06-22 17:22:20,125 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,125 - INFO - ♻️  Image already exists: listing-167-51975616.jpg
+2025-06-22 17:22:20,125 - INFO -     ✅ Success! Total processed: 167
+2025-06-22 17:22:20,125 - INFO - 📋 [174/210] Processing: Telecommunications Contractor
+2025-06-22 17:22:20,125 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,125 - INFO - ♻️  Image already exists: listing-168-6d0025c5.jpg
+2025-06-22 17:22:20,126 - INFO -     ✅ Success! Total processed: 168
+2025-06-22 17:22:20,126 - INFO - 📋 [175/210] Processing: Fiber Optic Installation Company
+2025-06-22 17:22:20,126 - INFO -     🌍 Location: Makassar, Indonesia
+2025-06-22 17:22:20,126 - INFO - ♻️  Image already exists: listing-169-ce76fc76.jpg
+2025-06-22 17:22:20,126 - INFO -     ✅ Success! Total processed: 169
+2025-06-22 17:22:20,126 - INFO - 📋 [176/210] Processing: Cell Tower Maintenance Service
+2025-06-22 17:22:20,126 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,126 - INFO - ♻️  Image already exists: listing-170-3ab094dd.jpg
+2025-06-22 17:22:20,126 - INFO -     ✅ Success! Total processed: 170
+2025-06-22 17:22:20,126 - INFO - 📋 [177/210] Processing: Broadcast Engineering Services
+2025-06-22 17:22:20,126 - INFO -     🌍 Location: Ahmedabad, India
+2025-06-22 17:22:20,126 - INFO - ♻️  Image already exists: listing-171-15446292.jpg
+2025-06-22 17:22:20,126 - INFO -     ✅ Success! Total processed: 171
+2025-06-22 17:22:20,127 - INFO - 📋 [178/210] Processing: Satellite Communications Provider
+2025-06-22 17:22:20,127 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,127 - INFO - ♻️  Image already exists: listing-172-5d1d9408.jpg
+2025-06-22 17:22:20,127 - INFO -     ✅ Success! Total processed: 172
+2025-06-22 17:22:20,127 - INFO - 📋 [179/210] Processing: Environmental Consulting Firm
+2025-06-22 17:22:20,127 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,127 - INFO - ♻️  Image already exists: listing-173-ce6240e7.jpg
+2025-06-22 17:22:20,127 - INFO -     ✅ Success! Total processed: 173
+2025-06-22 17:22:20,127 - INFO - 📋 [180/210] Processing: Air Quality Monitoring Service
+2025-06-22 17:22:20,127 - INFO -     🌍 Location: Cebu City, Philippines
+2025-06-22 17:22:20,127 - INFO - ♻️  Image already exists: listing-174-d3f8c3cc.jpg
+2025-06-22 17:22:20,127 - INFO -     ✅ Success! Total processed: 174
+2025-06-22 17:22:20,128 - INFO - 📋 [181/210] Processing: Soil & Groundwater Testing Laboratory
+2025-06-22 17:22:20,128 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,128 - INFO - ♻️  Image already exists: listing-175-29862084.jpg
+2025-06-22 17:22:20,128 - INFO -     ✅ Success! Total processed: 175
+2025-06-22 17:22:20,129 - INFO - 📋 [182/210] Processing: Renewable Energy Credit (REC) Brokerage
+2025-06-22 17:22:20,129 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:20,129 - INFO - ♻️  Image already exists: listing-176-70087c69.jpg
+2025-06-22 17:22:20,129 - INFO -     ✅ Success! Total processed: 176
+2025-06-22 17:22:20,129 - INFO - 📋 [183/210] Processing: Carbon Offset Project Developer
+2025-06-22 17:22:20,129 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,129 - INFO - ♻️  Image already exists: listing-177-74eef72e.jpg
+2025-06-22 17:22:20,129 - INFO -     ✅ Success! Total processed: 177
+2025-06-22 17:22:20,129 - INFO - 📋 [184/210] Processing: Sustainable Building (LEED) Consulting
+2025-06-22 17:22:20,129 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 17:22:20,129 - INFO - ♻️  Image already exists: listing-178-a712bfbe.jpg
+2025-06-22 17:22:20,129 - INFO -     ✅ Success! Total processed: 178
+2025-06-22 17:22:20,129 - INFO - 📋 [185/210] Processing: Energy Auditing Firm
+2025-06-22 17:22:20,129 - INFO -     🌍 Location: Kota Bharu, Malaysia
+2025-06-22 17:22:20,130 - INFO - ♻️  Image already exists: listing-179-31893ad0.jpg
+2025-06-22 17:22:20,130 - INFO -     ✅ Success! Total processed: 179
+2025-06-22 17:22:20,130 - INFO - 📋 [186/210] Processing: Wind Turbine Maintenance Service
+2025-06-22 17:22:20,130 - INFO -     🌍 Location: Iloilo City, Philippines
+2025-06-22 17:22:20,130 - INFO - ♻️  Image already exists: listing-180-cbba1b62.jpg
+2025-06-22 17:22:20,130 - INFO -     ✅ Success! Total processed: 180
+2025-06-22 17:22:20,130 - INFO - 📋 [187/210] Processing: Hydroelectric Power Plant Operator
+2025-06-22 17:22:20,130 - INFO -     🌍 Location: Jaipur, India
+2025-06-22 17:22:20,130 - INFO - ♻️  Image already exists: listing-181-dfcde40b.jpg
+2025-06-22 17:22:20,130 - INFO -     ✅ Success! Total processed: 181
+2025-06-22 17:22:20,130 - INFO - 📋 [188/210] Processing: Geothermal Energy Exploration
+2025-06-22 17:22:20,130 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,130 - INFO - ♻️  Image already exists: listing-182-65861b45.jpg
+2025-06-22 17:22:20,130 - INFO -     ✅ Success! Total processed: 182
+2025-06-22 17:22:20,130 - INFO - 📋 [189/210] Processing: EV Charging Network Operator
+2025-06-22 17:22:20,130 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-183-5a938c97.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 183
+2025-06-22 17:22:20,131 - INFO - 📋 [190/210] Processing: Machine Learning (ML) Consulting
+2025-06-22 17:22:20,131 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-184-53ced230.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 184
+2025-06-22 17:22:20,131 - INFO - 📋 [191/210] Processing: Cloud Cost Management Platform
+2025-06-22 17:22:20,131 - INFO -     🌍 Location: Pune, India
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-185-ddd42ab8.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 185
+2025-06-22 17:22:20,131 - INFO - 📋 [192/210] Processing: Penetration Testing as a Service (PtaaS)
+2025-06-22 17:22:20,131 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-186-ad4a6a8e.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 186
+2025-06-22 17:22:20,131 - INFO - 📋 [193/210] Processing: Threat Intelligence Platform
+2025-06-22 17:22:20,131 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-187-9561c5c6.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 187
+2025-06-22 17:22:20,131 - INFO - 📋 [194/210] Processing: Digital Forensics & Incident Response Firm
+2025-06-22 17:22:20,131 - INFO -     🌍 Location: Chennai, India
+2025-06-22 17:22:20,131 - INFO - ♻️  Image already exists: listing-188-e12f5f67.jpg
+2025-06-22 17:22:20,131 - INFO -     ✅ Success! Total processed: 188
+2025-06-22 17:22:20,132 - INFO - 📋 [195/210] Processing: Contact Center as a Service (CCaaS)
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 17:22:20,132 - INFO - ♻️  Image already exists: listing-189-7eec8fb0.jpg
+2025-06-22 17:22:20,132 - INFO -     ✅ Success! Total processed: 189
+2025-06-22 17:22:20,132 - INFO - 📋 [196/210] Processing: Waste Management & Recycling Corporation
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Iloilo City, Philippines
+2025-06-22 17:22:20,132 - INFO - ♻️  Image already exists: listing-190-746d90ea.jpg
+2025-06-22 17:22:20,132 - INFO -     ✅ Success! Total processed: 190
+2025-06-22 17:22:20,132 - INFO - 📋 [197/210] Processing: Quarry & Aggregate Supplier
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Kolkata, India
+2025-06-22 17:22:20,132 - INFO - ♻️  Image already exists: listing-191-d3a08288.jpg
+2025-06-22 17:22:20,132 - INFO -     ✅ Success! Total processed: 191
+2025-06-22 17:22:20,132 - INFO - 📋 [198/210] Processing: Steel Fabrication and Erection Company
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Kota Bharu, Malaysia
+2025-06-22 17:22:20,132 - INFO - ♻️  Image already exists: listing-192-54ff79b4.jpg
+2025-06-22 17:22:20,132 - INFO -     ✅ Success! Total processed: 192
+2025-06-22 17:22:20,132 - INFO - 📋 [199/210] Processing: Uniform & Linen Supply Service
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,132 - INFO - ♻️  Image already exists: listing-193-8cd1693c.jpg
+2025-06-22 17:22:20,132 - INFO -     ✅ Success! Total processed: 193
+2025-06-22 17:22:20,132 - INFO - 📋 [200/210] Processing: Blasting Services (Mining & Construction)
+2025-06-22 17:22:20,132 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-194-55ba4be2.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 194
+2025-06-22 17:22:20,133 - INFO - 📋 [201/210] Processing: Traffic Control Services
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Bandung, Indonesia
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-195-883a1abc.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 195
+2025-06-22 17:22:20,133 - INFO - 📋 [202/210] Processing: Geomatics & Land Surveying Firm
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Hyderabad, India
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-196-73664412.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 196
+2025-06-22 17:22:20,133 - INFO - 📋 [203/210] Processing: Nutraceutical & Supplement Manufacturer
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Kota Kinabalu, Malaysia
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-197-8196d1f8.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 197
+2025-06-22 17:22:20,133 - INFO - 📋 [204/210] Processing: Pet Food Manufacturer
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Bangalore, India
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-198-6ef132dc.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 198
+2025-06-22 17:22:20,133 - INFO - 📋 [205/210] Processing: Beverage Bottling and Canning Plant
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Bhopal, India
+2025-06-22 17:22:20,133 - INFO - ♻️  Image already exists: listing-199-a6234d3d.jpg
+2025-06-22 17:22:20,133 - INFO -     ✅ Success! Total processed: 199
+2025-06-22 17:22:20,133 - INFO - 📋 [206/210] Processing: E-Learning & Corporate Training Platform
+2025-06-22 17:22:20,133 - INFO -     🌍 Location: Kuala Lumpur, Malaysia
+2025-06-22 17:22:20,134 - INFO - ♻️  Image already exists: listing-200-112a5117.jpg
+2025-06-22 17:22:20,134 - INFO -     ✅ Success! Total processed: 200
+2025-06-22 17:22:20,134 - INFO - 📋 [207/210] Processing: Game Development Studio
+2025-06-22 17:22:20,134 - INFO -     🌍 Location: Medan, Indonesia
+2025-06-22 17:22:20,134 - INFO - ♻️  Image already exists: listing-201-94fb470f.jpg
+2025-06-22 17:22:20,134 - INFO -     ✅ Success! Total processed: 201
+2025-06-22 17:22:20,134 - INFO - 📋 [208/210] Processing: Music Licensing Platform
+2025-06-22 17:22:20,134 - INFO -     🌍 Location: Chiang Mai, Thailand
+2025-06-22 17:22:20,134 - INFO - ♻️  Image already exists: listing-202-d0f69807.jpg
+2025-06-22 17:22:20,134 - INFO -     ✅ Success! Total processed: 202
+2025-06-22 17:22:20,134 - INFO - 📋 [209/210] Processing: Online Auction Platform
+2025-06-22 17:22:20,134 - INFO -     🌍 Location: Surabaya, Indonesia
+2025-06-22 17:22:20,134 - INFO - ♻️  Image already exists: listing-203-775a52a4.jpg
+2025-06-22 17:22:20,134 - INFO -     ✅ Success! Total processed: 203
+2025-06-22 17:22:20,134 - INFO - 📋 [210/210] Processing: ATM Fleet Operator
+2025-06-22 17:22:20,134 - INFO -     🌍 Location: Banjarmasin, Indonesia
+2025-06-22 17:22:20,134 - INFO - ♻️  Image already exists: listing-204-1b79c94e.jpg
+2025-06-22 17:22:20,134 - INFO -     ✅ Success! Total processed: 204
+2025-06-22 17:22:20,134 - INFO - 📄 Generating seed.sql...
+2025-06-22 17:22:20,135 - INFO -    ✅ Using original clean seed template
+2025-06-22 17:22:20,143 - INFO - 
+🎉 PROCESSING COMPLETED SUCCESSFULLY!
+2025-06-22 17:22:20,143 - INFO - ============================================================
+2025-06-22 17:22:20,143 - INFO - 📊 PROCESSING STATISTICS:
+2025-06-22 17:22:20,143 - INFO -    ✅ CSV listings processed: 204
+2025-06-22 17:22:20,143 - INFO -    📥 Images downloaded: 0
+2025-06-22 17:22:20,143 - INFO - ♻️  Images skipped (existing): 204
+2025-06-22 17:22:20,143 - INFO - ❌ Images failed: 6
+2025-06-22 17:22:20,143 - INFO -    ⏱️  Processing time: 31.0 seconds
+2025-06-22 17:22:20,143 - INFO - 
+📋 EXPECTED DATABASE STATE AFTER IMPORT:
+2025-06-22 17:22:20,143 - INFO -    🎯 Estimated total listings: 209
+2025-06-22 17:22:20,143 - INFO -    📄 Source: 5 demo + 204 CSV
+2025-06-22 17:22:20,144 - INFO - 
+📄 FILES GENERATED:
+2025-06-22 17:22:20,144 - INFO -    📄 Generated seed.sql: /Users/macintosh/Developer/studio/supabase/seed.sql
+2025-06-22 17:22:20,144 - INFO -    📸 Images directory: /Users/macintosh/Developer/studio/public/assets/listing-assets
+2025-06-22 17:22:20,144 - INFO - ============================================================
+2025-06-22 17:22:20,144 - INFO - 🌐 Ready for database import!
+2025-06-22 17:22:20,144 - INFO - 
+📋 Sample processed listings:
+2025-06-22 17:22:20,144 - INFO -    1. Commercial & Industrial Painting Contractor (Medan, Indonesia)
+2025-06-22 17:22:20,144 - INFO -    2. Multi-Location Auto Service Center (Pune, India)
+2025-06-22 17:22:20,144 - INFO -    3. Commercial Landscaping & Groundskeeping Corp. (Banjarmasin, Indonesia)
+2025-06-22 17:22:20,144 - INFO - 
+🚀 NEXT STEPS:
+2025-06-22 17:22:20,144 - INFO -    1. Run: npx supabase db reset --linked
+2025-06-22 17:22:20,144 - INFO -    2. Verify total listings count: 209
+2025-06-22 17:22:20,144 - INFO -    3. Run image upload script for production deployment
+2025-06-23 01:42:33,999 - INFO - 🚀 NOBRIDGE MARKETPLACE DATA PROCESSOR - Starting...
+2025-06-23 01:42:33,999 - INFO - 🧹 STEP 1: Cleaning previous data...
+2025-06-23 01:42:34,024 - INFO -    🗑️  Removed existing assets directory
+2025-06-23 01:42:34,025 - INFO -    ✅ Created clean assets directory

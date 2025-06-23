@@ -40,7 +40,15 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { ConversationButton } from "@/components/marketplace/ConversationButton";
-import { CurrencyConverter } from '@/components/shared/currency-converter';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SUPPORTED_CURRENCIES, getCurrency } from '@/lib/currency-config';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Type definitions for the listing data
 interface ListingData {
@@ -93,9 +101,70 @@ interface ListingData {
 }
 
 // Helper to format currency
-const formatCurrency = (amount?: number) => {
-  if (typeof amount !== 'number' || isNaN(amount)) return 'Contact for Price';
-  return `$${amount.toLocaleString()} USD`;
+const formatCurrency = (amount?: number, currencyCode: string = 'USD', rates: Record<string, number> | null = null) => {
+  if (amount === undefined || amount === null) return 'N/A';
+
+  const rate = rates ? rates[currencyCode] : 1;
+  const convertedAmount = amount * (rate || 1);
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currencyCode,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(convertedAmount);
+};
+
+// Function to parse and convert revenue ranges like "$1M - $5M USD"
+const convertRevenueRange = (rangeString: string, currencyCode: string = 'USD', rates: Record<string, number> | null = null) => {
+  if (!rangeString) return null;
+
+  // Extract numbers and convert notation (K, M, B) to actual values
+  const parseAmount = (str: string): number | null => {
+    const match = str.match(/\$?(\d+(?:\.\d+)?)\s*([KMB])?/i);
+    if (!match) return null;
+
+    const num = parseFloat(match[1]);
+    const multiplier = match[2]?.toUpperCase();
+
+    switch (multiplier) {
+      case 'K': return num * 1000;
+      case 'M': return num * 1000000;
+      case 'B': return num * 1000000000;
+      default: return num;
+    }
+  };
+
+  // Split on " - " or "-" and parse each part
+  const parts = rangeString.split(/\s*-\s*/);
+  if (parts.length !== 2) return rangeString; // Return original if can't parse
+
+  const minAmount = parseAmount(parts[0]);
+  const maxAmount = parseAmount(parts[1]);
+
+  if (minAmount === null || maxAmount === null) return rangeString;
+
+  // Convert to selected currency
+  const rate = rates ? rates[currencyCode] : 1;
+  const convertedMin = minAmount * (rate || 1);
+  const convertedMax = maxAmount * (rate || 1);
+
+  // Format with appropriate abbreviation
+  const formatWithAbbreviation = (amount: number) => {
+    if (amount >= 1000000000) {
+      return `${(amount / 1000000000).toFixed(amount % 1000000000 === 0 ? 0 : 1)}B`;
+    } else if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(amount % 1000000 === 0 ? 0 : 1)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)}K`;
+    } else {
+      return amount.toFixed(0);
+    }
+  };
+
+  const currency = getCurrency(currencyCode);
+  if (!currency) return rangeString; // Fallback if currency not found
+  return `${currency.symbol}${formatWithAbbreviation(convertedMin)} - ${currency.symbol}${formatWithAbbreviation(convertedMax)} ${currencyCode}`;
 };
 
 const DEFAULT_LISTING_IMAGES = [
@@ -239,6 +308,11 @@ export default function ListingDetailPage() {
   const [showInquiryDialog, setShowInquiryDialog] = React.useState(false);
   const [inquiryMessage, setInquiryMessage] = React.useState("");
 
+  const [rates, setRates] = React.useState<Record<string, number> | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = React.useState('USD');
+  const [ratesError, setRatesError] = React.useState<string | null>(null);
+  const [isLoadingRates, setIsLoadingRates] = React.useState(true);
+
   const checkExistingInquiry = React.useCallback(async () => {
     if (!currentUser || currentUser.role !== 'buyer' || !listingId) return;
     setIsCheckingInquiry(true);
@@ -310,6 +384,24 @@ export default function ListingDetailPage() {
       ? (listing.asking_price / listing.adjusted_cash_flow).toFixed(2) + 'x'
       : 'N/A';
   }, [listing]);
+
+  React.useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        setIsLoadingRates(true);
+        const response = await fetch('/api/currency/rates');
+        if (!response.ok) throw new Error('Failed to fetch exchange rates.');
+        const data = await response.json();
+        setRates(data);
+        setRatesError(null);
+      } catch (err) {
+        setRatesError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      } finally {
+        setIsLoadingRates(false);
+      }
+    };
+    fetchRates();
+  }, []);
 
   if (listing === undefined || currentUser === undefined || isCheckingInquiry) {
     return <div className="container py-8 text-center min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <p className="ml-3">Loading listing details...</p></div>;
@@ -423,6 +515,17 @@ export default function ListingDetailPage() {
     return <p className="text-sm text-muted-foreground italic">Complete buyer verification to access documents</p>;
   };
 
+  const FinancialValue = ({ usdAmount }: { usdAmount: number | null | undefined }) => {
+    if (usdAmount === null || usdAmount === undefined) {
+      return <span className="text-lg font-semibold text-primary">N/A</span>;
+    }
+    return (
+      <span className="text-lg font-semibold text-primary">
+        {formatCurrency(usdAmount, selectedCurrency, rates)}
+      </span>
+    );
+  };
+
   return (
     <div className="container py-8 md:py-12 bg-brand-light-gray">
       <Card className="shadow-xl overflow-hidden bg-brand-white">
@@ -440,24 +543,51 @@ export default function ListingDetailPage() {
             </div>
             {/* Financial Highlights Bubble */}
             <Card className="bg-primary/5 p-4 md:p-6 rounded-lg shadow-sm border border-primary/20 mt-4">
-              <h2 className="text-xl font-semibold text-primary mb-3 flex items-center"><Banknote className="h-6 w-6 mr-2"/>Financial Snapshot</h2>
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-xl font-semibold text-primary flex items-center"><Banknote className="h-6 w-6 mr-2"/>Financial Snapshot</h2>
+                {isLoadingRates ? <Skeleton className="h-9 w-40" /> : !ratesError && (
+                  <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm">
+                    <span className="text-sm text-muted-foreground font-medium">Currency:</span>
+                    <Select onValueChange={setSelectedCurrency} defaultValue="USD">
+                      <SelectTrigger className="w-[80px] border-0 bg-transparent p-0 h-6 focus:ring-0">
+                        <SelectValue placeholder="USD" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SUPPORTED_CURRENCIES.map(currency => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{currency.code}</span>
+                              <span className="text-xs text-muted-foreground">{currency.symbol}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Asking Price</p>
                   {listing.asking_price > 0 ? (
-                    <CurrencyConverter usdAmount={listing.asking_price} />
+                    <FinancialValue usdAmount={listing.asking_price} />
                   ) : (
                     <p className="text-2xl font-bold text-primary">Contact for Price</p>
                   )}
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Annual Revenue</p>
-                  <p className="text-lg font-semibold text-primary">{listing.annual_revenue_range || formatCurrency(listing.verified_annual_revenue) || 'N/A'}</p>
+                  <p className="text-lg font-semibold text-primary">
+                    {listing.annual_revenue_range
+                      ? convertRevenueRange(listing.annual_revenue_range, selectedCurrency, rates) || listing.annual_revenue_range
+                      : <FinancialValue usdAmount={listing.verified_annual_revenue} />
+                    }
+                  </p>
                 </div>
                 {(listing.adjusted_cash_flow || listing.verified_cash_flow) && (
                  <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Adj. Cash Flow (TTM)</p>
-                    <p className="text-lg font-semibold text-primary">{formatCurrency(listing.adjusted_cash_flow || listing.verified_cash_flow)}</p>
+                    <FinancialValue usdAmount={listing.adjusted_cash_flow || listing.verified_cash_flow} />
                   </div>
                 )}
                 {cfMultiple !== 'N/A' && (
@@ -486,7 +616,7 @@ export default function ListingDetailPage() {
                     <div className="space-y-6">
                         <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><Building className="h-5 w-5"/>Company Details</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Registered Business Name:</span> {listing.registered_business_name || 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Year Established:</span> {listing.established_year || 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Number of Employees:</span> {listing.number_of_employees || 'N/A'}</p></div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view detailed company information</p>)}</div>
                         <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><Globe className="h-5 w-5"/>Web Presence</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Business Website:</span> {listing.website_url ? <Link href={listing.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">{listing.website_url}</Link> : 'N/A'}</p>{listing.social_media_links && <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Social Media:</span> <span className="whitespace-pre-wrap">{listing.social_media_links}</span></p>}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view web presence details</p>)}</div>
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><DollarSign className="h-5 w-5"/>Specific Financials</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Annual Revenue (TTM):</span> {listing.verified_annual_revenue ? `${formatCurrency(listing.verified_annual_revenue)}` : 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Net Profit (TTM):</span> {listing.verified_net_profit ? `${formatCurrency(listing.verified_net_profit)}` : 'N/A'}</p>{listing.net_profit_margin_range && <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Net Profit Margin Range:</span> {listing.net_profit_margin_range}</p>}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view specific financial details</p>)}</div>
+                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><DollarSign className="h-5 w-5"/>Specific Financials</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Annual Revenue (TTM):</span> {listing.verified_annual_revenue ? <FinancialValue usdAmount={listing.verified_annual_revenue} /> : 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Net Profit (TTM):</span> {listing.verified_net_profit ? <FinancialValue usdAmount={listing.verified_net_profit} /> : 'N/A'}</p>{listing.net_profit_margin_range && <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Net Profit Margin Range:</span> {listing.net_profit_margin_range}</p>}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view specific financial details</p>)}</div>
                         <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><UsersIcon className="h-5 w-5"/>Seller & Deal Information</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Detailed Reason for Selling:</span> <span className="whitespace-pre-wrap">{listing.detailed_reason_for_selling || 'N/A'}</span></p>{(() => {
   const dealStructure = listing.deal_structure_looking_for
     ? (typeof listing.deal_structure_looking_for === 'string'
@@ -530,7 +660,6 @@ export default function ListingDetailPage() {
   );
 })()}
                         <div className="flex items-center"><UserCircle className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Seller Status</p><p className="text-muted-foreground">{listing.is_seller_verified ? 'Verified Seller' : 'Unverified Seller'}</p></div></div>
-                         <div className="flex items-center"><CalendarDays className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Listed On</p><p className="text-muted-foreground">{new Date(listing.created_at).toLocaleDateString()}</p></div></div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-2">
                         <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry} onClick={handleInquireClick}>

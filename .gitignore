@@ -48,4 +48,5 @@ firestore-debug.log
 # prototyper
 /context_backup
 
-/python-scripts
+/python-scripts/__pycache__
+/python-scripts/venv

@@ -16,7 +16,9 @@
     "create-admin-remote": "node scripts/create-admin-user-remote.js",
     "migrate-images": "node scripts/smart-image-migration.cjs",
     "process-csv": "node scripts/smart-csv-processor.cjs",
-    "clean-rebuild": "node scripts/complete-clean-rebuild.cjs"
+    "clean-rebuild": "node scripts/complete-clean-rebuild.cjs",
+    "clean-rebuild:hard": "node scripts/complete-clean-rebuild.cjs --hard-reset",
+    "comprehensive-seed": "node scripts/comprehensive-data-seeder.cjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.19.5",
