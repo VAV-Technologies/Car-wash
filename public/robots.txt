@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+Allow: /marketplace
+Allow: /how-buying-works
+Allow: /how-selling-works
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /faq
+Allow: /help
+Allow: /terms
+Allow: /privacy
+
+# Block admin and user-specific areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /seller-dashboard
+Disallow: /auth
+Disallow: /api
+Disallow: /onboarding
+
+# Block development/test pages
+Disallow: /test-*
+Disallow: /debug-*
+
+# Sitemap location
+Sitemap: https://www.nobridge.co/sitemap.xml

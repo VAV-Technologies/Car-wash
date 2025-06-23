@@ -9,13 +9,63 @@ import { SWRProvider } from '@/contexts/swr-provider';
 import { QueryProvider } from '@/contexts/query-provider';
 import { GeistSans } from 'geist/font/sans';
 import { Toaster as SonnerToaster } from "sonner";
+import StructuredData from '@/components/seo/StructuredData';
 
 // Force all pages to be dynamic
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Nobridge - Business Marketplace Platform',
-  description: 'Connecting SME owners with investors and buyers in Asia.',
+  title: {
+    default: 'Nobridge - Business Marketplace Platform',
+    template: '%s | Nobridge'
+  },
+  description: 'Connecting SME owners with investors and buyers in Asia. Find businesses for sale, investment opportunities, and connect with verified buyers and sellers.',
+  keywords: ['business marketplace', 'SME', 'investors', 'buyers', 'sellers', 'Asia', 'business for sale', 'investment opportunities'],
+  authors: [{ name: 'Nobridge' }],
+  creator: 'Nobridge',
+  publisher: 'Nobridge',
+  metadataBase: new URL('https://www.nobridge.co'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://www.nobridge.co',
+    title: 'Nobridge - Business Marketplace Platform',
+    description: 'Connecting SME owners with investors and buyers in Asia. Find businesses for sale, investment opportunities, and connect with verified buyers and sellers.',
+    siteName: 'Nobridge',
+    images: [
+      {
+        url: '/assets/nobridge_app_icon.png',
+        width: 512,
+        height: 512,
+        alt: 'Nobridge Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nobridge - Business Marketplace Platform',
+    description: 'Connecting SME owners with investors and buyers in Asia. Find businesses for sale, investment opportunities, and connect with verified buyers and sellers.',
+    images: ['/assets/nobridge_app_icon.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // Add your verification codes when you get them
+    // google: 'your-google-verification-code',
+    // bing: 'your-bing-verification-code',
+  },
   icons: {
     icon: [
       { url: '/nobridge-favicon.ico?v=3', sizes: 'any' },
@@ -52,6 +102,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap"
         />
+        <StructuredData type="organization" />
       </head>
       <body className="font-sans antialiased flex flex-col min-h-screen bg-background text-foreground">
         <QueryProvider>

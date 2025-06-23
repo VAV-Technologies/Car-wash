@@ -1,7 +1,28 @@
 'use client';
 
+import type { Metadata } from 'next';
+import StructuredData from '@/components/seo/StructuredData';
+
 // Force dynamic rendering due to client-side interactivity
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Business Marketplace - Find Investment Opportunities',
+  description: 'Browse verified business listings from SME owners across Asia. Find investment opportunities, businesses for sale, and connect with motivated sellers.',
+  keywords: ['business marketplace', 'investment opportunities', 'businesses for sale', 'SME', 'Asia', 'verified listings'],
+  openGraph: {
+    title: 'Business Marketplace - Find Investment Opportunities | Nobridge',
+    description: 'Browse verified business listings from SME owners across Asia. Find investment opportunities, businesses for sale, and connect with motivated sellers.',
+    url: 'https://www.nobridge.co/marketplace',
+  },
+  twitter: {
+    title: 'Business Marketplace - Find Investment Opportunities | Nobridge',
+    description: 'Browse verified business listings from SME owners across Asia. Find investment opportunities, businesses for sale, and connect with motivated sellers.',
+  },
+  alternates: {
+    canonical: '/marketplace',
+  },
+};
 
 import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
@@ -192,8 +213,11 @@ function MarketplaceContent() {
 
 export default function MarketplacePage() {
   return (
-    <Suspense fallback={<div>Loading marketplace filters...</div>}>
-      <MarketplaceContent />
-    </Suspense>
+    <>
+      <StructuredData type="marketplace" />
+      <Suspense fallback={<div>Loading marketplace filters...</div>}>
+        <MarketplaceContent />
+      </Suspense>
+    </>
   );
 }
