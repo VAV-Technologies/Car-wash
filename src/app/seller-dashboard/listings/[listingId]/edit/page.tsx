@@ -91,6 +91,7 @@ const ListingSchema = z.object({
   specificAnnualRevenueLastYear: z.coerce.number({invalid_type_error: "Specific annual revenue must be a number."}).optional(),
   specificNetProfitLastYear: z.coerce.number({invalid_type_error: "Specific net profit must be a number."}).optional(),
   adjustedCashFlow: z.coerce.number({invalid_type_error: "Adjusted cash flow must be a number."}).optional(),
+  ebitda: z.coerce.number({invalid_type_error: "EBITDA must be a number."}).optional(),
   adjustedCashFlowExplanation: z.string().optional(),
 
   dealStructureLookingFor: z.array(z.string()).optional(),
@@ -188,6 +189,7 @@ export default function EditSellerListingPage() {
           specificAnnualRevenueLastYear: fetchedListing.verified_annual_revenue || undefined,
           specificNetProfitLastYear: fetchedListing.verified_net_profit || undefined,
           adjustedCashFlow: fetchedListing.adjusted_cash_flow || undefined,
+          ebitda: fetchedListing.ebitda || undefined,
           adjustedCashFlowExplanation: fetchedListing.adjusted_cash_flow_explanation || "",
           dealStructureLookingFor: fetchedListing.deal_structure_looking_for || [],
           reasonForSellingAnonymous: fetchedListing.reason_for_selling_anonymous || "",
@@ -460,6 +462,7 @@ export default function EditSellerListingPage() {
         specific_annual_revenue_last_year: values.specificAnnualRevenueLastYear || null,
         specific_net_profit_last_year: values.specificNetProfitLastYear || null,
         adjusted_cash_flow: values.adjustedCashFlow || null,
+        ebitda: values.ebitda || null,
         adjusted_cash_flow_explanation: values.adjustedCashFlowExplanation || null,
         deal_structure_looking_for: values.dealStructureLookingFor || [],
         reason_for_selling_anonymous: values.reasonForSellingAnonymous || null,
@@ -704,6 +707,7 @@ export default function EditSellerListingPage() {
               </div>
               <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80"/>Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isSubmitting} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)}/>
               <FormField control={form.control} name="adjustedCashFlow" render={({ field }) => (<FormItem><FormLabel>Adjusted Cash Flow / SDE (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 220000" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="ebitda" render={({ field }) => (<FormItem><FormLabel>EBITDA (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 250000" disabled={isSubmitting} /></FormControl><FormDescription>Earnings Before Interest, Taxes, Depreciation, and Amortization</FormDescription><FormMessage /></FormItem>)} />
               <Separator/>
               <h3 className="text-md font-medium text-muted-foreground font-heading">Specific Financials (For Verified View)</h3>
               <FormField control={form.control} name="specificAnnualRevenueLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Annual Revenue (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />

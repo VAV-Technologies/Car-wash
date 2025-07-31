@@ -84,6 +84,7 @@ const ListingSchema = z.object({
   specificAnnualRevenueLastYear: z.coerce.number({invalid_type_error: "Specific annual revenue must be a number."}).optional(),
   specificNetProfitLastYear: z.coerce.number({invalid_type_error: "Specific net profit must be a number."}).optional(),
   adjustedCashFlow: z.coerce.number({invalid_type_error: "Adjusted cash flow must be a number."}).optional(),
+  ebitda: z.coerce.number({invalid_type_error: "EBITDA must be a number."}).optional(),
 
   dealStructureLookingFor: z.array(z.string()).optional(),
   reasonForSellingAnonymous: z.string().max(500, "Reason too long (max 500 chars).").optional(),
@@ -139,7 +140,7 @@ export default function CreateSellerListingPage() {
       listingTitleAnonymous: "", industry: "", locationCountry: "", locationCityRegionGeneral: "", anonymousBusinessDescription: "",
       keyStrength1: "", keyStrength2: "", keyStrength3: "",
       businessModel: "", yearEstablished: undefined, registeredBusinessName: "", businessWebsiteUrl: "", socialMediaLinks: "", numberOfEmployees: undefined,
-      annualRevenueRange: "", netProfitMarginRange: "", askingPrice: undefined, specificAnnualRevenueLastYear: undefined, specificNetProfitLastYear: undefined, adjustedCashFlow: undefined,
+      annualRevenueRange: "", netProfitMarginRange: "", askingPrice: undefined, specificAnnualRevenueLastYear: undefined, specificNetProfitLastYear: undefined, adjustedCashFlow: undefined, ebitda: undefined,
       dealStructureLookingFor: [], reasonForSellingAnonymous: "", detailedReasonForSelling: "",
       growthOpportunity1: "", growthOpportunity2: "", growthOpportunity3: "",
       imageFile1: undefined, imageFile2: undefined, imageFile3: undefined, imageFile4: undefined, imageFile5: undefined,
@@ -241,6 +242,7 @@ export default function CreateSellerListingPage() {
           specificAnnualRevenueLastYear: values.specificAnnualRevenueLastYear || null,
           specificNetProfitLastYear: values.specificNetProfitLastYear || null,
           adjustedCashFlow: values.adjustedCashFlow || null,
+          ebitda: values.ebitda || null,
           keyStrength1: values.keyStrength1 ? String(values.keyStrength1).trim() : null,
           keyStrength2: values.keyStrength2 ? String(values.keyStrength2).trim() : null,
           keyStrength3: values.keyStrength3 ? String(values.keyStrength3).trim() : null,
@@ -584,6 +586,7 @@ export default function CreateSellerListingPage() {
               </div>
               <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80"/>Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isPending} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)}/>
               <FormField control={form.control} name="adjustedCashFlow" render={({ field }) => (<FormItem><FormLabel>Adjusted Cash Flow / SDE (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 220000" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="ebitda" render={({ field }) => (<FormItem><FormLabel>EBITDA (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 250000" disabled={isPending} /></FormControl><FormDescription>Earnings Before Interest, Taxes, Depreciation, and Amortization</FormDescription><FormMessage /></FormItem>)} />
               <Separator/>
               <h3 className="text-md font-medium text-muted-foreground font-heading">Specific Financials (For Verified View)</h3>
               <FormField control={form.control} name="specificAnnualRevenueLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Annual Revenue (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />

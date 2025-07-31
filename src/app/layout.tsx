@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nobridge - Business Marketplace Platform',
+  title: 'Nobridge - Business Marketplace Platform',
     description: 'Connecting SME owners with investors and buyers in Asia. Find businesses for sale, investment opportunities, and connect with verified buyers and sellers.',
     images: ['/assets/nobridge_app_icon.png'],
   },

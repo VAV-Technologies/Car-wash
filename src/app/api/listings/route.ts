@@ -47,6 +47,7 @@ export async function GET(request: NextRequest) {
         specific_annual_revenue_last_year,
         specific_net_profit_last_year,
         adjusted_cash_flow,
+        ebitda,
         key_strengths_anonymous,
         key_strength_1,
         key_strength_2,

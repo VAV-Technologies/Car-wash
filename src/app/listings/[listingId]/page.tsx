@@ -85,6 +85,7 @@ interface ListingData {
   reason_for_selling_anonymous?: string;
   detailed_reason_for_selling?: string;
   adjusted_cash_flow?: number;
+  ebitda?: number;
   social_media_links?: string;
   registered_business_name?: string;
   is_seller_verified?: boolean;
@@ -539,6 +540,25 @@ export default function ListingDetailPage() {
                   ) : (
                     <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
                   )}
+                  {/* Listing Verification Badge */}
+                  {(() => {
+                    const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
+                    if (verificationStatus === 'verified') {
+                      return (
+                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 border border-blue-500/30">
+                          <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
+                        </Badge>
+                      );
+                    } else if (verificationStatus === 'deactivated') {
+                      return (
+                        <Badge variant="secondary" className="bg-red-500/10 text-red-700 border border-red-500/30">
+                          <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
+                        </Badge>
+                      );
+                    }
+                    // Don't show badge for 'unverified' to avoid clutter
+                    return null;
+                  })()}
                 </div>
             </div>
             {/* Financial Highlights Bubble */}
@@ -568,14 +588,6 @@ export default function ListingDetailPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Asking Price</p>
-                  {listing.asking_price > 0 ? (
-                    <FinancialValue usdAmount={listing.asking_price} />
-                  ) : (
-                    <p className="text-2xl font-bold text-primary">Contact for Price</p>
-                  )}
-                </div>
-                <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Annual Revenue</p>
                   <p className="text-lg font-semibold text-primary">
                     {listing.annual_revenue_range
@@ -583,6 +595,10 @@ export default function ListingDetailPage() {
                       : <FinancialValue usdAmount={listing.verified_annual_revenue} />
                     }
                   </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">EBITDA (TTM)</p>
+                  <FinancialValue usdAmount={listing.ebitda} />
                 </div>
                 {(listing.adjusted_cash_flow || listing.verified_cash_flow) && (
                  <div>
@@ -648,7 +664,7 @@ export default function ListingDetailPage() {
                     <CardContent className="space-y-3 text-sm">
                         <div className="flex items-center"><Briefcase className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Industry</p><p className="text-muted-foreground">{listing.industry}</p></div></div>
                         <div className="flex items-center"><MapPin className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Location</p><p className="text-muted-foreground">{listing.location_city}, {listing.location_country}</p></div></div>
-                        {/* Moved Asking Price & Revenue to top Financial Snapshot */}
+                        <div className="flex items-center"><DollarSign className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Asking Price</p><p className="text-muted-foreground">{listing.asking_price > 0 ? formatCurrency(listing.asking_price, selectedCurrency, rates) : 'Contact for Price'}</p></div></div>
 {(() => {
   const dealStructure = listing.deal_structure_looking_for
     ? (typeof listing.deal_structure_looking_for === 'string'

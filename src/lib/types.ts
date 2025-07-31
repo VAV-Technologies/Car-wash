@@ -127,6 +127,17 @@ export type ListingStatus =
   | 'under_review'         // Admin is actively reviewing
   | 'appealing_rejection'; // Seller has appealed a rejection
 
+// Listing Verification System Types
+export type ListingVerificationStatus = 'unverified' | 'verified' | 'deactivated';
+
+export interface ListingVerificationInfo {
+  status: ListingVerificationStatus;
+  verifiedBy?: string;
+  verifiedByName?: string;
+  verifiedAt?: Date;
+  notes?: string;
+}
+
 export interface Listing {
   id: string;
   sellerId: string;
@@ -165,6 +176,12 @@ export interface Listing {
 
   status: ListingStatus;
   isSellerVerified: boolean;
+  
+  // New listing verification system (independent of seller verification)
+  listingVerificationStatus?: ListingVerificationStatus;
+  listingVerificationBy?: string;
+  listingVerificationAt?: Date;
+  listingVerificationNotes?: string;
 
   imageUrls?: string[];
   financialDocumentsUrl?: string;
@@ -321,7 +338,7 @@ export interface NotificationItem {
 }
 
 // Admin Listing Management Types
-export type AdminActionType = 'approved' | 'rejected' | 'status_changed' | 'appeal_reviewed' | 'notes_updated' | 'bulk_action';
+export type AdminActionType = 'approved' | 'rejected' | 'status_changed' | 'appeal_reviewed' | 'notes_updated' | 'bulk_action' | 'listing_verified' | 'listing_unverified' | 'listing_verification_deactivated';
 
 export type RejectionCategory = 'quality' | 'compliance' | 'incomplete' | 'fraud' | 'duplicate' | 'inappropriate' | 'other';
 
@@ -361,6 +378,11 @@ export interface AdminListingWithContext {
     adminActionBy?: string;
     adminActionAt?: Date;
     rejectionCategory?: RejectionCategory;
+    // Listing verification fields for admin context
+    listingVerificationStatus?: ListingVerificationStatus;
+    listingVerificationBy?: string;
+    listingVerificationAt?: Date;
+    listingVerificationNotes?: string;
   };
   seller: {
     id: string;

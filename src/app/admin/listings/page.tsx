@@ -32,7 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { AdminListingWithContext, ListingStatus, RejectionCategory } from "@/lib/types";
+import type { AdminListingWithContext, ListingStatus, RejectionCategory, ListingVerificationStatus } from "@/lib/types";
 import Link from "next/link";
 import {
   Eye,
@@ -41,15 +41,18 @@ import {
   Filter,
   Search,
   ShieldCheck,
+  ShieldX,
   AlertTriangle,
   CalendarDays,
   Loader2,
   RefreshCw,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from "lucide-react";
 import { industries } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { ListingVerificationDialog } from "@/components/admin/listing-verification-dialog";
 
 // Helper component for client-side date formatting
 function FormattedDate({ dateString }: { dateString: Date | string }) {
@@ -145,6 +148,15 @@ export default function AdminListingsPage() {
   const [actionLoading, setActionLoading] = React.useState(false);
   const [rejectionCategory, setRejectionCategory] = React.useState<RejectionCategory>('quality');
   const [adminNotes, setAdminNotes] = React.useState('');
+
+  // Verification dialog state
+  const [verificationDialog, setVerificationDialog] = React.useState<{
+    isOpen: boolean;
+    listing: AdminListingWithContext | null;
+  }>({
+    isOpen: false,
+    listing: null,
+  });
 
   // Fetch listings from API
   const fetchListings = React.useCallback(async (page = 1) => {
@@ -297,6 +309,49 @@ export default function AdminListingsPage() {
     return <Badge variant="outline" className="capitalize">{status.replace(/_/g, ' ')}</Badge>;
   };
 
+  // Verification status badge helper
+  const getVerificationStatusBadge = (verificationStatus?: ListingVerificationStatus) => {
+    const status = verificationStatus || 'unverified';
+    const statusConfig = {
+      'unverified': { 
+        color: 'bg-gray-100 text-gray-700 border-gray-300', 
+        icon: AlertTriangle, 
+        text: 'Unverified',
+        iconColor: 'text-gray-600'
+      },
+      'verified': { 
+        color: 'bg-green-100 text-green-700 border-green-300', 
+        icon: ShieldCheck, 
+        text: 'Verified',
+        iconColor: 'text-green-600'
+      },
+      'deactivated': { 
+        color: 'bg-red-100 text-red-700 border-red-300', 
+        icon: ShieldX, 
+        text: 'Deactivated',
+        iconColor: 'text-red-600'
+      }
+    };
+
+    const config = statusConfig[status];
+    const Icon = config.icon;
+    
+    return (
+      <Badge className={`${config.color} text-xs`}>
+        <Icon className={`h-3 w-3 mr-1 ${config.iconColor}`} />
+        {config.text}
+      </Badge>
+    );
+  };
+
+  // Handle verification dialog
+  const handleVerificationClick = (listing: AdminListingWithContext) => {
+    setVerificationDialog({
+      isOpen: true,
+      listing,
+    });
+  };
+
   const canApprove = (status: ListingStatus) => {
     return ['pending_approval', 'under_review', 'rejected_by_admin', 'appealing_rejection', 'inactive'].includes(status);
   };
@@ -406,26 +461,29 @@ export default function AdminListingsPage() {
           {/* Listings Table */}
           {!loading && (
             <>
-              <div className="rounded-md border overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="whitespace-nowrap">Anonymous Title</TableHead>
-                      <TableHead className="whitespace-nowrap">Seller Name</TableHead>
-                      <TableHead className="whitespace-nowrap">Seller Paid</TableHead>
-                      <TableHead>Industry</TableHead>
-                      <TableHead className="whitespace-nowrap">Asking Price (USD)</TableHead>
-                      <TableHead className="whitespace-nowrap">Listing Status</TableHead>
-                      <TableHead className="whitespace-nowrap flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-1"/>Created On
-                      </TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
+              <div className="rounded-md border">
+                <div className="overflow-x-auto">
+                  <Table className="min-w-full">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[200px]">Anonymous Title</TableHead>
+                        <TableHead className="hidden md:table-cell min-w-[120px]">Seller Name</TableHead>
+                        <TableHead className="hidden lg:table-cell text-center">Paid</TableHead>
+                        <TableHead className="hidden lg:table-cell min-w-[100px]">Industry</TableHead>
+                        <TableHead className="hidden xl:table-cell text-right min-w-[120px]">Asking Price</TableHead>
+                        <TableHead className="min-w-[120px]">Status</TableHead>
+                        <TableHead className="min-w-[120px]">Verification</TableHead>
+                        <TableHead className="hidden lg:table-cell text-center min-w-[100px]">
+                          <CalendarDays className="h-4 w-4 mx-auto"/>
+                          <span className="sr-only">Created On</span>
+                        </TableHead>
+                        <TableHead className="text-right sticky right-0 bg-background min-w-[60px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
                   <TableBody>
                     {listings.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                           No listings found matching your criteria.
                         </TableCell>
                       </TableRow>
@@ -434,34 +492,44 @@ export default function AdminListingsPage() {
                         const { listing, seller } = listingWithContext;
                         return (
                           <TableRow key={listing.id}>
-                            <TableCell className="font-medium max-w-[200px] sm:max-w-xs truncate" title={listing.listingTitleAnonymous}>
-                              <Link href={`/listings/${listing.id}`} className="text-primary hover:underline">
-                                {listing.listingTitleAnonymous}
-                              </Link>
+                            <TableCell className="min-w-[200px]">
+                              <div className="space-y-1">
+                                <div className="font-medium truncate" title={listing.listingTitleAnonymous}>
+                                  <Link href={`/listings/${listing.id}`} className="text-primary hover:underline">
+                                    {listing.listingTitleAnonymous}
+                                  </Link>
+                                </div>
+                                <div className="md:hidden text-xs text-muted-foreground">
+                                  by {seller.fullName} • {listing.industry}
+                                </div>
+                              </div>
                             </TableCell>
-                            <TableCell className="whitespace-nowrap">
+                            <TableCell className="hidden md:table-cell min-w-[120px]">
                               <Link href={`/admin/users/${seller.id}`} className="text-primary hover:underline">
                                 {seller.fullName}
                               </Link>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden lg:table-cell text-center">
                               {seller.isPaid ? (
-                                <Badge className="bg-green-500 text-white">Yes</Badge>
+                                <Badge className="bg-green-500 text-white text-xs">Yes</Badge>
                               ) : (
-                                <Badge variant="secondary">No</Badge>
+                                <Badge variant="secondary" className="text-xs">No</Badge>
                               )}
                             </TableCell>
-                            <TableCell>{listing.industry}</TableCell>
-                            <TableCell className="whitespace-nowrap">
+                            <TableCell className="hidden lg:table-cell min-w-[100px] text-sm">{listing.industry}</TableCell>
+                            <TableCell className="hidden xl:table-cell text-right min-w-[120px] text-sm">
                               {listing.askingPrice ? `$${listing.askingPrice.toLocaleString()}` : 'N/A'}
                             </TableCell>
-                            <TableCell>{getListingStatusBadge(listing.status, listing.isSellerVerified)}</TableCell>
-                            <TableCell><FormattedDate dateString={listing.createdAt} /></TableCell>
-                            <TableCell className="text-right whitespace-nowrap">
+                            <TableCell className="min-w-[120px]">{getListingStatusBadge(listing.status, listing.isSellerVerified)}</TableCell>
+                            <TableCell className="min-w-[120px]">{getVerificationStatusBadge(listing.listingVerificationStatus)}</TableCell>
+                            <TableCell className="hidden lg:table-cell text-center min-w-[100px] text-sm">
+                              <FormattedDate dateString={listing.createdAt} />
+                            </TableCell>
+                            <TableCell className="text-right sticky right-0 bg-background min-w-[60px]">
                               <div className="flex items-center justify-end gap-1">
-                                <Button variant="ghost" size="icon" asChild title="View Listing Details">
+                                <Button variant="ghost" size="icon" asChild title="View Listing Details" className="h-8 w-8">
                                   <Link href={`/listings/${listing.id}`}>
-                                    <Eye className="h-4 w-4" />
+                                    <Eye className="h-3 w-3" />
                                   </Link>
                                 </Button>
 
@@ -471,8 +539,9 @@ export default function AdminListingsPage() {
                                     size="icon"
                                     title="Approve Listing"
                                     onClick={() => handleAdminAction('approve', listingWithContext)}
+                                    className="h-8 w-8"
                                   >
-                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                    <CheckCircle className="h-3 w-3 text-green-600" />
                                   </Button>
                                 )}
 
@@ -482,10 +551,21 @@ export default function AdminListingsPage() {
                                     size="icon"
                                     title="Reject Listing"
                                     onClick={() => handleAdminAction('reject', listingWithContext)}
+                                    className="h-8 w-8"
                                   >
-                                    <XCircle className="h-4 w-4 text-red-600" />
+                                    <XCircle className="h-3 w-3 text-red-600" />
                                   </Button>
                                 )}
+
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  title="Manage Listing Verification"
+                                  onClick={() => handleVerificationClick(listingWithContext)}
+                                  className="h-8 w-8"
+                                >
+                                  <Settings className="h-3 w-3 text-blue-600" />
+                                </Button>
                               </div>
                             </TableCell>
                           </TableRow>
@@ -493,7 +573,8 @@ export default function AdminListingsPage() {
                       })
                     )}
                   </TableBody>
-                </Table>
+                  </Table>
+                </div>
               </div>
 
               {/* Pagination */}
@@ -605,6 +686,14 @@ export default function AdminListingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Listing Verification Dialog */}
+      <ListingVerificationDialog
+        isOpen={verificationDialog.isOpen}
+        onOpenChange={(isOpen) => setVerificationDialog(prev => ({ ...prev, isOpen }))}
+        listing={verificationDialog.listing}
+        onVerificationUpdate={() => fetchListings(pagination.currentPage)}
+      />
     </div>
   );
 }

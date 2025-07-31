@@ -97,6 +97,13 @@ export async function GET(
       verified_net_profit: responseData.specific_net_profit_last_year,
       verified_cash_flow: responseData.adjusted_cash_flow,
       adjusted_cash_flow: responseData.adjusted_cash_flow,
+      ebitda: responseData.ebitda,
+
+      // Listing verification fields
+      listingVerificationStatus: responseData.listing_verification_status,
+      listingVerificationBy: responseData.listing_verification_by,
+      listingVerificationAt: responseData.listing_verification_at,
+      listingVerificationNotes: responseData.listing_verification_notes,
 
       // Individual key strength fields
       key_strength_1: responseData.key_strength_1,
@@ -458,6 +465,7 @@ export async function PATCH(
       'specific_annual_revenue_last_year',
       'specific_net_profit_last_year',
       'adjusted_cash_flow',
+      'ebitda',
       'adjusted_cash_flow_explanation',
       'deal_structure_looking_for',
       'reason_for_selling_anonymous',

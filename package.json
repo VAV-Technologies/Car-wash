@@ -14,6 +14,7 @@
     "reset-test-users": "tsx scripts/reset-test-users.ts",
     "create-admin": "node scripts/create-admin-user.js",
     "create-admin-remote": "node scripts/create-admin-user-remote.js",
+    "load": "node scripts/local-seed.js",
     "migrate-images": "node scripts/smart-image-migration.cjs",
     "process-csv": "node scripts/smart-csv-processor.cjs",
     "clean-rebuild": "node scripts/complete-clean-rebuild.cjs",
