@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cleanup/process",
-      "schedule": "0 * * * *"
+      "schedule": "0 2 * * *"
     }
   ],
   "env": {
