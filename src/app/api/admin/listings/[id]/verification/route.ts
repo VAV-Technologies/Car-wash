@@ -93,9 +93,9 @@ export async function PATCH(
     const { data: updateResult, error: updateError } = await supabaseAdmin
       .rpc('update_listing_verification_status', {
         listing_uuid: listingId,
-        new_verification_status: verificationStatus,
+        new_verification_status: verificationStatus as any, // Cast to allow PostgreSQL to handle enum conversion
         admin_user_id: user.id,
-        verification_notes: notes || null
+        admin_notes: notes || null
       });
 
     if (updateError || !updateResult?.success) {
