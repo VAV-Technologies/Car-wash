@@ -1,7 +1,4 @@
 'use client';
-
-// Force dynamic rendering due to client-side interactivity
-export const dynamic = 'force-dynamic'
 import * as React from "react";
 import {
   Table,
@@ -207,7 +204,7 @@ export default function AdminListingsPage() {
   // Initial load and filter changes
   React.useEffect(() => {
     fetchListings(1);
-  }, [filters]);
+  }, [fetchListings]);
 
   // Handle admin actions
   const handleAdminAction = async (type: 'approve' | 'reject', listing: AdminListingWithContext) => {
