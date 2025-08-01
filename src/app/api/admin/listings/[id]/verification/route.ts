@@ -92,10 +92,10 @@ export async function PATCH(
     // Use the database function to update verification status with proper audit trail
     const { data: updateResult, error: updateError } = await supabaseAdmin
       .rpc('update_listing_verification_status', {
+        admin_user_id: user.id,
         listing_uuid: listingId,
         new_verification_status: verificationStatus as any, // Cast to allow PostgreSQL to handle enum conversion
-        admin_user_id: user.id,
-        admin_notes: notes || null
+        verification_notes: notes || null
       });
 
     if (updateError || !updateResult?.success) {
