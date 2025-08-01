@@ -94,7 +94,7 @@ export async function PATCH(
       .rpc('update_listing_verification_status', {
         admin_user_id: user.id,
         listing_uuid: listingId,
-        new_verification_status: verificationStatus as any, // Cast to allow PostgreSQL to handle enum conversion
+        new_verification_status: verificationStatus, // Function now handles TEXT and casts internally
         verification_notes: notes || null
       });
 
