@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         inquiry_count,
-        user_profiles!seller_id (
+        user_profiles(
           id,
           full_name,
           email,
@@ -97,9 +97,13 @@ export async function GET(request: NextRequest) {
     query = query.order(sortColumn, { ascending: sortOrder === 'asc' });
 
     // Get total count for pagination
-    const { count: totalCount } = await supabaseAdmin
+    const { count: totalCount, error: countError } = await supabaseAdmin
       .from('listings')
       .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('[ADMIN-LISTINGS] Count query error:', countError);
+    }
 
     // Apply pagination
     query = query.range(offset, offset + limit - 1);
@@ -108,8 +112,9 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('[ADMIN-LISTINGS] Database error:', error);
+      console.error('[ADMIN-LISTINGS] Error details:', JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: 'Failed to fetch listings' },
+        { error: 'Failed to fetch listings', details: error.message },
         { status: 500 }
       );
     }
@@ -130,7 +135,7 @@ export async function GET(request: NextRequest) {
             reason_category,
             admin_notes,
             created_at,
-            user_profiles!admin_user_id (
+            user_profiles(
               full_name
             )
           `)
@@ -153,7 +158,7 @@ export async function GET(request: NextRequest) {
             reviewed_by,
             created_at,
             reviewed_at,
-            user_profiles!reviewed_by (
+            user_profiles(
               full_name
             )
           `)
