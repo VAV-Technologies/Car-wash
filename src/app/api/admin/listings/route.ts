@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     console.log(`[ADMIN-LISTINGS] Fetching listings - Page: ${page}, Limit: ${limit}, Status: ${statusFilter}, Industry: ${industryFilter}`);
 
-    // Build the base query with comprehensive joins
+    // Build the base query without joins to avoid PostgREST ambiguity
     let query = supabaseAdmin
       .from('listings')
       .select(`
@@ -58,15 +58,7 @@ export async function GET(request: NextRequest) {
         listing_verification_notes,
         created_at,
         updated_at,
-        inquiry_count,
-        user_profiles!listings_seller_id_fkey(
-          id,
-          full_name,
-          email,
-          verification_status,
-          is_paid,
-          created_at
-        )
+        inquiry_count
       `);
 
     // Apply filters
@@ -119,10 +111,29 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Fetch seller user profiles separately to avoid PostgREST join ambiguity
+    const sellerIds = [...new Set((listings || []).map((listing: any) => listing.seller_id))];
+    const { data: sellerProfiles } = await supabaseAdmin
+      .from('user_profiles')
+      .select(`
+        id,
+        full_name,
+        email,
+        verification_status,
+        is_paid,
+        created_at
+      `)
+      .in('id', sellerIds);
+
+    // Create a map for quick seller profile lookup
+    const sellerProfileMap = new Map(
+      (sellerProfiles || []).map((profile: any) => [profile.id, profile])
+    );
+
     // Transform data to match AdminListingWithContext interface
     const transformedListings: AdminListingWithContext[] = await Promise.all(
       (listings || []).map(async (listing: any) => {
-        // Fetch admin action history for this listing
+        // Fetch admin action history for this listing (without joins)
         const { data: adminHistory } = await supabaseAdmin
           .from('admin_listing_actions')
           .select(`
@@ -134,16 +145,13 @@ export async function GET(request: NextRequest) {
             new_status,
             reason_category,
             admin_notes,
-            created_at,
-            user_profiles!admin_listing_actions_admin_user_id_fkey(
-              full_name
-            )
+            created_at
           `)
           .eq('listing_id', listing.id)
           .order('created_at', { ascending: false })
           .limit(10);
 
-        // Fetch appeal information if exists
+        // Fetch appeal information if exists (without joins)
         const { data: appeal } = await supabaseAdmin
           .from('listing_appeals')
           .select(`
@@ -157,10 +165,7 @@ export async function GET(request: NextRequest) {
             admin_response,
             reviewed_by,
             created_at,
-            reviewed_at,
-            user_profiles!listing_appeals_reviewed_by_fkey(
-              full_name
-            )
+            reviewed_at
           `)
           .eq('listing_id', listing.id)
           .single();
@@ -192,19 +197,22 @@ export async function GET(request: NextRequest) {
             // Required fields for Listing interface
             keyStrengthsAnonymous: [],
           } as any,
-          seller: {
-            id: listing.user_profiles.id,
-            fullName: listing.user_profiles.full_name,
-            email: listing.user_profiles.email,
-            verificationStatus: listing.user_profiles.verification_status,
-            isPaid: listing.user_profiles.is_paid,
-            createdAt: new Date(listing.user_profiles.created_at),
-          },
+          seller: (() => {
+            const sellerProfile = sellerProfileMap.get(listing.seller_id);
+            return sellerProfile ? {
+              id: sellerProfile.id,
+              fullName: sellerProfile.full_name,
+              email: sellerProfile.email,
+              verificationStatus: sellerProfile.verification_status,
+              isPaid: sellerProfile.is_paid,
+              createdAt: new Date(sellerProfile.created_at),
+            } : null;
+          })(),
           adminHistory: (adminHistory || []).map((action: any) => ({
             id: action.id,
             listingId: action.listing_id,
             adminUserId: action.admin_user_id,
-            adminName: action.user_profiles?.full_name,
+            adminName: null, // Admin names removed to avoid PostgREST joins
             actionType: action.action_type,
             previousStatus: action.previous_status,
             newStatus: action.new_status,
@@ -222,7 +230,7 @@ export async function GET(request: NextRequest) {
             status: appeal.status,
             adminResponse: appeal.admin_response,
             reviewedBy: appeal.reviewed_by,
-            reviewedByName: appeal.user_profiles?.full_name,
+            reviewedByName: null, // Reviewer names removed to avoid PostgREST joins
             createdAt: new Date(appeal.created_at),
             reviewedAt: appeal.reviewed_at ? new Date(appeal.reviewed_at) : undefined,
           } : undefined,
