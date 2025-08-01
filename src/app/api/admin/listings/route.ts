@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         inquiry_count,
-        user_profiles(
+        user_profiles!listings_seller_id_fkey(
           id,
           full_name,
           email,
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
             reason_category,
             admin_notes,
             created_at,
-            user_profiles(
+            user_profiles!admin_listing_actions_admin_user_id_fkey(
               full_name
             )
           `)
@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
             reviewed_by,
             created_at,
             reviewed_at,
-            user_profiles(
+            user_profiles!listing_appeals_reviewed_by_fkey(
               full_name
             )
           `)
