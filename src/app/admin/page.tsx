@@ -22,6 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { Inquiry } from "@/lib/types";
 import { NobridgeIcon, NobridgeIconType } from "@/components/ui/nobridge-icon";
+import { Settings } from "lucide-react";
 
 // Simple fetcher for SWR
 const fetcher = (url: string) => fetch(url).then(res => res.json());
@@ -387,6 +388,7 @@ export default function AdminDashboardPage() {
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/listings"><ListChecks className="mb-1"/> Listing Management</Link></Button>
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/analytics"><LineChart className="mb-1"/> View Full Analytics</Link></Button>
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/email-recovery"><NobridgeIcon icon="email" className="mb-1"/> Email Recovery</Link></Button>
+            <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/email-test"><Settings className="mb-1"/> Email Test</Link></Button>
         </CardContent>
       </Card>
     </div>
