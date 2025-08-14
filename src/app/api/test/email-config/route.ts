@@ -91,20 +91,26 @@ export async function POST(request: NextRequest) {
         };
         break;
 
-      case 'supabase-auth':
-        // Test Supabase Auth email
-        const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://nobridge.asia'}/auth/callback`
+      case 'registration-api':
+        // Test our new registration API
+        const registrationResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            password: 'TestPassword123!',
+            full_name: 'Test User',
+            role: 'buyer'
+          })
         });
         
-        if (error) {
-          throw error;
-        }
+        const registrationResult = await registrationResponse.json();
         
         result = {
-          success: true,
-          method: 'supabase-auth',
-          message: 'Supabase auth invite sent'
+          success: registrationResponse.ok,
+          method: 'registration-api',
+          response: registrationResult,
+          status: registrationResponse.status
         };
         break;
 

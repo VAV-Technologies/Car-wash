@@ -196,21 +196,21 @@ export default function EmailTestPage() {
                 </Button>
 
                 <Button
-                  onClick={() => testEmail('supabase-auth')}
-                  disabled={isLoading || testResults['supabase-auth']?.loading}
+                  onClick={() => testEmail('registration-api')}
+                  disabled={isLoading || testResults['registration-api']?.loading}
                   variant="outline"
                   className="w-full justify-start"
                 >
-                  {testResults['supabase-auth']?.loading ? (
+                  {testResults['registration-api']?.loading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : testResults['supabase-auth']?.success ? (
+                  ) : testResults['registration-api']?.success ? (
                     <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" />
-                  ) : testResults['supabase-auth']?.success === false ? (
+                  ) : testResults['registration-api']?.success === false ? (
                     <XCircle className="mr-2 h-4 w-4 text-red-600" />
                   ) : (
                     <Mail className="mr-2 h-4 w-4" />
                   )}
-                  Test Supabase Auth Email
+                  Test Registration API
                 </Button>
 
                 <Button
@@ -249,8 +249,8 @@ export default function EmailTestPage() {
                 <Info className="h-4 w-4" />
                 <AlertTitle>Testing Steps</AlertTitle>
                 <AlertDescription className="space-y-1 text-xs mt-2">
-                  <p>1. <strong>Resend Direct</strong> - Tests Resend API directly (uses test domain)</p>
-                  <p>2. <strong>Supabase Auth</strong> - Tests Supabase's email system with your SMTP</p>
+                  <p>1. <strong>Resend Direct</strong> - Tests Resend API directly (domain verification required)</p>
+                  <p>2. <strong>Registration API</strong> - Tests complete registration flow with email sending</p>
                   <p>3. <strong>Email Service</strong> - Tests your app's email service wrapper</p>
                 </AlertDescription>
               </Alert>

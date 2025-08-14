@@ -116,36 +116,70 @@ export const auth = {
     }
   },
 
-  // Sign up new user - ALWAYS use Resend bypass
+  // Sign up new user - Uses server-side API for proper client/server separation
   async signUp(registerData: RegisterData) {
     try {
-      console.log(`[AUTH-RESEND] Creating user with Resend email system: ${registerData.email}`)
+      console.log(`[AUTH-CLIENT] Starting registration for: ${registerData.email}`)
       
-      // Use bypass system directly (much more reliable)
-      const { signUpWithEmailBypass } = await import('./email-bypass')
-      const result = await signUpWithEmailBypass(registerData.email, registerData.password, {
-        role: registerData.role || 'buyer',
-        full_name: registerData.full_name,
-        phone_number: registerData.phone_number,
-        country: registerData.country
+      // Call server-side registration API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: registerData.email,
+          password: registerData.password,
+          full_name: registerData.full_name,
+          phone_number: registerData.phone_number,
+          country: registerData.country,
+          role: registerData.role || 'buyer',
+          initialCompanyName: registerData.initialCompanyName
+        })
       })
       
-      if (result.success) {
-        console.log(`[AUTH-RESEND] User created successfully via Resend: ${result.user?.id}`)
+      const result = await response.json()
+      
+      if (!response.ok) {
+        console.error(`[AUTH-CLIENT] Registration failed (${response.status}):`, result)
+        
+        // Handle specific error codes for better UX
+        if (result.code === 'USER_EXISTS_VERIFIED') {
+          return { user: null, error: 'USER_EXISTS_LOGIN_FAILED' } // Maintain existing error code
+        }
+        
+        return { 
+          user: null, 
+          error: result.error || 'Registration failed. Please try again.' 
+        }
+      }
+      
+      if (result.success && result.user) {
+        console.log(`[AUTH-CLIENT] Registration successful for user: ${result.user.id}`)
+        
         return {
           user: result.user,
           error: null,
-          needsVerification: true,
-          message: 'Account created successfully. Please check your email for verification.',
+          needsVerification: result.user.needsVerification,
+          message: result.message || 'Account created successfully. Please check your email for verification.',
           verificationToken: null // We handle verification through our own system
         }
       } else {
-        console.error(`[AUTH-RESEND] Failed to create user:`, result.error)
-        return { user: null, error: result.error || 'Registration failed' }
+        console.error(`[AUTH-CLIENT] Registration failed:`, result)
+        return { 
+          user: null, 
+          error: result.error || 'Registration failed. Please try again.' 
+        }
       }
     } catch (error) {
-      console.error('Unexpected error in signUp:', error)
-      return { user: null, error: 'An unexpected error occurred' }
+      console.error('[AUTH-CLIENT] Network or unexpected error during registration:', error)
+      
+      // Handle network errors gracefully
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        return { user: null, error: 'Network error. Please check your connection and try again.' }
+      }
+      
+      return { user: null, error: 'An unexpected error occurred. Please try again.' }
     }
   },
 
