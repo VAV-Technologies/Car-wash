@@ -126,7 +126,7 @@ export const auth = {
         email,
         password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:9002'}/auth/callback`,
+          emailRedirectTo: `${this.getBaseUrl()}/auth/callback`,
           data: {
             role: registerData.role || 'buyer',
             full_name: registerData.full_name,

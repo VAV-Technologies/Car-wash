@@ -386,6 +386,7 @@ export default function AdminDashboardPage() {
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/users"><Users className="mb-1"/> User Management</Link></Button>
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/listings"><ListChecks className="mb-1"/> Listing Management</Link></Button>
             <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/analytics"><LineChart className="mb-1"/> View Full Analytics</Link></Button>
+            <Button variant="outline" asChild className="flex-col h-24"><Link href="/admin/email-recovery"><NobridgeIcon icon="email" className="mb-1"/> Email Recovery</Link></Button>
         </CardContent>
       </Card>
     </div>
