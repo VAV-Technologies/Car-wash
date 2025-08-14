@@ -148,10 +148,10 @@ export class EmailService {
       try {
         console.log(`[EMAIL-SERVICE] Attempt ${attempt}/${this.maxRetries}: Sending ${subject} to ${to}`);
 
-        if (process.env.NODE_ENV === 'production' && resend) {
-          // Use Resend in production
+        // ALWAYS use Resend now (much more reliable)
+        if (resend) {
           const result = await resend.emails.send({
-            from,
+            from: from === 'noreply@yourdomain.com' ? 'onboarding@resend.dev' : from,
             to,
             subject,
             html,
@@ -166,25 +166,7 @@ export class EmailService {
             debug: { result, attempt }
           };
         } else {
-          // Use Supabase admin to generate email in development
-          const { data, error } = await supabaseAdmin.auth.admin.generateLink({
-            type: 'email_change_new',
-            email: to,
-            options: {
-              redirectTo: `${this.getBaseUrl()}/auth/callback`
-            }
-          });
-
-          if (error) throw error;
-
-          console.log(`[EMAIL-SERVICE] SUCCESS (Supabase Dev): ${subject} sent to ${to} via Mailpit`);
-      return {
-            success: true,
-            message: 'Email sent successfully via Supabase (Mailpit)',
-            service: 'supabase-dev',
-            attempts: attempt,
-            debug: { data, attempt, viewAt: 'http://localhost:54324' }
-      };
+          throw new Error('Resend API key not configured');
         }
     } catch (error) {
         console.error(`[EMAIL-SERVICE] Attempt ${attempt}/${this.maxRetries} failed:`, error);

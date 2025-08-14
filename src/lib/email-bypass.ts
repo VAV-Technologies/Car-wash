@@ -59,8 +59,13 @@ export async function sendVerificationEmailDirect(email: string, token?: string)
       ? `${baseUrl}/auth/callback?token=${token}&type=email&redirect_to=${encodeURIComponent('/dashboard')}`
       : `${baseUrl}/verify-email?email=${encodeURIComponent(email)}&type=register`;
 
+    // Determine the best sender email
+    const senderEmail = process.env.NODE_ENV === 'production' 
+      ? 'noreply@nobridge.co'  // Use your domain in production
+      : 'onboarding@resend.dev'; // Use Resend's test domain in development
+
     const result = await resend.emails.send({
-      from: 'noreply@resend.dev', // Use Resend's verified domain
+      from: senderEmail,
       to: email,
       subject: 'Welcome to Nobridge - Verify Your Email',
       html: `

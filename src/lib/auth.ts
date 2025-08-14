@@ -116,107 +116,33 @@ export const auth = {
     }
   },
 
-  // Sign up new user
+  // Sign up new user - ALWAYS use Resend bypass
   async signUp(registerData: RegisterData) {
     try {
-      const supabase = createClient()
-      const { email, password } = registerData
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${this.getBaseUrl()}/auth/callback`,
-          data: {
-            role: registerData.role || 'buyer',
-            full_name: registerData.full_name,
-            phone_number: registerData.phone_number,
-            country: registerData.country
-          }
-        }
+      console.log(`[AUTH-RESEND] Creating user with Resend email system: ${registerData.email}`)
+      
+      // Use bypass system directly (much more reliable)
+      const { signUpWithEmailBypass } = await import('./email-bypass')
+      const result = await signUpWithEmailBypass(registerData.email, registerData.password, {
+        role: registerData.role || 'buyer',
+        full_name: registerData.full_name,
+        phone_number: registerData.phone_number,
+        country: registerData.country
       })
-
-      if (error) {
-        // 🔥 SMART SIGN-UP: If user is already registered, try to sign them in automatically.
-        if (error.message.includes('User already registered')) {
-          console.log(`Registration attempt for existing email: ${email}. Attempting automatic sign-in.`)
-          try {
-            const signInData = await this.signIn(email, password)
-            // If sign-in is successful, return that user data.
-            return { user: signInData.user, error: null, session: signInData.session }
-          } catch (signInError: any) {
-            // If sign-in fails (e.g., wrong password), return a clear, user-friendly error.
-            return { user: null, error: 'USER_EXISTS_LOGIN_FAILED' }
-          }
-        }
-
-        // 🔥 EMAIL BYPASS: If signup fails due to email issues, use bypass system
-        if (error.message.includes('Error sending confirmation email') || 
-            error.message.includes('Failed to send email') ||
-            error.message.includes('SMTP') ||
-            error.status === 500) {
-          console.log(`[SIGNUP-BYPASS] Email sending failed, attempting bypass for: ${email}`)
-          
-          try {
-            const { signUpWithEmailBypass } = await import('./email-bypass')
-            const bypassResult = await signUpWithEmailBypass(email, password, {
-              role: registerData.role || 'buyer',
-              full_name: registerData.full_name,
-              phone_number: registerData.phone_number,
-              country: registerData.country
-            })
-            
-            if (bypassResult.success) {
-              console.log(`[SIGNUP-BYPASS] Successfully created user via bypass: ${bypassResult.user?.id}`)
-              return {
-                user: bypassResult.user,
-                error: null,
-                needsVerification: true,
-                message: 'Account created successfully. Please check your email for verification.',
-                method: 'bypass'
-              }
-            } else {
-              console.error(`[SIGNUP-BYPASS] Bypass also failed:`, bypassResult.error)
-              return { user: null, error: `Registration failed: ${bypassResult.error}` }
-            }
-          } catch (bypassError) {
-            console.error('[SIGNUP-BYPASS] Bypass system error:', bypassError)
-            return { user: null, error: `Registration failed: ${error.message}` }
-          }
-        }
-        
-        console.error('SignUp error:', error)
-        return { user: null, error: error.message }
-      }
-
-      if (data.user && !data.user.email_confirmed_at) {
-        console.log('User created but email not confirmed yet. User should check email for verification.')
-
-        // Generate a secure verification token for this registration
-        let verificationToken = '';
-        try {
-          const { generateVerificationToken } = await import('./verification-token');
-          // Pass the correct parameters - generateVerificationToken expects (email, expiresIn)
-          verificationToken = await generateVerificationToken(email, 3600); // 1 hour expiry
-          console.log(`Generated verification token for ${email} (token length: ${verificationToken.length})`);
-        } catch (tokenError) {
-          console.error('Failed to generate verification token:', tokenError);
-          // Continue without token - middleware fallback will still allow registration flow
-        }
-
-        // NOTE: Removed custom email sending since Supabase handles this automatically
-        // with the proper templates configured in supabase/config.toml
-
+      
+      if (result.success) {
+        console.log(`[AUTH-RESEND] User created successfully via Resend: ${result.user?.id}`)
         return {
-          user: data.user,
+          user: result.user,
           error: null,
           needsVerification: true,
-          message: 'Please check your email for a verification link.',
-          verificationToken // Include the token in the response
+          message: 'Account created successfully. Please check your email for verification.',
+          verificationToken: null // We handle verification through our own system
         }
+      } else {
+        console.error(`[AUTH-RESEND] Failed to create user:`, result.error)
+        return { user: null, error: result.error || 'Registration failed' }
       }
-
-      return { user: data.user, error: null }
     } catch (error) {
       console.error('Unexpected error in signUp:', error)
       return { user: null, error: 'An unexpected error occurred' }
