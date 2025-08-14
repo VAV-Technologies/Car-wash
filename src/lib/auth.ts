@@ -149,6 +149,42 @@ export const auth = {
             return { user: null, error: 'USER_EXISTS_LOGIN_FAILED' }
           }
         }
+
+        // 🔥 EMAIL BYPASS: If signup fails due to email issues, use bypass system
+        if (error.message.includes('Error sending confirmation email') || 
+            error.message.includes('Failed to send email') ||
+            error.message.includes('SMTP') ||
+            error.status === 500) {
+          console.log(`[SIGNUP-BYPASS] Email sending failed, attempting bypass for: ${email}`)
+          
+          try {
+            const { signUpWithEmailBypass } = await import('./email-bypass')
+            const bypassResult = await signUpWithEmailBypass(email, password, {
+              role: registerData.role || 'buyer',
+              full_name: registerData.full_name,
+              phone_number: registerData.phone_number,
+              country: registerData.country
+            })
+            
+            if (bypassResult.success) {
+              console.log(`[SIGNUP-BYPASS] Successfully created user via bypass: ${bypassResult.user?.id}`)
+              return {
+                user: bypassResult.user,
+                error: null,
+                needsVerification: true,
+                message: 'Account created successfully. Please check your email for verification.',
+                method: 'bypass'
+              }
+            } else {
+              console.error(`[SIGNUP-BYPASS] Bypass also failed:`, bypassResult.error)
+              return { user: null, error: `Registration failed: ${bypassResult.error}` }
+            }
+          } catch (bypassError) {
+            console.error('[SIGNUP-BYPASS] Bypass system error:', bypassError)
+            return { user: null, error: `Registration failed: ${error.message}` }
+          }
+        }
+        
         console.error('SignUp error:', error)
         return { user: null, error: error.message }
       }
@@ -277,12 +313,19 @@ export const auth = {
 
   // Helper function to get the base URL in a server-compatible way
   getBaseUrl() {
+    // Check for explicit app URL first (most reliable)
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+      return process.env.NEXT_PUBLIC_APP_URL
+    }
     // In production (Vercel), use VERCEL_URL
     if (process.env.VERCEL_URL) {
       return `https://${process.env.VERCEL_URL}`
     }
+    // Check for site URL (used by Supabase)
+    if (process.env.NEXT_PUBLIC_SITE_URL) {
+      return process.env.NEXT_PUBLIC_SITE_URL
+    }
     // In development, use localhost with the correct port
-    // Check for PORT env var or default to the configured dev port
     const port = process.env.PORT || '9002'
     return `http://localhost:${port}`
   },

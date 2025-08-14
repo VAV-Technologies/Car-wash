@@ -1,50 +1,77 @@
 'use client';
 
-// Force dynamic rendering due to client-side interactivity
-export const dynamic = 'force-dynamic'
+import { Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AuthCardWrapper } from '@/components/auth/auth-card-wrapper';
+import { useState } from 'react';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-export default function VerificationSuccessPage() {
+function VerificationSuccessContent() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const email = searchParams.get('email');
+  const method = searchParams.get('method');
 
-  useEffect(() => {
-    toast({
-      title: "Email Verified!",
-      description: "Your account has been successfully activated. Redirecting to login...",
-    });
-
-    const timer = setTimeout(() => {
-      router.push('/auth/login');
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [router, toast]);
+  const handleContinue = () => {
+    setIsLoading(true);
+    router.push('/auth/login');
+  };
 
   return (
     <AuthCardWrapper
       headerLabel="Email Verification Successful!"
-      backButtonLabel="Go to Login Now"
-      backButtonHref="/auth/login"
+      backButtonLabel=""
+      backButtonHref=""
     >
-      <Alert variant="default" className="bg-green-50 border-green-200 dark:bg-green-900 dark:border-green-700">
-        <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-        <AlertTitle className="text-green-700 dark:text-green-300">
-          🎉 Verification Complete!
-        </AlertTitle>
-        <AlertDescription className="text-green-600 dark:text-green-400">
-          Your email has been successfully verified. You can now log in to your account.
-          <br />
-          <br />
-          <em>Redirecting to login page in a few seconds...</em>
-        </AlertDescription>
-      </Alert>
+      <div className="text-center space-y-6">
+        <div className="flex justify-center">
+          <CheckCircle2 className="h-16 w-16 text-green-600" />
+        </div>
+        
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold text-foreground">
+            Welcome to Nobridge!
+          </h2>
+          <p className="text-muted-foreground">
+            {email && (
+              <>Your email address <strong>{email}</strong> has been successfully verified.</>
+            )}
+          </p>
+          {method === 'bypass' && (
+            <p className="text-xs text-muted-foreground bg-muted p-2 rounded">
+              Verified via secure bypass system
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-3">
+          <Button 
+            onClick={handleContinue} 
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Redirecting...' : 'Continue to Login'}
+          </Button>
+        </div>
+
+        <div className="text-xs text-muted-foreground space-y-1">
+          <p>Your account is now fully activated.</p>
+          <p>You can now sign in and access all Nobridge features.</p>
+        </div>
+      </div>
     </AuthCardWrapper>
+  );
+}
+
+export default function VerificationSuccessPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Suspense fallback={<div>Loading...</div>}>
+        <VerificationSuccessContent />
+      </Suspense>
+    </div>
   );
 }
