@@ -72,34 +72,123 @@ export class EmailService {
   }
 
   /**
-   * Enhanced email templates that match app design principles (no emojis)
+   * OTP verification email template
    */
   private getVerificationTemplate(verificationUrl: string): string {
     return `
-      <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F4F6FC; padding: 20px;">
-        <div style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #0D0D39; margin: 0; font-size: 24px; font-weight: 600;">Welcome to Nobridge!</h1>
-            <p style="color: #666; font-size: 16px; line-height: 1.5;">Please verify your email address to complete your registration.</p>
-          </div>
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Welcome to Nobridge - Verify Your Email</title>
+          <style>
+              body {
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  line-height: 1.6;
+                  color: #0D0D39;
+                  max-width: 600px;
+                  margin: 0 auto;
+                  padding: 20px;
+                  background-color: #F4F6FC;
+              }
+              .container {
+                  background: white;
+                  padding: 40px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);
+              }
+              .header {
+                  text-align: center;
+                  margin-bottom: 30px;
+              }
+              .logo {
+                  max-width: 180px;
+                  height: auto;
+                  margin-bottom: 20px;
+              }
+              h1 {
+                  color: #0D0D39;
+                  margin: 0;
+                  font-size: 24px;
+                  font-weight: 600;
+              }
+              .verification-section {
+                  background: #F4F6FC;
+                  padding: 24px;
+                  border-radius: 8px;
+                  margin: 24px 0;
+                  text-align: center;
+              }
+              .magic-link-btn {
+                  display: inline-block;
+                  background: #0D0D39;
+                  color: white;
+                  padding: 12px 32px;
+                  text-decoration: none;
+                  border-radius: 6px;
+                  font-weight: 600;
+                  margin: 16px 0;
+              }
+              .otp-section {
+                  border-top: 1px solid #E5E7EB;
+                  padding-top: 24px;
+                  margin-top: 24px;
+              }
+              .otp-code {
+                  font-size: 32px;
+                  font-weight: bold;
+                  letter-spacing: 8px;
+                  color: #0D0D39;
+                  background: #F9FAFB;
+                  padding: 16px;
+                  border-radius: 8px;
+                  display: inline-block;
+                  margin: 16px 0;
+              }
+              .footer {
+                  text-align: center;
+                  margin-top: 32px;
+                  padding-top: 24px;
+                  border-top: 1px solid #E5E7EB;
+                  color: #6B7280;
+                  font-size: 14px;
+              }
+              .expires {
+                  color: #EF4444;
+                  font-weight: 600;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="header">
+                  <h1>Welcome to Nobridge!</h1>
+                  <p>Please verify your email address to complete your registration.</p>
+              </div>
 
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationUrl}" style="background-color: #0D0D39; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-              Verify Email Address
-            </a>
-          </div>
+              <div class="verification-section">
+                  <h2>🔢 Email Verification Code</h2>
+                  <p>Enter this 6-digit code in the app to verify your email:</p>
+                  <div class="otp-code">{{ .Token }}</div>
+                  <p><small>This code will expire in 1 hour</small></p>
+                  <p style="margin-top: 16px; color: #059669; font-weight: 600;">
+                      ✨ This is the fastest and most secure way to verify your account
+                  </p>
+              </div>
 
-          <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #3B82F6;">
-            <p style="margin: 0; color: #0D0D39;"><strong>What happens next:</strong></p>
-            <p style="margin: 8px 0 0 0; color: #666;">Click the button above to verify your email and gain full access to the Nobridge platform.</p>
-          </div>
+              <div style="background: #FEF3C7; padding: 16px; border-radius: 8px; margin: 24px 0;">
+                  <p><strong>💡 Pro Tip:</strong> Check your spam/junk folder if you don't see this email in your inbox.</p>
+              </div>
 
-          <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 14px;">
-            <p style="margin: 0;">If you didn't create an account with Nobridge, you can safely ignore this email.</p>
-            <p style="margin: 5px 0 0 0;">&copy; 2024 Nobridge. All rights reserved.</p>
+              <div class="footer">
+                  <p>Welcome to the Nobridge community! We're excited to help you connect with business opportunities across Asia.</p>
+                  <p><small>If you didn't create an account with Nobridge, you can safely ignore this email.</small></p>
+                  <p><small>&copy; 2024 Nobridge. All rights reserved.</small></p>
+              </div>
           </div>
-        </div>
-      </div>
+      </body>
+      </html>
     `;
   }
 
@@ -418,22 +507,22 @@ export class EmailService {
         };
       }
 
-          // Try Resend fallback if available
+          // Try Resend fallback with OTP template if available
           if (attempt === this.maxRetries && resend) {
-            console.log(`[EMAIL-SERVICE] Fallback to Resend for verification: ${email}`);
+            console.log(`[EMAIL-SERVICE] Fallback to Resend with OTP template for verification: ${email}`);
 
-            const verificationUrl = `${this.getBaseUrl()}/auth/callback`;
+            const verificationUrl = `${this.getBaseUrl()}/verify-otp?email=${encodeURIComponent(email)}&type=register`;
             const result = await this.sendCustomEmail({
               to: email,
-              subject: 'Welcome to Nobridge - Verify Your Email',
+              subject: 'Welcome to Nobridge - Your Verification Code',
               html: this.getVerificationTemplate(verificationUrl)
             });
 
             if (result.success) {
               return {
                 ...result,
-                message: 'Verification email sent via Resend fallback',
-                service: 'resend-fallback'
+                message: 'OTP verification email sent via Resend fallback',
+                service: 'resend-otp-fallback'
               };
             }
           }
