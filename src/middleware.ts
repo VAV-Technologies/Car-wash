@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest) {
   // Public paths that don't require authentication
   const publicPaths = [
     // Auth pages
-    '/auth/login', '/auth/register', '/auth/forgot-password', '/auth/update-password',
+    '/auth/login', '/auth/register', '/auth/register/buyer', '/auth/register/seller', '/auth/forgot-password', '/auth/update-password',
     // Misc auth related
     '/auth/verify-otp', '/auth/callback', '/auth/verification-error', '/auth/verification-success',
     // Special case - verify-email now requires verification
