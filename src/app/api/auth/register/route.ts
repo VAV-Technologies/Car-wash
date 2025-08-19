@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendVerificationEmailDirect } from '@/lib/email-bypass';
 import { z } from 'zod';
 
 // Create admin client with proper error handling
@@ -79,21 +80,19 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
         // User exists but not verified - resend OTP verification
         console.log(`[REGISTER-API-${requestId}] Resending OTP verification for existing unverified user`);
         
-        try {
-          // For existing user, trigger a resend of signup confirmation using admin client
-          const { error: resendError } = await supabaseAdmin.auth.resend({
-            type: 'signup',
-            email: validatedData.email
-          });
-          
-          if (resendError) {
-            console.error(`[REGISTER-API-${requestId}] Failed to resend OTP:`, resendError);
-            return NextResponse.json({
-              success: false,
-              error: 'Unable to send verification code. Please try again.',
-              code: 'OTP_SEND_FAILED'
-            }, { status: 500 });
-          }
+        // Send verification email via Resend
+        console.log(`[REGISTER-API-${requestId}] Resending verification for existing unverified user`);
+        
+        const emailResult = await sendVerificationEmailDirect(validatedData.email);
+        
+        if (!emailResult.success) {
+          console.error(`[REGISTER-API-${requestId}] Failed to resend verification:`, emailResult.error);
+          return NextResponse.json({
+            success: false,
+            error: 'Unable to send verification email. Please try again.',
+            code: 'EMAIL_SEND_FAILED'
+          }, { status: 500 });
+        }
           
           return NextResponse.json({
             success: true,
@@ -102,7 +101,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
               email: existingUser.email!,
               needsVerification: true
             },
-            message: 'Verification code sent. Please check your email for your 6-digit code.',
+            message: 'Verification email sent. Please check your email to activate your account.',
             code: 'VERIFICATION_RESENT'
           });
         } catch (error) {
@@ -165,32 +164,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     
     console.log(`[REGISTER-API-${requestId}] User created successfully: ${newUser.user.id}`);
     
-    // Send OTP verification email for the newly created user
-    console.log(`[REGISTER-API-${requestId}] Sending OTP verification email for new user`);
+    // Send verification email via Resend
+    console.log(`[REGISTER-API-${requestId}] Sending verification email via Resend`);
     
-    try {
-      // Use resend method which should work with unconfirmed users
-      const { error: otpError } = await supabaseAdmin.auth.resend({
-        type: 'signup',
-        email: validatedData.email
-      });
+    const emailResult = await sendVerificationEmailDirect(validatedData.email);
+    
+    if (!emailResult.success) {
+      console.error(`[REGISTER-API-${requestId}] Email sending failed:`, emailResult.error);
       
-      if (otpError) {
-        console.error(`[REGISTER-API-${requestId}] Failed to send OTP:`, otpError);
-        // User was created but OTP failed - return success but note the issue
-        return NextResponse.json({
-          success: true,
-          user: {
-            id: newUser.user.id,
-            email: newUser.user.email!,
-            needsVerification: true
-          },
-          message: 'Account created successfully, but verification code failed to send. Please contact support.',
-          code: 'USER_CREATED_OTP_FAILED'
-        });
-      }
-    } catch (error) {
-      console.error(`[REGISTER-API-${requestId}] Error sending OTP:`, error);
+      // User was created but email failed - still return success but note the issue
       return NextResponse.json({
         success: true,
         user: {
@@ -198,8 +180,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
           email: newUser.user.email!,
           needsVerification: true
         },
-        message: 'Account created successfully, but verification code failed to send. Please contact support.',
-        code: 'USER_CREATED_OTP_FAILED'
+        message: 'Account created successfully, but verification email failed to send. Please contact support.',
+        code: 'USER_CREATED_EMAIL_FAILED'
       });
     }
     
@@ -213,7 +195,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
         email: newUser.user.email!,
         needsVerification: true
       },
-      message: 'Account created successfully! Please check your email for your 6-digit verification code.',
+      message: 'Account created successfully! Please check your email for a verification link.',
       code: 'USER_CREATED'
     });
     
