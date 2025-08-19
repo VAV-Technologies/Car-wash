@@ -77,12 +77,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
           code: 'USER_EXISTS_VERIFIED'
         }, { status: 409 });
       } else {
-        // User exists but not verified - resend verification
+        // User exists but not verified - resend OTP verification
+        console.log(`[REGISTER-API-${requestId}] Resending OTP verification for existing unverified user`);
+        
+        // Send verification email via Resend
         console.log(`[REGISTER-API-${requestId}] Resending verification for existing unverified user`);
         
         const emailResult = await sendVerificationEmailDirect(validatedData.email);
         
-        if (emailResult.success) {
+        if (!emailResult.success) {
+          console.error(`[REGISTER-API-${requestId}] Failed to resend verification:`, emailResult.error);
+          return NextResponse.json({
+            success: false,
+            error: 'Unable to send verification email. Please try again.',
+            code: 'EMAIL_SEND_FAILED'
+          }, { status: 500 });
+        }
+          
           return NextResponse.json({
             success: true,
             user: {
@@ -93,30 +104,29 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
             message: 'Verification email sent. Please check your email to activate your account.',
             code: 'VERIFICATION_RESENT'
           });
-        } else {
-          console.error(`[REGISTER-API-${requestId}] Failed to resend verification:`, emailResult.error);
+        } catch (error) {
+          console.error(`[REGISTER-API-${requestId}] Error sending OTP:`, error);
           return NextResponse.json({
             success: false,
-            error: 'Unable to send verification email. Please try again.',
+            error: 'Unable to send verification code. Please try again.',
             code: 'EMAIL_SEND_FAILED'
           }, { status: 500 });
         }
       }
     }
     
-    // Create new user
-    console.log(`[REGISTER-API-${requestId}] Creating new user: ${validatedData.email}`);
+    // Create new user using admin method (no session created)
+    console.log(`[REGISTER-API-${requestId}] Creating new user via admin: ${validatedData.email}`);
     
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email: validatedData.email,
       password: validatedData.password,
-      email_confirm: false, // We handle verification manually via Resend
+      email_confirm: false, // User needs to verify via OTP
       user_metadata: {
         role: validatedData.role,
         full_name: validatedData.full_name,
         phone_number: validatedData.phone_number || '',
         country: validatedData.country || '',
-        email_verified: false,
         // Seller-specific metadata
         ...(validatedData.role === 'seller' && validatedData.initialCompanyName && {
           initial_company_name: validatedData.initialCompanyName
