@@ -80,14 +80,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
         console.log(`[REGISTER-API-${requestId}] Resending OTP verification for existing unverified user`);
         
         try {
-          // Create a client instance for triggering OTP (not admin)
-          const supabaseClient = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-          );
-          
-          // For existing user, trigger a resend of signup confirmation
-          const { error: resendError } = await supabaseClient.auth.resend({
+          // For existing user, trigger a resend of signup confirmation using admin client
+          const { error: resendError } = await supabaseAdmin.auth.resend({
             type: 'signup',
             email: validatedData.email
           });
@@ -122,29 +116,22 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
       }
     }
     
-    // Create new user using regular signup (not admin) to trigger OTP
-    console.log(`[REGISTER-API-${requestId}] Creating new user via signup: ${validatedData.email}`);
+    // Create new user using admin method (no session created)
+    console.log(`[REGISTER-API-${requestId}] Creating new user via admin: ${validatedData.email}`);
     
-    // Create a client instance for regular signup
-    const supabaseClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    
-    const { data: newUser, error: createError } = await supabaseClient.auth.signUp({
+    const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email: validatedData.email,
       password: validatedData.password,
-      options: {
-        data: {
-          role: validatedData.role,
-          full_name: validatedData.full_name,
-          phone_number: validatedData.phone_number || '',
-          country: validatedData.country || '',
-          // Seller-specific metadata
-          ...(validatedData.role === 'seller' && validatedData.initialCompanyName && {
-            initial_company_name: validatedData.initialCompanyName
-          })
-        }
+      email_confirm: false, // User needs to verify via OTP
+      user_metadata: {
+        role: validatedData.role,
+        full_name: validatedData.full_name,
+        phone_number: validatedData.phone_number || '',
+        country: validatedData.country || '',
+        // Seller-specific metadata
+        ...(validatedData.role === 'seller' && validatedData.initialCompanyName && {
+          initial_company_name: validatedData.initialCompanyName
+        })
       }
     });
     
@@ -178,8 +165,43 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     
     console.log(`[REGISTER-API-${requestId}] User created successfully: ${newUser.user.id}`);
     
-    // signUp() automatically sends OTP when enable_confirmations = true
-    console.log(`[REGISTER-API-${requestId}] OTP should have been sent automatically via signUp`);
+    // Send OTP verification email for the newly created user
+    console.log(`[REGISTER-API-${requestId}] Sending OTP verification email for new user`);
+    
+    try {
+      // Use resend method which should work with unconfirmed users
+      const { error: otpError } = await supabaseAdmin.auth.resend({
+        type: 'signup',
+        email: validatedData.email
+      });
+      
+      if (otpError) {
+        console.error(`[REGISTER-API-${requestId}] Failed to send OTP:`, otpError);
+        // User was created but OTP failed - return success but note the issue
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: newUser.user.id,
+            email: newUser.user.email!,
+            needsVerification: true
+          },
+          message: 'Account created successfully, but verification code failed to send. Please contact support.',
+          code: 'USER_CREATED_OTP_FAILED'
+        });
+      }
+    } catch (error) {
+      console.error(`[REGISTER-API-${requestId}] Error sending OTP:`, error);
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: newUser.user.id,
+          email: newUser.user.email!,
+          needsVerification: true
+        },
+        message: 'Account created successfully, but verification code failed to send. Please contact support.',
+        code: 'USER_CREATED_OTP_FAILED'
+      });
+    }
     
     const duration = Date.now() - startTime;
     console.log(`[REGISTER-API-${requestId}] Registration completed successfully in ${duration}ms`);
