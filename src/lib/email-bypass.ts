@@ -40,9 +40,9 @@ function getBaseUrl(): string {
 }
 
 /**
- * Send verification email directly via Resend, bypassing Supabase
+ * Send verification email directly via Resend with OTP code
  */
-export async function sendVerificationEmailDirect(email: string, token?: string): Promise<EmailBypassResult> {
+export async function sendVerificationEmailDirect(email: string): Promise<EmailBypassResult> {
   if (!resend) {
     return {
       success: false,
@@ -51,15 +51,42 @@ export async function sendVerificationEmailDirect(email: string, token?: string)
   }
 
   try {
-    console.log(`[EMAIL-BYPASS] Sending verification email directly to ${email}`);
+    console.log(`[EMAIL-BYPASS] Sending OTP verification email directly to ${email}`);
 
+    // Request OTP from Supabase
+    const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false, // Don't create user, just send OTP
+        emailRedirectTo: undefined // Don't include magic link, just OTP
+      }
+    });
+
+    if (otpError) {
+      console.error(`[EMAIL-BYPASS] Failed to trigger OTP generation:`, otpError);
+      return {
+        success: false,
+        error: `Failed to generate OTP: ${otpError.message}`
+      };
+    }
+
+    // Supabase will send the OTP email using the configured SMTP settings
+    console.log(`[EMAIL-BYPASS] OTP email triggered successfully via Supabase for ${email}`);
+    
+    return {
+      success: true,
+      message: 'OTP verification email sent successfully',
+      method: 'supabase-otp'
+    };
+
+    /* OLD MANUAL EMAIL SENDING CODE - KEEPING FOR REFERENCE
     // Generate a verification URL
     const baseUrl = getBaseUrl();
-    const verificationUrl = token 
-      ? `${baseUrl}/auth/callback?token=${token}&type=email&redirect_to=${encodeURIComponent('/dashboard')}`
-      : `${baseUrl}/verify-email?email=${encodeURIComponent(email)}&type=register`;
+    const verificationUrl = `${baseUrl}/verify-otp?email=${encodeURIComponent(email)}&type=register`;
 
-    // Determine the best sender email
+    // MANUAL EMAIL SENDING - CURRENTLY DISABLED IN FAVOR OF SUPABASE OTP
+    // Keeping this code for potential future use if we need custom email templates
+    /*
     const senderEmail = process.env.NODE_ENV === 'production' 
       ? 'noreply@nobridge.co'  // Use your domain in production
       : 'onboarding@resend.dev'; // Use Resend's test domain in development
@@ -160,14 +187,8 @@ export async function sendVerificationEmailDirect(email: string, token?: string)
         </html>
       `
     });
-
-    console.log(`[EMAIL-BYPASS] Verification email sent successfully via Resend:`, result);
-    
-    return {
-      success: true,
-      message: 'Verification email sent successfully via Resend',
-      method: 'resend-bypass'
-    };
+    */
+    // END OF MANUAL EMAIL SENDING CODE
   } catch (error) {
     console.error(`[EMAIL-BYPASS] Failed to send verification email:`, error);
     return {
