@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { sendVerificationEmailDirect } from '@/lib/email-bypass';
 import { z } from 'zod';
 
 // Create admin client with proper error handling
@@ -77,12 +76,31 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
           code: 'USER_EXISTS_VERIFIED'
         }, { status: 409 });
       } else {
-        // User exists but not verified - resend verification
-        console.log(`[REGISTER-API-${requestId}] Resending verification for existing unverified user`);
+        // User exists but not verified - resend OTP verification
+        console.log(`[REGISTER-API-${requestId}] Resending OTP verification for existing unverified user`);
         
-        const emailResult = await sendVerificationEmailDirect(validatedData.email);
-        
-        if (emailResult.success) {
+        try {
+          // Create a client instance for triggering OTP (not admin)
+          const supabaseClient = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          );
+          
+          // For existing user, trigger a resend of signup confirmation
+          const { error: resendError } = await supabaseClient.auth.resend({
+            type: 'signup',
+            email: validatedData.email
+          });
+          
+          if (resendError) {
+            console.error(`[REGISTER-API-${requestId}] Failed to resend OTP:`, resendError);
+            return NextResponse.json({
+              success: false,
+              error: 'Unable to send verification code. Please try again.',
+              code: 'OTP_SEND_FAILED'
+            }, { status: 500 });
+          }
+          
           return NextResponse.json({
             success: true,
             user: {
@@ -90,37 +108,43 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
               email: existingUser.email!,
               needsVerification: true
             },
-            message: 'Verification email sent. Please check your email to activate your account.',
+            message: 'Verification code sent. Please check your email for your 6-digit code.',
             code: 'VERIFICATION_RESENT'
           });
-        } else {
-          console.error(`[REGISTER-API-${requestId}] Failed to resend verification:`, emailResult.error);
+        } catch (error) {
+          console.error(`[REGISTER-API-${requestId}] Error sending OTP:`, error);
           return NextResponse.json({
             success: false,
-            error: 'Unable to send verification email. Please try again.',
+            error: 'Unable to send verification code. Please try again.',
             code: 'EMAIL_SEND_FAILED'
           }, { status: 500 });
         }
       }
     }
     
-    // Create new user
-    console.log(`[REGISTER-API-${requestId}] Creating new user: ${validatedData.email}`);
+    // Create new user using regular signup (not admin) to trigger OTP
+    console.log(`[REGISTER-API-${requestId}] Creating new user via signup: ${validatedData.email}`);
     
-    const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+    // Create a client instance for regular signup
+    const supabaseClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    
+    const { data: newUser, error: createError } = await supabaseClient.auth.signUp({
       email: validatedData.email,
       password: validatedData.password,
-      email_confirm: false, // We handle verification manually via Resend
-      user_metadata: {
-        role: validatedData.role,
-        full_name: validatedData.full_name,
-        phone_number: validatedData.phone_number || '',
-        country: validatedData.country || '',
-        email_verified: false,
-        // Seller-specific metadata
-        ...(validatedData.role === 'seller' && validatedData.initialCompanyName && {
-          initial_company_name: validatedData.initialCompanyName
-        })
+      options: {
+        data: {
+          role: validatedData.role,
+          full_name: validatedData.full_name,
+          phone_number: validatedData.phone_number || '',
+          country: validatedData.country || '',
+          // Seller-specific metadata
+          ...(validatedData.role === 'seller' && validatedData.initialCompanyName && {
+            initial_company_name: validatedData.initialCompanyName
+          })
+        }
       }
     });
     
@@ -154,26 +178,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     
     console.log(`[REGISTER-API-${requestId}] User created successfully: ${newUser.user.id}`);
     
-    // Send verification email via Resend
-    console.log(`[REGISTER-API-${requestId}] Sending verification email via Resend`);
-    
-    const emailResult = await sendVerificationEmailDirect(validatedData.email);
-    
-    if (!emailResult.success) {
-      console.error(`[REGISTER-API-${requestId}] Email sending failed:`, emailResult.error);
-      
-      // User was created but email failed - still return success but note the issue
-      return NextResponse.json({
-        success: true,
-        user: {
-          id: newUser.user.id,
-          email: newUser.user.email!,
-          needsVerification: true
-        },
-        message: 'Account created successfully, but verification email failed to send. Please contact support.',
-        code: 'USER_CREATED_EMAIL_FAILED'
-      });
-    }
+    // signUp() automatically sends OTP when enable_confirmations = true
+    console.log(`[REGISTER-API-${requestId}] OTP should have been sent automatically via signUp`);
     
     const duration = Date.now() - startTime;
     console.log(`[REGISTER-API-${requestId}] Registration completed successfully in ${duration}ms`);
@@ -185,7 +191,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
         email: newUser.user.email!,
         needsVerification: true
       },
-      message: 'Account created successfully! Please check your email for a verification link.',
+      message: 'Account created successfully! Please check your email for your 6-digit verification code.',
       code: 'USER_CREATED'
     });
     
