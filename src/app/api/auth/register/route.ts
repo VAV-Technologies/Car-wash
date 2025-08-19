@@ -93,25 +93,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
             code: 'EMAIL_SEND_FAILED'
           }, { status: 500 });
         }
-          
-          return NextResponse.json({
-            success: true,
-            user: {
-              id: existingUser.id,
-              email: existingUser.email!,
-              needsVerification: true
-            },
-            message: 'Verification email sent. Please check your email to activate your account.',
-            code: 'VERIFICATION_RESENT'
-          });
-        } catch (error) {
-          console.error(`[REGISTER-API-${requestId}] Error sending OTP:`, error);
-          return NextResponse.json({
-            success: false,
-            error: 'Unable to send verification code. Please try again.',
-            code: 'EMAIL_SEND_FAILED'
-          }, { status: 500 });
-        }
+        
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: existingUser.id,
+            email: existingUser.email!,
+            needsVerification: true
+          },
+          message: 'Verification email sent. Please check your email to activate your account.',
+          code: 'VERIFICATION_RESENT'
+        });
       }
     }
     
