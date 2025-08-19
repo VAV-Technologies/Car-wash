@@ -341,39 +341,36 @@ export const auth = {
 
   // Resend verification email for a specific email (SECURITY: Only for authenticated users)
   async resendVerificationForEmail(email: string) {
-    console.log(`Attempting to resend verification for ${email}`)
+    console.log(`Attempting to resend OTP verification for ${email}`)
 
     // SECURITY CHECK: Only allow resending for the current authenticated user's email
     const { data: session } = await supabase.auth.getSession()
 
     if (!session?.session?.user?.email) {
-      throw new Error('You must be logged in to resend verification email')
+      throw new Error('You must be logged in to resend verification code')
     }
 
     // SECURITY: Only allow resending to the authenticated user's own email
     if (session.session.user.email !== email) {
-      throw new Error('You can only resend verification emails to your own email address')
+      throw new Error('You can only resend verification codes to your own email address')
     }
 
     const { error } = await supabase.auth.resend({
       type: 'signup',
-      email: email,
-      options: {
-        emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
-      }
+      email: email
     })
 
     if (error) {
-      console.error(`Failed to resend verification for ${email}:`, error)
-      throw new Error(`Failed to resend verification email: ${error.message}`)
+      console.error(`Failed to resend OTP verification for ${email}:`, error)
+      throw new Error(`Failed to resend verification code: ${error.message}`)
     }
 
-    console.log(`Successfully queued verification resend for ${email}`)
+    console.log(`Successfully queued OTP verification resend for ${email}`)
   },
 
   // Unauthenticated resend for legitimate lockout scenarios (with rate limiting)
   async resendVerificationUnauthenticated(email: string) {
-    console.log(`Attempting unauthenticated resend verification for ${email}`)
+    console.log(`Attempting unauthenticated resend OTP verification for ${email}`)
 
     // Basic email validation to prevent abuse
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -386,7 +383,7 @@ export const auth = {
     if (!emailStatus.exists) {
       // For security, don't reveal that the email doesn't exist
       // But don't actually send an email either
-      console.log(`Email ${email} does not exist in system - not sending email but returning success for security`)
+      console.log(`Email ${email} does not exist in system - not sending OTP but returning success for security`)
       return // Silently succeed to prevent email enumeration
     }
 
@@ -396,24 +393,21 @@ export const auth = {
 
     // Rate limiting: Only allow unauthenticated resends for unverified accounts
     if (!emailStatus.canResend) {
-      throw new Error('Verification email cannot be resent for this account. Please contact support.')
+      throw new Error('Verification code cannot be resent for this account. Please contact support.')
     }
 
-    // 🚀 SIMPLIFIED: Use Supabase for all environments (consistent and reliable)
+    // Use Supabase OTP system (will send 6-digit code via our configured email template)
     const { error } = await supabase.auth.resend({
       type: 'signup',
-      email: email,
-      options: {
-        emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
-      }
+      email: email
     })
 
     if (error) {
-      console.error(`[AUTH-SERVICE] Failed to resend verification for ${email}:`, error)
-      throw new Error(`Failed to resend verification email: ${error.message}`)
+      console.error(`[AUTH-SERVICE] Failed to resend OTP verification for ${email}:`, error)
+      throw new Error(`Failed to resend verification code: ${error.message}`)
     }
 
-    console.log(`Successfully queued unauthenticated verification resend for ${email}`)
+    console.log(`Successfully queued unauthenticated OTP verification resend for ${email}`)
   },
 
   // Verify email with OTP token

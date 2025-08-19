@@ -164,19 +164,19 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Email configuration - uses local Inbucket for development
-# [auth.email.smtp]
-# enabled = false  # Disabled for local development to use Inbucket
-# host = "smtp.resend.com"
-# port = 587
-# user = "resend"
-# pass = "env(RESEND_API_KEY)"
-# admin_email = "noreply@yourdomain.com"
-# sender_name = "Your App"
+# Email configuration - uses Resend in production, local Inbucket for development
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 587
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "noreply@nobridge.co"
+sender_name = "Nobridge"
 
-# Custom email template for email confirmation
+# Custom email template for email confirmation (OTP)
 [auth.email.template.confirmation]
-subject = "Welcome to Nobridge - Verify Your Email"
+subject = "Welcome to Nobridge - Your Verification Code"
 content_path = "./supabase/templates/confirmation.html"
 
 # Custom email template for password recovery
