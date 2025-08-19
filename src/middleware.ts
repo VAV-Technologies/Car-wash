@@ -39,9 +39,16 @@ export async function middleware(req: NextRequest) {
     '/faq', '/docs', '/help', '/how-selling-works', '/how-buying-works',
     // Marketplace and listing pages - now public
     '/marketplace',
-    '/api/test', '/api/auth/create-profile', // Allow create-profile API for signup process
-    '/api/health', '/api/debug', // Allow health and debug endpoints
+    // Public API endpoints
+    '/api/test', '/api/health', '/api/debug', // Allow health and debug endpoints
     '/api/listings', // Allow public access to listings API for marketplace
+    // Public auth API endpoints - CRITICAL: These must be public for registration/verification flow
+    '/api/auth/register', // Users registering don't have authentication yet
+    '/api/auth/create-profile', // Allow create-profile API for signup process  
+    '/api/auth/verify-email-bypass', // Allow OTP verification without session
+    '/api/email/resend-verification', // Allow resending OTP codes
+    '/api/email/check-status', // Allow checking email status for registration flow
+    // Debug/test pages
     '/test-auth', // Allow debug auth testing page
     '/test-email-system', // Allow email testing page
   ]

@@ -71,37 +71,7 @@ export class EmailService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  /**
-   * Enhanced email templates that match app design principles (no emojis)
-   */
-  private getVerificationTemplate(verificationUrl: string): string {
-    return `
-      <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F4F6FC; padding: 20px;">
-        <div style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #0D0D39; margin: 0; font-size: 24px; font-weight: 600;">Welcome to Nobridge!</h1>
-            <p style="color: #666; font-size: 16px; line-height: 1.5;">Please verify your email address to complete your registration.</p>
-          </div>
-
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationUrl}" style="background-color: #0D0D39; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
-              Verify Email Address
-            </a>
-          </div>
-
-          <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; margin: 24px 0; border-left: 4px solid #3B82F6;">
-            <p style="margin: 0; color: #0D0D39;"><strong>What happens next:</strong></p>
-            <p style="margin: 8px 0 0 0; color: #666;">Click the button above to verify your email and gain full access to the Nobridge platform.</p>
-          </div>
-
-          <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 14px;">
-            <p style="margin: 0;">If you didn't create an account with Nobridge, you can safely ignore this email.</p>
-            <p style="margin: 5px 0 0 0;">&copy; 2024 Nobridge. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+  // Removed getVerificationTemplate() - now using Supabase's OTP template system instead
 
   private getPasswordResetTemplate(resetUrl: string): string {
     return `
@@ -418,23 +388,36 @@ export class EmailService {
         };
       }
 
-          // Try Resend fallback if available
-          if (attempt === this.maxRetries && resend) {
-            console.log(`[EMAIL-SERVICE] Fallback to Resend for verification: ${email}`);
+          // Try Supabase OTP fallback instead of custom magic link
+          if (attempt === this.maxRetries) {
+            console.log(`[EMAIL-SERVICE] Fallback to Supabase OTP for verification: ${email}`);
 
-            const verificationUrl = `${this.getBaseUrl()}/auth/callback`;
-            const result = await this.sendCustomEmail({
-              to: email,
-              subject: 'Welcome to Nobridge - Verify Your Email',
-              html: this.getVerificationTemplate(verificationUrl)
-            });
+            try {
+              // Use Supabase's OTP system which will use your configured template
+              const { error: otpError } = await supabase.auth.signInWithOtp({
+                email,
+                options: {
+                  shouldCreateUser: false, // Don't create user, just send OTP
+                  emailRedirectTo: `${this.getBaseUrl()}/auth/callback`
+                }
+              });
 
-            if (result.success) {
-              return {
-                ...result,
-                message: 'Verification email sent via Resend fallback',
-                service: 'resend-fallback'
-              };
+              if (!otpError) {
+                console.log(`[EMAIL-SERVICE] OTP verification email sent successfully to ${email}`);
+                return {
+                  success: true,
+                  message: 'OTP verification email sent via Supabase',
+                  service: 'supabase-otp-fallback',
+                  debug: {
+                    method: 'signInWithOtp',
+                    usingOtpTemplate: true
+                  }
+                };
+              } else {
+                console.error(`[EMAIL-SERVICE] OTP fallback failed:`, otpError);
+              }
+            } catch (otpError) {
+              console.error(`[EMAIL-SERVICE] OTP fallback error:`, otpError);
             }
           }
 
