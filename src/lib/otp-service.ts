@@ -34,6 +34,48 @@ export interface OTPVerificationResult {
 }
 
 /**
+ * Log email attempt to database for tracking and debugging
+ */
+async function logEmailAttempt(data: {
+  recipientEmail: string;
+  senderEmail?: string;
+  subject: string;
+  templateType: string;
+  htmlContent?: string;
+  status: 'pending' | 'sent' | 'failed';
+  externalId?: string;
+  errorMessage?: string;
+  userId?: string;
+  metadata?: any;
+}): Promise<void> {
+  try {
+    const { error } = await supabaseAdmin
+      .from('email_logs')
+      .insert({
+        recipient_email: data.recipientEmail,
+        sender_email: data.senderEmail,
+        subject: data.subject,
+        template_type: data.templateType,
+        html_content: data.htmlContent,
+        status: data.status,
+        external_id: data.externalId,
+        error_message: data.errorMessage,
+        user_id: data.userId,
+        metadata: data.metadata || {},
+        sent_at: data.status === 'sent' ? new Date().toISOString() : null
+      });
+
+    if (error) {
+      console.error('[OTP-SERVICE] Failed to log email attempt:', error);
+    } else {
+      console.log(`[OTP-SERVICE] Email attempt logged for ${data.recipientEmail}`);
+    }
+  } catch (error) {
+    console.error('[OTP-SERVICE] Error logging email attempt:', error);
+  }
+}
+
+/**
  * Generate a secure 6-digit OTP code
  */
 export function generateOTP(): string {
@@ -188,6 +230,13 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
 
     console.log(`[OTP-SERVICE] Generated OTP ${otpCode} for ${email}, expires at ${expiresAt.toISOString()}`);
 
+    // Prepare email content
+    const subject = 'Welcome to Nobridge - Your Verification Code';
+    const senderEmail = process.env.NODE_ENV === 'production' 
+      ? 'noreply@nobridge.co'
+      : 'onboarding@resend.dev';
+    const htmlTemplate = getOTPEmailTemplate(otpCode);
+
     // Store OTP in database
     const { error: dbError } = await supabaseAdmin
       .from('email_verifications')
@@ -199,6 +248,18 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
 
     if (dbError) {
       console.error('[OTP-SERVICE] Failed to store OTP in database:', dbError);
+      
+      // Log failed email attempt
+      await logEmailAttempt({
+        recipientEmail: email,
+        senderEmail,
+        subject,
+        templateType: 'otp_verification',
+        status: 'failed',
+        errorMessage: 'Failed to store OTP in database: ' + dbError.message,
+        metadata: { otpGenerated: true, dbError: dbError.message }
+      });
+
       return {
         success: false,
         error: 'Failed to store verification code'
@@ -208,18 +269,30 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
     console.log(`[OTP-SERVICE] OTP stored in database for ${email}`);
 
     // Send email via Resend
-    const senderEmail = process.env.NODE_ENV === 'production' 
-      ? 'noreply@nobridge.co'
-      : 'onboarding@resend.dev';
-
     const result = await resend.emails.send({
       from: senderEmail,
       to: email,
-      subject: 'Welcome to Nobridge - Your Verification Code',
-      html: getOTPEmailTemplate(otpCode)
+      subject,
+      html: htmlTemplate
     });
 
     console.log(`[OTP-SERVICE] Email sent successfully via Resend to ${email}:`, result);
+
+    // Log successful email attempt
+    await logEmailAttempt({
+      recipientEmail: email,
+      senderEmail,
+      subject,
+      templateType: 'otp_verification',
+      htmlContent: htmlTemplate,
+      status: 'sent',
+      externalId: result.data?.id || undefined,
+      metadata: {
+        otpCode: process.env.NODE_ENV === 'development' ? otpCode : '[HIDDEN]',
+        expiresAt: expiresAt.toISOString(),
+        resendResponse: result
+      }
+    });
 
     return {
       success: true,
@@ -233,6 +306,23 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
 
   } catch (error) {
     console.error('[OTP-SERVICE] Failed to send OTP email:', error);
+
+    // Log failed email attempt
+    const subject = 'Welcome to Nobridge - Your Verification Code';
+    const senderEmail = process.env.NODE_ENV === 'production' 
+      ? 'noreply@nobridge.co'
+      : 'onboarding@resend.dev';
+      
+    await logEmailAttempt({
+      recipientEmail: email,
+      senderEmail,
+      subject,
+      templateType: 'otp_verification',
+      status: 'failed',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error sending verification code',
+      metadata: { errorType: 'send_failure', originalError: String(error) }
+    });
+
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error sending verification code'

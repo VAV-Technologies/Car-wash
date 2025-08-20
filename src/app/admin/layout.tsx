@@ -34,6 +34,7 @@ import {
   BellRing,
   RefreshCw,
   AlertTriangle,
+  Mail,
 } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import { useAuth } from '@/contexts/auth-context';
@@ -78,6 +79,7 @@ const adminSidebarNavItems = [
   { title: 'Seller Verification', href: '/admin/verification-queue/sellers', icon: ShieldCheck, tooltip: "Seller/Listing Verifications" },
   { title: 'Engagement Queue', href: '/admin/engagement-queue', icon: BellRing, tooltip: "Engagement Queue" },
   // { title: 'Conversations', href: '/admin/conversations', icon: MessageSquare, tooltip: "Platform Conversations" },
+  { title: 'Email Logs', href: '/admin/email-logs', icon: Mail, tooltip: "Email Delivery Tracking" },
   { title: 'Analytics', href: '/admin/analytics', icon: LineChart, tooltip: "Platform Analytics" },
   { title: 'Sync Tools', href: '/admin/sync-tools', icon: RefreshCw, tooltip: "Data Synchronization Tools" },
 ];
