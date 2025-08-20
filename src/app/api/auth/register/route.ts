@@ -83,7 +83,18 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
         // Send verification email via Resend
         console.log(`[REGISTER-API-${requestId}] Resending verification for existing unverified user`);
         
-        const emailResult = await sendVerificationEmailDirect(validatedData.email);
+        // Capture request context for better logging
+        const userAgent = request.headers.get('user-agent') || undefined;
+        const forwardedFor = request.headers.get('x-forwarded-for');
+        const realIp = request.headers.get('x-real-ip');
+        const ipAddress = forwardedFor?.split(',')[0] || realIp || undefined;
+        
+        const emailResult = await sendVerificationEmailDirect(validatedData.email, {
+          trigger: 'auto_retry',
+          userId: existingUser.id,
+          userAgent,
+          ipAddress
+        });
         
         if (!emailResult.success) {
           console.error(`[REGISTER-API-${requestId}] Failed to resend verification:`, emailResult.error);
@@ -159,7 +170,18 @@ export async function POST(request: NextRequest): Promise<NextResponse<RegisterR
     // Send verification email via Resend
     console.log(`[REGISTER-API-${requestId}] Sending verification email via Resend`);
     
-    const emailResult = await sendVerificationEmailDirect(validatedData.email);
+    // Capture request context for better logging
+    const userAgent = request.headers.get('user-agent') || undefined;
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const ipAddress = forwardedFor?.split(',')[0] || realIp || undefined;
+    
+    const emailResult = await sendVerificationEmailDirect(validatedData.email, {
+      trigger: 'initial_registration',
+      userId: newUser.user.id,
+      userAgent,
+      ipAddress
+    });
     
     if (!emailResult.success) {
       console.error(`[REGISTER-API-${requestId}] Email sending failed:`, emailResult.error);

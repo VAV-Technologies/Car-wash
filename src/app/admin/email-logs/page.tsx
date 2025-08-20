@@ -87,6 +87,7 @@ export default function EmailLogsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedTemplateType, setSelectedTemplateType] = useState<string>('all');
   const [selectedProvider, setSelectedProvider] = useState<string>('all');
+  const [selectedTrigger, setSelectedTrigger] = useState<string>('all');
 
   // Stats
   const [stats, setStats] = useState({
@@ -111,6 +112,7 @@ export default function EmailLogsPage() {
       if (selectedStatus !== 'all') params.set('status', selectedStatus);
       if (selectedTemplateType !== 'all') params.set('template_type', selectedTemplateType);
       if (selectedProvider !== 'all') params.set('provider', selectedProvider);
+      if (selectedTrigger !== 'all') params.set('trigger', selectedTrigger);
       if (searchEmail) params.set('search', searchEmail);
 
       const response = await fetch(`${EMAIL_LOGS_API}?${params.toString()}`);
@@ -168,12 +170,18 @@ export default function EmailLogsPage() {
       filtered = filtered.filter(log => log.email_provider === selectedProvider);
     }
 
+    // Filter by trigger
+    if (selectedTrigger !== 'all') {
+      filtered = filtered.filter(log => log.metadata?.trigger === selectedTrigger);
+    }
+
     setFilteredLogs(filtered);
-  }, [emailLogs, searchEmail, selectedStatus, selectedTemplateType, selectedProvider]);
+  }, [emailLogs, searchEmail, selectedStatus, selectedTemplateType, selectedProvider, selectedTrigger]);
 
   // Get unique values for filter dropdowns
   const uniqueTemplateTypes = [...new Set(emailLogs.map(log => log.template_type).filter(Boolean))];
   const uniqueProviders = [...new Set(emailLogs.map(log => log.email_provider).filter(Boolean))];
+  const uniqueTriggers = [...new Set(emailLogs.map(log => log.metadata?.trigger).filter(Boolean))];
 
   useEffect(() => {
     fetchEmailLogs();
@@ -283,7 +291,7 @@ export default function EmailLogsPage() {
           <CardDescription>Filter email logs by recipient, status, template type, or provider</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Search Email</label>
               <div className="relative">
@@ -345,6 +353,22 @@ export default function EmailLogsPage() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Trigger</label>
+              <Select value={selectedTrigger} onValueChange={setSelectedTrigger}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Triggers</SelectItem>
+                  <SelectItem value="initial_registration">Initial Registration</SelectItem>
+                  <SelectItem value="manual_resend">Manual Resend</SelectItem>
+                  <SelectItem value="auto_retry">Auto Retry</SelectItem>
+                  <SelectItem value="admin_resend">Admin Resend</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -364,6 +388,7 @@ export default function EmailLogsPage() {
                   <TableHead>Subject</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Template</TableHead>
+                  <TableHead>Trigger</TableHead>
                   <TableHead>Provider</TableHead>
                   <TableHead>Sent</TableHead>
                   <TableHead>Error</TableHead>
@@ -372,7 +397,7 @@ export default function EmailLogsPage() {
               <TableBody>
                 {filteredLogs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       No email logs found matching your criteria
                     </TableCell>
                   </TableRow>
@@ -400,6 +425,26 @@ export default function EmailLogsPage() {
                           <code className="text-xs bg-muted px-1 py-0.5 rounded">
                             {log.template_type || 'N/A'}
                           </code>
+                        </TableCell>
+                        <TableCell>
+                          {log.metadata?.trigger ? (
+                            <Badge 
+                              variant="outline" 
+                              className={
+                                log.metadata.trigger === 'initial_registration' 
+                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                  : log.metadata.trigger === 'manual_resend'
+                                  ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                  : log.metadata.trigger === 'auto_retry'
+                                  ? 'bg-orange-50 text-orange-700 border-orange-200'
+                                  : 'bg-purple-50 text-purple-700 border-purple-200'
+                              }
+                            >
+                              {log.metadata.trigger.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">—</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">

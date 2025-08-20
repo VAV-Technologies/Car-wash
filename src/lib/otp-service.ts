@@ -213,7 +213,15 @@ function getOTPEmailTemplate(otpCode: string): string {
 /**
  * Send OTP verification email directly via Resend
  */
-export async function sendOTPEmail(email: string): Promise<OTPResult> {
+export async function sendOTPEmail(
+  email: string, 
+  options: {
+    trigger?: 'initial_registration' | 'manual_resend' | 'auto_retry' | 'admin_resend';
+    userId?: string;
+    userAgent?: string;
+    ipAddress?: string;
+  } = {}
+): Promise<OTPResult> {
   if (!resend) {
     return {
       success: false,
@@ -222,7 +230,8 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
   }
 
   try {
-    console.log(`[OTP-SERVICE] Generating OTP for ${email}`);
+    const { trigger = 'manual_resend', userId, userAgent, ipAddress } = options;
+    console.log(`[OTP-SERVICE] Generating OTP for ${email} (trigger: ${trigger})`);
     
     // Generate OTP
     const otpCode = generateOTP();
@@ -236,6 +245,9 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
       ? 'noreply@nobridge.co'
       : 'onboarding@resend.dev';
     const htmlTemplate = getOTPEmailTemplate(otpCode);
+    
+    // Determine template type based on trigger
+    const templateType = trigger === 'initial_registration' ? 'otp_verification_initial' : 'otp_verification_resend';
 
     // Store OTP in database
     const { error: dbError } = await supabaseAdmin
@@ -254,10 +266,17 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
         recipientEmail: email,
         senderEmail,
         subject,
-        templateType: 'otp_verification',
+        templateType,
         status: 'failed',
         errorMessage: 'Failed to store OTP in database: ' + dbError.message,
-        metadata: { otpGenerated: true, dbError: dbError.message }
+        userId,
+        metadata: { 
+          otpGenerated: true, 
+          dbError: dbError.message,
+          trigger,
+          userAgent,
+          ipAddress
+        }
       });
 
       return {
@@ -283,14 +302,18 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
       recipientEmail: email,
       senderEmail,
       subject,
-      templateType: 'otp_verification',
+      templateType,
       htmlContent: htmlTemplate,
       status: 'sent',
       externalId: result.data?.id || undefined,
+      userId,
       metadata: {
         otpCode: process.env.NODE_ENV === 'development' ? otpCode : '[HIDDEN]',
         expiresAt: expiresAt.toISOString(),
-        resendResponse: result
+        resendResponse: result,
+        trigger,
+        userAgent,
+        ipAddress
       }
     });
 
@@ -308,19 +331,28 @@ export async function sendOTPEmail(email: string): Promise<OTPResult> {
     console.error('[OTP-SERVICE] Failed to send OTP email:', error);
 
     // Log failed email attempt
+    const { trigger = 'manual_resend', userId, userAgent, ipAddress } = options;
     const subject = 'Welcome to Nobridge - Your Verification Code';
     const senderEmail = process.env.NODE_ENV === 'production' 
       ? 'noreply@nobridge.co'
       : 'onboarding@resend.dev';
+    const templateType = trigger === 'initial_registration' ? 'otp_verification_initial' : 'otp_verification_resend';
       
     await logEmailAttempt({
       recipientEmail: email,
       senderEmail,
       subject,
-      templateType: 'otp_verification',
+      templateType,
       status: 'failed',
       errorMessage: error instanceof Error ? error.message : 'Unknown error sending verification code',
-      metadata: { errorType: 'send_failure', originalError: String(error) }
+      userId,
+      metadata: { 
+        errorType: 'send_failure', 
+        originalError: String(error),
+        trigger,
+        userAgent,
+        ipAddress
+      }
     });
 
     return {

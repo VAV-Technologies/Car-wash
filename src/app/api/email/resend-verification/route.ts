@@ -17,8 +17,18 @@ export async function POST(request: NextRequest) {
 
     console.log(`[RESEND-VERIFICATION-API] Processing OTP resend request for ${email}`);
 
-    // Use the new OTP service to resend verification code
-    const result = await sendOTPEmail(email);
+    // Capture request context for better logging
+    const userAgent = request.headers.get('user-agent') || undefined;
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    const ipAddress = forwardedFor?.split(',')[0] || realIp || undefined;
+
+    // Use the new OTP service to resend verification code with context
+    const result = await sendOTPEmail(email, {
+      trigger: 'manual_resend',
+      userAgent,
+      ipAddress
+    });
 
     if (!result.success) {
       console.error(`[RESEND-VERIFICATION-API] Failed to resend OTP:`, result.error);

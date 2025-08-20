@@ -43,15 +43,28 @@ function getBaseUrl(): string {
  * Send verification email directly via Resend with custom OTP
  * This completely bypasses Supabase's email system
  */
-export async function sendVerificationEmailDirect(email: string): Promise<EmailBypassResult> {
+export async function sendVerificationEmailDirect(
+  email: string,
+  options: {
+    trigger?: 'initial_registration' | 'manual_resend' | 'auto_retry' | 'admin_resend';
+    userId?: string;
+    userAgent?: string;
+    ipAddress?: string;
+  } = {}
+): Promise<EmailBypassResult> {
   try {
     console.log(`[EMAIL-BYPASS] Sending OTP verification email directly to ${email}`);
 
     // Import OTP service
     const { sendOTPEmail } = await import('./otp-service');
     
-    // Send OTP email via our custom service
-    const result = await sendOTPEmail(email);
+    // Send OTP email via our custom service with context
+    const result = await sendOTPEmail(email, {
+      trigger: options.trigger || 'initial_registration',
+      userId: options.userId,
+      userAgent: options.userAgent,
+      ipAddress: options.ipAddress
+    });
     
     if (!result.success) {
       console.error(`[EMAIL-BYPASS] Failed to send OTP email:`, result.error);

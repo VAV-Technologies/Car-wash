@@ -22,6 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const templateType = searchParams.get('template_type');
     const provider = searchParams.get('provider');
     const search = searchParams.get('search');
+    const trigger = searchParams.get('trigger');
 
     // Build query
     let query = supabaseAdmin
@@ -45,6 +46,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (search) {
       query = query.ilike('recipient_email', `%${search}%`);
+    }
+
+    if (trigger && trigger !== 'all') {
+      query = query.contains('metadata', { trigger });
     }
 
     const { data, error } = await query;
