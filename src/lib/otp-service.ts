@@ -227,9 +227,9 @@ export async function sendOTPEmail(
     const { trigger = 'manual_resend', userId, userAgent, ipAddress } = options;
     console.log(`[OTP-SERVICE] Generating Supabase OTP for ${email} (trigger: ${trigger})`);
     
-    // Generate OTP via Supabase admin API for existing user email verification
+    // Generate OTP via Supabase admin API for email verification (works for both new and existing users)
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'email', // This generates an OTP token for email verification
+      type: 'recovery', // This generates an OTP token that works for both new and existing users
       email: email,
       options: {
         redirectTo: `${getBaseUrl()}/verify-otp?email=${encodeURIComponent(email)}`
