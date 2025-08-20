@@ -87,7 +87,7 @@ export async function sendVerificationEmail(email: string, verificationUrl: stri
         <div style="text-align: center; margin: 30px 0;">
           <a href="${verificationUrl}"
              style="background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-            Verify Email Address here
+            Verify Email Address at here!!
           </a>
         </div>
         <p style="color: #888; font-size: 14px;">
