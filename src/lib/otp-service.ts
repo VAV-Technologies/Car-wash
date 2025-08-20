@@ -227,17 +227,24 @@ export async function sendOTPEmail(
     const { trigger = 'manual_resend', userId, userAgent, ipAddress } = options;
     console.log(`[OTP-SERVICE] Generating Supabase OTP for ${email} (trigger: ${trigger})`);
     
-    // Generate OTP via Supabase admin API for email verification (works for both new and existing users)
+    // Hybrid Approach: Generate both custom OTP and Supabase TokenHash
+    console.log(`[OTP-SERVICE] Generating hybrid OTP system for ${email}`);
+    
+    // Step 1: Generate custom 6-digit OTP
+    const customOtp = generateOTP();
+    console.log(`[OTP-SERVICE] Generated custom OTP for ${email}`);
+    
+    // Step 2: Generate Supabase TokenHash via magiclink
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'email_change_current', // This generates an OTP token verifiable with type: 'email'
+      type: 'magiclink',
       email: email,
       options: {
         redirectTo: `${getBaseUrl()}/verify-otp?email=${encodeURIComponent(email)}`
       }
     });
 
-    if (linkError || !linkData?.properties?.email_otp) {
-      console.error('[OTP-SERVICE] Failed to generate Supabase OTP:', linkError);
+    if (linkError || !linkData?.properties?.hashed_token) {
+      console.error('[OTP-SERVICE] Failed to generate Supabase TokenHash:', linkError);
       
       // Log failed email attempt
       const subject = 'Welcome to Nobridge - Your Verification Code';
@@ -252,11 +259,11 @@ export async function sendOTPEmail(
         subject,
         templateType,
         status: 'failed',
-        errorMessage: 'Failed to generate Supabase OTP: ' + (linkError?.message || 'No OTP in response'),
+        errorMessage: 'Failed to generate Supabase TokenHash: ' + (linkError?.message || 'No hashed_token in response'),
         userId,
         metadata: { 
           otpGenerated: false, 
-          supabaseError: linkError?.message || 'No email_otp in response',
+          supabaseError: linkError?.message || 'No hashed_token in response',
           trigger,
           userAgent,
           ipAddress
@@ -269,7 +276,58 @@ export async function sendOTPEmail(
       };
     }
 
-    const otpCode = linkData.properties.email_otp;
+    const tokenHash = linkData.properties.hashed_token;
+    console.log(`[OTP-SERVICE] Generated Supabase TokenHash for ${email}`);
+    
+    // Step 3: Store OTP → TokenHash mapping in database
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    
+    const { error: mappingError } = await supabaseAdmin
+      .from('otp_token_mappings')
+      .insert({
+        email: email,
+        custom_otp: customOtp,
+        token_hash: tokenHash,
+        expires_at: expiresAt.toISOString()
+      });
+
+    if (mappingError) {
+      console.error('[OTP-SERVICE] Failed to store OTP mapping:', mappingError);
+      
+      // Log failed email attempt
+      const subject = 'Welcome to Nobridge - Your Verification Code';
+      const senderEmail = process.env.NODE_ENV === 'production' 
+        ? 'noreply@nobridge.co'
+        : 'onboarding@resend.dev';
+      const templateType = trigger === 'initial_registration' ? 'otp_verification_initial' : 'otp_verification_resend';
+      
+      await logEmailAttempt({
+        recipientEmail: email,
+        senderEmail,
+        subject,
+        templateType,
+        status: 'failed',
+        errorMessage: 'Failed to store OTP mapping: ' + mappingError.message,
+        userId,
+        metadata: { 
+          otpGenerated: true,
+          mappingError: mappingError.message,
+          trigger,
+          userAgent,
+          ipAddress
+        }
+      });
+
+      return {
+        success: false,
+        error: 'Failed to generate verification code'
+      };
+    }
+
+    console.log(`[OTP-SERVICE] Stored OTP mapping successfully for ${email}`);
+    
+    // Use custom OTP for email (user sees the 6-digit code)
+    const otpCode = customOtp;
     console.log(`[OTP-SERVICE] Generated Supabase OTP ${otpCode} for ${email}`);
 
     // Prepare email content
@@ -303,8 +361,10 @@ export async function sendOTPEmail(
       externalId: result.data?.id || undefined,
       userId,
       metadata: {
-        otpCode: process.env.NODE_ENV === 'development' ? otpCode : '[HIDDEN]',
-        supabaseOTP: true,
+        customOtp: process.env.NODE_ENV === 'development' ? otpCode : '[HIDDEN]',
+        hybridSystem: true,
+        tokenHashGenerated: true,
+        mappingStored: true,
         resendResponse: result,
         trigger,
         userAgent,
@@ -318,7 +378,10 @@ export async function sendOTPEmail(
       otpCode: process.env.NODE_ENV === 'development' ? otpCode : undefined, // Only show in dev
       debug: {
         emailId: result.data?.id,
-        supabaseGenerated: true
+        hybridSystem: true,
+        customOtpGenerated: true,
+        tokenHashGenerated: true,
+        mappingStored: true
       }
     };
 

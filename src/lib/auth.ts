@@ -410,17 +410,35 @@ export const auth = {
     console.log(`Successfully queued unauthenticated OTP verification resend for ${email}`)
   },
 
-  // Verify email with OTP token
-  async verifyEmailOtp(email: string, token: string, flow: 'register' | 'email_change' = 'register') {
-    console.log(`[AUTH-SERVICE] Starting email verification for ${email}, flow: ${flow}, token: ${token.substring(0, 2)}***`);
+  // Verify email with custom OTP token (hybrid TokenHash approach)
+  async verifyEmailOtp(email: string, customOtp: string, flow: 'register' | 'email_change' = 'register') {
+    console.log(`[AUTH-SERVICE] Starting hybrid email verification for ${email}, flow: ${flow}, OTP: ${customOtp.substring(0, 2)}***`);
 
-    // Use 'email' type for all email verification scenarios (signup type is deprecated)
-    const supabaseType = 'email';
+    // Step 1: Get TokenHash from custom OTP
+    const tokenHashResponse = await fetch('/api/auth/get-token-hash', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        customOtp: customOtp
+      })
+    });
 
+    if (!tokenHashResponse.ok) {
+      const errorData = await tokenHashResponse.json();
+      console.error(`[AUTH-SERVICE] Failed to get token hash for ${email}:`, errorData);
+      throw new Error(errorData.error || 'Failed to lookup verification code');
+    }
+
+    const { tokenHash } = await tokenHashResponse.json();
+    console.log(`[AUTH-SERVICE] Retrieved token hash for ${email}, proceeding with Supabase verification`);
+
+    // Step 2: Verify with Supabase using TokenHash
     const { data, error } = await supabase.auth.verifyOtp({
-      email,
-      token,
-      type: supabaseType as any
+      token_hash: tokenHash,
+      type: 'email'
     })
 
     if (error) {
