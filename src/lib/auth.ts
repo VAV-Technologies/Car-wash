@@ -414,7 +414,8 @@ export const auth = {
   async verifyEmailOtp(email: string, token: string, flow: 'register' | 'email_change' = 'register') {
     console.log(`[AUTH-SERVICE] Starting email verification for ${email}, flow: ${flow}, token: ${token.substring(0, 2)}***`);
 
-    const supabaseType = flow === 'register' ? 'signup' : 'email';
+    // Use 'email' type for all email verification scenarios (signup type is deprecated)
+    const supabaseType = 'email';
 
     const { data, error } = await supabase.auth.verifyOtp({
       email,

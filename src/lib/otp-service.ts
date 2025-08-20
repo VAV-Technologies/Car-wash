@@ -229,7 +229,7 @@ export async function sendOTPEmail(
     
     // Generate OTP via Supabase admin API for email verification (works for both new and existing users)
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'recovery', // This generates an OTP token that works for both new and existing users
+      type: 'email_change_current', // This generates an OTP token verifiable with type: 'email'
       email: email,
       options: {
         redirectTo: `${getBaseUrl()}/verify-otp?email=${encodeURIComponent(email)}`
