@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { emailService } from '@/lib/email-service';
+import { sendOTPEmail } from '@/lib/otp-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,20 +15,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`[RESEND-VERIFICATION-API] Processing request for ${email}`);
+    console.log(`[RESEND-VERIFICATION-API] Processing OTP resend request for ${email}`);
 
-    // Use the unified email service with retry logic and proper error handling
-    const result = await emailService.resendVerificationEmail(email);
+    // Use the new OTP service to resend verification code
+    const result = await sendOTPEmail(email);
+
+    if (!result.success) {
+      console.error(`[RESEND-VERIFICATION-API] Failed to resend OTP:`, result.error);
+      return NextResponse.json({
+        success: false,
+        error: result.error || 'Failed to resend verification code',
+        code: 'RESEND_FAILED'
+      }, { status: 500 });
+    }
+
+    console.log(`[RESEND-VERIFICATION-API] OTP resent successfully for ${email}`);
 
     // Return consistent response format
     return NextResponse.json({
-      success: result.success,
-      message: result.success
-        ? 'Verification email sent successfully. Please check your inbox.'
-        : result.error,
-      debug: result.debug,
-      service: result.service,
-      attempts: result.attempts
+      success: true,
+      message: 'A new verification code has been sent to your email. Please check your inbox.',
+      code: 'OTP_RESENT'
     });
 
   } catch (error) {

@@ -22,7 +22,8 @@ export type NobridgeIconType =
   // New icons
   | 'process'
   | 'worldwide'
-  | 'people';
+  | 'people'
+  | 'email';
 
 const iconMap: Record<NobridgeIconType, string> = {
   'business-listing': '/assets/icon_01.png',
@@ -45,6 +46,7 @@ const iconMap: Record<NobridgeIconType, string> = {
   'process': '/assets/process_fixed.png',
   'worldwide': '/assets/worldwide_fixed.png',
   'people': '/assets/people_fixed.png',
+  'email': '/assets/icon_02.png', // Reuse transactions icon or create specific email icon
 };
 
 const iconAltMap: Record<NobridgeIconType, string> = {
@@ -68,6 +70,7 @@ const iconAltMap: Record<NobridgeIconType, string> = {
   'process': 'Process Icon',
   'worldwide': 'Worldwide Icon',
   'people': 'People Icon',
+  'email': 'Email Icon',
 };
 
 interface NobridgeIconProps {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,11 +34,8 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-// Initialize Supabase client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// API endpoint for fetching email logs
+const EMAIL_LOGS_API = '/api/admin/email-logs';
 
 interface EmailLog {
   id: string;
@@ -107,23 +103,33 @@ export default function EmailLogsPage() {
       setLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabaseAdmin
-        .from('email_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500); // Limit to recent 500 entries
+      // Build query parameters
+      const params = new URLSearchParams({
+        limit: '500'
+      });
 
-      if (fetchError) {
-        throw fetchError;
+      if (selectedStatus !== 'all') params.set('status', selectedStatus);
+      if (selectedTemplateType !== 'all') params.set('template_type', selectedTemplateType);
+      if (selectedProvider !== 'all') params.set('provider', selectedProvider);
+      if (searchEmail) params.set('search', searchEmail);
+
+      const response = await fetch(`${EMAIL_LOGS_API}?${params.toString()}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
 
-      setEmailLogs(data || []);
+      const result = await response.json();
+      const data = result.data || [];
+
+      setEmailLogs(data);
       
       // Calculate stats
-      const total = data?.length || 0;
-      const sent = data?.filter(log => ['sent', 'delivered', 'opened', 'clicked'].includes(log.status)).length || 0;
-      const delivered = data?.filter(log => ['delivered', 'opened', 'clicked'].includes(log.status)).length || 0;
-      const failed = data?.filter(log => ['failed', 'bounced'].includes(log.status)).length || 0;
+      const total = data.length;
+      const sent = data.filter((log: EmailLog) => ['sent', 'delivered', 'opened', 'clicked'].includes(log.status)).length;
+      const delivered = data.filter((log: EmailLog) => ['delivered', 'opened', 'clicked'].includes(log.status)).length;
+      const failed = data.filter((log: EmailLog) => ['failed', 'bounced'].includes(log.status)).length;
       const successRate = total > 0 ? Math.round((delivered / total) * 100) : 0;
 
       setStats({ total, sent, delivered, failed, successRate });
