@@ -46,6 +46,8 @@ export async function middleware(req: NextRequest) {
     '/api/auth/register', // Users registering don't have authentication yet
     '/api/auth/create-profile', // Allow create-profile API for signup process  
     '/api/auth/verify-email-bypass', // Allow OTP verification without session
+    '/api/auth/verify-otp', // Allow OTP verification without session
+    '/api/auth/resend-otp', // Allow resending OTP codes without session
     '/api/email/resend-verification', // Allow resending OTP codes
     '/api/email/check-status', // Allow checking email status for registration flow
     // Debug/test pages

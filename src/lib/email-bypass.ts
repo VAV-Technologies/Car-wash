@@ -40,161 +40,41 @@ function getBaseUrl(): string {
 }
 
 /**
- * Send verification email directly via Resend with OTP code
+ * Send verification email directly via Resend with custom OTP
+ * This completely bypasses Supabase's email system
  */
 export async function sendVerificationEmailDirect(email: string): Promise<EmailBypassResult> {
-  if (!resend) {
-    return {
-      success: false,
-      error: 'Resend API key not configured'
-    };
-  }
-
   try {
     console.log(`[EMAIL-BYPASS] Sending OTP verification email directly to ${email}`);
 
-    // Request OTP from Supabase
-    const { error: otpError } = await supabaseAdmin.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false, // Don't create user, just send OTP
-        emailRedirectTo: undefined // Don't include magic link, just OTP
-      }
-    });
-
-    if (otpError) {
-      console.error(`[EMAIL-BYPASS] Failed to trigger OTP generation:`, otpError);
+    // Import OTP service
+    const { sendOTPEmail } = await import('./otp-service');
+    
+    // Send OTP email via our custom service
+    const result = await sendOTPEmail(email);
+    
+    if (!result.success) {
+      console.error(`[EMAIL-BYPASS] Failed to send OTP email:`, result.error);
       return {
         success: false,
-        error: `Failed to generate OTP: ${otpError.message}`
+        error: result.error || 'Failed to send verification email'
       };
     }
 
-    // Supabase will send the OTP email using the configured SMTP settings
-    console.log(`[EMAIL-BYPASS] OTP email triggered successfully via Supabase for ${email}`);
+    console.log(`[EMAIL-BYPASS] OTP email sent successfully via Resend to ${email}`);
     
     return {
       success: true,
-      message: 'OTP verification email sent successfully',
-      method: 'supabase-otp'
+      message: 'Verification code sent to your email. Please check your inbox.',
+      method: 'resend-direct-otp'
     };
 
-    /* OLD MANUAL EMAIL SENDING CODE - KEEPING FOR REFERENCE
-    // Generate a verification URL
-    const baseUrl = getBaseUrl();
-    const verificationUrl = `${baseUrl}/verify-otp?email=${encodeURIComponent(email)}&type=register`;
-
-    // MANUAL EMAIL SENDING - CURRENTLY DISABLED IN FAVOR OF SUPABASE OTP
-    // Keeping this code for potential future use if we need custom email templates
-    /*
-    const senderEmail = process.env.NODE_ENV === 'production' 
-      ? 'noreply@nobridge.co'  // Use your domain in production
-      : 'onboarding@resend.dev'; // Use Resend's test domain in development
-
-    const result = await resend.emails.send({
-      from: senderEmail,
-      to: email,
-      subject: 'Welcome to Nobridge - Verify Your Email',
-      html: `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Welcome to Nobridge - Verify Your Email</title>
-            <style>
-                body {
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    line-height: 1.6;
-                    color: #0D0D39;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    background-color: #F4F6FC;
-                }
-                .container {
-                    background: white;
-                    padding: 40px;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 8px rgba(13, 13, 57, 0.1);
-                }
-                .header {
-                    text-align: center;
-                    margin-bottom: 30px;
-                }
-                h1 {
-                    color: #0D0D39;
-                    margin: 0;
-                    font-size: 24px;
-                    font-weight: 600;
-                }
-                .verification-section {
-                    background: #F4F6FC;
-                    padding: 24px;
-                    border-radius: 8px;
-                    margin: 24px 0;
-                    text-align: center;
-                }
-                .magic-link-btn {
-                    display: inline-block;
-                    background: #0D0D39;
-                    color: white;
-                    padding: 16px 32px;
-                    text-decoration: none;
-                    border-radius: 6px;
-                    font-weight: 600;
-                    margin: 16px 0;
-                }
-                .footer {
-                    text-align: center;
-                    margin-top: 32px;
-                    padding-top: 24px;
-                    border-top: 1px solid #E5E7EB;
-                    color: #6B7280;
-                    font-size: 14px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>Welcome to Nobridge!</h1>
-                    <p>Please verify your email address to complete your registration.</p>
-                </div>
-
-                <div class="verification-section">
-                    <p><strong>Click the button below to verify your email:</strong></p>
-                    <a href="${verificationUrl}" class="magic-link-btn">
-                        Verify Email Address
-                    </a>
-                    <p style="margin-top: 16px; color: #059669; font-weight: 600;">
-                        This link will expire in 24 hours for security
-                    </p>
-                </div>
-
-                <div style="background: #FEF3C7; padding: 16px; border-radius: 8px; margin: 24px 0;">
-                    <p><strong>What's next?</strong></p>
-                    <p>After verifying your email, you'll have full access to the Nobridge platform to connect with business opportunities across Asia.</p>
-                </div>
-
-                <div class="footer">
-                    <p>Welcome to the Nobridge community! We're excited to help you connect with business opportunities.</p>
-                    <p><small>If you didn't create an account with Nobridge, you can safely ignore this email.</small></p>
-                    <p><small>&copy; 2024 Nobridge. All rights reserved.</small></p>
-                </div>
-            </div>
-        </body>
-        </html>
-      `
-    });
-    */
-    // END OF MANUAL EMAIL SENDING CODE
   } catch (error) {
     console.error(`[EMAIL-BYPASS] Failed to send verification email:`, error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      method: 'resend-bypass'
+      error: error instanceof Error ? error.message : 'Unknown error sending verification email',
+      method: 'resend-direct-otp'
     };
   }
 }
