@@ -25,13 +25,7 @@ export interface OTPResult {
   debug?: any;
 }
 
-export interface OTPVerificationResult {
-  success: boolean;
-  message?: string;
-  error?: string;
-  userVerified?: boolean;
-  debug?: any;
-}
+// OTP verification is now handled directly by Supabase's built-in system
 
 /**
  * Log email attempt to database for tracking and debugging
@@ -211,7 +205,7 @@ function getOTPEmailTemplate(otpCode: string): string {
 }
 
 /**
- * Send OTP verification email directly via Resend
+ * Send OTP verification email using Supabase OTP generation + Resend delivery
  */
 export async function sendOTPEmail(
   email: string, 
@@ -231,13 +225,52 @@ export async function sendOTPEmail(
 
   try {
     const { trigger = 'manual_resend', userId, userAgent, ipAddress } = options;
-    console.log(`[OTP-SERVICE] Generating OTP for ${email} (trigger: ${trigger})`);
+    console.log(`[OTP-SERVICE] Generating Supabase OTP for ${email} (trigger: ${trigger})`);
     
-    // Generate OTP
-    const otpCode = generateOTP();
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    // Generate OTP via Supabase admin API for existing user email verification
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'email', // This generates an OTP token for email verification
+      email: email,
+      options: {
+        redirectTo: `${getBaseUrl()}/verify-otp?email=${encodeURIComponent(email)}`
+      }
+    });
 
-    console.log(`[OTP-SERVICE] Generated OTP ${otpCode} for ${email}, expires at ${expiresAt.toISOString()}`);
+    if (linkError || !linkData?.properties?.email_otp) {
+      console.error('[OTP-SERVICE] Failed to generate Supabase OTP:', linkError);
+      
+      // Log failed email attempt
+      const subject = 'Welcome to Nobridge - Your Verification Code';
+      const senderEmail = process.env.NODE_ENV === 'production' 
+        ? 'noreply@nobridge.co'
+        : 'onboarding@resend.dev';
+      const templateType = trigger === 'initial_registration' ? 'otp_verification_initial' : 'otp_verification_resend';
+      
+      await logEmailAttempt({
+        recipientEmail: email,
+        senderEmail,
+        subject,
+        templateType,
+        status: 'failed',
+        errorMessage: 'Failed to generate Supabase OTP: ' + (linkError?.message || 'No OTP in response'),
+        userId,
+        metadata: { 
+          otpGenerated: false, 
+          supabaseError: linkError?.message || 'No email_otp in response',
+          trigger,
+          userAgent,
+          ipAddress
+        }
+      });
+
+      return {
+        success: false,
+        error: 'Failed to generate verification code'
+      };
+    }
+
+    const otpCode = linkData.properties.email_otp;
+    console.log(`[OTP-SERVICE] Generated Supabase OTP ${otpCode} for ${email}`);
 
     // Prepare email content
     const subject = 'Welcome to Nobridge - Your Verification Code';
@@ -248,44 +281,6 @@ export async function sendOTPEmail(
     
     // Determine template type based on trigger
     const templateType = trigger === 'initial_registration' ? 'otp_verification_initial' : 'otp_verification_resend';
-
-    // Store OTP in database
-    const { error: dbError } = await supabaseAdmin
-      .from('email_verifications')
-      .insert({
-        email,
-        otp_code: otpCode,
-        expires_at: expiresAt.toISOString()
-      });
-
-    if (dbError) {
-      console.error('[OTP-SERVICE] Failed to store OTP in database:', dbError);
-      
-      // Log failed email attempt
-      await logEmailAttempt({
-        recipientEmail: email,
-        senderEmail,
-        subject,
-        templateType,
-        status: 'failed',
-        errorMessage: 'Failed to store OTP in database: ' + dbError.message,
-        userId,
-        metadata: { 
-          otpGenerated: true, 
-          dbError: dbError.message,
-          trigger,
-          userAgent,
-          ipAddress
-        }
-      });
-
-      return {
-        success: false,
-        error: 'Failed to store verification code'
-      };
-    }
-
-    console.log(`[OTP-SERVICE] OTP stored in database for ${email}`);
 
     // Send email via Resend
     const result = await resend.emails.send({
@@ -309,7 +304,7 @@ export async function sendOTPEmail(
       userId,
       metadata: {
         otpCode: process.env.NODE_ENV === 'development' ? otpCode : '[HIDDEN]',
-        expiresAt: expiresAt.toISOString(),
+        supabaseOTP: true,
         resendResponse: result,
         trigger,
         userAgent,
@@ -323,7 +318,7 @@ export async function sendOTPEmail(
       otpCode: process.env.NODE_ENV === 'development' ? otpCode : undefined, // Only show in dev
       debug: {
         emailId: result.data?.id,
-        expiresAt: expiresAt.toISOString()
+        supabaseGenerated: true
       }
     };
 
@@ -363,127 +358,8 @@ export async function sendOTPEmail(
 }
 
 /**
- * Verify OTP code and confirm user email
+ * Note: OTP verification is now handled by Supabase's built-in verification system.
+ * When users enter the OTP code, they should use Supabase's verify OTP endpoint directly:
+ * - supabase.auth.verifyOtp({ email, token, type: 'email' })
+ * This eliminates the need for custom verification logic and table.
  */
-export async function verifyOTP(email: string, otpCode: string): Promise<OTPVerificationResult> {
-  try {
-    console.log(`[OTP-SERVICE] Verifying OTP ${otpCode} for ${email}`);
-
-    // Find the OTP record
-    const { data: otpRecord, error: fetchError } = await supabaseAdmin
-      .from('email_verifications')
-      .select('*')
-      .eq('email', email)
-      .eq('otp_code', otpCode)
-      .is('verified_at', null) // Not already used
-      .gte('expires_at', new Date().toISOString()) // Not expired
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (fetchError || !otpRecord) {
-      console.log(`[OTP-SERVICE] Invalid or expired OTP for ${email}: ${otpCode}`);
-      return {
-        success: false,
-        error: 'Invalid or expired verification code. Please request a new one.'
-      };
-    }
-
-    console.log(`[OTP-SERVICE] Valid OTP found for ${email}, marking as verified`);
-
-    // Mark OTP as used
-    const { error: updateError } = await supabaseAdmin
-      .from('email_verifications')
-      .update({ 
-        verified_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', otpRecord.id);
-
-    if (updateError) {
-      console.error('[OTP-SERVICE] Failed to mark OTP as verified:', updateError);
-      return {
-        success: false,
-        error: 'Failed to process verification'
-      };
-    }
-
-    console.log(`[OTP-SERVICE] OTP marked as verified, now confirming user email in auth`);
-
-    // Find and confirm the user's email in Supabase Auth
-    const { data: users, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-    
-    if (listError) {
-      console.error('[OTP-SERVICE] Failed to list users:', listError);
-      return {
-        success: false,
-        error: 'Failed to verify user account'
-      };
-    }
-
-    const user = users.users.find(u => u.email === email);
-    if (!user) {
-      console.error(`[OTP-SERVICE] User not found for email: ${email}`);
-      return {
-        success: false,
-        error: 'User account not found'
-      };
-    }
-
-    // Update user to confirm email
-    const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
-      email_confirm: true
-    });
-
-    if (confirmError) {
-      console.error('[OTP-SERVICE] Failed to confirm user email:', confirmError);
-      return {
-        success: false,
-        error: 'Failed to verify user account'
-      };
-    }
-
-    console.log(`[OTP-SERVICE] User email confirmed successfully for ${email} (${user.id})`);
-
-    return {
-      success: true,
-      message: 'Email verified successfully! You can now sign in.',
-      userVerified: true,
-      debug: {
-        userId: user.id,
-        verifiedAt: new Date().toISOString()
-      }
-    };
-
-  } catch (error) {
-    console.error('[OTP-SERVICE] Verification error:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown verification error'
-    };
-  }
-}
-
-/**
- * Clean up expired OTP codes (call periodically)
- */
-export async function cleanupExpiredOTPs(): Promise<{ deleted: number }> {
-  try {
-    const { count, error } = await supabaseAdmin
-      .from('email_verifications')
-      .delete()
-      .lt('expires_at', new Date().toISOString())
-      .select('*', { count: 'exact' });
-
-    if (error) {
-      console.error('[OTP-SERVICE] Failed to cleanup expired OTPs:', error);
-      return { deleted: 0 };
-    }
-
-    console.log(`[OTP-SERVICE] Cleaned up ${count || 0} expired OTP records`);
-    return { deleted: count || 0 };
-  } catch (error) {
-    console.error('[OTP-SERVICE] Cleanup error:', error);
-    return { deleted: 0 };
-  }
-}
