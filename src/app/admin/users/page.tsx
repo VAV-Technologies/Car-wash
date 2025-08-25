@@ -24,10 +24,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { User, VerificationStatus } from "@/lib/types";
 import Link from "next/link";
-import { Eye, ShieldCheck, ShieldAlert, Filter, Search, Edit, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Eye, ShieldCheck, ShieldAlert, Filter, Search, Edit, ChevronLeft, ChevronRight, Loader2, UserPlus } from "lucide-react";
 import useSWR from 'swr';
 import { useState, useCallback, useMemo } from 'react';
 import { useDebounce } from '@/hooks/use-debounce';
+import { CreateUserDialog } from '@/components/admin/create-user-dialog';
 
 // Simplified interface for admin user data that matches API response exactly
 interface AdminUser {
@@ -77,6 +78,7 @@ export default function AdminUsersPage() {
   const [verificationStatus, setVerificationStatus] = useState('all');
   const [paidStatus, setPaidStatus] = useState('all');
   const [page, setPage] = useState(1);
+  const [createUserDialogOpen, setCreateUserDialogOpen] = useState(false);
   const limit = 10;
 
   // Debounce search to avoid excessive API calls
@@ -127,6 +129,14 @@ export default function AdminUsersPage() {
     setPage(1);
   }, []);
 
+  // Handle successful user creation
+  const handleUserCreated = useCallback((user: any) => {
+    // Refresh the user list
+    mutate();
+    // Optionally, show a success message or update filters
+    setPage(1); // Go to first page to see the new user
+  }, [mutate]);
+
   // Badge component for verification status
   const getProfileVerificationBadge = (status: string) => {
     switch (status) {
@@ -147,8 +157,16 @@ export default function AdminUsersPage() {
     <div className="space-y-8">
       <Card className="shadow-md">
         <CardHeader>
-          <CardTitle>User Management</CardTitle>
-          <CardDescription>View, search, filter, and manage all platform users.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>User Management</CardTitle>
+              <CardDescription>View, search, filter, and manage all platform users.</CardDescription>
+            </div>
+            <Button onClick={() => setCreateUserDialogOpen(true)} className="gap-2">
+              <UserPlus className="h-4 w-4" />
+              Add User
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Search and Filters */}
@@ -312,6 +330,13 @@ export default function AdminUsersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Create User Dialog */}
+      <CreateUserDialog 
+        open={createUserDialogOpen}
+        onOpenChange={setCreateUserDialogOpen}
+        onSuccess={handleUserCreated}
+      />
     </div>
   );
 }

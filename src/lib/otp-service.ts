@@ -421,6 +421,84 @@ export async function sendOTPEmail(
 }
 
 /**
+ * Verify OTP code by looking up the mapping and using Supabase's verification
+ */
+export async function verifyOTP(email: string, otpCode: string): Promise<OTPResult> {
+  try {
+    console.log(`[OTP-SERVICE] Verifying OTP for ${email}`);
+    
+    // Step 1: Look up the OTP mapping
+    const { data: mapping, error: lookupError } = await supabaseAdmin
+      .from('otp_token_mappings')
+      .select('token_hash, expires_at, used_at')
+      .eq('email', email)
+      .eq('custom_otp', otpCode)
+      .single();
+
+    if (lookupError || !mapping) {
+      console.error('[OTP-SERVICE] OTP mapping not found:', lookupError);
+      return {
+        success: false,
+        error: 'Invalid or expired verification code'
+      };
+    }
+
+    // Check if already used
+    if (mapping.used_at) {
+      console.log('[OTP-SERVICE] OTP already used');
+      return {
+        success: false,
+        error: 'This verification code has already been used'
+      };
+    }
+
+    // Check if expired
+    if (new Date(mapping.expires_at) < new Date()) {
+      console.log('[OTP-SERVICE] OTP expired');
+      return {
+        success: false,
+        error: 'Verification code has expired. Please request a new one.'
+      };
+    }
+
+    // Step 2: Use the token hash to verify with Supabase
+    const { data: verifyData, error: verifyError } = await supabaseAdmin.auth.verifyOtp({
+      token_hash: mapping.token_hash,
+      type: 'magiclink' // We use magiclink type for the token hash
+    });
+
+    if (verifyError) {
+      console.error('[OTP-SERVICE] Supabase verification failed:', verifyError);
+      return {
+        success: false,
+        error: 'Failed to verify code. Please try again.'
+      };
+    }
+
+    // Step 3: Mark OTP as used
+    await supabaseAdmin
+      .from('otp_token_mappings')
+      .update({ used_at: new Date().toISOString() })
+      .eq('email', email)
+      .eq('custom_otp', otpCode);
+
+    console.log(`[OTP-SERVICE] Successfully verified OTP for ${email}`);
+    
+    return {
+      success: true,
+      message: 'Email verified successfully'
+    };
+
+  } catch (error) {
+    console.error('[OTP-SERVICE] Unexpected error during OTP verification:', error);
+    return {
+      success: false,
+      error: 'An unexpected error occurred during verification'
+    };
+  }
+}
+
+/**
  * Note: OTP verification is now handled by Supabase's built-in verification system.
  * When users enter the OTP code, they should use Supabase's verify OTP endpoint directly:
  * - supabase.auth.verifyOtp({ email, token, type: 'email' })
