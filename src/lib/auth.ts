@@ -290,19 +290,30 @@ export const auth = {
     return `http://localhost:${port}`
   },
 
-  // Request password reset
+  // Request password reset (now using pure Resend API)
   async requestPasswordReset(email: string) {
     console.log(`[AUTH-SERVICE] Requesting password reset for: ${email}`);
 
-    // Use the unified email service
-    const { emailService } = await import('./email-service');
-    const result = await emailService.sendPasswordResetEmail(email);
+    try {
+      const response = await fetch('/api/auth/request-password-reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      });
 
-    if (!result.success) {
-      throw new Error(`Password reset request failed: ${result.error || 'Unknown error'}`);
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Password reset request failed');
+      }
+
+      console.log(`[AUTH-SERVICE] Password reset email sent successfully to ${email}`);
+    } catch (error) {
+      console.error('[AUTH-SERVICE] Password reset request failed:', error);
+      throw error;
     }
-
-    console.log(`[AUTH-SERVICE] Password reset email sent successfully to ${email}`);
   },
 
   // Update password
