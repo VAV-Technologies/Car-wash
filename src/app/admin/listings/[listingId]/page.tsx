@@ -51,7 +51,11 @@ export default async function AdminListingDetailPage({ params }: { params: { lis
             <NobridgeIcon icon="business-listing" size="lg" className="mr-3" /> Listing Details: {listing.listingTitleAnonymous}
         </h1>
         <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
-            <Button variant="outline"><Edit className="h-4 w-4 mr-2"/> Edit Listing</Button>
+            <Button variant="outline" asChild>
+              <Link href={`/admin/listings/${listingId}/edit`}>
+                <Edit className="h-4 w-4 mr-2"/> Edit Listing
+              </Link>
+            </Button>
             <Button variant={(listing.status === 'active' || listing.status === 'verified_public' || listing.status === 'verified_anonymous') ? 'destructive' : 'default'}>
                 {(listing.status === 'active' || listing.status === 'verified_public' || listing.status === 'verified_anonymous') ? <Trash2 className="h-4 w-4 mr-2"/> : <ShieldCheck className="h-4 w-4 mr-2"/>}
                 {(listing.status === 'active' || listing.status === 'verified_public' || listing.status === 'verified_anonymous') ? 'Deactivate' : 'Activate'} Listing

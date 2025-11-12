@@ -45,7 +45,8 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Settings
+  Settings,
+  Pencil
 } from "lucide-react";
 import { industries } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -527,6 +528,12 @@ export default function AdminListingsPage() {
                                 <Button variant="ghost" size="icon" asChild title="View Listing Details" className="h-8 w-8">
                                   <Link href={`/listings/${listing.id}`}>
                                     <Eye className="h-3 w-3" />
+                                  </Link>
+                                </Button>
+
+                                <Button variant="ghost" size="icon" asChild title="Edit Listing" className="h-8 w-8">
+                                  <Link href={`/admin/listings/${listing.id}/edit`}>
+                                    <Pencil className="h-3 w-3 text-blue-600" />
                                   </Link>
                                 </Button>
 
