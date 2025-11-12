@@ -26,6 +26,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -46,7 +54,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
-  Pencil
+  Pencil,
+  MoreVertical
 } from "lucide-react";
 import { industries } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -523,54 +532,65 @@ export default function AdminListingsPage() {
                             <TableCell className="hidden lg:table-cell text-center min-w-[100px] text-sm">
                               <FormattedDate dateString={listing.createdAt} />
                             </TableCell>
-                            <TableCell className="text-right sticky right-0 bg-background min-w-[60px]">
-                              <div className="flex items-center justify-end gap-1">
-                                <Button variant="ghost" size="icon" asChild title="View Listing Details" className="h-8 w-8">
-                                  <Link href={`/listings/${listing.id}`}>
-                                    <Eye className="h-3 w-3" />
-                                  </Link>
-                                </Button>
-
-                                <Button variant="ghost" size="icon" asChild title="Edit Listing" className="h-8 w-8">
-                                  <Link href={`/admin/listings/${listing.id}/edit`}>
-                                    <Pencil className="h-3 w-3 text-blue-600" />
-                                  </Link>
-                                </Button>
-
-                                {canApprove(listing.status) && (
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    title="Approve Listing"
-                                    onClick={() => handleAdminAction('approve', listingWithContext)}
-                                    className="h-8 w-8"
-                                  >
-                                    <CheckCircle className="h-3 w-3 text-green-600" />
+                            <TableCell className="text-right sticky right-0 bg-background">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreVertical className="h-4 w-4" />
+                                    <span className="sr-only">Open actions menu</span>
                                   </Button>
-                                )}
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
 
-                                {canReject(listing.status) && (
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    title="Reject Listing"
-                                    onClick={() => handleAdminAction('reject', listingWithContext)}
-                                    className="h-8 w-8"
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/listings/${listing.id}`} className="flex items-center cursor-pointer">
+                                      <Eye className="mr-2 h-4 w-4" />
+                                      <span>View Details</span>
+                                    </Link>
+                                  </DropdownMenuItem>
+
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/admin/listings/${listing.id}/edit`} className="flex items-center cursor-pointer">
+                                      <Pencil className="mr-2 h-4 w-4 text-blue-600" />
+                                      <span>Edit Listing</span>
+                                    </Link>
+                                  </DropdownMenuItem>
+
+                                  <DropdownMenuSeparator />
+
+                                  {canApprove(listing.status) && (
+                                    <DropdownMenuItem
+                                      onClick={() => handleAdminAction('approve', listingWithContext)}
+                                      className="cursor-pointer"
+                                    >
+                                      <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
+                                      <span>Approve Listing</span>
+                                    </DropdownMenuItem>
+                                  )}
+
+                                  {canReject(listing.status) && (
+                                    <DropdownMenuItem
+                                      onClick={() => handleAdminAction('reject', listingWithContext)}
+                                      className="cursor-pointer text-red-600"
+                                    >
+                                      <XCircle className="mr-2 h-4 w-4" />
+                                      <span>Reject Listing</span>
+                                    </DropdownMenuItem>
+                                  )}
+
+                                  <DropdownMenuSeparator />
+
+                                  <DropdownMenuItem
+                                    onClick={() => handleVerificationClick(listingWithContext)}
+                                    className="cursor-pointer"
                                   >
-                                    <XCircle className="h-3 w-3 text-red-600" />
-                                  </Button>
-                                )}
-
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  title="Manage Listing Verification"
-                                  onClick={() => handleVerificationClick(listingWithContext)}
-                                  className="h-8 w-8"
-                                >
-                                  <Settings className="h-3 w-3 text-blue-600" />
-                                </Button>
-                              </div>
+                                    <Settings className="mr-2 h-4 w-4 text-blue-600" />
+                                    <span>Manage Verification</span>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </TableCell>
                           </TableRow>
                         );
