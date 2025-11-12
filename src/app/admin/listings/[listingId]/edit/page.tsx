@@ -138,7 +138,7 @@ interface ImageSlot {
 
 export default function AdminEditListingPage() {
   const params = useParams();
-  const listingId = typeof params.id === 'string' ? params.id : '';
+  const listingId = typeof params.listingId === 'string' ? params.listingId : '';
 
   const { toast } = useToast();
   const router = useRouter();
