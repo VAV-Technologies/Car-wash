@@ -80,7 +80,8 @@ export async function GET(request: NextRequest) {
 
     // Apply search filter
     if (searchQuery) {
-      query = query.or(`listing_title_anonymous.ilike.%${searchQuery}%,id.eq.${searchQuery}`);
+      // Search in title and description
+      query = query.or(`listing_title_anonymous.ilike.%${searchQuery}%,anonymous_business_description.ilike.%${searchQuery}%`);
     }
 
     // Apply sorting
