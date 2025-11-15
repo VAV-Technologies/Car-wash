@@ -144,7 +144,6 @@ export async function GET(request: NextRequest) {
             action_type,
             previous_status,
             new_status,
-            reason_category,
             admin_notes,
             created_at
           `)
