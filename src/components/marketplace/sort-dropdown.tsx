@@ -32,7 +32,7 @@ export function SortDropdown() {
 
   return (
     <div className="flex items-center space-x-2">
-      <Label htmlFor="sort-by" className="text-sm font-medium text-brand-dark-blue">
+      <Label htmlFor="sort-by" className="text-sm font-medium text-white">
         Sort by:
       </Label>
       <Select
@@ -42,20 +42,24 @@ export function SortDropdown() {
       >
         <SelectTrigger
           id="sort-by"
-          className="w-full sm:w-[200px] bg-brand-white border-brand-light-gray focus:ring-brand-sky-blue disabled:opacity-50"
+          className="w-full sm:w-[200px] bg-white/10 backdrop-blur-md border-white/20 text-white focus:ring-brand-sky-blue focus:border-brand-sky-blue hover:bg-white/20 transition-colors"
         >
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-brand-dark-blue border-white/20 text-white">
           {Object.entries(SORT_OPTIONS).map(([key, _]) => (
-            <SelectItem key={key} value={key}>
+            <SelectItem
+              key={key}
+              value={key}
+              className="focus:bg-white/10 focus:text-white cursor-pointer"
+            >
               {getSortOptionLabel(key)}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       {isLoading && (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-brand-sky-blue animate-pulse">
           Updating...
         </div>
       )}

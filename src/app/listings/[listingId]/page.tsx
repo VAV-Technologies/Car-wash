@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/select";
 import { SUPPORTED_CURRENCIES, getCurrency } from '@/lib/currency-config';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AnimatedBackground } from '@/components/ui/animated-background';
 
 // Type definitions for the listing data
 interface ListingData {
@@ -185,18 +186,16 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
     return filtered.length > 0 ? filtered : [DEFAULT_LISTING_IMAGES[0]];
   }, [imageUrls]);
 
+  // Reset index if urls change
   React.useEffect(() => {
-    if (currentIndex >= validImageUrls.length && validImageUrls.length > 0) {
-      setCurrentIndex(0);
-    } else if (validImageUrls.length === 0 && currentIndex !== 0) { // Should not happen due to fallback
-      setCurrentIndex(0);
-    }
-  }, [validImageUrls, currentIndex]);
+    setCurrentIndex(0);
+  }, [validImageUrls]);
 
-  const mainImage = validImageUrls[currentIndex];
+  const mainImage = validImageUrls[0]; // Always show the first image in the sidebar
+  const currentDialogImage = validImageUrls[currentIndex];
 
   const handleNextImage = (e?: React.MouseEvent) => {
-    e?.stopPropagation(); // Prevent dialog from closing if clicking on arrows inside it
+    e?.stopPropagation();
     setCurrentIndex((prevIndex) => (prevIndex + 1) % validImageUrls.length);
   };
 
@@ -211,48 +210,34 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
 
   return (
     <div className="w-full">
-      <Card className="shadow-md bg-muted/30 border-border">
-        <CardContent className="p-3">
+      <Card className="shadow-md bg-white/10 backdrop-blur-md border-white/20 overflow-hidden">
+        <CardContent className="p-0">
           <div
             className={cn(
-              "rounded-md overflow-hidden shadow-inner bg-muted aspect-[16/10] flex items-center justify-center relative cursor-pointer group",
-              "h-48 md:h-56" // Adjusted height for sidebar
+              "shadow-inner bg-muted aspect-[16/10] flex items-center justify-center relative cursor-pointer group w-full",
             )}
             onClick={openPreview}
           >
             <Image
               src={mainImage}
-              alt={`Main image for ${listingTitle} (${currentIndex + 1} of ${validImageUrls.length})`}
+              alt={`Main image for ${listingTitle}`}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 400px, 400px"
               className="transition-transform duration-300 group-hover:scale-105 object-cover"
-              key={mainImage} // Force re-render on image change
               onError={(e) => {
                 const target = e.currentTarget as HTMLImageElement;
-                const triedUrls = target.dataset.triedUrls ? target.dataset.triedUrls.split(',') : [];
-                if (!triedUrls.includes(mainImage)) {
-                   triedUrls.push(mainImage);
-                   target.dataset.triedUrls = triedUrls.join(',');
-                   const fallbackIndex = DEFAULT_LISTING_IMAGES.findIndex(img => !triedUrls.includes(img));
-                   if (fallbackIndex !== -1) target.src = DEFAULT_LISTING_IMAGES[fallbackIndex];
-                   else target.src = DEFAULT_LISTING_IMAGES[0]; // Ultimate fallback
-                }
+                target.src = DEFAULT_LISTING_IMAGES[0];
               }}
               data-ai-hint="business office product"
             />
             <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
             {validImageUrls.length > 1 && (
-              <>
-                <Button variant="ghost" size="icon" className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white border-none rounded-full h-7 w-7" onClick={handlePrevImage} aria-label="Previous image"><ChevronLeft className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white border-none rounded-full h-7 w-7" onClick={handleNextImage} aria-label="Next image"><ChevronRight className="h-4 w-4" /></Button>
-              </>
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm flex items-center gap-1">
+                <ImagesIcon className="h-3 w-3" />
+                <span>+{validImageUrls.length - 1}</span>
+              </div>
             )}
           </div>
-          {validImageUrls.length > 1 && (
-            <div className="text-center text-xs text-muted-foreground mt-2">
-              Image {currentIndex + 1} of {validImageUrls.length} (Click to enlarge)
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -263,13 +248,12 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
           </DialogHeader>
           <div className="relative aspect-video bg-black rounded-md">
             <Image
-              src={mainImage} // Dialog always shows the current main image
+              src={currentDialogImage}
               alt={`Enlarged image for ${listingTitle} (${currentIndex + 1} of ${validImageUrls.length})`}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               className="object-contain"
-              key={`dialog-${mainImage}`}
-              onError={(e) => { /* Similar error handling as above if needed */ }}
+              key={`dialog-${currentDialogImage}`}
             />
             {validImageUrls.length > 1 && (
               <>
@@ -278,13 +262,13 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
               </>
             )}
             <DialogClose asChild>
-                <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-full h-8 w-8">
-                    <X className="h-5 w-5"/>
-                    <span className="sr-only">Close preview</span>
-                </Button>
+              <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-full h-8 w-8">
+                <X className="h-5 w-5" />
+                <span className="sr-only">Close preview</span>
+              </Button>
             </DialogClose>
           </div>
-           {validImageUrls.length > 1 && (
+          {validImageUrls.length > 1 && (
             <div className="text-center text-sm text-muted-foreground mt-2">
               Image {currentIndex + 1} of {validImageUrls.length}
             </div>
@@ -323,8 +307,8 @@ export default function ListingDetailPage() {
         const data = await response.json();
         setInquirySent(data.has_inquired);
       } else {
-         console.warn('Failed to check existing inquiry, assuming not inquired.');
-         setInquirySent(false);
+        console.warn('Failed to check existing inquiry, assuming not inquired.');
+        setInquirySent(false);
       }
     } catch (error) {
       console.error('Error checking inquiry status:', error);
@@ -488,7 +472,7 @@ export default function ListingDetailPage() {
       if (!href || href.trim() === "" || href.trim() === "#") {
         return <p className="text-sm text-slate-600">You haven't uploaded this document yet. <Link href={`/seller-dashboard/listings/${listing.id}/edit`} className="text-blue-600 hover:underline">Upload now</Link></p>;
       }
-      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4"/>{children}</Link>;
+      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:text-blue-200 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4" />{children}</Link>;
     }
 
     // Admin access - full visibility for moderation purposes
@@ -496,7 +480,7 @@ export default function ListingDetailPage() {
       if (!href || href.trim() === "" || href.trim() === "#") {
         return <p className="text-sm text-slate-600">Document not provided by seller.</p>;
       }
-      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4"/>{children}</Link>;
+      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:text-blue-200 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4" />{children}</Link>;
     }
 
     // Non-verified seller content - show restriction message
@@ -509,11 +493,11 @@ export default function ListingDetailPage() {
       if (!href || href.trim() === "" || href.trim() === "#") {
         return <p className="text-sm text-slate-600">Document not provided by seller.</p>;
       }
-      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4"/>{children}</Link>;
+      return <Link href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:text-blue-200 hover:underline font-medium flex items-center gap-1"><FileText className="h-4 w-4" />{children}</Link>;
     }
 
     // Unverified buyer - show verification requirement
-    return <p className="text-sm text-muted-foreground italic">Complete buyer verification to access documents</p>;
+    return <p className="text-sm text-gray-300 italic">Complete buyer verification to access documents</p>;
   };
 
   const FinancialValue = ({ usdAmount }: { usdAmount: number | null | undefined }) => {
@@ -521,50 +505,53 @@ export default function ListingDetailPage() {
       return <span className="text-lg font-semibold text-primary">N/A</span>;
     }
     return (
-      <span className="text-lg font-semibold text-primary">
+      <span className="text-lg font-semibold text-white">
         {formatCurrency(usdAmount, selectedCurrency, rates)}
       </span>
     );
   };
 
   return (
-    <div className="container py-8 md:py-12 bg-brand-light-gray">
-      <Card className="shadow-xl overflow-hidden bg-brand-white">
-        <CardHeader className="p-4 md:p-6 border-b">
+    <>
+      <AnimatedBackground />
+      <div className="container py-8 md:py-12 relative z-10">
+        <Card className="shadow-xl overflow-hidden bg-white/10 backdrop-blur-md border-white/20 text-white">
+
+          <CardHeader className="p-4 md:p-6 border-white/10 border-b">
             <div className="mb-4">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-brand-dark-blue tracking-tight">{listing.title}</h1>
-                <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary" className="bg-brand-dark-blue/10 text-brand-dark-blue">{listing.industry}</Badge>
-                  {listing.is_seller_verified ? (
-                    <Badge variant="secondary" className="bg-green-500/10 text-green-700 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
-                  ) : (
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
-                  )}
-                  {/* Listing Verification Badge */}
-                  {(() => {
-                    const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
-                    if (verificationStatus === 'verified') {
-                      return (
-                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 border border-blue-500/30">
-                          <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
-                        </Badge>
-                      );
-                    } else if (verificationStatus === 'deactivated') {
-                      return (
-                        <Badge variant="secondary" className="bg-red-500/10 text-red-700 border border-red-500/30">
-                          <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
-                        </Badge>
-                      );
-                    }
-                    // Don't show badge for 'unverified' to avoid clutter
-                    return null;
-                  })()}
-                </div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight">{listing.title}</h1>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <Badge variant="secondary" className="bg-brand-dark-blue/10 text-brand-dark-blue">{listing.industry}</Badge>
+                {listing.is_seller_verified ? (
+                  <Badge variant="secondary" className="bg-green-500/10 text-green-700 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
+                )}
+                {/* Listing Verification Badge */}
+                {(() => {
+                  const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
+                  if (verificationStatus === 'verified') {
+                    return (
+                      <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 border border-blue-500/30">
+                        <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
+                      </Badge>
+                    );
+                  } else if (verificationStatus === 'deactivated') {
+                    return (
+                      <Badge variant="secondary" className="bg-red-500/10 text-red-700 border border-red-500/30">
+                        <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
+                      </Badge>
+                    );
+                  }
+                  // Don't show badge for 'unverified' to avoid clutter
+                  return null;
+                })()}
+              </div>
             </div>
             {/* Financial Highlights Bubble */}
-            <Card className="bg-primary/5 p-4 md:p-6 rounded-lg shadow-sm border border-primary/20 mt-4">
+            <Card className="bg-white/5 p-4 md:p-6 rounded-lg shadow-sm border border-white/10 mt-4 backdrop-blur-sm">
               <div className="flex justify-between items-center mb-3">
-                <h2 className="text-xl font-semibold text-primary flex items-center"><Banknote className="h-6 w-6 mr-2"/>Financial Snapshot</h2>
+                <h2 className="text-xl font-semibold text-white flex items-center"><Banknote className="h-6 w-6 mr-2" />Financial Snapshot</h2>
                 {isLoadingRates ? <Skeleton className="h-9 w-40" /> : !ratesError && (
                   <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm">
                     <span className="text-sm text-muted-foreground font-medium">Currency:</span>
@@ -588,8 +575,8 @@ export default function ListingDetailPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Annual Revenue</p>
-                  <p className="text-lg font-semibold text-primary">
+                  <p className="text-xs text-gray-300 uppercase tracking-wider">Annual Revenue</p>
+                  <p className="text-lg font-semibold text-white">
                     {listing.annual_revenue_range
                       ? convertRevenueRange(listing.annual_revenue_range, selectedCurrency, rates) || listing.annual_revenue_range
                       : <FinancialValue usdAmount={listing.verified_annual_revenue} />
@@ -597,148 +584,149 @@ export default function ListingDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">EBITDA (TTM)</p>
+                  <p className="text-xs text-gray-300 uppercase tracking-wider">EBITDA (TTM)</p>
                   <FinancialValue usdAmount={listing.ebitda} />
                 </div>
                 {(listing.adjusted_cash_flow || listing.verified_cash_flow) && (
-                 <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Adj. Cash Flow (TTM)</p>
+                  <div>
+                    <p className="text-xs text-gray-300 uppercase tracking-wider">Adj. Cash Flow (TTM)</p>
                     <FinancialValue usdAmount={listing.adjusted_cash_flow || listing.verified_cash_flow} />
                   </div>
                 )}
                 {cfMultiple !== 'N/A' && (
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Est. C.F. Multiple</p>
-                    <p className="text-lg font-semibold text-primary">{cfMultiple}</p>
+                    <p className="text-xs text-gray-300 uppercase tracking-wider">Est. C.F. Multiple</p>
+                    <p className="text-lg font-semibold text-white">{cfMultiple}</p>
                   </div>
                 )}
-                  </div>
+              </div>
             </Card>
-        </CardHeader>
-        <CardContent className="p-6 md:p-8 pt-6 grid lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 space-y-8">
-                {/* Alerts Section */}
-                {listing.is_seller_verified && !currentUser && ( <Card className="bg-blue-50 border-blue-300 dark:bg-blue-900/20 dark:border-blue-700"><CardHeader><CardTitle className="text-blue-700 dark:text-blue-300 flex items-center"><UserCircle className="h-5 w-5 mr-2"/>Access Full Details</CardTitle></CardHeader><CardContent><p className="text-sm text-blue-600 dark:text-blue-400">This listing is from a verified seller. <Link href={`/auth/login?redirect=/listings/${listing.id}`} className="font-semibold underline hover:text-blue-700">Login</Link> or <Link href={`/auth/register?redirect=/listings/${listing.id}`} className="font-semibold underline hover:text-blue-700">Register</Link> as a buyer and complete verification to view detailed information and documents.</p></CardContent></Card> )}
-                {listing.is_seller_verified && currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && ( <Card className="bg-amber-50 border-amber-300 dark:bg-amber-900/20 dark:border-amber-700"><CardHeader><CardTitle className="text-amber-700 dark:text-amber-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2"/>Unlock Verified Access</CardTitle></CardHeader><CardContent><p className="text-sm text-amber-600 dark:text-amber-400">This listing is from a seller who has completed Due Diligence. To view specific company details, financials, and documents, please <Link href="/dashboard/verification" className="font-semibold underline hover:text-amber-700">complete buyer verification</Link>.</p></CardContent></Card> )}
-                {listing.is_seller_verified && currentUser && currentUser.id === listing.seller_id && ( <Card className="bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-700"><CardHeader><CardTitle className="text-green-700 dark:text-green-300 flex items-center"><Eye className="h-5 w-5 mr-2"/>Seller View</CardTitle></CardHeader><CardContent><p className="text-sm text-green-600 dark:text-green-400">You are viewing your own verified listing. All details and documents are visible to you. Buyers will need to complete verification to see this level of detail.</p></CardContent></Card> )}
-                {currentUser && currentUser.role === 'admin' && ( <Card className="bg-purple-50 border-purple-300 dark:bg-purple-900/20 dark:border-purple-700"><CardHeader><CardTitle className="text-purple-700 dark:text-purple-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2"/>Admin Access</CardTitle></CardHeader><CardContent><p className="text-sm text-purple-600 dark:text-purple-400">You have administrative access to view all listing content for moderation purposes. All details and documents are visible regardless of seller verification status.</p></CardContent></Card> )}
+          </CardHeader>
+          <CardContent className="p-6 md:p-8 pt-6 grid lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8 space-y-8 border-r border-white/10 pr-0 lg:pr-8">
+              {/* Alerts Section */}
+              {listing.is_seller_verified && !currentUser && (<Card className="bg-brand-light-gray border-brand-dark-blue/20 dark:bg-white/5 dark:border-white/10"><CardHeader><CardTitle className="text-brand-dark-blue dark:text-white flex items-center"><UserCircle className="h-5 w-5 mr-2" />Access Full Details</CardTitle></CardHeader><CardContent><p className="text-sm text-brand-dark-blue/80 dark:text-gray-300">This listing is from a verified seller. <Link href={`/auth/login?redirect=/listings/${listing.id}`} className="font-semibold underline hover:text-brand-dark-blue dark:hover:text-white">Login</Link> or <Link href={`/auth/register?redirect=/listings/${listing.id}`} className="font-semibold underline hover:text-brand-dark-blue dark:hover:text-white">Register</Link> as a buyer and complete verification to view detailed information and documents.</p></CardContent></Card>)}
+              {listing.is_seller_verified && currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && (<Card className="bg-amber-50 border-amber-300 dark:bg-amber-900/20 dark:border-amber-700"><CardHeader><CardTitle className="text-amber-700 dark:text-amber-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2" />Unlock Verified Access</CardTitle></CardHeader><CardContent><p className="text-sm text-amber-600 dark:text-amber-400">This listing is from a seller who has completed Due Diligence. To view specific company details, financials, and documents, please <Link href="/dashboard/verification" className="font-semibold underline hover:text-amber-700">complete buyer verification</Link>.</p></CardContent></Card>)}
+              {listing.is_seller_verified && currentUser && currentUser.id === listing.seller_id && (<Card className="bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-700"><CardHeader><CardTitle className="text-green-700 dark:text-green-300 flex items-center"><Eye className="h-5 w-5 mr-2" />Seller View</CardTitle></CardHeader><CardContent><p className="text-sm text-green-600 dark:text-green-400">You are viewing your own verified listing. All details and documents are visible to you. Buyers will need to complete verification to see this level of detail.</p></CardContent></Card>)}
+              {currentUser && currentUser.role === 'admin' && (<Card className="bg-purple-50 border-purple-300 dark:bg-purple-900/20 dark:border-purple-700"><CardHeader><CardTitle className="text-purple-700 dark:text-purple-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2" />Admin Access</CardTitle></CardHeader><CardContent><p className="text-sm text-purple-600 dark:text-purple-400">You have administrative access to view all listing content for moderation purposes. All details and documents are visible regardless of seller verification status.</p></CardContent></Card>)}
 
-                <section id="business-overview"><h2 className="text-2xl font-semibold text-brand-dark-blue mb-3 flex items-center"><BookOpen className="h-6 w-6 mr-2 text-primary"/>Business Overview</h2><p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{listing.short_description}</p></section><Separator />
-                {keyStrengths.length > 0 && ( <><section id="key-strengths"><h2 className="text-2xl font-semibold text-brand-dark-blue mb-3 flex items-center"><TrendingUp className="h-6 w-6 mr-2 text-primary"/>Key Strengths</h2><ul className="list-disc list-inside space-y-1 text-muted-foreground pl-5">{keyStrengths.map((strength, index) => (<li key={index}>{strength}</li>))}</ul></section><Separator /></> )}
-                {listing.reason_for_selling_anonymous && ( <><section id="reason-for-selling"><h2 className="text-2xl font-semibold text-brand-dark-blue mb-3 flex items-center"><Tag className="h-6 w-6 mr-2 text-primary"/>Reason for Selling</h2><p className="text-muted-foreground leading-relaxed">{listing.reason_for_selling_anonymous}</p></section><Separator /></> )}
-                {growthOpportunities.length > 0 && ( <><section id="growth-potential"><h2 className="text-2xl font-semibold text-brand-dark-blue mb-3 flex items-center"><Brain className="h-6 w-6 mr-2 text-primary"/>Specific Growth Opportunities</h2><ul className="list-disc list-inside space-y-1 text-muted-foreground pl-5">{growthOpportunities.map((opportunity, index) => (<li key={index}>{opportunity.replace(/^[•\-]\s*/, '')}</li>))}</ul></section><Separator /></> )}
-                <section id="verified-details" className={`p-6 rounded-lg border ${canViewVerifiedDetails ? 'bg-primary/5 border-primary/20' : 'bg-muted/30 border-muted/50'}`}>
-                    <h2 className="text-2xl font-semibold text-primary mb-4 flex items-center"><ShieldCheck className="h-6 w-6 mr-2"/>{canViewVerifiedDetails ? "Verified Information & Documents" : "Verified Information (Restricted Access)"}</h2>
-                    <div className="space-y-6">
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><Building className="h-5 w-5"/>Company Details</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Registered Business Name:</span> {listing.registered_business_name || 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Year Established:</span> {listing.established_year || 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Number of Employees:</span> {listing.number_of_employees || 'N/A'}</p></div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view detailed company information</p>)}</div>
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><Globe className="h-5 w-5"/>Web Presence</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Business Website:</span> {listing.website_url ? <Link href={listing.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">{listing.website_url}</Link> : 'N/A'}</p>{listing.social_media_links && <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Social Media:</span> <span className="whitespace-pre-wrap">{listing.social_media_links}</span></p>}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view web presence details</p>)}</div>
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><DollarSign className="h-5 w-5"/>Specific Financials</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Annual Revenue (TTM):</span> {listing.verified_annual_revenue ? <FinancialValue usdAmount={listing.verified_annual_revenue} /> : 'N/A'}</p><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Specific Net Profit (TTM):</span> {listing.verified_net_profit ? <FinancialValue usdAmount={listing.verified_net_profit} /> : 'N/A'}</p>{listing.net_profit_margin_range && <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Net Profit Margin Range:</span> {listing.net_profit_margin_range}</p>}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view specific financial details</p>)}</div>
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><UsersIcon className="h-5 w-5"/>Seller & Deal Information</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Detailed Reason for Selling:</span> <span className="whitespace-pre-wrap">{listing.detailed_reason_for_selling || 'N/A'}</span></p>{(() => {
-  const dealStructure = listing.deal_structure_looking_for
-    ? (typeof listing.deal_structure_looking_for === 'string'
-        ? JSON.parse(listing.deal_structure_looking_for)
-        : listing.deal_structure_looking_for)
-    : null;
-  return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
-    <p className="text-sm text-slate-700"><span className="font-medium text-slate-900">Deal Structure Preferences:</span> {dealStructure.join(', ')}</p>
-  );
-})()}</div>) : (<p className="text-sm text-muted-foreground italic">Complete buyer verification to view seller and deal information</p>)}</div>
-                        <div><h3 className="font-semibold text-brand-dark-blue flex items-center gap-2 mb-2"><FileText className="h-5 w-5"/>Supporting Documents</h3><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><div><p className="text-xs font-medium text-slate-800 mb-1">Financial Documents</p><DocumentLink href={listing.financial_documents_url}>Financial Statements (P&L, Balance Sheet)</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Business Metrics</p><DocumentLink href={listing.key_metrics_report_url}>Key Performance Indicators Report</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Ownership Documents</p><DocumentLink href={listing.ownership_documents_url}>Company Registration & Certificates</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Financial Summary</p><DocumentLink href={listing.financial_snapshot_url}>Recent Financial Summary</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Ownership Details</p><DocumentLink href={listing.ownership_details_url}>Detailed Ownership Structure</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Location & Assets</p><DocumentLink href={listing.location_real_estate_info_url}>Real Estate & Location Info</DocumentLink></div><div><p className="text-xs font-medium text-slate-800 mb-1">Digital Presence</p><DocumentLink href={listing.web_presence_info_url}>Website Analytics & SEO Data</DocumentLink></div>{listing.secure_data_room_link && (<div className="md:col-span-2"><p className="text-xs font-medium text-slate-800 mb-1">Additional Documents</p><DocumentLink href={listing.secure_data_room_link}>Secure Data Room Access</DocumentLink></div>)}</div></div>
-                    </div>
-                </section>
-          </div>
+              <section id="business-overview"><h2 className="text-2xl font-semibold text-white mb-3 flex items-center"><BookOpen className="h-6 w-6 mr-2 text-white/90" />Business Overview</h2><p className="text-gray-200 leading-relaxed whitespace-pre-wrap text-justify">{listing.short_description}</p></section><Separator className="bg-white/10" />
+              {keyStrengths.length > 0 && (<><section id="key-strengths"><h2 className="text-2xl font-semibold text-white mb-3 flex items-center"><TrendingUp className="h-6 w-6 mr-2 text-white/90" />Key Strengths</h2><ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{keyStrengths.map((strength, index) => (<li key={index}>{strength}</li>))}</ul></section><Separator className="bg-white/10" /></>)}
+              {listing.reason_for_selling_anonymous && (<><section id="reason-for-selling"><h2 className="text-2xl font-semibold text-white mb-3 flex items-center"><Tag className="h-6 w-6 mr-2 text-white/90" />Reason for Selling</h2><p className="text-gray-200 leading-relaxed text-justify">{listing.reason_for_selling_anonymous}</p></section><Separator className="bg-white/10" /></>)}
+              {growthOpportunities.length > 0 && (<><section id="growth-potential"><h2 className="text-2xl font-semibold text-white mb-3 flex items-center"><Brain className="h-6 w-6 mr-2 text-white/90" />Specific Growth Opportunities</h2><ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{growthOpportunities.map((opportunity, index) => (<li key={index}>{opportunity.replace(/^[•\-]\s*/, '')}</li>))}</ul></section><Separator className="bg-white/10" /></>)}
+              <section id="verified-details" className={`p-6 rounded-lg border ${canViewVerifiedDetails ? 'bg-white/5 border-white/10' : 'bg-white/5 border-white/10'}`}>
+                <h2 className="text-2xl font-semibold text-white mb-4 flex items-center"><ShieldCheck className="h-6 w-6 mr-2" />{canViewVerifiedDetails ? "Verified Information & Documents" : "Verified Information (Restricted Access)"}</h2>
+                <div className="space-y-6">
+                  <div><h3 className="font-semibold text-white flex items-center gap-2 mb-2"><Building className="h-5 w-5" />Company Details</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Registered Business Name:</span> {listing.registered_business_name || 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Year Established:</span> {listing.established_year || 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Number of Employees:</span> {listing.number_of_employees || 'N/A'}</p></div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view detailed company information</p>)}</div>
+                  <div><h3 className="font-semibold text-white flex items-center gap-2 mb-2"><Globe className="h-5 w-5" />Web Presence</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Business Website:</span> {listing.website_url ? <Link href={listing.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-200 hover:underline font-medium">{listing.website_url}</Link> : 'N/A'}</p>{listing.social_media_links && <p className="text-sm text-gray-200"><span className="font-medium text-white">Social Media:</span> <span className="whitespace-pre-wrap">{listing.social_media_links}</span></p>}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view web presence details</p>)}</div>
+                  <div><h3 className="font-semibold text-white flex items-center gap-2 mb-2"><DollarSign className="h-5 w-5" />Specific Financials</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Specific Annual Revenue (TTM):</span> {listing.verified_annual_revenue ? <FinancialValue usdAmount={listing.verified_annual_revenue} /> : 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Specific Net Profit (TTM):</span> {listing.verified_net_profit ? <FinancialValue usdAmount={listing.verified_net_profit} /> : 'N/A'}</p>{listing.net_profit_margin_range && <p className="text-sm text-gray-200"><span className="font-medium text-white">Net Profit Margin Range:</span> {listing.net_profit_margin_range}</p>}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view specific financial details</p>)}</div>
+                  <div><h3 className="font-semibold text-white flex items-center gap-2 mb-2"><UsersIcon className="h-5 w-5" />Seller & Deal Information</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Detailed Reason for Selling:</span> <span className="whitespace-pre-wrap">{listing.detailed_reason_for_selling || 'N/A'}</span></p>{(() => {
+                    const dealStructure = listing.deal_structure_looking_for
+                      ? (typeof listing.deal_structure_looking_for === 'string'
+                        ? JSON.parse(listing.deal_structure_looking_for)
+                        : listing.deal_structure_looking_for)
+                      : null;
+                    return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
+                      <p className="text-sm text-gray-200"><span className="font-medium text-white">Deal Structure Preferences:</span> {dealStructure.join(', ')}</p>
+                    );
+                  })()}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view seller and deal information</p>)}</div>
+                  <div><h3 className="font-semibold text-white flex items-center gap-2 mb-2"><FileText className="h-5 w-5" />Supporting Documents</h3><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><div><p className="text-xs font-medium text-white mb-1">Financial Documents</p><DocumentLink href={listing.financial_documents_url}>Financial Statements (P&L, Balance Sheet)</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Business Metrics</p><DocumentLink href={listing.key_metrics_report_url}>Key Performance Indicators Report</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Ownership Documents</p><DocumentLink href={listing.ownership_documents_url}>Company Registration & Certificates</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Financial Summary</p><DocumentLink href={listing.financial_snapshot_url}>Recent Financial Summary</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Location & Assets</p><DocumentLink href={listing.location_real_estate_info_url}>Real Estate & Location Info</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Digital Presence</p><DocumentLink href={listing.web_presence_info_url}>Website Analytics & SEO Data</DocumentLink></div>{listing.secure_data_room_link && (<div className="md:col-span-2"><p className="text-xs font-medium text-white mb-1">Additional Documents</p><DocumentLink href={listing.secure_data_room_link}>Secure Data Room Access</DocumentLink></div>)}</div></div>
+                </div>
+              </section>
+            </div>
             <aside className="lg:col-span-4 space-y-6 md:sticky md:top-24 h-fit">
-                {/* Moved Image Gallery to top of sidebar */}
-                <ImageGallery
-                  imageUrls={
-                    listing.images
-                      ? (typeof listing.images === 'string'
-                          ? JSON.parse(listing.images)
-                          : listing.images)
-                      : undefined
-                  }
-                  listingTitle={listing.title}
-                />
+              {/* Moved Image Gallery to top of sidebar */}
+              <ImageGallery
+                imageUrls={
+                  listing.images
+                    ? (typeof listing.images === 'string'
+                      ? JSON.parse(listing.images)
+                      : listing.images)
+                    : undefined
+                }
+                listingTitle={listing.title}
+              />
 
-                <Card className="shadow-md bg-brand-white"><CardHeader><CardTitle className="text-xl text-brand-dark-blue font-heading">Listing Summary</CardTitle></CardHeader>
-                    <CardContent className="space-y-3 text-sm">
-                        <div className="flex items-center"><Briefcase className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Industry</p><p className="text-muted-foreground">{listing.industry}</p></div></div>
-                        <div className="flex items-center"><MapPin className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Location</p><p className="text-muted-foreground">{listing.location_city}, {listing.location_country}</p></div></div>
-                        <div className="flex items-center"><DollarSign className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Asking Price</p><p className="text-muted-foreground">{listing.asking_price > 0 ? formatCurrency(listing.asking_price, selectedCurrency, rates) : 'Contact for Price'}</p></div></div>
-{(() => {
-  const dealStructure = listing.deal_structure_looking_for
-    ? (typeof listing.deal_structure_looking_for === 'string'
-        ? JSON.parse(listing.deal_structure_looking_for)
-        : listing.deal_structure_looking_for)
-    : null;
-  return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
-    <div className="flex items-start"><HandCoins className="h-5 w-5 mr-3 text-primary flex-shrink-0 mt-0.5" /><div><p className="font-medium text-brand-dark-blue">Deal Structure</p><p className="text-muted-foreground">{dealStructure.join(', ')}</p></div></div>
-  );
-})()}
-                        <div className="flex items-center"><UserCircle className="h-5 w-5 mr-3 text-primary flex-shrink-0" /><div><p className="font-medium text-brand-dark-blue">Seller Status</p><p className="text-muted-foreground">{listing.is_seller_verified ? 'Verified Seller' : 'Unverified Seller'}</p></div></div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col gap-2">
-                        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry} onClick={handleInquireClick}>
-                            {(isSubmittingInquiry || isCheckingInquiry) && <Loader2 className="h-4 w-4 mr-2 animate-spin"/>}
-                            {isCheckingInquiry ? 'Checking...' : isSubmittingInquiry ? 'Sending...' : inquirySent ? 'Inquiry Sent' : 'Inquire About Business'}
-                            {!isSubmittingInquiry && !isCheckingInquiry && <MessageSquare className="h-4 w-4 ml-2"/>}
-                        </Button>
-                        {inquirySent && (
-                       <ConversationButton
-                            listingId={listing.id}
-                            buyerId={currentUser?.id}
-                            sellerName="the seller"
-                            listingTitle={listing.title}
-                            isAuthenticated={!!currentUser}
-                            userRole={currentUser?.role}
-                            variant="outline"
-                            className="w-full border-primary text-primary hover:bg-primary/10"
-                          />
-                        )}
+              <Card className="shadow-md bg-white/10 backdrop-blur-md border-white/20 text-white"><CardHeader><CardTitle className="text-xl text-white font-heading">Listing Summary</CardTitle></CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <div className="flex items-center"><Briefcase className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Industry</p><p className="text-gray-300">{listing.industry}</p></div></div>
+                  <div className="flex items-center"><MapPin className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Location</p><p className="text-gray-300">{listing.location_city}, {listing.location_country}</p></div></div>
+                  <div className="flex items-center"><DollarSign className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Asking Price</p><p className="text-gray-300">{listing.asking_price > 0 ? formatCurrency(listing.asking_price, selectedCurrency, rates) : 'Contact for Price'}</p></div></div>
+                  {(() => {
+                    const dealStructure = listing.deal_structure_looking_for
+                      ? (typeof listing.deal_structure_looking_for === 'string'
+                        ? JSON.parse(listing.deal_structure_looking_for)
+                        : listing.deal_structure_looking_for)
+                      : null;
+                    return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
+                      <div className="flex items-start"><HandCoins className="h-5 w-5 mr-3 text-white/80 flex-shrink-0 mt-0.5" /><div><p className="font-medium text-white">Deal Structure</p><p className="text-gray-300">{dealStructure.join(', ')}</p></div></div>
+                    );
+                  })()}
+                  <div className="flex items-center"><UserCircle className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Seller Status</p><p className="text-gray-300">{listing.is_seller_verified ? 'Verified Seller' : 'Unverified Seller'}</p></div></div>
+                </CardContent>
+                <CardFooter className="flex flex-col gap-2">
+                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry} onClick={handleInquireClick}>
+                    {(isSubmittingInquiry || isCheckingInquiry) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                    {isCheckingInquiry ? 'Checking...' : isSubmittingInquiry ? 'Sending...' : inquirySent ? 'Inquiry Sent' : 'Inquire About Business'}
+                    {!isSubmittingInquiry && !isCheckingInquiry && <MessageSquare className="h-4 w-4 ml-2" />}
+                  </Button>
+                  {inquirySent && (
+                    <ConversationButton
+                      listingId={listing.id}
+                      buyerId={currentUser?.id}
+                      sellerName="the seller"
+                      listingTitle={listing.title}
+                      isAuthenticated={!!currentUser}
+                      userRole={currentUser?.role}
+                      variant="outline"
+                      className="w-full border-primary text-primary hover:bg-primary/10"
+                    />
+                  )}
                 </CardFooter>
-            </Card>
-                {!currentUser && (<Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30"><CardContent className="p-4 text-center"><p className="text-sm text-brand-dark-blue mb-2">Want to learn more or see verified details?</p><Button variant="outline" asChild className="border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5"><Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login or Register to Inquire</Link></Button></CardContent></Card>)}
-                {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
+              </Card>
+              {!currentUser && (<Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30"><CardContent className="p-4 text-center"><p className="text-sm text-brand-dark-blue dark:text-brand-light-gray mb-2">Want to learn more or see verified details?</p><Button variant="outline" asChild className="w-full border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5"><Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login / Register as a Buyer to Inquire</Link></Button></CardContent></Card>)}
+              {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
             </aside>
-              </CardContent>
-            </Card>
+          </CardContent>
+        </Card>
 
-       <AlertDialog open={showVerificationPopup} onOpenChange={setShowVerificationPopup}>
-        <AlertDialogContent>
-          <AlertDialogHeader><AlertDialogTitle>Business Verification Pending</AlertDialogTitle><AlertDialogDescription>This business is currently undergoing our verification due diligence process. We&apos;ll notify you once they are ready for direct communication.</AlertDialogDescription></AlertDialogHeader>
-          <AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <AlertDialog open={showVerificationPopup} onOpenChange={setShowVerificationPopup}>
+          <AlertDialogContent>
+            <AlertDialogHeader><AlertDialogTitle>Business Verification Pending</AlertDialogTitle><AlertDialogDescription>This business is currently undergoing our verification due diligence process. We&apos;ll notify you once they are ready for direct communication.</AlertDialogDescription></AlertDialogHeader>
+            <AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-       <Dialog open={showInquiryDialog} onOpenChange={setShowInquiryDialog}>
+        <Dialog open={showInquiryDialog} onOpenChange={setShowInquiryDialog}>
           <DialogContent>
             <DialogHeader>
-            <DialogTitle>Confirm Your Interest: {listing.title}</DialogTitle>
+              <DialogTitle>Confirm Your Interest: {listing.title}</DialogTitle>
               <DialogDescription>
-              You are about to send an inquiry for this business. You can optionally add a message below.
+                You are about to send an inquiry for this business. You can optionally add a message below.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <Textarea
-              placeholder="Optional: Add a brief message to the seller or ask an initial question..."
+                placeholder="Optional: Add a brief message to the seller or ask an initial question..."
                 value={inquiryMessage}
                 onChange={(e) => setInquiryMessage(e.target.value)}
-              rows={3}
+                rows={3}
               />
-            <p className="text-xs text-muted-foreground mt-2">
-              Nobridge will facilitate further communication upon mutual interest and verification.
-            </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                Nobridge will facilitate further communication upon mutual interest and verification.
+              </p>
             </div>
             <DialogFooter>
-            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
               <Button onClick={handleInquirySubmit} disabled={isSubmittingInquiry}>
-              {isSubmittingInquiry && <Loader2 className="h-4 w-4 mr-2 animate-spin"/>}
-              {isSubmittingInquiry ? "Submitting..." : "Submit Inquiry"}
+                {isSubmittingInquiry && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                {isSubmittingInquiry ? "Submitting..." : "Submit Inquiry"}
               </Button>
             </DialogFooter>
           </DialogContent>
-       </Dialog>
+        </Dialog>
 
-    </div>
+      </div>
+    </>
   );
 }

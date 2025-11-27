@@ -19,6 +19,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/shared/logo';
 import { useAuth } from '@/contexts/auth-context';
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 
 interface NavLinkItem {
   href: string;
@@ -72,6 +73,13 @@ export function Navbar() {
   const [sellMenuOpen, setSellMenuOpen] = useState(false);
   const [buyMenuOpen, setBuyMenuOpen] = useState(false);
   const [companyMenuOpen, setCompanyMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 20);
+  });
 
   const sellMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
   const buyMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -151,12 +159,19 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-brand-light-gray/60 bg-brand-white text-brand-dark-blue shadow-sm">
+    <motion.header
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300 border-b",
+        scrolled
+          ? "bg-white/90 backdrop-blur-xl border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/80"
+          : "bg-white/80 backdrop-blur-lg border-white/10 supports-[backdrop-filter]:bg-white/60"
+      )}
+    >
       <div className="container mx-auto flex h-20 items-center justify-between px-6 md:px-8">
         <div className="flex items-center gap-x-6 lg:gap-x-8">
           <Logo size="xl" forceTheme="light" />
           <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
-            {navLinkGroups.map((group) => {
+            {navLinkGroups.map((group, index) => {
               const TriggerIcon = group.triggerIcon;
               return (
                 <DropdownMenu
@@ -232,8 +247,8 @@ export function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-brand-light-gray focus:bg-brand-light-gray">
                     <Link href={`${getDashboardUrl(userProfile)}/settings`} className="flex items-center px-3 py-2">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -277,7 +292,7 @@ export function Navbar() {
                   const TriggerIcon = group.triggerIcon;
                   return (
                     <div key={group.label} className="flex flex-col space-y-1">
-                       <h4 className="text-base font-semibold px-3 py-3 w-full text-brand-dark-blue flex items-center">
+                      <h4 className="text-base font-semibold px-3 py-3 w-full text-brand-dark-blue flex items-center">
                         <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
                         {group.label}
                       </h4>
@@ -299,11 +314,11 @@ export function Navbar() {
                     </div>
                   )
                 })}
-                <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80"/>
+                <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80" />
                 {isLoading ? (
-                   <div className="px-3 py-2 text-sm text-brand-dark-blue/60 flex items-center">
-                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading user...
-                   </div>
+                  <div className="px-3 py-2 text-sm text-brand-dark-blue/60 flex items-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading user...
+                  </div>
                 ) : isAuthenticated ? (
                   <>
                     <div className="px-3 py-2 text-sm border-b border-brand-light-gray/60 mb-2">
@@ -312,31 +327,31 @@ export function Navbar() {
                       <div className="text-brand-dark-blue/60 text-xs capitalize">{userProfile?.role}</div>
                     </div>
                     <SheetClose asChild>
-                     <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
-                       <Link href={getDashboardUrl(userProfile)} className="flex items-center"><LayoutDashboard className="mr-2 h-5 w-5" />Dashboard</Link>
-                     </Button>
+                      <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
+                        <Link href={getDashboardUrl(userProfile)} className="flex items-center"><LayoutDashboard className="mr-2 h-5 w-5" />Dashboard</Link>
+                      </Button>
                     </SheetClose>
                     <SheetClose asChild>
-                       <Button
-                         variant="ghost"
-                         onClick={handleLogout}
-                         className="justify-start text-lg px-3 py-3 text-red-600 hover:bg-red-100 hover:text-red-700 w-full"
-                       >
+                      <Button
+                        variant="ghost"
+                        onClick={handleLogout}
+                        className="justify-start text-lg px-3 py-3 text-red-600 hover:bg-red-100 hover:text-red-700 w-full"
+                      >
                         <LogOut className="mr-2 h-5 w-5" /> Logout
-                       </Button>
-                     </SheetClose>
+                      </Button>
+                    </SheetClose>
                   </>
                 ) : (
                   <>
                     <SheetClose asChild>
-                    <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
-                      <Link href="/auth/login" className="flex items-center"><LogIn className="mr-2 h-5 w-5" /> Login</Link>
-                    </Button>
+                      <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
+                        <Link href="/auth/login" className="flex items-center"><LogIn className="mr-2 h-5 w-5" /> Login</Link>
+                      </Button>
                     </SheetClose>
                     <SheetClose asChild>
-                    <Button asChild className="justify-start text-lg px-3 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
-                      <Link href="/auth/register" className="flex items-center"><UserPlus className="mr-2 h-5 w-5" /> Register</Link>
-                    </Button>
+                      <Button asChild className="justify-start text-lg px-3 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
+                        <Link href="/auth/register" className="flex items-center"><UserPlus className="mr-2 h-5 w-5" /> Register</Link>
+                      </Button>
                     </SheetClose>
                   </>
                 )}
@@ -345,6 +360,6 @@ export function Navbar() {
           </Sheet>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

@@ -4,15 +4,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Briefcase, Search, Users, Info, ShieldCheck, MessageSquare } from "lucide-react"; // Kept some relevant icons
+import { Briefcase, Search, Users, Info, ShieldCheck, MessageSquare } from "lucide-react";
+import { AnimatedBackground } from "@/components/ui/animated-background";
+import { FadeIn } from "@/components/ui/fade-in";
 
 const sellerFAQs = [
   {
     sectionTitle: "General & Getting Started",
-    icon: <Info className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Info className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What is Nobridge?",
@@ -38,7 +40,7 @@ const sellerFAQs = [
   },
   {
     sectionTitle: "How the Platform Works",
-    icon: <Briefcase className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Briefcase className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What is an \"anonymous\" listing?",
@@ -64,7 +66,7 @@ const sellerFAQs = [
   },
   {
     sectionTitle: "Verification, Security & Trust",
-    icon: <ShieldCheck className="h-5 w-5 mr-2 text-primary" />,
+    icon: <ShieldCheck className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "Why do I need to verify my account?",
@@ -90,7 +92,7 @@ const sellerFAQs = [
   },
   {
     sectionTitle: "Support & Next Steps",
-    icon: <MessageSquare className="h-5 w-5 mr-2 text-primary" />,
+    icon: <MessageSquare className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What happens after I start talking to a buyer?",
@@ -119,7 +121,7 @@ const sellerFAQs = [
 const buyerFAQs = [
   {
     sectionTitle: "General & Getting Started",
-    icon: <Info className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Info className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What is Nobridge?",
@@ -141,7 +143,7 @@ const buyerFAQs = [
   },
   {
     sectionTitle: "How the Platform Works",
-    icon: <Search className="h-5 w-5 mr-2 text-primary" />,
+    icon: <Search className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What is an \"anonymous\" listing?",
@@ -163,7 +165,7 @@ const buyerFAQs = [
   },
   {
     sectionTitle: "Verification, Security & Trust",
-    icon: <ShieldCheck className="h-5 w-5 mr-2 text-primary" />,
+    icon: <ShieldCheck className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "Why do I need to verify my profile?",
@@ -189,7 +191,7 @@ const buyerFAQs = [
   },
   {
     sectionTitle: "Support & Next Steps",
-    icon: <MessageSquare className="h-5 w-5 mr-2 text-primary" />,
+    icon: <MessageSquare className="h-5 w-5 mr-2 text-brand-sky-blue" />,
     questions: [
       {
         q: "What are the next steps after I connect with a seller?",
@@ -217,91 +219,124 @@ const buyerFAQs = [
 
 export default function FAQPage() {
   return (
-    <div className="container py-12 md:py-16">
-      <Card className="shadow-xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl md:text-4xl font-bold text-primary font-heading">
-            Frequently Asked Questions
-          </CardTitle>
-          <CardDescription className="text-lg">
-            Find answers to common questions about using Nobridge.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="max-w-3xl mx-auto space-y-12">
+    <div className="relative min-h-screen w-full overflow-hidden">
+      <AnimatedBackground position="fixed" className="z-0" />
 
-          {/* Seller FAQs */}
-          <div>
-            <div className="flex items-center mb-6">
-              <Briefcase className="h-8 w-8 mr-3 text-primary" />
-              <h2 className="text-2xl md:text-3xl font-semibold text-brand-dark-blue font-heading">
-                FAQ for Business Sellers
-              </h2>
-            </div>
-            <p className="text-muted-foreground mb-6">This guide answers common questions for business owners using the Nobridge platform.</p>
-            {sellerFAQs.map((category) => (
-              <div key={category.sectionTitle} className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 flex items-center text-brand-dark-blue font-heading">
-                  {category.icon}
-                  {category.sectionTitle}
-                </h3>
-                <Accordion type="single" collapsible className="w-full">
-                  {category.questions.map((faq, index) => (
-                    <AccordionItem value={`seller-${category.sectionTitle}-${index}`} key={index}>
-                      <AccordionTrigger className="text-left hover:no-underline text-base">
-                        {faq.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-base">
-                        {faq.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            ))}
-          </div>
-
-          {/* Buyer FAQs */}
-          <div>
-            <div className="flex items-center mb-6">
-              <Users className="h-8 w-8 mr-3 text-primary" />
-              <h2 className="text-2xl md:text-3xl font-semibold text-brand-dark-blue font-heading">
-                FAQ for Business Buyers
-              </h2>
-            </div>
-            <p className="text-muted-foreground mb-6">This guide answers common questions for investors and acquirers using the Nobridge platform.</p>
-            {buyerFAQs.map((category) => (
-              <div key={category.sectionTitle} className="mb-8">
-                <h3 className="text-xl font-semibold mb-3 flex items-center text-brand-dark-blue font-heading">
-                  {category.icon}
-                  {category.sectionTitle}
-                </h3>
-                <Accordion type="single" collapsible className="w-full">
-                  {category.questions.map((faq, index) => (
-                    <AccordionItem value={`buyer-${category.sectionTitle}-${index}`} key={index}>
-                      <AccordionTrigger className="text-left hover:no-underline text-base">
-                        {faq.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground text-base">
-                        {faq.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 text-center border-t pt-10">
-            <h3 className="text-xl font-semibold mb-3 font-heading">Still have questions?</h3>
-            <p className="text-muted-foreground mb-4">
-              If you can't find the answer you're looking for, please don't hesitate to reach out to our support team.
+      {/* Header Section */}
+      <section className="relative z-10 w-full pt-32 pb-16 md:pt-40 md:pb-20">
+        <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
+          <FadeIn direction="up" delay={200} className="max-w-4xl mx-auto space-y-6">
+            <h1 className="text-4xl md:text-6xl font-bold font-heading tracking-tight text-white drop-shadow-lg">
+              Frequently Asked Questions
+            </h1>
+            <p className="text-xl md:text-2xl font-light leading-relaxed text-blue-100 drop-shadow-md max-w-2xl mx-auto">
+              Find answers to common questions about using Nobridge.
             </p>
-            <Button asChild>
-              <Link href="/contact">Contact Support</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </FadeIn>
+        </div>
+      </section>
+
+      <div className="relative z-10 container mx-auto px-4 md:px-6 pb-24 md:pb-32">
+        <FadeIn delay={400}>
+          <Card className="shadow-2xl bg-white/10 backdrop-blur-xl border-white/20 text-white overflow-hidden">
+            <CardContent className="max-w-4xl mx-auto p-8 md:p-12 space-y-16">
+
+              {/* Seller FAQs */}
+              <div>
+                <div className="flex items-center mb-8 border-b border-white/10 pb-4">
+                  <div className="p-3 bg-brand-sky-blue/20 rounded-full mr-4 backdrop-blur-sm">
+                    <Briefcase className="h-8 w-8 text-brand-sky-blue" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white font-heading">
+                      FAQ for Business Sellers
+                    </h2>
+                    <p className="text-blue-100 mt-1">Everything you need to know about selling your business.</p>
+                  </div>
+                </div>
+
+                {sellerFAQs.map((category) => (
+                  <div key={category.sectionTitle} className="mb-10 last:mb-0">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center text-white/90 font-heading">
+                      {category.icon}
+                      {category.sectionTitle}
+                    </h3>
+                    <Accordion type="single" collapsible className="w-full space-y-3">
+                      {category.questions.map((faq, index) => (
+                        <AccordionItem
+                          value={`seller-${category.sectionTitle}-${index}`}
+                          key={index}
+                          className="border border-white/10 rounded-lg bg-white/5 px-4 data-[state=open]:bg-white/10 transition-colors"
+                        >
+                          <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
+                            {faq.q}
+                          </AccordionTrigger>
+                          <AccordionContent className="text-blue-100 text-base leading-relaxed pb-4">
+                            {faq.a}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </div>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-12" />
+
+              {/* Buyer FAQs */}
+              <div>
+                <div className="flex items-center mb-8 border-b border-white/10 pb-4">
+                  <div className="p-3 bg-brand-sky-blue/20 rounded-full mr-4 backdrop-blur-sm">
+                    <Users className="h-8 w-8 text-brand-sky-blue" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white font-heading">
+                      FAQ for Business Buyers
+                    </h2>
+                    <p className="text-blue-100 mt-1">Everything you need to know about buying a business.</p>
+                  </div>
+                </div>
+
+                {buyerFAQs.map((category) => (
+                  <div key={category.sectionTitle} className="mb-10 last:mb-0">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center text-white/90 font-heading">
+                      {category.icon}
+                      {category.sectionTitle}
+                    </h3>
+                    <Accordion type="single" collapsible className="w-full space-y-3">
+                      {category.questions.map((faq, index) => (
+                        <AccordionItem
+                          value={`buyer-${category.sectionTitle}-${index}`}
+                          key={index}
+                          className="border border-white/10 rounded-lg bg-white/5 px-4 data-[state=open]:bg-white/10 transition-colors"
+                        >
+                          <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
+                            {faq.q}
+                          </AccordionTrigger>
+                          <AccordionContent className="text-blue-100 text-base leading-relaxed pb-4">
+                            {faq.a}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-20 text-center border-t border-white/10 pt-12">
+                <h3 className="text-2xl font-semibold mb-4 font-heading text-white">Still have questions?</h3>
+                <p className="text-blue-100 mb-8 max-w-xl mx-auto">
+                  If you can't find the answer you're looking for, please don't hesitate to reach out to our support team.
+                </p>
+                <Button asChild size="lg" className="bg-brand-sky-blue text-brand-dark-blue hover:bg-white hover:text-brand-dark-blue font-semibold px-8 shadow-lg shadow-brand-sky-blue/20">
+                  <Link href="/contact">Contact Support</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </FadeIn>
+      </div>
     </div>
   );
 }

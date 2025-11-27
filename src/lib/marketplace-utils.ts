@@ -40,19 +40,19 @@ export const INDUSTRIES = {
 
 // Country mappings for consistent display and API values
 export const COUNTRIES = {
-  'australia': 'Australia',
-  'canada': 'Canada',
+  'cambodia': 'Cambodia',
   'china': 'China',
-  'france': 'France',
-  'germany': 'Germany',
+  'hong-kong': 'Hong Kong',
   'india': 'India',
   'indonesia': 'Indonesia',
   'japan': 'Japan',
+  'malaysia': 'Malaysia',
+  'myanmar': 'Myanmar',
+  'philippines': 'Philippines',
   'singapore': 'Singapore',
   'south-korea': 'South Korea',
+  'taiwan': 'Taiwan',
   'thailand': 'Thailand',
-  'united-kingdom': 'United Kingdom',
-  'united-states': 'United States',
   'vietnam': 'Vietnam',
 } as const;
 

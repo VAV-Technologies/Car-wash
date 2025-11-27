@@ -46,66 +46,65 @@ export function ListingCard({ listing }: ListingCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg bg-brand-white">
-      <CardHeader className="p-0 relative">
-        <Image
-          src={
-            listing.images
-              ? (typeof listing.images === 'string'
-                  ? JSON.parse(listing.images)[0]
-                  : listing.images[0]) || "https://placehold.co/400x250.png"
-              : "https://placehold.co/400x250.png"
-          }
-          alt={listing.title}
-          width={400}
-          height={250}
-          className="w-full h-48 object-cover"
-          data-ai-hint={listing.images ? (listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business") : "generic business"}
-        />
-        {listing.verification_status === 'verified' && (
-          <Badge variant="outline" className="absolute top-2 right-2 bg-green-100 border-green-500 text-green-700 dark:bg-green-700 dark:text-green-200 dark:border-green-500">
-            <CheckCircle2 className="h-3 w-3 mr-1" />
-            Verified Seller
-          </Badge>
-        )}
-      </CardHeader>
-      <CardContent className="p-4 flex-grow">
-        <CardTitle className="text-lg text-brand-dark-blue mb-2 leading-tight">
-          <Link href={`/listings/${listing.id}`} className="hover:text-brand-sky-blue transition-colors">
+    <Link href={`/listings/${listing.id}`} className="block h-full group">
+      <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:border-brand-sky-blue/50 transition-all duration-300 rounded-lg bg-white/10 backdrop-blur-md border-white/20 text-white cursor-pointer">
+        <CardHeader className="p-0 relative">
+          <div className="overflow-hidden h-48 w-full">
+            <Image
+              src={
+                listing.images
+                  ? (typeof listing.images === 'string'
+                    ? JSON.parse(listing.images)[0]
+                    : listing.images[0]) || "https://placehold.co/400x250.png"
+                  : "https://placehold.co/400x250.png"
+              }
+              alt={listing.title}
+              width={400}
+              height={250}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              data-ai-hint={listing.images ? (listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business") : "generic business"}
+            />
+          </div>
+          {listing.verification_status === 'verified' && (
+            <Badge variant="outline" className="absolute top-2 right-2 bg-green-500/20 border-green-400 text-green-100 backdrop-blur-sm">
+              <CheckCircle2 className="h-3 w-3 mr-1" />
+              Verified Seller
+            </Badge>
+          )}
+        </CardHeader>
+        <CardContent className="p-4 flex-grow">
+          <CardTitle className="text-lg text-white mb-2 leading-tight group-hover:text-brand-sky-blue transition-colors">
             {listing.title}
-          </Link>
-        </CardTitle>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <div className="flex items-center">
-            <Briefcase className="h-4 w-4 mr-2 text-brand-dark-blue/70" />
-            <span>{listing.industry}</span>
-          </div>
-          <div className="flex items-center">
-            <MapPin className="h-4 w-4 mr-2 text-brand-dark-blue/70" />
-            <span>{listing.location_city}, {listing.location_country}</span>
-          </div>
-          <div className="flex items-center">
-            <TrendingUp className="h-4 w-4 mr-2 text-brand-dark-blue/70" />
-            <span>Revenue: {formatRevenueDisplay(listing)}</span>
-          </div>
+          </CardTitle>
+          <div className="space-y-2 text-sm text-gray-300">
             <div className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2 text-brand-dark-blue/70" />
-                <span>Asking Price: {displayPrice}</span>
+              <Briefcase className="h-4 w-4 mr-2 text-brand-sky-blue" />
+              <span>{listing.industry}</span>
             </div>
-          <p className="text-sm text-brand-dark-blue/90 pt-1">{truncatedDescription}</p>
-        </div>
-      </CardContent>
-      <CardFooter className="p-4 border-t border-brand-light-gray/80">
-        <div className="flex justify-end items-center w-full">
-
-          <Button asChild size="sm" className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90">
-            <Link href={`/listings/${listing.id}`}>
+            <div className="flex items-center">
+              <MapPin className="h-4 w-4 mr-2 text-brand-sky-blue" />
+              <span>{listing.location_city}, {listing.location_country}</span>
+            </div>
+            <div className="flex items-center">
+              <TrendingUp className="h-4 w-4 mr-2 text-brand-sky-blue" />
+              <span>Revenue: {formatRevenueDisplay(listing)}</span>
+            </div>
+            <div className="flex items-center">
+              <DollarSign className="h-4 w-4 mr-2 text-brand-sky-blue" />
+              <span>Asking Price: {displayPrice}</span>
+            </div>
+            <p className="text-sm text-gray-200 pt-1">{truncatedDescription}</p>
+          </div>
+        </CardContent>
+        <CardFooter className="p-4 border-t border-white/10">
+          <div className="flex justify-end items-center w-full">
+            <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-3 bg-white/20 text-white group-hover:bg-brand-sky-blue group-hover:text-brand-dark-blue border border-white/20 backdrop-blur-sm">
               View Details <ExternalLink className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+            </div>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 }
 

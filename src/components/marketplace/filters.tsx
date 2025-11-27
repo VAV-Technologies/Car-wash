@@ -127,18 +127,18 @@ export function Filters() {
   }, [resetAndApplyFilters]);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+    <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-6 space-y-6 text-white">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Filter className="h-5 w-5 text-brand-dark-blue" />
-          <h3 className="text-lg font-semibold text-brand-dark-blue">Filter Listings</h3>
+          <Filter className="h-5 w-5 text-brand-sky-blue" />
+          <h3 className="text-lg font-semibold text-white">Filter Listings</h3>
         </div>
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-300 hover:text-white hover:bg-white/10"
           >
             <RotateCcw className="h-4 w-4 mr-1" />
             Clear all
@@ -151,50 +151,50 @@ export function Filters() {
 
         {/* Verification Status Filter */}
         <div className="space-y-2">
-          <Label htmlFor="verificationStatus" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="verificationStatus" className="text-sm font-medium text-gray-200">
             Verification Status
           </Label>
           <Select
             value={draftFilters.verificationStatus || 'all'}
             onValueChange={(value) => updateDraftFilter('verificationStatus', value === 'all' ? undefined : value)}
           >
-            <SelectTrigger id="verificationStatus" className="w-full">
+            <SelectTrigger id="verificationStatus" className="w-full bg-white/5 border-white/20 text-white">
               <SelectValue placeholder="Select verification status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-brand-dark-blue border-white/20 text-white">
               {Object.entries(VERIFICATION_STATUS_OPTIONS).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
+                <SelectItem key={key} value={key} className="focus:bg-white/10 focus:text-white">
                   <div className="flex items-center space-x-2">
-                    {key === 'verified' && <ShieldCheck className="h-4 w-4 text-green-600" />}
-                    {key === 'unverified' && <EyeOff className="h-4 w-4 text-gray-500" />}
-                    {key === 'all' && <Eye className="h-4 w-4 text-blue-600" />}
+                    {key === 'verified' && <ShieldCheck className="h-4 w-4 text-green-400" />}
+                    {key === 'unverified' && <EyeOff className="h-4 w-4 text-gray-400" />}
+                    {key === 'all' && <Eye className="h-4 w-4 text-blue-400" />}
                     <span>{label}</span>
                   </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-400">
             Filter by admin verification status. Verified listings have undergone additional review.
           </p>
         </div>
 
         {/* Industry Filter */}
         <div className="space-y-2">
-          <Label htmlFor="industry" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="industry" className="text-sm font-medium text-gray-200">
             Industry
           </Label>
           <Select
             value={draftFilters.industry || 'all'}
             onValueChange={(value) => updateDraftFilter('industry', value === 'all' ? undefined : value)}
           >
-            <SelectTrigger id="industry" className="w-full">
+            <SelectTrigger id="industry" className="w-full bg-white/5 border-white/20 text-white">
               <SelectValue placeholder="Select industry" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Industries</SelectItem>
+            <SelectContent className="bg-brand-dark-blue border-white/20 text-white max-h-[300px]">
+              <SelectItem value="all" className="focus:bg-white/10 focus:text-white">All Industries</SelectItem>
               {Object.entries(INDUSTRIES).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
+                <SelectItem key={key} value={key} className="focus:bg-white/10 focus:text-white">
                   {label}
                 </SelectItem>
               ))}
@@ -204,20 +204,20 @@ export function Filters() {
 
         {/* Country Filter */}
         <div className="space-y-2">
-          <Label htmlFor="country" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="country" className="text-sm font-medium text-gray-200">
             Country
           </Label>
           <Select
             value={draftFilters.country || 'all'}
             onValueChange={(value) => updateDraftFilter('country', value === 'all' ? undefined : value)}
           >
-            <SelectTrigger id="country" className="w-full">
+            <SelectTrigger id="country" className="w-full bg-white/5 border-white/20 text-white">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Countries</SelectItem>
+            <SelectContent className="bg-brand-dark-blue border-white/20 text-white max-h-[300px]">
+              <SelectItem value="all" className="focus:bg-white/10 focus:text-white">All Countries</SelectItem>
               {Object.entries(COUNTRIES).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
+                <SelectItem key={key} value={key} className="focus:bg-white/10 focus:text-white">
                   {label}
                 </SelectItem>
               ))}
@@ -227,7 +227,7 @@ export function Filters() {
 
         {/* Price Range */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
+          <Label className="text-sm font-medium text-gray-200">
             Asking Price Range (USD)
           </Label>
           <div className="grid grid-cols-2 gap-3">
@@ -237,10 +237,10 @@ export function Filters() {
                 placeholder="Min price"
                 value={draftFilters.minPrice ? formatPrice(draftFilters.minPrice) : ''}
                 onChange={(e) => handlePriceChange('min', e.target.value)}
-                className={priceErrors.min ? 'border-red-500' : ''}
+                className={`bg-white/5 border-white/20 text-white placeholder:text-gray-500 ${priceErrors.min ? 'border-red-500' : ''}`}
               />
               {priceErrors.min && (
-                <p className="text-xs text-red-600">{priceErrors.min}</p>
+                <p className="text-xs text-red-400">{priceErrors.min}</p>
               )}
             </div>
             <div className="space-y-1">
@@ -249,10 +249,10 @@ export function Filters() {
                 placeholder="Max price"
                 value={draftFilters.maxPrice ? formatPrice(draftFilters.maxPrice) : ''}
                 onChange={(e) => handlePriceChange('max', e.target.value)}
-                className={priceErrors.max ? 'border-red-500' : ''}
+                className={`bg-white/5 border-white/20 text-white placeholder:text-gray-500 ${priceErrors.max ? 'border-red-500' : ''}`}
               />
               {priceErrors.max && (
-                <p className="text-xs text-red-600">{priceErrors.max}</p>
+                <p className="text-xs text-red-400">{priceErrors.max}</p>
               )}
             </div>
           </div>
@@ -260,10 +260,10 @@ export function Filters() {
 
         {/* Keywords Section - Main Search Functionality */}
         <div className="space-y-4">
-          <Label className="text-sm font-medium text-gray-700">
+          <Label className="text-sm font-medium text-gray-200">
             Search by Keywords
           </Label>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-400">
             Add keywords to search across listings titles, descriptions, and business details
           </p>
 
@@ -281,7 +281,7 @@ export function Filters() {
                     handleAddCustomKeyword();
                   }
                 }}
-                className="flex-1"
+                className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-gray-500"
               />
               <Button
                 type="button"
@@ -289,6 +289,7 @@ export function Filters() {
                 size="sm"
                 onClick={handleAddCustomKeyword}
                 disabled={!customKeywordInput.trim()}
+                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -297,7 +298,7 @@ export function Filters() {
 
           {/* Predefined Keywords */}
           <div className="space-y-2">
-            <Label className="text-xs font-medium text-gray-600">
+            <Label className="text-xs font-medium text-gray-300">
               Popular Keywords
             </Label>
             <div className="flex flex-wrap gap-2">
@@ -310,7 +311,7 @@ export function Filters() {
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePredefinedKeywordToggle(keyword)}
-                    className="text-xs"
+                    className={`text-xs ${isSelected ? 'bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90' : 'bg-white/5 border-white/20 text-gray-300 hover:bg-white/10 hover:text-white'}`}
                   >
                     {keyword}
                   </Button>
@@ -322,7 +323,7 @@ export function Filters() {
           {/* Selected Keywords Display */}
           {draftFilters.keywords && draftFilters.keywords.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-gray-600">
+              <Label className="text-xs font-medium text-gray-300">
                 Selected Keywords ({draftFilters.keywords.length})
               </Label>
               <div className="flex flex-wrap gap-2">
@@ -330,13 +331,13 @@ export function Filters() {
                   <Badge
                     key={keyword}
                     variant="secondary"
-                    className="flex items-center space-x-1"
+                    className="flex items-center space-x-1 bg-brand-sky-blue/20 text-brand-sky-blue border border-brand-sky-blue/30"
                   >
                     <span>{keyword}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveKeyword(keyword)}
-                      className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                      className="ml-1 hover:bg-brand-sky-blue/30 rounded-full p-0.5"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -348,11 +349,11 @@ export function Filters() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex space-x-3 pt-4 border-t border-white/20">
           <Button
             type="submit"
             disabled={isLoading || (priceErrors.min || priceErrors.max) ? true : false}
-            className="flex-1"
+            className="flex-1 bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90"
           >
             <Search className="h-4 w-4 mr-2" />
             {isLoading ? 'Searching...' : 'Apply Filters'}
@@ -368,6 +369,7 @@ export function Filters() {
                 setCustomKeywordInput('');
                 setPriceErrors({});
               }}
+              className="bg-transparent border-white/20 text-white hover:bg-white/10"
             >
               Cancel
             </Button>
@@ -376,7 +378,7 @@ export function Filters() {
 
         {/* Unsaved Changes Indicator */}
         {hasUnsavedChanges && (
-          <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+          <div className="text-xs text-amber-300 bg-amber-900/30 p-2 rounded border border-amber-500/50">
             You have unsaved filter changes. Click "Apply Filters" to search with these settings.
           </div>
         )}
