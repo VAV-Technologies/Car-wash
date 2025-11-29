@@ -40,6 +40,7 @@ const navLinkGroups: NavLinkGroup[] = [
     items: [
       { href: "/seller-dashboard/listings/create", label: "List Your Business", icon: FileText },
       { href: "/how-selling-works", label: "How Selling Works", icon: Info },
+      { href: "/seller-services", label: "Seller Services", icon: Briefcase },
     ],
   },
   {
@@ -48,6 +49,7 @@ const navLinkGroups: NavLinkGroup[] = [
     items: [
       { href: "/marketplace", label: "Browse Listings", icon: Search },
       { href: "/how-buying-works", label: "How Buying Works", icon: Info },
+      { href: "/buyer-services", label: "Buyer Services", icon: ShoppingCart },
     ],
   },
   {
@@ -55,7 +57,6 @@ const navLinkGroups: NavLinkGroup[] = [
     triggerIcon: Building2,
     items: [
       { href: "/about", label: "About Us", icon: Users2 },
-      { href: "/contact", label: "Contact Us", icon: Phone },
       { href: "/faq", label: "FAQ", icon: Info },
     ],
   },
@@ -216,6 +217,9 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center space-x-3">
+          <Button variant="ghost" asChild className="text-brand-dark-blue hover:bg-brand-light-gray/50 px-4 py-2 text-sm font-medium hover:text-brand-dark-blue/90">
+            <Link href="/contact">Contact Us</Link>
+          </Button>
           {isLoading ? (
             <div className="flex items-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-brand-dark-blue/50" />
@@ -315,6 +319,11 @@ export function Navbar() {
                   )
                 })}
                 <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80" />
+                <SheetClose asChild>
+                  <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
+                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-5 w-5" /> Contact Us</Link>
+                  </Button>
+                </SheetClose>
                 {isLoading ? (
                   <div className="px-3 py-2 text-sm text-brand-dark-blue/60 flex items-center">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading user...
