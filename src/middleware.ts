@@ -36,7 +36,7 @@ export async function middleware(req: NextRequest) {
     // '/verify-email', // REMOVED - now requires special handling
     '/about', '/contact', '/pricing', '/terms', '/privacy',
     // Public information pages
-    '/faq', '/docs', '/help', '/how-selling-works', '/how-buying-works',
+    '/faq', '/docs', '/help', '/how-selling-works', '/how-buying-works', '/seller-services', '/buyer-services',
     // Marketplace and listing pages - now public
     '/marketplace',
     // Public API endpoints
@@ -44,7 +44,7 @@ export async function middleware(req: NextRequest) {
     '/api/listings', // Allow public access to listings API for marketplace
     // Public auth API endpoints - CRITICAL: These must be public for registration/verification flow
     '/api/auth/register', // Users registering don't have authentication yet
-    '/api/auth/create-profile', // Allow create-profile API for signup process  
+    '/api/auth/create-profile', // Allow create-profile API for signup process
     '/api/auth/verify-email-bypass', // Allow OTP verification without session
     '/api/auth/verify-otp', // Allow OTP verification without session
     '/api/auth/resend-otp', // Allow resending OTP codes without session

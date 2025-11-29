@@ -137,20 +137,6 @@ const convertRevenueRange = (rangeString: string, currencyCode: string = 'USD', 
     }
   };
 
-  // Split on " - " or "-" and parse each part
-  const parts = rangeString.split(/\s*-\s*/);
-  if (parts.length !== 2) return rangeString; // Return original if can't parse
-
-  const minAmount = parseAmount(parts[0]);
-  const maxAmount = parseAmount(parts[1]);
-
-  if (minAmount === null || maxAmount === null) return rangeString;
-
-  // Convert to selected currency
-  const rate = rates ? rates[currencyCode] : 1;
-  const convertedMin = minAmount * (rate || 1);
-  const convertedMax = maxAmount * (rate || 1);
-
   // Format with appropriate abbreviation
   const formatWithAbbreviation = (amount: number) => {
     if (amount >= 1000000000) {
@@ -163,6 +149,34 @@ const convertRevenueRange = (rangeString: string, currencyCode: string = 'USD', 
       return amount.toFixed(0);
     }
   };
+
+  // Split on " - " or "-" and parse each part
+  const parts = rangeString.split(/\s*-\s*/);
+
+  if (parts.length === 1) {
+    const amount = parseAmount(parts[0]);
+    if (amount === null) return rangeString;
+
+    const rate = rates ? rates[currencyCode] : 1;
+    const converted = amount * (rate || 1);
+
+    const currency = getCurrency(currencyCode);
+    if (!currency) return rangeString;
+
+    return `${currency.symbol}${formatWithAbbreviation(converted)}${rangeString.includes('+') ? '+' : ''} ${currencyCode}`;
+  }
+
+  if (parts.length !== 2) return rangeString; // Return original if can't parse
+
+  const minAmount = parseAmount(parts[0]);
+  const maxAmount = parseAmount(parts[1]);
+
+  if (minAmount === null || maxAmount === null) return rangeString;
+
+  // Convert to selected currency
+  const rate = rates ? rates[currencyCode] : 1;
+  const convertedMin = minAmount * (rate || 1);
+  const convertedMax = maxAmount * (rate || 1);
 
   const currency = getCurrency(currencyCode);
   if (!currency) return rangeString; // Fallback if currency not found
@@ -502,7 +516,7 @@ export default function ListingDetailPage() {
 
   const FinancialValue = ({ usdAmount }: { usdAmount: number | null | undefined }) => {
     if (usdAmount === null || usdAmount === undefined) {
-      return <span className="text-lg font-semibold text-primary">N/A</span>;
+      return <span className="text-lg font-semibold text-white">N/A</span>;
     }
     return (
       <span className="text-lg font-semibold text-white">
@@ -518,53 +532,62 @@ export default function ListingDetailPage() {
         <Card className="shadow-xl overflow-hidden bg-white/10 backdrop-blur-md border-white/20 text-white">
 
           <CardHeader className="p-4 md:p-6 border-white/10 border-b">
-            <div className="mb-4">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight">{listing.title}</h1>
-              <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <Badge variant="secondary" className="bg-brand-dark-blue/10 text-brand-dark-blue">{listing.industry}</Badge>
-                {listing.is_seller_verified ? (
-                  <Badge variant="secondary" className="bg-green-500/10 text-green-700 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
-                ) : (
-                  <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
-                )}
-                {/* Listing Verification Badge */}
-                {(() => {
-                  const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
-                  if (verificationStatus === 'verified') {
-                    return (
-                      <Badge variant="secondary" className="bg-blue-500/10 text-blue-700 border border-blue-500/30">
-                        <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
-                      </Badge>
-                    );
-                  } else if (verificationStatus === 'deactivated') {
-                    return (
-                      <Badge variant="secondary" className="bg-red-500/10 text-red-700 border border-red-500/30">
-                        <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
-                      </Badge>
-                    );
-                  }
-                  // Don't show badge for 'unverified' to avoid clutter
-                  return null;
-                })()}
+            <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight">{listing.title}</h1>
+                <div className="mt-2 flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary" className="bg-white/10 text-white border border-white/20">{listing.industry}</Badge>
+                  {listing.is_seller_verified ? (
+                    <Badge variant="secondary" className="bg-green-500/10 text-green-400 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
+                  ) : (
+                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-400 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
+                  )}
+                  {/* Listing Verification Badge */}
+                  {(() => {
+                    const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
+                    if (verificationStatus === 'verified') {
+                      return (
+                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                          <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
+                        </Badge>
+                      );
+                    } else if (verificationStatus === 'deactivated') {
+                      return (
+                        <Badge variant="secondary" className="bg-red-500/10 text-red-400 border border-red-500/30">
+                          <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
+                        </Badge>
+                      );
+                    }
+                    // Don't show badge for 'unverified' to avoid clutter
+                    return null;
+                  })()}
+                </div>
               </div>
+              <Button
+                onClick={handleInquireClick}
+                className="bg-brand-sky-blue text-white hover:bg-white hover:text-brand-dark-blue font-semibold shadow-lg transition-all duration-300 border border-white/20 shrink-0"
+                disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry}
+              >
+                {inquirySent ? 'Inquiry Sent' : 'Inquire Now'}
+              </Button>
             </div>
             {/* Financial Highlights Bubble */}
             <Card className="bg-white/5 p-4 md:p-6 rounded-lg shadow-sm border border-white/10 mt-4 backdrop-blur-sm">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-xl font-semibold text-white flex items-center"><Banknote className="h-6 w-6 mr-2" />Financial Snapshot</h2>
                 {isLoadingRates ? <Skeleton className="h-9 w-40" /> : !ratesError && (
-                  <div className="flex items-center gap-2 bg-white p-2 rounded-lg border shadow-sm">
-                    <span className="text-sm text-muted-foreground font-medium">Currency:</span>
+                  <div className="flex items-center gap-2 bg-white/10 p-2 rounded-lg border border-white/20 shadow-sm">
+                    <span className="text-sm text-white font-medium">Currency:</span>
                     <Select onValueChange={setSelectedCurrency} defaultValue="USD">
-                      <SelectTrigger className="w-[80px] border-0 bg-transparent p-0 h-6 focus:ring-0">
+                      <SelectTrigger className="w-[80px] border-0 bg-transparent p-0 h-6 focus:ring-0 text-white">
                         <SelectValue placeholder="USD" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-brand-dark-blue text-white border-white/20">
                         {SUPPORTED_CURRENCIES.map(currency => (
-                          <SelectItem key={currency.code} value={currency.code}>
+                          <SelectItem key={currency.code} value={currency.code} className="focus:bg-white/10 focus:text-white">
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{currency.code}</span>
-                              <span className="text-xs text-muted-foreground">{currency.symbol}</span>
+                              <span className="text-xs text-gray-300">{currency.symbol}</span>
                             </div>
                           </SelectItem>
                         ))}
@@ -684,7 +707,27 @@ export default function ListingDetailPage() {
                   )}
                 </CardFooter>
               </Card>
-              {!currentUser && (<Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30"><CardContent className="p-4 text-center"><p className="text-sm text-brand-dark-blue dark:text-brand-light-gray mb-2">Want to learn more or see verified details?</p><Button variant="outline" asChild className="w-full border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5"><Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login / Register as a Buyer to Inquire</Link></Button></CardContent></Card>)}
+              {!currentUser && (
+                <>
+                  <Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-sm text-white mb-2">Want to learn more or see verified details?</p>
+                      <Button variant="outline" asChild className="w-full border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5">
+                        <Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login / Register as a Buyer to Inquire</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-md bg-white/5 border-white/10 mt-4">
+                    <CardContent className="p-4 text-center">
+                      <p className="text-sm text-gray-300 mb-2">Have questions or need assistance?</p>
+                      <Button variant="ghost" asChild className="w-full text-white hover:text-brand-sky-blue hover:bg-white/5 border border-white/20">
+                        <Link href="/contact">Contact Support</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </>
+              )}
               {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
             </aside>
           </CardContent>

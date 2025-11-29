@@ -302,7 +302,7 @@ export default function ContactPage() {
                     {errors.message && <p className="text-sm text-red-300 mt-1">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" className="w-full bg-brand-sky-blue text-brand-dark-blue hover:bg-white hover:text-brand-dark-blue font-semibold" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-brand-sky-blue text-white hover:bg-white hover:text-brand-dark-blue font-semibold shadow-lg transition-all duration-300 border border-white/20" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -355,7 +355,7 @@ export default function ContactPage() {
 
                 <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                   <p className="text-sm text-blue-100 leading-relaxed">
-                    "We are committed to providing you with the best possible service and support."
+                    "We’re committed to help you in every aspect of M&A from beginning to end."
                   </p>
                 </div>
               </div>

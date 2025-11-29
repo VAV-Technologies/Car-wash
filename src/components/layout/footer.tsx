@@ -24,6 +24,9 @@ export function Footer() {
               <Link href="/seller-dashboard/listings/create" className="hover:text-brand-white transition-colors duration-300">
                 List Your Business
               </Link>
+              <Link href="/seller-services" className="hover:text-brand-white transition-colors duration-300">
+                Services for sellers
+              </Link>
               <Link href="/how-selling-works" className="hover:text-brand-white transition-colors duration-300">
                 How Selling Works
               </Link>
@@ -37,6 +40,9 @@ export function Footer() {
             <div className="flex flex-col space-y-2">
               <Link href="/marketplace" className="hover:text-brand-white transition-colors duration-300">
                 Browse Listings
+              </Link>
+              <Link href="/buyer-services" className="hover:text-brand-white transition-colors duration-300">
+                Services for buyers
               </Link>
               <Link href="/how-buying-works" className="hover:text-brand-white transition-colors duration-300">
                 How Buying Works
@@ -66,7 +72,7 @@ export function Footer() {
               Legal
             </p>
             <div className="flex flex-col space-y-2">
-               <Link href="/terms" className="hover:text-brand-white transition-colors duration-300">
+              <Link href="/terms" className="hover:text-brand-white transition-colors duration-300">
                 Terms of Service
               </Link>
               <Link href="/privacy" className="hover:text-brand-white transition-colors duration-300">

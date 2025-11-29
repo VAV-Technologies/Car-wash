@@ -140,6 +140,92 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+      {/* Exclusive Advisory Section */}
+      <section className="w-full py-24 md:py-32 bg-brand-dark-blue text-white">
+        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+          <div className="grid md:grid-cols-[1fr_1fr] gap-12 md:gap-24 items-center">
+            {/* Left Image */}
+            <FadeIn direction="right" delay={200} className="relative h-full min-h-[400px] w-full rounded-lg overflow-hidden shadow-2xl order-2 md:order-1">
+              <Image
+                src="/assets/about_2.png"
+                alt="Expert Advisory"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-700 opacity-90"
+              />
+            </FadeIn>
+
+            {/* Right Content */}
+            <FadeIn direction="left" delay={400} className="space-y-8 order-1 md:order-2">
+              <h2 className="text-3xl md:text-5xl font-bold font-heading uppercase leading-tight tracking-tight">
+                Exclusive, Expert <br /> Seller-Side Advisory
+              </h2>
+              <p className="text-lg md:text-xl text-blue-100 leading-relaxed">
+                Our mandate is clear and unwavering: we exclusively represent the seller. From the moment of formal engagement, Nobridge acts as the seller's dedicated M&A advisor. We manage the entire transaction, from strategic preparation and comprehensive valuation to confidential marketing, negotiation, and closing. Our goal is to craft a compelling narrative, defend the company's true value, and generate a competitive environment to achieve the best possible price and terms for our client.
+              </p>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Nobridge Section */}
+      <section className="w-full py-24 md:py-32 bg-white">
+        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+          <FadeIn direction="up">
+            <h2 className="text-3xl md:text-5xl font-bold text-center text-brand-dark-blue font-heading uppercase leading-tight tracking-tight mb-16">
+              Why Choose Nobridge?
+            </h2>
+            <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 bg-brand-sky-blue/10 p-4 rounded-full">
+                  <Globe className="h-8 w-8 text-brand-dark-blue" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-brand-dark-blue font-heading mb-2">Asia-Centric Focus</h4>
+                  <p className="text-muted-foreground leading-relaxed">Nobridge is built by experts who understand the specific nuances and needs of the SME landscape across Asia.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 bg-brand-sky-blue/10 p-4 rounded-full">
+                  <ShieldCheck className="h-8 w-8 text-brand-dark-blue" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-brand-dark-blue font-heading mb-2">Dedicated Advocacy</h4>
+                  <p className="text-muted-foreground leading-relaxed">We are not neutral facilitators. Our fiduciary duty is exclusively to the seller, ensuring their interests are protected.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 bg-brand-sky-blue/10 p-4 rounded-full">
+                  <Zap className="h-8 w-8 text-brand-dark-blue" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-brand-dark-blue font-heading mb-2">End-to-End Execution</h4>
+                  <p className="text-muted-foreground leading-relaxed">We provide structured support throughout the entire M&A journey, from marketing to post-closing.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 bg-brand-sky-blue/10 p-4 rounded-full">
+                  <Handshake className="h-8 w-8 text-brand-dark-blue" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-brand-dark-blue font-heading mb-2">Alignment and Transparency</h4>
+                  <p className="text-muted-foreground leading-relaxed">Our success-based fee structure ensures our primary compensation is directly tied to a successful closing.</p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* Conclusion Section */}
+      <section className="w-full py-24 bg-brand-light-gray/30">
+        <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
+          <FadeIn direction="up">
+            <p className="text-xl md:text-2xl font-medium text-brand-dark-blue max-w-4xl mx-auto leading-relaxed">
+              By combining a modern technology platform with disciplined, expert-led advisory, Nobridge empowers SME owners to navigate their exit with clarity, confidence, and the professional support required to successfully monetize their life's work.
+            </p>
+          </FadeIn>
+        </div>
+      </section>
     </div>
   );
 }

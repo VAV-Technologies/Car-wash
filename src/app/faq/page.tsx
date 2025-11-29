@@ -329,7 +329,7 @@ export default function FAQPage() {
                 <p className="text-blue-100 mb-8 max-w-xl mx-auto">
                   If you can't find the answer you're looking for, please don't hesitate to reach out to our support team.
                 </p>
-                <Button asChild size="lg" className="bg-brand-sky-blue text-brand-dark-blue hover:bg-white hover:text-brand-dark-blue font-semibold px-8 shadow-lg shadow-brand-sky-blue/20">
+                <Button asChild size="lg" className="bg-brand-sky-blue text-white hover:bg-white hover:text-brand-dark-blue font-semibold px-8 shadow-lg shadow-brand-sky-blue/20 transition-all duration-300 border border-white/20">
                   <Link href="/contact">Contact Support</Link>
                 </Button>
               </div>

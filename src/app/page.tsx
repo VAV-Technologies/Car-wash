@@ -247,7 +247,7 @@ export default function HomePage() {
 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-8 w-fit group-hover:scale-105 transition-transform duration-500">
-                    <NobridgeIcon icon="growth" size={80} variant="blue" className="w-20 h-20" />
+                    <TrendingUp className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
                   </div>
 
                   <h3 className="text-3xl font-bold text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">List Your Business</h3>
@@ -258,7 +258,7 @@ export default function HomePage() {
                   <ul className="space-y-6 mb-10">
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="people" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <UsersRound className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Access to Verified Buyers</h4>
@@ -267,7 +267,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="process" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <ListChecks className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Step-by-Step Guidance</h4>
@@ -276,7 +276,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="documents" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <ShieldCheck className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Secure Management</h4>
@@ -302,7 +302,7 @@ export default function HomePage() {
 
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-8 w-fit group-hover:scale-105 transition-transform duration-500">
-                    <NobridgeIcon icon="investment" size={80} variant="blue" className="w-20 h-20" />
+                    <HandCoins className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
                   </div>
 
                   <h3 className="text-3xl font-bold text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">Find Opportunities</h3>
@@ -313,7 +313,7 @@ export default function HomePage() {
                   <ul className="space-y-6 mb-10">
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="business-listing" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <CheckCircle2 className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Vetted Listings</h4>
@@ -322,7 +322,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="deal-structure" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <SearchIconLucide className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Advanced Filtering</h4>
@@ -331,7 +331,7 @@ export default function HomePage() {
                     </li>
                     <li className="flex items-start">
                       <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <NobridgeIcon icon="worldwide" size="md" className="w-6 h-6 drop-shadow-md" />
+                        <MessageSquare className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-brand-dark-blue text-lg">Direct Engagement</h4>

@@ -94,47 +94,45 @@ function MarketplaceContent() {
     <>
       <AnimatedBackground />
       <div className="container py-8 md:py-12 relative z-10">
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-xl">
-            <h1 className="text-3xl font-semibold tracking-tight text-white font-heading">Business Marketplace</h1>
-            <p className="text-gray-200 mt-1">
-              {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
-              {hasActiveFilters && !isLoading && (
-                <span className="ml-2 text-brand-sky-blue font-medium">
-                  (Filtered results)
-                </span>
-              )}
-            </p>
-          </div>
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="md:hidden flex-grow">
-              <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20">
-                    <Filter className="mr-2 h-4 w-4" /> {/* Changed icon */}
-                    Filters
-                    {hasActiveFilters && (
-                      <span className="ml-2 bg-brand-sky-blue text-white text-xs rounded-full px-2 py-1">
-                        Active
-                      </span>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-white/20 bg-brand-dark-blue/95 backdrop-blur-xl text-white">
-                  {/* Filters component will be rendered here */}
-                  <div className="h-full flex flex-col">
-                    <div className="flex-grow overflow-y-auto p-4">
-                      <Filters />
-                    </div>
-                    {/* Apply button now inside Filters.tsx, SheetClose might not be needed here */}
-                    {/* Or, keep a general close button */}
-                    <SheetClose asChild>
-                      <Button variant="outline" className="m-4 border-white/20 text-white hover:bg-white/10 hover:text-white">Close Filters</Button>
-                    </SheetClose>
+        <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-lg border border-white/20 shadow-xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-white font-heading">Business Marketplace</h1>
+          <p className="text-gray-200 mt-2 text-lg">
+            {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
+            {hasActiveFilters && !isLoading && (
+              <span className="ml-2 text-brand-sky-blue font-medium">
+                (Filtered results)
+              </span>
+            )}
+          </p>
+        </div>
+
+        <div className="mb-8 flex justify-end items-center gap-4">
+          <div className="md:hidden flex-grow">
+            <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 h-11">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filters
+                  {hasActiveFilters && (
+                    <span className="ml-2 bg-brand-sky-blue text-white text-xs rounded-full px-2 py-1">
+                      Active
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 border-r-white/20 bg-brand-dark-blue/95 backdrop-blur-xl text-white">
+                <div className="h-full flex flex-col">
+                  <div className="flex-grow overflow-y-auto p-4">
+                    <Filters />
                   </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+                  <SheetClose asChild>
+                    <Button variant="outline" className="m-4 border-white/20 text-white hover:bg-white/10 hover:text-white">Close Filters</Button>
+                  </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+          <div className="w-full md:w-auto">
             <SortDropdown />
           </div>
         </div>
