@@ -95,7 +95,7 @@ function MarketplaceContent() {
       <AnimatedBackground />
       <div className="container py-8 md:py-12 relative z-10">
         <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-lg border border-white/20 shadow-xl">
-          <h1 className="text-3xl font-semibold tracking-tight text-white font-heading">Business Marketplace</h1>
+          <h1 className="text-3xl font-normal tracking-tight text-white font-heading">Business Marke<span style={{ fontSize: '1.06em' }}>t</span>place</h1>
           <p className="text-gray-200 mt-2 text-lg">
             {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
             {hasActiveFilters && !isLoading && (
@@ -106,8 +106,9 @@ function MarketplaceContent() {
           </p>
         </div>
 
-        <div className="mb-8 flex justify-end items-center gap-4">
-          <div className="md:hidden flex-grow">
+        {/* Mobile filter button and sort */}
+        <div className="md:hidden mb-6 flex justify-end items-center gap-4">
+          <div className="flex-grow">
             <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 h-11">
@@ -138,14 +139,20 @@ function MarketplaceContent() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          <aside className="hidden md:block md:col-span-3 md:sticky md:top-24 h-fit">
-            <Filters />
+          <aside className="hidden md:block md:col-span-3">
+            <div className="sticky top-24 h-fit">
+              <Filters />
+            </div>
           </aside>
           <main className="md:col-span-9">
+            {/* Desktop sort dropdown aligned with top of filters */}
+            <div className="hidden md:flex justify-end mb-6">
+              <SortDropdown />
+            </div>
             {error ? (
               <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-red-900/20 backdrop-blur-md rounded-md border border-red-500/30">
                 <AlertCircle className="h-16 w-16 text-red-400 mb-4" />
-                <p className="text-xl text-red-300 font-semibold mb-2">Failed to Load Listings</p>
+                <p className="text-xl text-red-300 font-normal mb-2">Failed to Load Listings</p>
                 <p className="text-sm text-red-200 mb-4">{error}</p>
                 <Button
                   onClick={() => window.location.reload()}
@@ -168,7 +175,7 @@ function MarketplaceContent() {
             ) : (
               <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-white/5 backdrop-blur-md rounded-md border border-white/10 border-dashed">
                 <Briefcase className="h-16 w-16 text-gray-400 mb-4" />
-                <p className="text-xl text-gray-200 font-semibold">No listings available, but we can help.</p>
+                <p className="text-xl text-gray-200 font-normal">No listings available, but we can help.</p>
                 <div className="text-sm text-gray-300 mt-2 max-w-md leading-relaxed">
                   <p>If you have a buyer mandate, please reach out to <a href="mailto:business@nobridge.co" className="text-brand-sky-blue hover:underline">business@nobridge.co</a>.</p>
                   <p className="mt-1">We have the most advanced systems to find and reach out to any company that meet your criteria.</p>

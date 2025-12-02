@@ -86,8 +86,8 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-[calc(80vh-theme(spacing.20))] px-4 py-24 md:py-32 lg:py-40 relative z-10">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
-            Find Your Next Business Venture with Nobridge
+          <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
+            F<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nd Your Next Bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>ness Venture<br />w<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>th Nobr<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>dge
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl text-brand-light-gray max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200">
             Nobridge is the premier marketplace connecting SME owners with motivated investors and buyers. Discover, inquire, and engage with verified opportunities.
@@ -104,10 +104,10 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
-            <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray hover:scale-105 hover:shadow-lg h-12 py-3 px-8 text-base shadow-xl">
+            <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base">
               List Your Business <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-            <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-2 border-brand-white text-brand-white hover:bg-brand-white/10 hover:text-brand-white hover:scale-105 hover:shadow-lg h-12 py-3 px-8 text-base shadow-xl">
+            <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base">
               Browse Businesses <SearchIconLucide className="ml-2 h-5 w-5" />
             </Link>
           </div>
@@ -119,7 +119,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-brand-dark-blue font-heading">Featured Opportunities</h2>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">Fea<span style={{ fontSize: '1.06em' }}>t</span>ured Oppor<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span>uni<span style={{ fontSize: '1.06em' }}>t</span>ies</h2>
               <p className="text-muted-foreground mt-3 text-lg">A Glimpse into Our Curated Marketplace</p>
             </div>
           </FadeIn>
@@ -177,7 +177,7 @@ export default function HomePage() {
                       <div className="flex justify-between items-start mb-2">
                         <Badge variant="secondary" className="bg-brand-dark-blue/5 text-brand-dark-blue text-xs">{listing.industry}</Badge>
                       </div>
-                      <CardTitle className="text-xl font-semibold text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
+                      <CardTitle className="text-xl font-normal text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
                         <Link href={`/listings/${listing.id}`}>{listing.title}</Link>
                       </CardTitle>
                       <div className="space-y-1 text-sm text-muted-foreground">
@@ -232,7 +232,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-brand-dark-blue font-heading mb-6">Your Journey with Nobridge</h2>
+              <h2 className="text-3xl md:text-5xl font-normal tracking-tight text-brand-dark-blue font-heading mb-6">Your Journey with Nobridge</h2>
               <p className="text-muted-foreground text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
                 Whether you're selling your life's work or seeking your next strategic investment, Nobridge provides the premium tools and exclusive network you need.
               </p>
@@ -250,7 +250,7 @@ export default function HomePage() {
                     <TrendingUp className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
                   </div>
 
-                  <h3 className="text-3xl font-bold text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">List Your Business</h3>
+                  <h3 className="text-3xl font-normal text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">List Your Business</h3>
                   <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
                     Connect with verified buyers across Asia through a secure, efficient platform designed to maximize your business value.
                   </p>
@@ -261,7 +261,7 @@ export default function HomePage() {
                         <UsersRound className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Access to Verified Buyers</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Access to Verified Buyers</h4>
                         <p className="text-sm text-muted-foreground mt-1">Reach serious investors pre-vetted for financial capability.</p>
                       </div>
                     </li>
@@ -270,7 +270,7 @@ export default function HomePage() {
                         <ListChecks className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Step-by-Step Guidance</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Step-by-Step Guidance</h4>
                         <p className="text-sm text-muted-foreground mt-1">Expert support from valuation to final negotiation.</p>
                       </div>
                     </li>
@@ -279,14 +279,14 @@ export default function HomePage() {
                         <ShieldCheck className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Secure Management</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Secure Management</h4>
                         <p className="text-sm text-muted-foreground mt-1">Control who sees your sensitive data with our secure data room.</p>
                       </div>
                     </li>
                   </ul>
 
                   <div className="mt-auto pt-6">
-                    <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 text-base font-semibold text-white transition-all duration-300 bg-brand-dark-blue rounded-xl hover:bg-brand-sky-blue hover:shadow-lg hover:-translate-y-1 group-hover:w-full">
+                    <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-8 text-base">
                       Start Selling
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
@@ -305,9 +305,9 @@ export default function HomePage() {
                     <HandCoins className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
                   </div>
 
-                  <h3 className="text-3xl font-bold text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">Find Opportunities</h3>
+                  <h3 className="text-3xl font-normal text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">Find Opportunities</h3>
                   <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-                    Discover curated, high-potential businesses. Get detailed insights and engage directly with sellers.
+                    Discover curated, high-potential businesses with detailed insights. Make informed decisions and engage directly with verified sellers.
                   </p>
 
                   <ul className="space-y-6 mb-10">
@@ -316,7 +316,7 @@ export default function HomePage() {
                         <CheckCircle2 className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Vetted Listings</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Vetted Listings</h4>
                         <p className="text-sm text-muted-foreground mt-1">Every business is verified for authenticity and operational status.</p>
                       </div>
                     </li>
@@ -325,7 +325,7 @@ export default function HomePage() {
                         <SearchIconLucide className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Advanced Filtering</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Advanced Filtering</h4>
                         <p className="text-sm text-muted-foreground mt-1">Find exactly what matches your investment criteria instantly.</p>
                       </div>
                     </li>
@@ -334,14 +334,14 @@ export default function HomePage() {
                         <MessageSquare className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-brand-dark-blue text-lg">Direct Engagement</h4>
+                        <h4 className="font-normal text-brand-dark-blue text-lg">Direct Engagement</h4>
                         <p className="text-sm text-muted-foreground mt-1">Connect directly with business owners after verification.</p>
                       </div>
                     </li>
                   </ul>
 
                   <div className="mt-auto pt-6">
-                    <Link href="/marketplace" className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 text-base font-semibold text-brand-dark-blue transition-all duration-300 bg-white border-2 border-brand-dark-blue rounded-xl hover:bg-brand-dark-blue hover:text-white hover:shadow-lg hover:-translate-y-1 group-hover:w-full">
+                    <Link href="/marketplace" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-8 text-base">
                       Explore Marketplace
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
@@ -358,7 +358,7 @@ export default function HomePage() {
         <AnimatedBackground position="absolute" className="z-0" />
         <div className="container mx-auto px-4 relative z-10">
           <FadeIn direction="up">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white text-center mb-4 font-heading">Trusted by the Business Community</h2>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white text-center mb-4 font-heading"><span style={{ fontSize: '1.06em' }}>T</span>rus<span style={{ fontSize: '1.06em' }}>t</span>ed by <span style={{ fontSize: '1.06em' }}>t</span>he Business Communi<span style={{ fontSize: '1.06em', marginRight: '0.05em' }}>t</span>y</h2>
             <p className="text-center text-brand-light-gray/90 text-lg mb-12 md:mb-16">Hear from entrepreneurs and investors who have found success with Nobridge.</p>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -378,7 +378,7 @@ export default function HomePage() {
                       ))}
                     </div>
                     <p className="text-gray-200 mb-4 italic text-base leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-                    <p className="font-semibold text-white">{testimonial.name}</p>
+                    <p className="font-normal text-white">{testimonial.name}</p>
                     <p className="text-sm text-gray-300">{testimonial.role}</p>
                   </CardContent>
                 </Card>
@@ -392,7 +392,7 @@ export default function HomePage() {
       <section className="py-12 md:py-16 bg-brand-white">
         <div className="container mx-auto px-4 text-center">
           <FadeIn>
-            <h3 className="text-sm font-semibold uppercase text-muted-foreground tracking-wider mb-10 font-heading">Featured In</h3>
+            <h3 className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-10 font-heading">Featured In</h3>
           </FadeIn>
           <FadeIn delay={200}>
             <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-10 md:gap-x-16 lg:gap-x-20">
@@ -417,8 +417,8 @@ export default function HomePage() {
       <section className="py-20 md:py-32 bg-brand-dark-blue text-brand-white">
         <div className="container mx-auto px-4 text-center">
           <FadeIn direction="up">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-light-gray/70 mb-3">OUR COMMITMENT</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 font-heading">Empowering SME Growth and Transitions Across Asia</h2>
+            <p className="text-sm font-normal uppercase tracking-wider text-brand-light-gray/70 mb-3">OUR COMMITMENT</p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight mb-6 font-heading">Empowering SME Grow<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span>h and <span style={{ fontSize: '1.06em' }}>T</span>ransi<span style={{ fontSize: '1.06em' }}>t</span>ions Across Asia</h2>
             <p className="text-lg md:text-xl text-brand-light-gray/90 max-w-3xl mx-auto mb-10">
               At Nobridge, we believe in the power of small and medium-sized enterprises. Our mission is to provide a transparent, efficient, and supportive platform that connects business owners with the right investors and buyers, fostering growth and successful transitions throughout the continent.
             </p>
@@ -433,12 +433,12 @@ export default function HomePage() {
       <section className="py-16 md:py-24 bg-brand-white">
         <div className="container mx-auto px-4 text-center">
           <FadeIn direction="up">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-brand-dark-blue mb-4 font-heading">Ready to Begin Your Journey?</h2>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">Ready to Begin Your Journey?</h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10">
               Whether you&apos;re looking to sell your business, find your next investment, or simply learn more, our team is here to help.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <Link href="/auth/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-8 text-base">
+              <Link href="/auth/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
                 Register Now
               </Link>
               <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">

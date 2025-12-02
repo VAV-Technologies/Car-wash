@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import styles from './navbar.module.css';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -183,7 +184,7 @@ export function Navbar() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="px-3 py-2 text-sm font-semibold text-brand-dark-blue hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90 focus-visible:ring-brand-sky-blue flex items-center"
+                      className="px-3 py-2 text-sm font-normal text-brand-dark-blue hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90 focus-visible:ring-brand-sky-blue flex items-center"
                       onMouseEnter={() => handleMouseEnter(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
                       onMouseLeave={() => handleMouseLeave(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
                     >
@@ -217,9 +218,6 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center space-x-3">
-          <Button variant="ghost" asChild className="text-brand-dark-blue hover:bg-brand-light-gray/50 px-4 py-2 text-sm font-medium hover:text-brand-dark-blue/90">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
           {isLoading ? (
             <div className="flex items-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-brand-dark-blue/50" />
@@ -232,7 +230,7 @@ export function Navbar() {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-9 w-9 rounded-full bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 text-sm font-semibold">
+                  <Button variant="ghost" className="h-9 w-9 rounded-full bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 text-sm font-normal">
                     {getUserInitials(userProfile)}
                   </Button>
                 </DropdownMenuTrigger>
@@ -268,7 +266,7 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Button variant="ghost" asChild className="text-brand-dark-blue hover:bg-brand-light-gray/50 px-4 py-2 text-sm font-medium hover:text-brand-dark-blue/90">
+              <Button variant="outline" asChild className="border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue hover:text-white px-4 py-2 text-sm font-medium rounded-md transition-colors">
                 <Link href="/auth/login">Login</Link>
               </Button>
               <Button asChild className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 px-4 py-2 text-sm font-medium rounded-md">
@@ -276,6 +274,20 @@ export function Navbar() {
               </Button>
             </>
           )}
+
+          {/* Contact Us button with wavy animation */}
+          <Button
+            asChild
+            className={cn(
+              "relative text-white px-4 py-2 text-sm font-medium rounded-md transition-all duration-300",
+              styles.contactButton
+            )}
+          >
+            <Link href="/contact">
+              <Phone className="mr-2 h-4 w-4 text-white" />
+              Contact Us
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile Menu */}
@@ -296,7 +308,7 @@ export function Navbar() {
                   const TriggerIcon = group.triggerIcon;
                   return (
                     <div key={group.label} className="flex flex-col space-y-1">
-                      <h4 className="text-base font-semibold px-3 py-3 w-full text-brand-dark-blue flex items-center">
+                      <h4 className="text-base font-normal px-3 py-3 w-full text-brand-dark-blue flex items-center">
                         <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
                         {group.label}
                       </h4>

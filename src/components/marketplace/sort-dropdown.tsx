@@ -33,7 +33,7 @@ export function SortDropdown() {
   return (
     <div className="flex items-center space-x-2">
       <Label htmlFor="sort-by" className="text-sm font-medium text-white">
-        Sort by:
+        Sor<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span> by:
       </Label>
       <Select
         value={currentSortOption}

@@ -6,7 +6,20 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Mail, Loader2, ArrowRight, CheckCircle, Phone } from "lucide-react";
+import {
+    Mail,
+    Loader2,
+    ArrowRight,
+    Network,
+    MapPin,
+    GitMerge,
+    Shield,
+    Globe,
+    Lock,
+    Handshake,
+    Users,
+    Phone
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -153,7 +166,7 @@ export default function ContactPage() {
 
         {/* Header Section */}
         <FadeIn direction="up" className="text-center mb-16 md:mb-24">
-          <h1 className="text-4xl md:text-6xl font-bold font-heading tracking-tight text-white drop-shadow-lg mb-6 max-w-5xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight text-white drop-shadow-lg mb-6 max-w-5xl mx-auto">
             Ready to Make Your Next Move? <br className="hidden md:block" />
             <span className="text-brand-sky-blue">Connect with the right partner</span> for your M&A journey
           </h1>
@@ -165,29 +178,34 @@ export default function ContactPage() {
           <FadeIn delay={200} className="h-full">
             <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20 text-white shadow-2xl hover:shadow-brand-sky-blue/10 transition-all duration-300">
               <CardContent className="p-8 md:p-10 flex flex-col h-full">
-                <h2 className="text-3xl font-bold mb-4 font-heading">Talk to a buyer partner.</h2>
-                <p className="text-blue-100 text-lg mb-8 leading-relaxed">
+                <h2 className="text-3xl font-normal mb-4 font-heading">Talk to a buyer partner.</h2>
+                <p className="text-blue-100 text-lg mb-8 leading-relaxed text-justify">
                   Looking to expand through strategic acquisitions in Asia? Our buyer partners get exclusive access to off-market opportunities across Indonesia, Malaysia, and emerging Asian markets.
                 </p>
 
                 <div className="mb-8 flex-grow">
                   <h3 className="text-lg font-semibold mb-4 text-brand-sky-blue">Why Leading Acquirers Choose Nobridge:</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Proprietary deal flow from 500+ active seller relationships",
-                      "Deep local market knowledge with global transaction standards",
-                      "End-to-end support from sourcing to integration planning",
-                      "Risk mitigation through comprehensive seller vetting"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-200">{item}</span>
-                      </li>
-                    ))}
+                    <li className="flex items-start">
+                      <Network className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Proprietary deal flow from 500+ active seller relationships</span>
+                    </li>
+                    <li className="flex items-start">
+                      <MapPin className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Deep local market knowledge with global transaction standards</span>
+                    </li>
+                    <li className="flex items-start">
+                      <GitMerge className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">End-to-end support from sourcing to integration planning</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Shield className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Risk mitigation through comprehensive seller vetting</span>
+                    </li>
                   </ul>
                 </div>
 
-                <Button asChild size="lg" className="w-full bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white font-semibold text-lg h-12">
+                <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
                   <Link href="/contact/buyer">
                     Schedule Buyer Consultation <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -200,29 +218,34 @@ export default function ContactPage() {
           <FadeIn delay={300} className="h-full">
             <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20 text-white shadow-2xl hover:shadow-brand-sky-blue/10 transition-all duration-300">
               <CardContent className="p-8 md:p-10 flex flex-col h-full">
-                <h2 className="text-3xl font-bold mb-4 font-heading">Talk to a seller partner.</h2>
-                <p className="text-blue-100 text-lg mb-8 leading-relaxed">
+                <h2 className="text-3xl font-normal mb-4 font-heading">Talk to a seller partner.</h2>
+                <p className="text-blue-100 text-lg mb-8 leading-relaxed text-justify">
                   Ready to explore your exit options or fundraise? Our seller partners work with business owners who've built something valuable and want to ensure their legacy continues with the right acquirer.
                 </p>
 
                 <div className="mb-8 flex-grow">
                   <h3 className="text-lg font-semibold mb-4 text-brand-sky-blue">Why Successful Founders Trust Nobridge:</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Access to 2,000+ qualified international buyers",
-                      "Confidential marketing that protects your business operations",
-                      "Expert negotiation to maximize value and terms",
-                      "Smooth transition planning for you and your team"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-200">{item}</span>
-                      </li>
-                    ))}
+                    <li className="flex items-start">
+                      <Globe className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Access to 2,000+ qualified international buyers</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Lock className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Confidential marketing that protects your business operations</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Handshake className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Expert negotiation to maximize value and terms</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Users className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-200">Smooth transition planning for you and your team</span>
+                    </li>
                   </ul>
                 </div>
 
-                <Button asChild size="lg" className="w-full bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white font-semibold text-lg h-12">
+                <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
                   <Link href="/contact/seller">
                     Schedule Seller Consultation <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -235,7 +258,7 @@ export default function ContactPage() {
         {/* Bottom Section - Contact Form */}
         <FadeIn delay={400} className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-white font-heading mb-4">Need something else?</h2>
+            <h2 className="text-3xl md:text-4xl font-normal text-white font-heading mb-4">Need something else?</h2>
             <p className="text-xl text-blue-100">
               All consultations are confidential and commitment-free. Speak with a senior partner who understands your market.
             </p>
@@ -302,7 +325,7 @@ export default function ContactPage() {
                     {errors.message && <p className="text-sm text-red-300 mt-1">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" className="w-full bg-brand-sky-blue text-white hover:bg-white hover:text-brand-dark-blue font-semibold shadow-lg transition-all duration-300 border border-white/20" disabled={isLoading}>
+                  <Button type="submit" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base border border-white/20 shadow-lg transition-all duration-300" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />

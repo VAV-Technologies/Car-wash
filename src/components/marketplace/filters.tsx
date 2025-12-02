@@ -131,7 +131,7 @@ export function Filters() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Filter className="h-5 w-5 text-brand-sky-blue" />
-          <h3 className="text-lg font-semibold text-white">Filter Listings</h3>
+          <h3 className="text-lg font-normal text-white">Fil<span style={{ fontSize: '1.06em' }}>t</span>er Lis<span style={{ fontSize: '1.06em' }}>t</span>ings</h3>
         </div>
         {hasActiveFilters && (
           <Button
