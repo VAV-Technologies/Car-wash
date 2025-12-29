@@ -79,12 +79,12 @@ const ListingSchema = z.object({
 
   annualRevenueRange: z.string().min(1, "Annual revenue range is required."),
   netProfitMarginRange: z.string().optional(),
-  askingPrice: z.coerce.number({invalid_type_error: "Asking price must be a number."}).positive({message: "Asking price must be positive."}).optional(),
+  askingPrice: z.coerce.number({ invalid_type_error: "Asking price must be a number." }).positive({ message: "Asking price must be positive." }).optional(),
 
-  specificAnnualRevenueLastYear: z.coerce.number({invalid_type_error: "Specific annual revenue must be a number."}).optional(),
-  specificNetProfitLastYear: z.coerce.number({invalid_type_error: "Specific net profit must be a number."}).optional(),
-  adjustedCashFlow: z.coerce.number({invalid_type_error: "Adjusted cash flow must be a number."}).optional(),
-  ebitda: z.coerce.number({invalid_type_error: "EBITDA must be a number."}).optional(),
+  specificAnnualRevenueLastYear: z.coerce.number({ invalid_type_error: "Specific annual revenue must be a number." }).optional(),
+  specificNetProfitLastYear: z.coerce.number({ invalid_type_error: "Specific net profit must be a number." }).optional(),
+  adjustedCashFlow: z.coerce.number({ invalid_type_error: "Adjusted cash flow must be a number." }).optional(),
+  ebitda: z.coerce.number({ invalid_type_error: "EBITDA must be a number." }).optional(),
 
   dealStructureLookingFor: z.array(z.string()).optional(),
   reasonForSellingAnonymous: z.string().max(500, "Reason too long (max 500 chars).").optional(),
@@ -298,7 +298,7 @@ export default function CreateSellerListingPage() {
             console.log(`[CREATE-UPLOAD] Starting ${fieldName} upload for listing: ${listingId}`);
 
             // 🔥 FIX: Use XMLHttpRequest for progress tracking
-            const uploadResult = await new Promise<{signedUrl: string}>((resolve, reject) => {
+            const uploadResult = await new Promise<{ signedUrl: string }>((resolve, reject) => {
               const xhr = new XMLHttpRequest();
               const formData = new FormData();
               formData.append('file', file);
@@ -384,12 +384,12 @@ export default function CreateSellerListingPage() {
                   formData.append('document_type', `image_url_${i + 1}`);
                   formData.append('listing_id', listingId); // 🔥 FIX: Now we have the listing ID!
 
-                  console.log(`[CREATE-IMAGE] Starting image ${i+1} upload for listing: ${listingId}`);
+                  console.log(`[CREATE-IMAGE] Starting image ${i + 1} upload for listing: ${listingId}`);
 
                   xhr.upload.addEventListener('progress', (e) => {
                     if (e.lengthComputable) {
                       const progress = (e.loaded / e.total) * 100;
-                      console.log(`[CREATE-IMAGE] Image ${i+1} progress: ${progress.toFixed(1)}%`);
+                      console.log(`[CREATE-IMAGE] Image ${i + 1} progress: ${progress.toFixed(1)}%`);
                     }
                   });
 
@@ -397,36 +397,36 @@ export default function CreateSellerListingPage() {
                     if (xhr.status === 200) {
                       try {
                         const result = JSON.parse(xhr.responseText);
-                        console.log(`[CREATE-IMAGE] Image ${i+1} uploaded successfully`);
+                        console.log(`[CREATE-IMAGE] Image ${i + 1} uploaded successfully`);
                         resolve(result.signedUrl);
                       } catch (e) {
-                        console.error(`[CREATE-IMAGE] Failed to parse response for image ${i+1}:`, e);
-                        resolve(null); // Allow partial success
+                        console.error(`[CREATE-IMAGE] Failed to parse response for image ${i + 1}:`, e);
+                        reject(new Error(`Failed to parse response for image ${i + 1}`));
                       }
                     } else {
                       // Enhanced error logging with response details
                       try {
                         const errorResponse = JSON.parse(xhr.responseText);
-                        console.error(`[CREATE-IMAGE] Failed to upload image ${i+1}: ${xhr.status}`, {
+                        console.error(`[CREATE-IMAGE] Failed to upload image ${i + 1}: ${xhr.status}`, {
                           error: errorResponse.error,
                           code: errorResponse.code,
                           details: errorResponse.details
                         });
                       } catch (e) {
-                        console.error(`[CREATE-IMAGE] Failed to upload image ${i+1}: ${xhr.status} - ${xhr.responseText}`);
+                        console.error(`[CREATE-IMAGE] Failed to upload image ${i + 1}: ${xhr.status} - ${xhr.responseText}`);
                       }
-                      resolve(null); // Allow partial success
+                      reject(new Error(`Failed to upload image ${i + 1}: ${xhr.status}`));
                     }
                   });
 
                   xhr.addEventListener('error', () => {
-                    console.error(`[CREATE-IMAGE] Network error uploading image ${i+1}`);
-                    resolve(null); // Allow partial success
+                    console.error(`[CREATE-IMAGE] Network error uploading image ${i + 1}`);
+                    reject(new Error(`Network error uploading image ${i + 1}`));
                   });
 
                   xhr.addEventListener('timeout', () => {
-                    console.error(`[CREATE-IMAGE] Timeout uploading image ${i+1}`);
-                    resolve(null); // Allow partial success
+                    console.error(`[CREATE-IMAGE] Timeout uploading image ${i + 1}`);
+                    reject(new Error(`Timeout uploading image ${i + 1}`));
                   });
 
                   xhr.open('POST', '/api/listings/upload');
@@ -514,36 +514,36 @@ export default function CreateSellerListingPage() {
           <Card className="shadow-md bg-brand-white">
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading">Section 1: Basic Information (Anonymous)</CardTitle><CardDescription>Provide the essential details for your listing. This information will be displayed anonymously initially.</CardDescription></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="listingTitleAnonymous" render={({ field }) => (<FormItem><FormLabel>Listing Title (Anonymous)</FormLabel><FormControl><Input {...field} placeholder="e.g., Profitable E-commerce Store in Southeast Asia" disabled={isPending} /></FormControl><FormDescription>A catchy, anonymous title for your business.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="listingTitleAnonymous" render={({ field }) => (<FormItem><FormLabel>Listing Title (Anonymous)</FormLabel><FormControl><Input {...field} placeholder="e.g., Profitable E-commerce Store in Southeast Asia" disabled={isPending} /></FormControl><FormDescription>A catchy, anonymous title for your business.</FormDescription><FormMessage /></FormItem>)} />
               <div className="grid md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="industry" render={({ field }) => (<FormItem><FormLabel>Industry</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger></FormControl><SelectContent>{industries.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="locationCountry" render={({ field }) => (<FormItem><FormLabel>Location (Country)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger></FormControl><SelectContent>{asianCountries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="industry" render={({ field }) => (<FormItem><FormLabel>Industry</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger></FormControl><SelectContent>{industries.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="locationCountry" render={({ field }) => (<FormItem><FormLabel>Location (Country)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger></FormControl><SelectContent>{asianCountries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="locationCityRegionGeneral" render={({ field }) => (<FormItem><FormLabel>Location (General City/Region)</FormLabel><FormControl><Input {...field} placeholder="e.g., Metro Manila, Bangkok Area" disabled={isPending} /></FormControl><FormDescription>Keep this general for anonymity (e.g., "Nationwide" or a major metro area).</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="locationCityRegionGeneral" render={({ field }) => (<FormItem><FormLabel>Location (General City/Region)</FormLabel><FormControl><Input {...field} placeholder="e.g., Metro Manila, Bangkok Area" disabled={isPending} /></FormControl><FormDescription>Keep this general for anonymity (e.g., "Nationwide" or a major metro area).</FormDescription><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
           <Card className="shadow-md bg-brand-white">
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading">Section 2: Business Profile &amp; Operations</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="anonymousBusinessDescription" render={({ field }) => (<FormItem><FormLabel>Business Description</FormLabel><FormControl><Textarea {...field} rows={6} placeholder="Describe your business, products/services, market position, and growth potential without revealing identifying details." disabled={isPending} /></FormControl><FormDescription>Max 2000 characters.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="anonymousBusinessDescription" render={({ field }) => (<FormItem><FormLabel>Business Description</FormLabel><FormControl><Textarea {...field} rows={6} placeholder="Describe your business, products/services, market position, and growth potential without revealing identifying details." disabled={isPending} /></FormControl><FormDescription>Max 2000 characters.</FormDescription><FormMessage /></FormItem>)} />
               <div className="space-y-2">
                 <Label className="text-brand-dark-blue">Key Strengths (1-3 points)</Label><FormDescription>Highlight the main advantages of your business.</FormDescription>
-                <FormField control={form.control} name="keyStrength1" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 1 (e.g., Strong recurring revenue)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="keyStrength2" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 2 (Optional)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="keyStrength3" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 3 (Optional)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="keyStrength1" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 1 (e.g., Strong recurring revenue)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="keyStrength2" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 2 (Optional)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="keyStrength3" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 3 (Optional)" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="businessModel" render={({ field }) => (<FormItem><FormLabel>Business Model</FormLabel><FormControl><Textarea {...field} value={field.value || ""} placeholder="e.g., SaaS, E-commerce (dropshipping/inventory), Service-based, Lead Generation, Content Site (Adsense/Affiliate), etc." disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="yearEstablished" render={({ field }) => (<FormItem><FormLabel>Year Business Established</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} placeholder="YYYY" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="registeredBusinessName" render={({ field }) => (<FormItem><FormLabel>Legal Registered Business Name</FormLabel><FormControl><Input {...field} value={field.value || ""} placeholder="Your Company Pte Ltd" disabled={isPending} /></FormControl><FormDescription>This is for verification and won't be public initially.</FormDescription><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="businessWebsiteUrl" render={({ field }) => (<FormItem><FormLabel>Primary Business Website</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://yourbusiness.com" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="socialMediaLinks" render={({ field }) => (<FormItem><FormLabel>Key Social Media Profiles (one per line)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="https://linkedin.com/company/yourbusiness\nhttps://facebook.com/yourbusiness" disabled={isPending} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="numberOfEmployees" render={({ field }) => (<FormItem><FormLabel>Number of Employees</FormLabel><Select onValueChange={field.onChange} value={field.value || undefined} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select number of employees" /></SelectTrigger></FormControl><SelectContent>{employeeCountRanges.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormDescription>Full-time.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="businessModel" render={({ field }) => (<FormItem><FormLabel>Business Model</FormLabel><FormControl><Textarea {...field} value={field.value || ""} placeholder="e.g., SaaS, E-commerce (dropshipping/inventory), Service-based, Lead Generation, Content Site (Adsense/Affiliate), etc." disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="yearEstablished" render={({ field }) => (<FormItem><FormLabel>Year Business Established</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} placeholder="YYYY" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="registeredBusinessName" render={({ field }) => (<FormItem><FormLabel>Legal Registered Business Name</FormLabel><FormControl><Input {...field} value={field.value || ""} placeholder="Your Company Pte Ltd" disabled={isPending} /></FormControl><FormDescription>This is for verification and won't be public initially.</FormDescription><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="businessWebsiteUrl" render={({ field }) => (<FormItem><FormLabel>Primary Business Website</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://yourbusiness.com" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="socialMediaLinks" render={({ field }) => (<FormItem><FormLabel>Key Social Media Profiles (one per line)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="https://linkedin.com/company/yourbusiness\nhttps://facebook.com/yourbusiness" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="numberOfEmployees" render={({ field }) => (<FormItem><FormLabel>Number of Employees</FormLabel><Select onValueChange={field.onChange} value={field.value || undefined} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select number of employees" /></SelectTrigger></FormControl><SelectContent>{employeeCountRanges.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormDescription>Full-time.</FormDescription><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><ImagePlus className="h-5 w-5 text-primary"/>Business Images</CardTitle><CardDescription>Upload up to 5 images for your listing (e.g., logo, storefront, product shots). Max 5MB each. JPG, PNG, WebP.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><ImagePlus className="h-5 w-5 text-primary" />Business Images</CardTitle><CardDescription>Upload up to 5 images for your listing (e.g., logo, storefront, product shots). Max 5MB each. JPG, PNG, WebP.</CardDescription></CardHeader>
             <CardContent className="space-y-4">
               {[0, 1, 2, 3, 4].map(i => (
                 <FormField
@@ -581,13 +581,13 @@ export default function CreateSellerListingPage() {
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="calculator" size="sm" />Financial Performance</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="annualRevenueRange" render={({ field }) => (<FormItem><FormLabel>Annual Revenue Range</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select revenue range" /></SelectTrigger></FormControl><SelectContent>{revenueRanges.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="netProfitMarginRange" render={({ field }) => (<FormItem><FormLabel>Net Profit Margin Range (Optional)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select profit margin"/></SelectTrigger></FormControl><SelectContent>{profitMarginRanges.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="annualRevenueRange" render={({ field }) => (<FormItem><FormLabel>Annual Revenue Range</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select revenue range" /></SelectTrigger></FormControl><SelectContent>{revenueRanges.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="netProfitMarginRange" render={({ field }) => (<FormItem><FormLabel>Net Profit Margin Range (Optional)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isPending}><FormControl><SelectTrigger><SelectValue placeholder="Select profit margin" /></SelectTrigger></FormControl><SelectContent>{profitMarginRanges.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80"/>Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isPending} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80" />Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isPending} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="adjustedCashFlow" render={({ field }) => (<FormItem><FormLabel>Adjusted Cash Flow / SDE (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 220000" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="ebitda" render={({ field }) => (<FormItem><FormLabel>EBITDA (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 250000" disabled={isPending} /></FormControl><FormDescription>Earnings Before Interest, Taxes, Depreciation, and Amortization</FormDescription><FormMessage /></FormItem>)} />
-              <Separator/>
+              <Separator />
               <h3 className="text-md font-medium text-muted-foreground font-heading">Specific Financials (For Verified View)</h3>
               <FormField control={form.control} name="specificAnnualRevenueLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Annual Revenue (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="specificNetProfitLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Net Profit (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 180000" disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
@@ -595,13 +595,13 @@ export default function CreateSellerListingPage() {
               {!isSellerVerified && (
                 <Card className="p-4 bg-blue-50 border-blue-200">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5"/>
+                    <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-blue-700">Get Verified for Enhanced Listing</p>
                       <p className="text-xs text-blue-600 mb-3">Verified sellers can provide specific financial figures and upload detailed documents, increasing buyer trust.</p>
                       <Button type="button" variant="outline" size="sm" asChild className="border-blue-500 text-blue-700 hover:bg-blue-100">
                         <Link href="/seller-dashboard/verification">
-                          <ShieldCheck className="h-4 w-4 mr-2"/> Request Verification
+                          <ShieldCheck className="h-4 w-4 mr-2" /> Request Verification
                         </Link>
                       </Button>
                     </div>
@@ -614,16 +614,16 @@ export default function CreateSellerListingPage() {
           <Card className="shadow-md bg-brand-white">
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="deal-structure" size="sm" />Deal &amp; Seller Information</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="dealStructureLookingFor" render={() => (<FormItem><FormLabel>Looking for (Deal Structure):</FormLabel><FormDescription>Select all that apply.</FormDescription><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">{dealStructures.map((item) => (<FormField key={item} control={form.control} name="dealStructureLookingFor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0"><FormControl><Checkbox checked={field.value?.includes(item)} onCheckedChange={(checked) => checked ? field.onChange([...(field.value || []), item]) : field.onChange(field.value?.filter(v => v !== item))} disabled={isPending}/></FormControl><FormLabel className="font-normal">{item}</FormLabel></FormItem>)}/>))}</div><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="reasonForSellingAnonymous" render={({ field }) => (<FormItem><FormLabel>Reason for Selling (Public Summary, Optional)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Briefly state your reason for selling (e.g., Retirement, Other ventures)." disabled={isPending} /></FormControl><FormDescription>Max 500 characters. This may be shown publicly.</FormDescription><FormMessage /></FormItem>)}/>
-              <Separator/>
+              <FormField control={form.control} name="dealStructureLookingFor" render={() => (<FormItem><FormLabel>Looking for (Deal Structure):</FormLabel><FormDescription>Select all that apply.</FormDescription><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">{dealStructures.map((item) => (<FormField key={item} control={form.control} name="dealStructureLookingFor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0"><FormControl><Checkbox checked={field.value?.includes(item)} onCheckedChange={(checked) => checked ? field.onChange([...(field.value || []), item]) : field.onChange(field.value?.filter(v => v !== item))} disabled={isPending} /></FormControl><FormLabel className="font-normal">{item}</FormLabel></FormItem>)} />))}</div><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="reasonForSellingAnonymous" render={({ field }) => (<FormItem><FormLabel>Reason for Selling (Public Summary, Optional)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Briefly state your reason for selling (e.g., Retirement, Other ventures)." disabled={isPending} /></FormControl><FormDescription>Max 500 characters. This may be shown publicly.</FormDescription><FormMessage /></FormItem>)} />
+              <Separator />
               <h3 className="text-md font-medium text-muted-foreground font-heading">Additional Seller Information (For Verified View)</h3>
               <FormField control={form.control} name="detailedReasonForSelling" render={({ field }) => (<FormItem><FormLabel>Detailed Reason for Selling</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Provide more context for verified buyers." disabled={isPending} /></FormControl><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="growth" size="sm"/>Growth &amp; Future Potential</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="growth" size="sm" />Growth &amp; Future Potential</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label className="text-brand-dark-blue">Specific Growth Opportunities (1-3 points)</Label><FormDescription>List 1-3 specific, actionable growth opportunities.</FormDescription>
@@ -647,7 +647,7 @@ export default function CreateSellerListingPage() {
           </Card>
 
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><FileText className="h-5 w-5 text-primary"/>Supporting Documents & Information</CardTitle><CardDescription>All documents are optional but highly recommended for verified listings.{isSellerVerified ? " Upload documents to provide transparency." : " These fields are available to verified sellers."}</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Supporting Documents & Information</CardTitle><CardDescription>All documents are optional but highly recommended for verified listings.{isSellerVerified ? " Upload documents to provide transparency." : " These fields are available to verified sellers."}</CardDescription></CardHeader>
             <CardContent className="space-y-6">
               {isSellerVerified ? (
                 <>
@@ -660,17 +660,17 @@ export default function CreateSellerListingPage() {
                     <FormField control={form.control} name="locationRealEstateInfo" render={({ field }) => (<FormItem><FormLabel>Location & Real Estate Information</FormLabel><FormControl><Input type="file" onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)} accept={ACCEPTED_DOCUMENT_TYPES.join(",")} disabled={isPending} /></FormControl><FormDescription>Lease agreements, property details.</FormDescription><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name="webPresenceInfo" render={({ field }) => (<FormItem><FormLabel>Web Presence Information</FormLabel><FormControl><Input type="file" onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)} accept={ACCEPTED_DOCUMENT_TYPES.join(",")} disabled={isPending} /></FormControl><FormDescription>Website analytics, SEO reports.</FormDescription><FormMessage /></FormItem>)} />
                   </div>
-                  <FormField control={form.control} name="secureDataRoomLink" render={({ field }) => (<FormItem><FormLabel>Secure Data Room Link (Optional)</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://your-dataroom-provider.com/room/..." disabled={isPending}/></FormControl><FormDescription>Link to external secure data room containing additional documents.</FormDescription><FormMessage /></FormItem>)}/>
+                  <FormField control={form.control} name="secureDataRoomLink" render={({ field }) => (<FormItem><FormLabel>Secure Data Room Link (Optional)</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://your-dataroom-provider.com/room/..." disabled={isPending} /></FormControl><FormDescription>Link to external secure data room containing additional documents.</FormDescription><FormMessage /></FormItem>)} />
                 </>
               ) : (
                 <Card className="p-4 bg-yellow-50 border-yellow-200">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5"/>
+                    <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-yellow-700">Document Uploads for Verified Sellers</p>
                       <p className="text-xs text-yellow-600 mb-3">Once your seller profile is verified, you can upload detailed financial statements, metrics reports, and ownership documents here to build buyer trust.</p>
                       <Button type="button" variant="outline" size="sm" asChild className="border-yellow-500 text-yellow-700 hover:bg-yellow-100">
-                        <Link href="/seller-dashboard/verification"><ShieldCheck className="h-4 w-4 mr-2"/> Check Verification Status</Link>
+                        <Link href="/seller-dashboard/verification"><ShieldCheck className="h-4 w-4 mr-2" /> Check Verification Status</Link>
                       </Button>
                     </div>
                   </div>

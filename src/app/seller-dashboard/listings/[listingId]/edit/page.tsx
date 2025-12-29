@@ -86,12 +86,12 @@ const ListingSchema = z.object({
 
   annualRevenueRange: z.string().min(1, "Annual revenue range is required."),
   netProfitMarginRange: z.string().optional(),
-  askingPrice: z.coerce.number({invalid_type_error: "Asking price must be a number."}).positive({message: "Asking price must be positive."}).optional(),
+  askingPrice: z.coerce.number({ invalid_type_error: "Asking price must be a number." }).positive({ message: "Asking price must be positive." }).optional(),
 
-  specificAnnualRevenueLastYear: z.coerce.number({invalid_type_error: "Specific annual revenue must be a number."}).optional(),
-  specificNetProfitLastYear: z.coerce.number({invalid_type_error: "Specific net profit must be a number."}).optional(),
-  adjustedCashFlow: z.coerce.number({invalid_type_error: "Adjusted cash flow must be a number."}).optional(),
-  ebitda: z.coerce.number({invalid_type_error: "EBITDA must be a number."}).optional(),
+  specificAnnualRevenueLastYear: z.coerce.number({ invalid_type_error: "Specific annual revenue must be a number." }).optional(),
+  specificNetProfitLastYear: z.coerce.number({ invalid_type_error: "Specific net profit must be a number." }).optional(),
+  adjustedCashFlow: z.coerce.number({ invalid_type_error: "Adjusted cash flow must be a number." }).optional(),
+  ebitda: z.coerce.number({ invalid_type_error: "EBITDA must be a number." }).optional(),
   adjustedCashFlowExplanation: z.string().optional(),
 
   dealStructureLookingFor: z.array(z.string()).optional(),
@@ -207,7 +207,7 @@ export default function EditSellerListingPage() {
         const initialImageSlots: ImageSlot[] = Array(5).fill({}).map((_, i) => {
           const imageUrl = existingImageUrls[i] || null;
           if (imageUrl) {
-            formDefaultValues[`imageFile${i+1}` as keyof ListingFormValues] = imageUrl as any;
+            formDefaultValues[`imageFile${i + 1}` as keyof ListingFormValues] = imageUrl as any;
             return { currentUrl: imageUrl, previewUrl: imageUrl, file: null };
           }
           return { currentUrl: null, previewUrl: null, file: null };
@@ -215,10 +215,10 @@ export default function EditSellerListingPage() {
         setImageSlots(initialImageSlots);
 
         ['financialDocuments', 'keyMetricsReport', 'ownershipDocuments', 'financialSnapshot', 'ownershipDetails', 'locationRealEstateInfo', 'webPresenceInfo'].forEach(docField => {
-            const dbDocUrl = fetchedListing[`${docField.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')}_url`];
-            if (dbDocUrl) {
-                 formDefaultValues[docField as keyof ListingFormValues] = dbDocUrl as any;
-            }
+          const dbDocUrl = fetchedListing[`${docField.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')}_url`];
+          if (dbDocUrl) {
+            formDefaultValues[docField as keyof ListingFormValues] = dbDocUrl as any;
+          }
         });
 
         form.reset(formDefaultValues);
@@ -299,12 +299,12 @@ export default function EditSellerListingPage() {
                 formData.append('document_type', `image_url_${i + 1}`);
                 formData.append('listing_id', listingId); // 🔥 FIX: Add listing_id for images too
 
-                console.log(`[IMAGE-UPLOAD] Starting image ${i+1} upload for listing: ${listingId}`);
+                console.log(`[IMAGE-UPLOAD] Starting image ${i + 1} upload for listing: ${listingId}`);
 
                 xhr.upload.addEventListener('progress', (e) => {
                   if (e.lengthComputable) {
                     const progress = (e.loaded / e.total) * 100;
-                    console.log(`[IMAGE-UPLOAD] Image ${i+1} progress: ${progress.toFixed(1)}%`);
+                    console.log(`[IMAGE-UPLOAD] Image ${i + 1} progress: ${progress.toFixed(1)}%`);
                     // You can add a progress callback here if needed
                   }
                 });
@@ -313,36 +313,36 @@ export default function EditSellerListingPage() {
                   if (xhr.status === 200) {
                     try {
                       const result = JSON.parse(xhr.responseText);
-                      console.log(`[IMAGE-UPLOAD] Image ${i+1} uploaded successfully`);
+                      console.log(`[IMAGE-UPLOAD] Image ${i + 1} uploaded successfully`);
                       resolve(result.signedUrl);
                     } catch (e) {
-                      console.error(`[IMAGE-UPLOAD] Failed to parse response for image ${i+1}:`, e);
-                      resolve(null); // Allow partial success
+                      console.error(`[IMAGE-UPLOAD] Failed to parse response for image ${i + 1}:`, e);
+                      reject(new Error(`Failed to parse response for image ${i + 1}`));
                     }
                   } else {
                     // Enhanced error logging with response details
                     try {
                       const errorResponse = JSON.parse(xhr.responseText);
-                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i+1}: ${xhr.status}`, {
+                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i + 1}: ${xhr.status}`, {
                         error: errorResponse.error,
                         code: errorResponse.code,
                         details: errorResponse.details
                       });
                     } catch (e) {
-                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i+1}: ${xhr.status} - ${xhr.responseText}`);
+                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i + 1}: ${xhr.status} - ${xhr.responseText}`);
                     }
-                    resolve(null); // Allow partial success
+                    reject(new Error(`Failed to upload image ${i + 1}: ${xhr.status}`));
                   }
                 });
 
                 xhr.addEventListener('error', () => {
-                  console.error(`[IMAGE-UPLOAD] Network error uploading image ${i+1}`);
-                  resolve(null); // Allow partial success
+                  console.error(`[IMAGE-UPLOAD] Network error uploading image ${i + 1}`);
+                  reject(new Error(`Network error uploading image ${i + 1}`));
                 });
 
                 xhr.addEventListener('timeout', () => {
-                  console.error(`[IMAGE-UPLOAD] Timeout uploading image ${i+1}`);
-                  resolve(null); // Allow partial success
+                  console.error(`[IMAGE-UPLOAD] Timeout uploading image ${i + 1}`);
+                  reject(new Error(`Timeout uploading image ${i + 1}`));
                 });
 
                 xhr.open('POST', '/api/listings/upload');
@@ -368,74 +368,74 @@ export default function EditSellerListingPage() {
       const documentUploads: Record<string, string | null> = {};
       const documentFields = ['financialDocuments', 'keyMetricsReport', 'ownershipDocuments', 'financialSnapshot', 'ownershipDetails', 'locationRealEstateInfo', 'webPresenceInfo'];
       for (const fieldName of documentFields) {
-          const fileOrUrl = values[fieldName as keyof ListingFormValues] as File | string | null | undefined;
-          const dbFieldName = `${fieldName.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')}_url`;
-          if (fileOrUrl instanceof File) {
-              if (!accessToken) throw new Error('Authentication required for document upload');
+        const fileOrUrl = values[fieldName as keyof ListingFormValues] as File | string | null | undefined;
+        const dbFieldName = `${fieldName.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '')}_url`;
+        if (fileOrUrl instanceof File) {
+          if (!accessToken) throw new Error('Authentication required for document upload');
 
-              console.log(`[EDIT-UPLOAD] Starting ${fieldName} upload for listing: ${listingId}`);
+          console.log(`[EDIT-UPLOAD] Starting ${fieldName} upload for listing: ${listingId}`);
 
-              // 🔥 FIX: Use XMLHttpRequest for progress tracking
-              const uploadResult = await new Promise<{signedUrl: string}>((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                const formData = new FormData();
-                formData.append('file', fileOrUrl);
-                formData.append('document_type', fieldName.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''));
-                formData.append('listing_id', listingId); // 🔥 FIX: Add listing_id for database updates
+          // 🔥 FIX: Use XMLHttpRequest for progress tracking
+          const uploadResult = await new Promise<{ signedUrl: string }>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData();
+            formData.append('file', fileOrUrl);
+            formData.append('document_type', fieldName.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''));
+            formData.append('listing_id', listingId); // 🔥 FIX: Add listing_id for database updates
 
-                // Debug the FormData contents
-                console.log(`[EDIT-UPLOAD] FormData for ${fieldName}:`);
-                for (let [key, value] of formData.entries()) {
-                  console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
+            // Debug the FormData contents
+            console.log(`[EDIT-UPLOAD] FormData for ${fieldName}:`);
+            for (let [key, value] of formData.entries()) {
+              console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
+            }
+
+            let lastProgress = 0;
+            xhr.upload.addEventListener('progress', (e) => {
+              if (e.lengthComputable) {
+                const progress = Math.round((e.loaded / e.total) * 100);
+                if (progress !== lastProgress && progress % 10 === 0) { // Log every 10%
+                  console.log(`[EDIT-UPLOAD] ${fieldName} progress: ${progress}%`);
+                  lastProgress = progress;
                 }
+              }
+            });
 
-                let lastProgress = 0;
-                xhr.upload.addEventListener('progress', (e) => {
-                  if (e.lengthComputable) {
-                    const progress = Math.round((e.loaded / e.total) * 100);
-                    if (progress !== lastProgress && progress % 10 === 0) { // Log every 10%
-                      console.log(`[EDIT-UPLOAD] ${fieldName} progress: ${progress}%`);
-                      lastProgress = progress;
-                    }
-                  }
-                });
+            xhr.addEventListener('load', () => {
+              if (xhr.status === 200) {
+                try {
+                  const result = JSON.parse(xhr.responseText);
+                  console.log(`[EDIT-UPLOAD] ${fieldName} uploaded successfully, signedUrl: ${result.signedUrl?.substring(0, 50)}...`);
+                  resolve(result);
+                } catch (e) {
+                  console.error(`[EDIT-UPLOAD] Failed to parse response for ${fieldName}:`, xhr.responseText);
+                  reject(new Error(`Failed to parse upload response for ${fieldName}`));
+                }
+              } else {
+                console.error(`[EDIT-UPLOAD] Upload failed for ${fieldName}: ${xhr.status} - ${xhr.responseText}`);
+                reject(new Error(`Upload failed for ${fieldName}: ${xhr.status}`));
+              }
+            });
 
-                xhr.addEventListener('load', () => {
-                  if (xhr.status === 200) {
-                    try {
-                      const result = JSON.parse(xhr.responseText);
-                      console.log(`[EDIT-UPLOAD] ${fieldName} uploaded successfully, signedUrl: ${result.signedUrl?.substring(0, 50)}...`);
-                      resolve(result);
-                    } catch (e) {
-                      console.error(`[EDIT-UPLOAD] Failed to parse response for ${fieldName}:`, xhr.responseText);
-                      reject(new Error(`Failed to parse upload response for ${fieldName}`));
-                    }
-                  } else {
-                    console.error(`[EDIT-UPLOAD] Upload failed for ${fieldName}: ${xhr.status} - ${xhr.responseText}`);
-                    reject(new Error(`Upload failed for ${fieldName}: ${xhr.status}`));
-                  }
-                });
+            xhr.addEventListener('error', () => {
+              console.error(`[EDIT-UPLOAD] Network error uploading ${fieldName}`);
+              reject(new Error(`Network error uploading ${fieldName}`));
+            });
 
-                xhr.addEventListener('error', () => {
-                  console.error(`[EDIT-UPLOAD] Network error uploading ${fieldName}`);
-                  reject(new Error(`Network error uploading ${fieldName}`));
-                });
+            xhr.open('POST', '/api/listings/upload');
+            xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+            xhr.timeout = 60000; // 60 second timeout
+            xhr.send(formData);
+          });
 
-                xhr.open('POST', '/api/listings/upload');
-                xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
-                xhr.timeout = 60000; // 60 second timeout
-                xhr.send(formData);
-              });
-
-              documentUploads[dbFieldName] = uploadResult.signedUrl;
-          } else if (typeof fileOrUrl === 'string' && fileOrUrl && (listing ? listing[dbFieldName] !== fileOrUrl : true)) {
-              // If it's a string and different from original, it means it was an existing URL that wasn't changed, or a new URL was pasted (though UI doesn't support this directly for files)
-               documentUploads[dbFieldName] = fileOrUrl;
-          } else if (!fileOrUrl && listing && listing[dbFieldName]) { // File was cleared
-              documentUploads[dbFieldName] = null;
-          } else if (listing && listing[dbFieldName]) { // Keep existing if no new file
-              documentUploads[dbFieldName] = listing[dbFieldName];
-          }
+          documentUploads[dbFieldName] = uploadResult.signedUrl;
+        } else if (typeof fileOrUrl === 'string' && fileOrUrl && (listing ? listing[dbFieldName] !== fileOrUrl : true)) {
+          // If it's a string and different from original, it means it was an existing URL that wasn't changed, or a new URL was pasted (though UI doesn't support this directly for files)
+          documentUploads[dbFieldName] = fileOrUrl;
+        } else if (!fileOrUrl && listing && listing[dbFieldName]) { // File was cleared
+          documentUploads[dbFieldName] = null;
+        } else if (listing && listing[dbFieldName]) { // Keep existing if no new file
+          documentUploads[dbFieldName] = listing[dbFieldName];
+        }
       }
 
       const updatePayload = {
@@ -617,34 +617,34 @@ export default function EditSellerListingPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Basic Information Card */}
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><Info className="h-5 w-5 text-primary"/>Basic Information</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><Info className="h-5 w-5 text-primary" />Basic Information</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="listingTitleAnonymous" render={({ field }) => (<FormItem><FormLabel>Listing Title (Anonymous)</FormLabel><FormControl><Input {...field} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="listingTitleAnonymous" render={({ field }) => (<FormItem><FormLabel>Listing Title (Anonymous)</FormLabel><FormControl><Input {...field} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
               <div className="grid md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="industry" render={({ field }) => (<FormItem><FormLabel>Industry</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select industry"/></SelectTrigger></FormControl><SelectContent>{industries.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="locationCountry" render={({ field }) => (<FormItem><FormLabel>Location (Country)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select country"/></SelectTrigger></FormControl><SelectContent>{asianCountries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="industry" render={({ field }) => (<FormItem><FormLabel>Industry</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select industry" /></SelectTrigger></FormControl><SelectContent>{industries.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="locationCountry" render={({ field }) => (<FormItem><FormLabel>Location (Country)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger></FormControl><SelectContent>{asianCountries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="locationCityRegionGeneral" render={({ field }) => (<FormItem><FormLabel>Location (General City/Region)</FormLabel><FormControl><Input {...field} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="locationCityRegionGeneral" render={({ field }) => (<FormItem><FormLabel>Location (General City/Region)</FormLabel><FormControl><Input {...field} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
           {/* Business Profile & Operations Card */}
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><Building className="h-5 w-5 text-primary"/>Business Profile &amp; Operations</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><Building className="h-5 w-5 text-primary" />Business Profile &amp; Operations</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="anonymousBusinessDescription" render={({ field }) => (<FormItem><FormLabel>Business Description</FormLabel><FormControl><Textarea {...field} rows={6} disabled={isSubmitting} /></FormControl><FormDescription>Max 2000 characters.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="anonymousBusinessDescription" render={({ field }) => (<FormItem><FormLabel>Business Description</FormLabel><FormControl><Textarea {...field} rows={6} disabled={isSubmitting} /></FormControl><FormDescription>Max 2000 characters.</FormDescription><FormMessage /></FormItem>)} />
               <div className="space-y-2">
                 <Label className="text-brand-dark-blue font-medium">Key Strengths (1-3 points)</Label><FormDescription>Highlight the main advantages of your business. Each strength max 150 chars.</FormDescription>
-                <FormField control={form.control} name="keyStrength1" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 1 (e.g., Strong recurring revenue)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="keyStrength2" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 2 (Optional)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="keyStrength3" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 3 (Optional)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="keyStrength1" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 1 (e.g., Strong recurring revenue)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="keyStrength2" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 2 (Optional)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="keyStrength3" render={({ field }) => (<FormItem><FormControl><Input {...field} value={field.value || ""} placeholder="Strength 3 (Optional)" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="businessModel" render={({ field }) => (<FormItem><FormLabel>Business Model</FormLabel><FormControl><Textarea {...field} value={field.value || ""} placeholder="e.g., SaaS, E-commerce..." disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="yearEstablished" render={({ field }) => (<FormItem><FormLabel>Year Established</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} placeholder="YYYY" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="registeredBusinessName" render={({ field }) => (<FormItem><FormLabel>Legal Registered Business Name</FormLabel><FormControl><Input {...field} value={field.value || ""} disabled={isSubmitting} /></FormControl><FormDescription>For verification, not public initially.</FormDescription><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="businessWebsiteUrl" render={({ field }) => (<FormItem><FormLabel>Website URL</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="socialMediaLinks" render={({ field }) => (<FormItem><FormLabel>Social Media (one per line)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="numberOfEmployees" render={({ field }) => (<FormItem><FormLabel>Number of Employees</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select range" /></SelectTrigger></FormControl><SelectContent>{employeeCountRanges.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormDescription>Full-time.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="businessModel" render={({ field }) => (<FormItem><FormLabel>Business Model</FormLabel><FormControl><Textarea {...field} value={field.value || ""} placeholder="e.g., SaaS, E-commerce..." disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="yearEstablished" render={({ field }) => (<FormItem><FormLabel>Year Established</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} placeholder="YYYY" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="registeredBusinessName" render={({ field }) => (<FormItem><FormLabel>Legal Registered Business Name</FormLabel><FormControl><Input {...field} value={field.value || ""} disabled={isSubmitting} /></FormControl><FormDescription>For verification, not public initially.</FormDescription><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="businessWebsiteUrl" render={({ field }) => (<FormItem><FormLabel>Website URL</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="socialMediaLinks" render={({ field }) => (<FormItem><FormLabel>Social Media (one per line)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="numberOfEmployees" render={({ field }) => (<FormItem><FormLabel>Number of Employees</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select range" /></SelectTrigger></FormControl><SelectContent>{employeeCountRanges.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent></Select><FormDescription>Full-time.</FormDescription><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
@@ -652,7 +652,7 @@ export default function EditSellerListingPage() {
           <Card className="shadow-md bg-brand-white">
             <CardHeader>
               <CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2">
-                <ImagePlus className="h-5 w-5 text-primary"/>Manage Business Images
+                <ImagePlus className="h-5 w-5 text-primary" />Manage Business Images
               </CardTitle>
               <CardDescription>
                 Review existing images, remove, or upload new ones. Max 5MB each. JPG, PNG, WebP.
@@ -686,12 +686,12 @@ export default function EditSellerListingPage() {
                           <XCircle className="h-4 w-4 mr-1" /> Remove Image
                         </Button>
                       )}
-                       <FormDescription className="text-xs">
-                        {imageSlots[i]?.currentUrl && !imageSlots[i]?.file ? `Current: ${imageSlots[i].currentUrl!.split('/').pop()?.substring(0,20)}...` : imageSlots[i]?.file ? `New: ${imageSlots[i].file!.name}` : 'No image selected'}
+                      <FormDescription className="text-xs">
+                        {imageSlots[i]?.currentUrl && !imageSlots[i]?.file ? `Current: ${imageSlots[i].currentUrl!.split('/').pop()?.substring(0, 20)}...` : imageSlots[i]?.file ? `New: ${imageSlots[i].file!.name}` : 'No image selected'}
                       </FormDescription>
                     </div>
                   </div>
-                  <FormMessage>{form.formState.errors[`imageFile${i+1}` as keyof ListingFormValues]?.message as React.ReactNode}</FormMessage>
+                  <FormMessage>{form.formState.errors[`imageFile${i + 1}` as keyof ListingFormValues]?.message as React.ReactNode}</FormMessage>
                 </FormItem>
               ))}
             </CardContent>
@@ -702,13 +702,13 @@ export default function EditSellerListingPage() {
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="calculator" size="sm" />Financial Performance</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
-                <FormField control={form.control} name="annualRevenueRange" render={({ field }) => (<FormItem><FormLabel>Annual Revenue Range</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select revenue range" /></SelectTrigger></FormControl><SelectContent>{revenueRanges.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
-                <FormField control={form.control} name="netProfitMarginRange" render={({ field }) => (<FormItem><FormLabel>Net Profit Margin Range (Optional)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select profit margin"/></SelectTrigger></FormControl><SelectContent>{profitMarginRanges.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)}/>
+                <FormField control={form.control} name="annualRevenueRange" render={({ field }) => (<FormItem><FormLabel>Annual Revenue Range</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select revenue range" /></SelectTrigger></FormControl><SelectContent>{revenueRanges.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="netProfitMarginRange" render={({ field }) => (<FormItem><FormLabel>Net Profit Margin Range (Optional)</FormLabel><Select onValueChange={field.onChange} value={field.value || ""} disabled={isSubmitting}><FormControl><SelectTrigger><SelectValue placeholder="Select profit margin" /></SelectTrigger></FormControl><SelectContent>{profitMarginRanges.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>)} />
               </div>
-              <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80"/>Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isSubmitting} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="askingPrice" render={({ field }) => (<FormItem><FormLabel className="flex items-center"><NobridgeIcon icon="revenue" size="sm" className="mr-1 opacity-80" />Asking Price (USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isSubmitting} /></FormControl><FormDescription>Enter the specific asking price for your business.</FormDescription><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="adjustedCashFlow" render={({ field }) => (<FormItem><FormLabel>Adjusted Cash Flow / SDE (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 220000" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="ebitda" render={({ field }) => (<FormItem><FormLabel>EBITDA (TTM, USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 250000" disabled={isSubmitting} /></FormControl><FormDescription>Earnings Before Interest, Taxes, Depreciation, and Amortization</FormDescription><FormMessage /></FormItem>)} />
-              <Separator/>
+              <Separator />
               <h3 className="text-md font-medium text-muted-foreground font-heading">Specific Financials (For Verified View)</h3>
               <FormField control={form.control} name="specificAnnualRevenueLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Annual Revenue (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 750000" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
               <FormField control={form.control} name="specificNetProfitLastYear" render={({ field }) => (<FormItem><FormLabel>Actual Net Profit (TTM, in USD)</FormLabel><FormControl><Input type="number" {...field} value={field.value === undefined ? '' : field.value} onChange={e => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))} placeholder="e.g., 180000" disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
@@ -717,7 +717,7 @@ export default function EditSellerListingPage() {
 
           {/* Supporting Documents Section */}
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><FileText className="h-5 w-5 text-primary"/>Supporting Documents & Information</CardTitle><CardDescription>Update supporting documents. These are visible to verified buyers. Max 5MB each. PDF, XLSX, CSV.</CardDescription></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Supporting Documents & Information</CardTitle><CardDescription>Update supporting documents. These are visible to verified buyers. Max 5MB each. PDF, XLSX, CSV.</CardDescription></CardHeader>
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 {[
@@ -741,7 +741,7 @@ export default function EditSellerListingPage() {
                   )} />
                 ))}
               </div>
-              <FormField control={form.control} name="secureDataRoomLink" render={({ field }) => (<FormItem><FormLabel>Secure Data Room Link (Optional)</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://dataroom.example.com/your-listing" disabled={isSubmitting}/></FormControl><FormDescription>Link to external secure data room.</FormDescription><FormMessage /></FormItem>)}/>
+              <FormField control={form.control} name="secureDataRoomLink" render={({ field }) => (<FormItem><FormLabel>Secure Data Room Link (Optional)</FormLabel><FormControl><Input type="url" {...field} value={field.value || ""} placeholder="https://dataroom.example.com/your-listing" disabled={isSubmitting} /></FormControl><FormDescription>Link to external secure data room.</FormDescription><FormMessage /></FormItem>)} />
             </CardContent>
           </Card>
 
@@ -749,9 +749,9 @@ export default function EditSellerListingPage() {
           <Card className="shadow-md bg-brand-white">
             <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="deal-structure" size="sm" />Deal &amp; Seller Information</CardTitle></CardHeader>
             <CardContent className="space-y-6">
-              <FormField control={form.control} name="dealStructureLookingFor" render={() => (<FormItem><FormLabel>Looking for (Deal Structure):</FormLabel><FormDescription>Select all that apply.</FormDescription><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">{dealStructures.map((item) => (<FormField key={item} control={form.control} name="dealStructureLookingFor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0"><FormControl><Checkbox checked={field.value?.includes(item)} onCheckedChange={(checked) => checked ? field.onChange([...(field.value || []), item]) : field.onChange(field.value?.filter(v => v !== item))} disabled={isSubmitting}/></FormControl><FormLabel className="font-normal">{item}</FormLabel></FormItem>)}/>))}</div><FormMessage /></FormItem>)}/>
-              <FormField control={form.control} name="reasonForSellingAnonymous" render={({ field }) => (<FormItem><FormLabel>Reason for Selling (Public Summary, Optional)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Briefly state your reason for selling (e.g., Retirement, Other ventures)." disabled={isSubmitting} /></FormControl><FormDescription>Max 500 characters. This may be shown publicly.</FormDescription><FormMessage /></FormItem>)}/>
-              <Separator/>
+              <FormField control={form.control} name="dealStructureLookingFor" render={() => (<FormItem><FormLabel>Looking for (Deal Structure):</FormLabel><FormDescription>Select all that apply.</FormDescription><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">{dealStructures.map((item) => (<FormField key={item} control={form.control} name="dealStructureLookingFor" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0"><FormControl><Checkbox checked={field.value?.includes(item)} onCheckedChange={(checked) => checked ? field.onChange([...(field.value || []), item]) : field.onChange(field.value?.filter(v => v !== item))} disabled={isSubmitting} /></FormControl><FormLabel className="font-normal">{item}</FormLabel></FormItem>)} />))}</div><FormMessage /></FormItem>)} />
+              <FormField control={form.control} name="reasonForSellingAnonymous" render={({ field }) => (<FormItem><FormLabel>Reason for Selling (Public Summary, Optional)</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Briefly state your reason for selling (e.g., Retirement, Other ventures)." disabled={isSubmitting} /></FormControl><FormDescription>Max 500 characters. This may be shown publicly.</FormDescription><FormMessage /></FormItem>)} />
+              <Separator />
               <h3 className="text-md font-medium text-muted-foreground font-heading">Additional Seller Information (For Verified View)</h3>
               <FormField control={form.control} name="detailedReasonForSelling" render={({ field }) => (<FormItem><FormLabel>Detailed Reason for Selling</FormLabel><FormControl><Textarea {...field} value={field.value || ""} rows={3} placeholder="Provide more context for verified buyers." disabled={isSubmitting} /></FormControl><FormMessage /></FormItem>)} />
             </CardContent>
@@ -759,7 +759,7 @@ export default function EditSellerListingPage() {
 
           {/* Growth & Future Potential */}
           <Card className="shadow-md bg-brand-white">
-            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="growth" size="sm"/>Growth &amp; Future Potential</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-brand-dark-blue font-heading flex items-center gap-2"><NobridgeIcon icon="growth" size="sm" />Growth &amp; Future Potential</CardTitle></CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label className="text-brand-dark-blue">Specific Growth Opportunities (1-3 points)</Label><FormDescription>List 1-3 specific, actionable growth opportunities.</FormDescription>
@@ -787,8 +787,8 @@ export default function EditSellerListingPage() {
           <div className="flex justify-end gap-4">
             <Button type="button" variant="outline" onClick={() => router.push('/seller-dashboard/listings')} disabled={isSubmitting} className="border-input hover:bg-accent/50">Cancel</Button>
             <Button type="submit" className="min-w-[150px] bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90" disabled={isSubmitting}>
-                {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <EditIcon className="h-4 w-4 mr-2" />}
-                {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <EditIcon className="h-4 w-4 mr-2" />}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </form>

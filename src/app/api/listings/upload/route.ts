@@ -115,7 +115,8 @@ export async function POST(request: NextRequest) {
       'text/csv',
       'image/jpeg',
       'image/png',
-      'image/webp'
+      'image/webp',
+      'image/jpg'
     ];
     if (!allowedMimeTypes.includes(file.type)) {
       return NextResponse.json({
