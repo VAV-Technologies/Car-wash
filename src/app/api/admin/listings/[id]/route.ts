@@ -205,7 +205,23 @@ export async function PATCH(
     updateData.admin_notes = adminReason;
     updateData.updated_at = new Date().toISOString();
 
-    if (changedFields.length === 0) {
+    // Skip the "no changes" check if image_urls or document URLs are in the payload
+    // These fields are updated directly by the /api/listings/upload endpoint,
+    // so by the time this PATCH runs, the DB already has the new values.
+    // The comparison would incorrectly show "no changes" even though images were uploaded.
+    const documentUrlFields = [
+      'image_urls',
+      'financial_documents_url',
+      'key_metrics_report_url',
+      'ownership_documents_url',
+      'financial_snapshot_url',
+      'ownership_details_url',
+      'location_real_estate_info_url',
+      'web_presence_info_url'
+    ];
+    const hasUploadedFiles = documentUrlFields.some(field => field in listingUpdates);
+
+    if (changedFields.length === 0 && !hasUploadedFiles) {
       return NextResponse.json(
         { error: 'No changes detected' },
         { status: 400 }
