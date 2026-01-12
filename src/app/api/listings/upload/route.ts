@@ -151,9 +151,22 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // 🔥 FIX: Enhanced listing ownership verification
+    // 🔥 FIX: Enhanced listing ownership verification (allows admins)
+    let isAdmin = false;
     if (listingId) {
       try {
+        // First check if user is an admin
+        const { data: userProfile, error: profileError } = await supabaseAdmin
+          .from('user_profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (!profileError && userProfile?.role === 'admin') {
+          isAdmin = true;
+          console.log('[UPLOAD] User is admin, bypassing ownership check');
+        }
+
         const { data: listing, error: listingError } = await supabaseAdmin
           .from('listings')
           .select('id, seller_id')
@@ -175,7 +188,8 @@ export async function POST(request: NextRequest) {
           }, { status: 404 });
         }
 
-        if (listing.seller_id !== user.id) {
+        // Allow if user is admin OR owns the listing
+        if (!isAdmin && listing.seller_id !== user.id) {
           console.log('[UPLOAD] User does not own listing:', { userId: user.id, sellerId: listing.seller_id });
           return NextResponse.json({
             error: 'You do not own this listing',
@@ -268,11 +282,17 @@ export async function POST(request: NextRequest) {
       const dbColumnName = getDbColumnName(documentType);
       if (dbColumnName) {
         try {
-          const { error: updateError } = await supabaseAdmin
+          // Admins can update any listing, sellers only their own
+          let updateQuery = supabaseAdmin
             .from('listings')
             .update({ [dbColumnName]: signedUrl })
-            .eq('id', listingId)
-            .eq('seller_id', user.id);
+            .eq('id', listingId);
+
+          if (!isAdmin) {
+            updateQuery = updateQuery.eq('seller_id', user.id);
+          }
+
+          const { error: updateError } = await updateQuery;
 
           if (updateError) {
             console.error('[UPLOAD] Failed to update listing record:', updateError);
@@ -298,16 +318,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 🔥 FIX: Enhanced image array updates
+    // 🔥 FIX: Enhanced image array updates (allows admins)
     if (listingId && isImage) {
       try {
         // Get current listing to update images array
-        const { data: currentListing, error: fetchError } = await supabaseAdmin
+        // Admins can access any listing, sellers only their own
+        let fetchQuery = supabaseAdmin
           .from('listings')
           .select('image_urls')
-          .eq('id', listingId)
-          .eq('seller_id', user.id)
-          .single();
+          .eq('id', listingId);
+
+        if (!isAdmin) {
+          fetchQuery = fetchQuery.eq('seller_id', user.id);
+        }
+
+        const { data: currentListing, error: fetchError } = await fetchQuery.single();
 
         if (fetchError) {
           console.error('[UPLOAD] Failed to fetch current listing:', fetchError);
@@ -331,11 +356,17 @@ export async function POST(request: NextRequest) {
 
         currentImages[imageIndex] = signedUrl;
 
-        const { error: updateError } = await supabaseAdmin
+        // Admins can update any listing, sellers only their own
+        let updateQuery = supabaseAdmin
           .from('listings')
           .update({ image_urls: currentImages })
-          .eq('id', listingId)
-          .eq('seller_id', user.id);
+          .eq('id', listingId);
+
+        if (!isAdmin) {
+          updateQuery = updateQuery.eq('seller_id', user.id);
+        }
+
+        const { error: updateError } = await updateQuery;
 
         if (updateError) {
           console.error('[UPLOAD] Failed to update listing images:', updateError);

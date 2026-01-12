@@ -329,15 +329,34 @@ export default function AdminEditListingPage() {
                       const result = JSON.parse(xhr.responseText);
                       resolve(result.signedUrl);
                     } catch (e) {
-                      resolve(null);
+                      console.error(`[IMAGE-UPLOAD] Failed to parse response for image ${i + 1}:`, e);
+                      reject(new Error(`Failed to parse response for image ${i + 1}`));
                     }
                   } else {
-                    resolve(null);
+                    // Enhanced error logging with response details
+                    try {
+                      const errorResponse = JSON.parse(xhr.responseText);
+                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i + 1}: ${xhr.status}`, {
+                        error: errorResponse.error,
+                        code: errorResponse.code,
+                        details: errorResponse.details
+                      });
+                      reject(new Error(errorResponse.error || `Failed to upload image ${i + 1}: ${xhr.status}`));
+                    } catch (e) {
+                      console.error(`[IMAGE-UPLOAD] Failed to upload image ${i + 1}: ${xhr.status} - ${xhr.responseText}`);
+                      reject(new Error(`Failed to upload image ${i + 1}: ${xhr.status}`));
+                    }
                   }
                 });
 
-                xhr.addEventListener('error', () => resolve(null));
-                xhr.addEventListener('timeout', () => resolve(null));
+                xhr.addEventListener('error', () => {
+                  console.error(`[IMAGE-UPLOAD] Network error uploading image ${i + 1}`);
+                  reject(new Error(`Network error uploading image ${i + 1}`));
+                });
+                xhr.addEventListener('timeout', () => {
+                  console.error(`[IMAGE-UPLOAD] Timeout uploading image ${i + 1}`);
+                  reject(new Error(`Timeout uploading image ${i + 1}`));
+                });
 
                 xhr.open('POST', '/api/listings/upload');
                 xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
