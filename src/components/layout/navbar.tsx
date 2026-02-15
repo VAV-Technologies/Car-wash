@@ -336,18 +336,20 @@ export function Navbar() {
                             </SheetClose>
                           );
                         })}
+                        {group.label === "Company" && (
+                          <SheetClose asChild>
+                            <Button variant="ghost" asChild className={cn("justify-start text-base font-normal px-3 py-2 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray", pathname === "/acfi-certificate" && "bg-brand-light-gray font-medium")}>
+                              <Link href="/acfi-certificate" className="flex items-center">
+                                <Award className="mr-2 h-4 w-4 opacity-80" />
+                                ACFI Certificate
+                              </Link>
+                            </Button>
+                          </SheetClose>
+                        )}
                       </div>
                     </div>
                   )
                 })}
-                <SheetClose asChild>
-                  <Button variant="ghost" asChild className={cn("justify-start text-base font-normal px-3 py-2 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray", pathname === "/acfi-certificate" && "bg-brand-light-gray font-medium")}>
-                    <Link href="/acfi-certificate" className="flex items-center">
-                      <Award className="mr-2 h-4 w-4 opacity-80" />
-                      ACFI Certificate
-                    </Link>
-                  </Button>
-                </SheetClose>
                 <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80" />
                 <SheetClose asChild>
                   <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">

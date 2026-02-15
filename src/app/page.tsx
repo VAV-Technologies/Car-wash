@@ -85,8 +85,13 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-[calc(80vh-theme(spacing.20))] px-4 py-24 md:py-32 lg:py-40 relative z-10">
-          <a href="https://acfi.asia/directory/nobridge" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-sm text-brand-light-gray hover:bg-white/10 transition-colors animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-75">
-            <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> CERTIFIED & ACCREDITED BY ASIA CORPORATE FINANCE INSTITUTE (ACFI)
+          <a href="https://acfi.asia/directory/nobridge" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex flex-col md:flex-row items-center gap-2 md:gap-0 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-75">
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-brand-light-gray md:hidden">
+              <ShieldCheck className="h-4 w-4 opacity-90" />
+            </span>
+            <span className="px-3 md:px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-xs md:text-sm text-brand-light-gray hover:bg-white/10 transition-colors self-center">
+              <ShieldCheck className="hidden md:inline mr-2 h-4 w-4 opacity-90 align-text-bottom" />CERTIFIED & ACCREDITED BY ASIA CORPORATE FINANCE INSTITUTE (ACFI)
+            </span>
           </a>
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
             F<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nd Your Next Bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>ness Venture<br />w<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>th Nobr<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>dge
@@ -399,7 +404,7 @@ export default function HomePage() {
             <h3 className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-10 font-heading">Featured In</h3>
           </FadeIn>
           <FadeIn delay={200}>
-            <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-10 md:gap-x-16 lg:gap-x-20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 lg:gap-14 place-items-center">
               {featuredCompanyLogos.map((logo, index) => (
                 <div key={index} className="h-20 md:h-24 lg:h-28 flex items-center"> {/* Made even bigger */}
                   <Image
