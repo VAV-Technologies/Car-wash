@@ -26,7 +26,7 @@ import {
     GitMerge,
     Rocket
 } from "lucide-react";
-import Link from "next/link";
+
 
 // Content Data
 const services = [
@@ -313,9 +313,9 @@ export default function BuyerServicesPage() {
                                             </div>
                                             <div className="mt-8 pt-6 border-t border-white/10 flex justify-end">
                                                 <Button asChild className="bg-brand-sky-blue text-brand-dark-blue hover:bg-white">
-                                                    <Link href="/contact/buyer">
+                                                    <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
                                                         Schedule Consultation
-                                                    </Link>
+                                                    </a>
                                                 </Button>
                                             </div>
                                         </div>
@@ -387,9 +387,9 @@ export default function BuyerServicesPage() {
                                     Whether you're making your first acquisition or building through serial M&A, we provide the insights and execution support needed to achieve your objectives.
                                 </p>
                                 <Button asChild size="lg" className="bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-brand-dark-blue font-normal text-lg h-14 px-8 rounded transition-all duration-300 shadow-lg">
-                                    <Link href="/contact/buyer">
+                                    <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
                                         Start Your Acquisition Journey <ChevronRight className="ml-2 h-5 w-5" />
-                                    </Link>
+                                    </a>
                                 </Button>
                             </div>
                         </FadeIn>

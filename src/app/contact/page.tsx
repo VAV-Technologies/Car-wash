@@ -23,7 +23,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FadeIn } from "@/components/ui/fade-in";
-import Link from "next/link";
+
 
 interface FormData {
   name: string;
@@ -206,9 +206,9 @@ export default function ContactPage() {
                 </div>
 
                 <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
-                  <Link href="/contact/buyer">
+                  <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
                     Schedule Buyer Consultation <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
+                  </a>
                 </Button>
               </CardContent>
             </Card>
@@ -246,9 +246,9 @@ export default function ContactPage() {
                 </div>
 
                 <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
-                  <Link href="/contact/seller">
+                  <a href="https://cal.com/fachri-budianto-nobridge-seller" target="_blank" rel="noopener noreferrer">
                     Schedule Seller Consultation <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
+                  </a>
                 </Button>
               </CardContent>
             </Card>

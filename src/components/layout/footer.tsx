@@ -64,6 +64,9 @@ export function Footer() {
               <Link href="/faq" className="hover:text-brand-white transition-colors duration-300">
                 FAQ
               </Link>
+              <Link href="/acfi-certificate" className="hover:text-brand-white transition-colors duration-300">
+                ACFI Certificate
+              </Link>
             </div>
           </div>
 

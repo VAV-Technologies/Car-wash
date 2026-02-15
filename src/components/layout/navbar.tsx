@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, UserCircle, LogIn, UserPlus, LogOut, LayoutDashboard, Settings, Bell, Briefcase, ShoppingCart, Building2, Phone, Info, FileText, Search, Users2, DollarSign, Loader2 } from 'lucide-react';
+import { Menu, ChevronDown, UserCircle, LogIn, UserPlus, LogOut, LayoutDashboard, Settings, Bell, Briefcase, ShoppingCart, Building2, Phone, Info, FileText, Search, Users2, DollarSign, Loader2, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -214,6 +214,16 @@ export function Navbar() {
                 </DropdownMenu>
               );
             })}
+            <Button
+              variant="ghost"
+              asChild
+              className={cn("px-3 py-2 text-sm font-normal text-brand-dark-blue hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90 focus-visible:ring-brand-sky-blue flex items-center", pathname === "/acfi-certificate" && "bg-brand-light-gray/50")}
+            >
+              <Link href="/acfi-certificate">
+                <Award className="mr-2 h-4 w-4 opacity-80" />
+                ACFI Certificate
+              </Link>
+            </Button>
           </nav>
         </div>
 
@@ -330,6 +340,14 @@ export function Navbar() {
                     </div>
                   )
                 })}
+                <SheetClose asChild>
+                  <Button variant="ghost" asChild className={cn("justify-start text-base font-normal px-3 py-2 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray", pathname === "/acfi-certificate" && "bg-brand-light-gray font-medium")}>
+                    <Link href="/acfi-certificate" className="flex items-center">
+                      <Award className="mr-2 h-4 w-4 opacity-80" />
+                      ACFI Certificate
+                    </Link>
+                  </Button>
+                </SheetClose>
                 <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80" />
                 <SheetClose asChild>
                   <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">

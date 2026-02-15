@@ -26,7 +26,7 @@ import {
     CheckCircle,
     HeartHandshake
 } from "lucide-react";
-import Link from "next/link";
+
 
 // Content Data
 const services = [
@@ -299,9 +299,9 @@ export default function SellerServicesPage() {
                                             </div>
                                             <div className="mt-8 pt-6 border-t border-white/10 flex justify-end">
                                                 <Button asChild className="bg-brand-sky-blue text-brand-dark-blue hover:bg-white">
-                                                    <Link href="/contact/seller">
+                                                    <a href="https://cal.com/fachri-budianto-nobridge-seller" target="_blank" rel="noopener noreferrer">
                                                         Schedule Consultation
-                                                    </Link>
+                                                    </a>
                                                 </Button>
                                             </div>
                                         </div>
@@ -358,9 +358,9 @@ export default function SellerServicesPage() {
                                     Whether you're planning an exit in the next 6 months or 3 years, now is the time to prepare. Let us help you achieve the exit you deserve.
                                 </p>
                                 <Button asChild size="lg" className="bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-brand-dark-blue font-normal text-lg h-14 px-8 rounded transition-all duration-300 shadow-lg">
-                                    <Link href="/contact/seller">
+                                    <a href="https://cal.com/fachri-budianto-nobridge-seller" target="_blank" rel="noopener noreferrer">
                                         Start Your Exit Journey <ChevronRight className="ml-2 h-5 w-5" />
-                                    </Link>
+                                    </a>
                                 </Button>
                             </div>
                         </FadeIn>

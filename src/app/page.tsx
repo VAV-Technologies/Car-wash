@@ -39,11 +39,10 @@ interface FeaturedListing {
 }
 
 const featuredCompanyLogos = [
-  { src: "/assets/1.png", alt: "Featured Company Logo 1", dataAiHint: "company logo" },
-  { src: "/assets/2.png", alt: "Featured Company Logo 2", dataAiHint: "company logo" },
-  { src: "/assets/3.png", alt: "Featured Company Logo 3", dataAiHint: "company logo" },
-  { src: "/assets/4.png", alt: "Featured Company Logo 4", dataAiHint: "company logo" },
-  { src: "/assets/5.png", alt: "Featured Company Logo 5", dataAiHint: "company logo" },
+  { src: "/assets/featured-harian-jabar.png", alt: "Harian Jabar", dataAiHint: "company logo" },
+  { src: "/assets/featured-merdeka.png", alt: "Merdeka.com", dataAiHint: "company logo" },
+  { src: "/assets/featured-upberita.png", alt: "UpBerita", dataAiHint: "company logo" },
+  { src: "/assets/featured-independent-observer.png", alt: "Independent Observer", dataAiHint: "company logo" },
 ];
 
 export default function HomePage() {
@@ -86,21 +85,26 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-[calc(80vh-theme(spacing.20))] px-4 py-24 md:py-32 lg:py-40 relative z-10">
+          <a href="https://acfi.asia/directory/nobridge" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-sm text-brand-light-gray hover:bg-white/10 transition-colors animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-75">
+            <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> CERTIFIED & ACCREDITED BY ASIA CORPORATE FINANCE INSTITUTE (ACFI)
+          </a>
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
             F<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nd Your Next Bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>ness Venture<br />w<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>th Nobr<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>dge
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl text-brand-light-gray max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200">
-            Nobridge is the premier marketplace connecting SME owners with motivated investors and buyers. Discover, inquire, and engage with verified opportunities.
+            Nobridge is the premier M&A advisory firm and marketplace connecting both SME owners with investors. Discover, inquire, and engage with off-market opportunities.
           </p>
-          <div className="mb-10 flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-8 text-sm md:text-base text-brand-light-gray animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
-            <div className="flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <NobridgeIcon icon="people" size="sm" className="mr-2 opacity-90" /> Verified Network
+          <div className="mb-10 flex items-center justify-center text-sm md:text-base text-brand-light-gray animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
+            <div className="flex items-center">
+              <NobridgeIcon icon="people" size="sm" className="mr-2 opacity-90" /> End To End M&A Advisory
             </div>
-            <div className="flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <NobridgeIcon icon="process" size="sm" className="mr-2 opacity-90" /> Efficient Process
+            <span className="mx-4 text-white/30">|</span>
+            <div className="flex items-center">
+              <NobridgeIcon icon="process" size="sm" className="mr-2 opacity-90" /> 3X More Efficient Process
             </div>
-            <div className="flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-              <NobridgeIcon icon="worldwide" size="sm" className="mr-2 opacity-90" /> Expert Support
+            <span className="mx-4 text-white/30">|</span>
+            <div className="flex items-center">
+              <NobridgeIcon icon="worldwide" size="sm" className="mr-2 opacity-90" /> Global Investor Network
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
