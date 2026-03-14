@@ -1,29 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
-    Mail,
-    Loader2,
-    ArrowRight,
-    Network,
-    MapPin,
-    GitMerge,
-    Shield,
-    Globe,
-    Lock,
-    Handshake,
-    Users,
-    Phone
+  Mail,
+  Loader2,
+  ArrowRight,
+  Network,
+  MapPin,
+  GitMerge,
+  Shield,
+  Globe,
+  Lock,
+  Handshake,
+  Users,
+  Phone
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FadeIn } from "@/components/ui/fade-in";
-
+import { cn } from "@/lib/utils";
 
 interface FormData {
   name: string;
@@ -49,16 +46,13 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form validation
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     } else if (formData.name.length > 100) {
       newErrors.name = "Name must be under 100 characters";
     }
-
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -66,21 +60,17 @@ export default function ContactPage() {
     } else if (formData.email.length > 100) {
       newErrors.email = "Email must be under 100 characters";
     }
-
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
     } else if (formData.message.length > 2000) {
       newErrors.message = "Message must be under 2000 characters";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) {
       toast({
         variant: "destructive",
@@ -89,20 +79,14 @@ export default function ContactPage() {
       });
       return;
     }
-
     setIsLoading(true);
-
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       const result = await response.json();
-
       if (!response.ok) {
         if (response.status === 429) {
           toast({
@@ -119,22 +103,12 @@ export default function ContactPage() {
         }
         return;
       }
-
-      // Success!
       toast({
         title: "Message Sent Successfully!",
-        description: result.message || "Thank you for your message! We'll get back to you soon."
+        description: result.message || "Thank you for your message! We will get back to you soon."
       });
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: ""
-      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
       setErrors({});
-
     } catch (error) {
       console.error('Contact form error:', error);
       toast({
@@ -147,126 +121,136 @@ export default function ContactPage() {
     }
   };
 
-  // Handle input changes
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-
-    // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
+  const buyerReasons = [
+    { icon: Network, text: "Proprietary deal flow from 500+ active seller relationships" },
+    { icon: MapPin, text: "Deep local market knowledge with global transaction standards" },
+    { icon: GitMerge, text: "End-to-end support from sourcing to integration planning" },
+    { icon: Shield, text: "Risk mitigation through comprehensive seller vetting" },
+  ];
+
+  const sellerReasons = [
+    { icon: Globe, text: "Access to 2,000+ qualified international buyers" },
+    { icon: Lock, text: "Confidential marketing that protects your business operations" },
+    { icon: Handshake, text: "Expert negotiation to maximize value and terms" },
+    { icon: Users, text: "Smooth transition planning for you and your team" },
+  ];
+
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
-      <AnimatedBackground position="fixed" className="z-0" />
+    <div className="bg-white">
+      {/* Hero */}
+      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-dark-blue text-white section-lines-light">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center space-y-6 px-4">
+              <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
+                Speak With Our Team
+              </h1>
+              <p className="text-lg md:text-xl text-blue-100 font-light max-w-2xl mx-auto">
+                Connect with the right partner for your M&A journey. All consultations are confidential and commitment-free.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 md:px-6 py-12 md:py-20">
-
-        {/* Header Section */}
-        <FadeIn direction="up" className="text-center mb-16 md:mb-24">
-          <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight text-white drop-shadow-lg mb-6 max-w-5xl mx-auto">
-            Ready to Make Your Next Move? <br className="hidden md:block" />
-            <span className="text-brand-sky-blue">Connect with the right partner</span> for your M&A journey
-          </h1>
-        </FadeIn>
-
-        {/* Two Boxes Section */}
-        <div className="grid md:grid-cols-2 gap-8 mb-24 max-w-6xl mx-auto">
-          {/* Buyer Partner Box */}
-          <FadeIn delay={200} className="h-full">
-            <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20 text-white shadow-2xl hover:shadow-brand-sky-blue/10 transition-all duration-300">
-              <CardContent className="p-8 md:p-10 flex flex-col h-full">
-                <h2 className="text-3xl font-normal mb-4 font-heading">Talk to a buyer partner.</h2>
-                <p className="text-blue-100 text-lg mb-8 leading-relaxed text-justify">
+      {/* Consultation Boxes */}
+      <section className="w-full py-24 md:py-32 bg-white section-lines-dark">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row">
+            {/* Buyer Partner Box */}
+            <FadeIn delay={100} className="flex-1">
+              <div className="border border-brand-dark-blue/10 p-8 md:p-10 h-full flex flex-col">
+                <h2 className="text-2xl font-normal mb-4 font-heading text-brand-dark-blue">Talk to a buyer partner.</h2>
+                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
                   Looking to expand through strategic acquisitions in Asia? Our buyer partners get exclusive access to off-market opportunities across Indonesia, Malaysia, and emerging Asian markets.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-lg font-semibold mb-4 text-brand-sky-blue">Why Leading Acquirers Choose Nobridge:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-brand-dark-blue">Why Leading Acquirers Choose Nobridge:</h3>
                   <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <Network className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Proprietary deal flow from 500+ active seller relationships</span>
-                    </li>
-                    <li className="flex items-start">
-                      <MapPin className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Deep local market knowledge with global transaction standards</span>
-                    </li>
-                    <li className="flex items-start">
-                      <GitMerge className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">End-to-end support from sourcing to integration planning</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Shield className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Risk mitigation through comprehensive seller vetting</span>
-                    </li>
+                    {buyerReasons.map((reason, i) => {
+                      const Icon = reason.icon;
+                      return (
+                        <li key={i} className="flex items-start">
+                          <Icon className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 shrink-0" />
+                          <span className="text-muted-foreground">{reason.text}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 
-                <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
-                  <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
-                    Schedule Buyer Consultation <ArrowRight className="ml-2 h-5 w-5" />
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          </FadeIn>
+                <a
+                  href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-white bg-brand-dark-blue hover:bg-brand-dark-blue/90 rounded-none transition-colors"
+                >
+                  Schedule Buyer Consultation <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </div>
+            </FadeIn>
 
-          {/* Seller Partner Box */}
-          <FadeIn delay={300} className="h-full">
-            <Card className="h-full bg-white/10 backdrop-blur-xl border-white/20 text-white shadow-2xl hover:shadow-brand-sky-blue/10 transition-all duration-300">
-              <CardContent className="p-8 md:p-10 flex flex-col h-full">
-                <h2 className="text-3xl font-normal mb-4 font-heading">Talk to a seller partner.</h2>
-                <p className="text-blue-100 text-lg mb-8 leading-relaxed text-justify">
-                  Ready to explore your exit options or fundraise? Our seller partners work with business owners who've built something valuable and want to ensure their legacy continues with the right acquirer.
+            {/* Seller Partner Box */}
+            <FadeIn delay={200} className="flex-1">
+              <div className="border border-brand-dark-blue/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10 h-full flex flex-col">
+                <h2 className="text-2xl font-normal mb-4 font-heading text-brand-dark-blue">Talk to a seller partner.</h2>
+                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                  Ready to explore your exit options or fundraise? Our seller partners work with business owners who have built something valuable and want to ensure their legacy continues with the right acquirer.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-lg font-semibold mb-4 text-brand-sky-blue">Why Successful Founders Trust Nobridge:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-brand-dark-blue">Why Successful Founders Trust Nobridge:</h3>
                   <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <Globe className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Access to 2,000+ qualified international buyers</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Lock className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Confidential marketing that protects your business operations</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Handshake className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Expert negotiation to maximize value and terms</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Users className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-200">Smooth transition planning for you and your team</span>
-                    </li>
+                    {sellerReasons.map((reason, i) => {
+                      const Icon = reason.icon;
+                      return (
+                        <li key={i} className="flex items-start">
+                          <Icon className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 shrink-0" />
+                          <span className="text-muted-foreground">{reason.text}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 
-                <Button asChild className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base">
-                  <a href="https://cal.com/fachri-budianto-nobridge-seller" target="_blank" rel="noopener noreferrer">
-                    Schedule Seller Consultation <ArrowRight className="ml-2 h-5 w-5" />
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          </FadeIn>
-        </div>
-
-        {/* Bottom Section - Contact Form */}
-        <FadeIn delay={400} className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-normal text-white font-heading mb-4">Need something else?</h2>
-            <p className="text-xl text-blue-100">
-              All consultations are confidential and commitment-free. Speak with a senior partner who understands your market.
-            </p>
+                <a
+                  href="https://cal.com/fachri-budianto-nobridge-seller"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-white bg-brand-dark-blue hover:bg-brand-dark-blue/90 rounded-none transition-colors"
+                >
+                  Schedule Seller Consultation <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </div>
+            </FadeIn>
           </div>
+        </div>
+      </section>
 
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white shadow-2xl">
-            <CardContent className="p-8 md:p-12 grid md:grid-cols-3 gap-12">
-              <div className="md:col-span-2 space-y-6">
+      {/* Contact Form */}
+      <section className="w-full py-24 md:py-32 bg-brand-dark-blue text-white section-lines-light">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-12 px-4">
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">Need something else?</h2>
+              <p className="text-lg text-blue-100 max-w-2xl mx-auto">
+                Speak with a senior partner who understands your market.
+              </p>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={200}>
+            <div className="flex flex-col md:flex-row">
+              {/* Form */}
+              <div className="flex-[2] border border-white/15 p-8 md:p-12">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
                     <div className="space-y-2">
@@ -276,7 +260,10 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="John Doe"
-                        className={`bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue ${errors.name ? "border-red-400" : ""}`}
+                        className={cn(
+                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                          errors.name && "border-red-400"
+                        )}
                         disabled={isLoading}
                         required
                       />
@@ -290,7 +277,10 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         placeholder="you@example.com"
-                        className={`bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue ${errors.email ? "border-red-400" : ""}`}
+                        className={cn(
+                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                          errors.email && "border-red-400"
+                        )}
                         disabled={isLoading}
                         required
                       />
@@ -304,8 +294,8 @@ export default function ContactPage() {
                       id="subject"
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
-                      placeholder="Inquiry about listing services"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue"
+                      placeholder="Inquiry about advisory services"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none"
                       disabled={isLoading}
                     />
                   </div>
@@ -318,14 +308,21 @@ export default function ContactPage() {
                       onChange={(e) => handleInputChange('message', e.target.value)}
                       placeholder="Your message..."
                       rows={5}
-                      className={`bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue ${errors.message ? "border-red-400" : ""}`}
+                      className={cn(
+                        "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                        errors.message && "border-red-400"
+                      )}
                       disabled={isLoading}
                       required
                     />
                     {errors.message && <p className="text-sm text-red-300 mt-1">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white h-11 py-3 px-8 text-base border border-white/20 shadow-lg transition-all duration-300" disabled={isLoading}>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-brand-dark-blue bg-white hover:bg-white/90 rounded-none transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                    disabled={isLoading}
+                  >
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -334,20 +331,19 @@ export default function ContactPage() {
                     ) : (
                       "Send Message"
                     )}
-                  </Button>
+                  </button>
                 </form>
               </div>
 
-              <div className="space-y-8 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-8">
+              {/* Contact Info */}
+              <div className="flex-1 border border-white/15 border-t-0 md:border-t md:border-l-0 p-8 md:p-12 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-white font-heading mb-4">
+                  <h3 className="text-lg font-semibold text-white font-heading mb-6">
                     Contact Information
                   </h3>
                   <div className="space-y-6">
                     <div className="flex items-start space-x-3">
-                      <div className="p-2 bg-brand-sky-blue/20 rounded-lg">
-                        <Mail className="h-5 w-5 text-brand-sky-blue" />
-                      </div>
+                      <Mail className="h-5 w-5 text-brand-sky-blue mt-0.5" />
                       <div>
                         <p className="text-sm text-blue-200 mb-1">Email Us</p>
                         <a
@@ -360,9 +356,7 @@ export default function ContactPage() {
                     </div>
 
                     <div className="flex items-start space-x-3">
-                      <div className="p-2 bg-brand-sky-blue/20 rounded-lg">
-                        <Phone className="h-5 w-5 text-brand-sky-blue" />
-                      </div>
+                      <Phone className="h-5 w-5 text-brand-sky-blue mt-0.5" />
                       <div>
                         <p className="text-sm text-blue-200 mb-1">Call Us</p>
                         <a
@@ -376,16 +370,18 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                <div className="border border-white/15 p-4 mt-8">
                   <p className="text-sm text-blue-100 leading-relaxed">
-                    "We’re committed to help you in every aspect of M&A from beginning to end."
+                    "We are committed to help you in every aspect of M&A from beginning to end."
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </FadeIn>
-      </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      <div className="border-t border-white/15" />
     </div>
   );
 }

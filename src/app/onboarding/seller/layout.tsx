@@ -35,7 +35,7 @@ export default function SellerOnboardingLayout({
     <div className="min-h-screen bg-brand-light-gray flex flex-col items-center py-8 md:py-12 px-4">
       <div className="w-full max-w-3xl">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-dark-blue mb-2 font-heading">
+          <h1 className="text-3xl md:text-4xl font-semibold text-brand-dark-blue mb-2 font-heading">
             Complete Your Seller Profile & Business Verification
           </h1>
           <p className="text-muted-foreground">

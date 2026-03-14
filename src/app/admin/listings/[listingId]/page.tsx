@@ -47,7 +47,7 @@ export default async function AdminListingDetailPage({ params }: { params: { lis
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-        <h1 className="text-3xl font-bold tracking-tight flex items-center text-brand-dark-blue font-heading">
+        <h1 className="text-3xl font-semibold tracking-tight flex items-center text-brand-dark-blue font-heading">
             <NobridgeIcon icon="business-listing" size="lg" className="mr-3" /> Listing Details: {listing.listingTitleAnonymous}
         </h1>
         <div className="flex flex-wrap gap-2 mt-2 md:mt-0">

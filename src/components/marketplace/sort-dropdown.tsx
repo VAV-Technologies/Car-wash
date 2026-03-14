@@ -31,33 +31,37 @@ export function SortDropdown() {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <Label htmlFor="sort-by" className="text-sm font-medium text-white">
-        Sor<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span> by:
-      </Label>
-      <Select
-        value={currentSortOption}
-        onValueChange={handleSortChange}
-        disabled={isLoading}
-      >
-        <SelectTrigger
-          id="sort-by"
-          className="w-full sm:w-[200px] bg-white/10 backdrop-blur-md border-white/20 text-white focus:ring-brand-sky-blue focus:border-brand-sky-blue hover:bg-white/20 transition-colors"
-        >
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent className="bg-brand-dark-blue border-white/20 text-white">
-          {Object.entries(SORT_OPTIONS).map(([key, _]) => (
-            <SelectItem
-              key={key}
-              value={key}
-              className="focus:bg-white/10 focus:text-white cursor-pointer"
+    <div className="flex items-center gap-2">
+      <div className="flex items-center border border-white/20 rounded-none">
+        <span className="text-sm font-medium text-white px-3 h-9 flex items-center whitespace-nowrap">
+          Sort by
+        </span>
+        <div className="border-l border-white/20">
+          <Select
+            value={currentSortOption}
+            onValueChange={handleSortChange}
+            disabled={isLoading}
+          >
+            <SelectTrigger
+              id="sort-by"
+              className="w-[260px] border-0 bg-white/10 rounded-none px-3 h-9 focus:ring-0 text-white"
             >
-              {getSortOptionLabel(key)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent className="bg-brand-dark-blue border-white/20 text-white w-[260px]">
+              {Object.entries(SORT_OPTIONS).map(([key, _]) => (
+                <SelectItem
+                  key={key}
+                  value={key}
+                  className="focus:bg-white/10 focus:text-white cursor-pointer"
+                >
+                  {getSortOptionLabel(key)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       {isLoading && (
         <div className="text-xs text-brand-sky-blue animate-pulse">
           Updating...

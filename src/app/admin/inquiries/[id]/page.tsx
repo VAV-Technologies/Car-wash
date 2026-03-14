@@ -252,7 +252,7 @@ export default function AdminInquiryDetailPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">Inquiry Details</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Inquiry Details</h1>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2 text-muted-foreground">
@@ -272,7 +272,7 @@ export default function AdminInquiryDetailPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">Inquiry Details</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Inquiry Details</h1>
         </div>
         <Card>
           <CardContent className="text-center py-12">
@@ -299,7 +299,7 @@ export default function AdminInquiryDetailPage() {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Inquiry Details</h1>
+            <h1 className="text-3xl font-semibold tracking-tight">Inquiry Details</h1>
             <p className="text-muted-foreground">ID: {inquiry.id}</p>
           </div>
         </div>

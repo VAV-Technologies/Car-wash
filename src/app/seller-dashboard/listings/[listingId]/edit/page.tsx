@@ -610,7 +610,7 @@ export default function EditSellerListingPage() {
           <Link href="/seller-dashboard/listings"><ArrowLeft className="h-4 w-4 mr-2" />Back to Listings</Link>
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-brand-dark-blue font-heading">Edit Listing: {listing?.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-brand-dark-blue font-heading">Edit Listing: {listing?.title}</h1>
         </div>
       </div>
       <Form {...form}>

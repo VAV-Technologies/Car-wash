@@ -220,7 +220,7 @@ export default function EmailLogsPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Email Logs</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Email Logs</h1>
           <p className="text-muted-foreground">
             Track and monitor all email delivery attempts
           </p>
@@ -239,7 +239,7 @@ export default function EmailLogsPage() {
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total.toLocaleString()}</div>
+            <div className="text-2xl font-semibold">{stats.total.toLocaleString()}</div>
           </CardContent>
         </Card>
         
@@ -249,7 +249,7 @@ export default function EmailLogsPage() {
             <CheckCircle2 className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.sent.toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-blue-600">{stats.sent.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -259,7 +259,7 @@ export default function EmailLogsPage() {
             <CheckCircle2 className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.delivered.toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-green-600">{stats.delivered.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -269,7 +269,7 @@ export default function EmailLogsPage() {
             <XCircle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.failed.toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-red-600">{stats.failed.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -279,7 +279,7 @@ export default function EmailLogsPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.successRate}%</div>
+            <div className="text-2xl font-semibold">{stats.successRate}%</div>
           </CardContent>
         </Card>
       </div>

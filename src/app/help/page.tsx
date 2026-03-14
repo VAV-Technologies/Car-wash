@@ -15,7 +15,7 @@ export default function HelpPage() {
           <div className="flex justify-center mb-4">
             <LifeBuoy className="h-16 w-16 text-primary" />
           </div>
-          <CardTitle className="text-3xl md:text-4xl font-bold text-primary font-heading">
+          <CardTitle className="text-3xl md:text-4xl font-semibold text-primary font-heading">
             Nobridge Support Center
           </CardTitle>
           <CardDescription className="text-lg max-w-2xl mx-auto">

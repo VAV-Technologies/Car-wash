@@ -578,7 +578,7 @@ export default function AdminEditListingPage() {
           <Link href="/admin/listings"><ArrowLeft className="h-4 w-4 mr-2" />Back to Listings</Link>
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-brand-dark-blue font-heading">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-brand-dark-blue font-heading">
             <Shield className="inline h-7 w-7 mr-2 text-primary" />
             Admin Edit Listing
           </h1>

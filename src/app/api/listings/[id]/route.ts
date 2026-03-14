@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authServer } from '@/lib/auth-server'
+import { sampleListings, transformSampleForDetail } from '@/lib/sample-listings'
 
 interface RouteParams {
   params: {
@@ -39,6 +40,12 @@ export async function GET(
     const { data: listing, error } = await query.single()
 
     if (error) {
+      // Fallback to sample listings when database is unavailable (local dev)
+      console.log(`[LISTING-API] Database unavailable, checking sample listings for id: ${id}`)
+      const sample = sampleListings.find(s => s.id === id)
+      if (sample) {
+        return NextResponse.json(transformSampleForDetail(sample))
+      }
       if (error.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Listing not found' },
@@ -152,6 +159,13 @@ export async function GET(
     return NextResponse.json(transformedListing)
   } catch (error) {
     console.error('Listing fetch error:', error)
+    // Fallback to sample listings when database is completely unavailable
+    const { id } = await params
+    const sample = sampleListings.find(s => s.id === id)
+    if (sample) {
+      console.log(`[LISTING-API] Returning sample listing for id: ${id}`)
+      return NextResponse.json(transformSampleForDetail(sample))
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

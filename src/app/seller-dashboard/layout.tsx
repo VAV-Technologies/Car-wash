@@ -134,7 +134,7 @@ export default function SellerDashboardLayout({
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-background">
         <Logo size="2xl" forceTheme="light"/>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">Access Denied</h1>
+        <h1 className="mt-4 text-2xl font-semibold text-foreground">Access Denied</h1>
         <p className="mt-2 text-lg text-muted-foreground">
           You must be logged in as a seller to view this page.
         </p>

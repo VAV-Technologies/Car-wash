@@ -22,7 +22,7 @@ export function MetricCard({ title, value, icon: Icon, description, trend, trend
         <Icon className="h-5 w-5 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-semibold">{value}</div>
         {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend && <p className={`text-xs ${trendColorClass} mt-1`}>{trend}</p>}
       </CardContent>

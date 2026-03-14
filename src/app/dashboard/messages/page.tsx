@@ -61,7 +61,7 @@ export default function BuyerMessagesPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Messages</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Messages</h1>
       <Card className="shadow-lg bg-brand-white">
         <CardHeader>
           <CardTitle className="text-brand-dark-blue">Active Conversations</CardTitle>

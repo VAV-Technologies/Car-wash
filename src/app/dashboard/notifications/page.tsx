@@ -61,7 +61,7 @@ export default function NotificationsPage() {
   if (typeof window !== 'undefined' && !currentUser) { 
      return (
       <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Access Denied</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Access Denied</h1>
         <p className="text-muted-foreground">You must be logged in as a buyer to view this page.</p>
         <Button asChild><Link href="/auth/login">Login</Link></Button>
       </div>
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Notifications</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Notifications</h1>
       <p className="text-muted-foreground">
         Stay updated with important alerts and messages related to your activity.
       </p>

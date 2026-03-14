@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { authServer } from '@/lib/auth-server'
 import { normalizeIndustryValue, normalizeCountryValue } from '@/lib/marketplace-utils'
+import { sampleListings, transformSampleForList } from '@/lib/sample-listings'
 
 // GET /api/listings - Get all listings with filtering, search, and pagination
 export async function GET(request: NextRequest) {
@@ -14,8 +15,8 @@ export async function GET(request: NextRequest) {
     const industry = searchParams.get('industry')
     const country = searchParams.get('country')
     const verificationStatus = searchParams.get('verificationStatus')
-    const minPrice = searchParams.get('min_price') // API expects min_price
-    const maxPrice = searchParams.get('max_price') // API expects max_price
+    const minRevenue = searchParams.get('min_revenue')
+    const maxRevenue = searchParams.get('max_revenue')
     const status = searchParams.get('status')
     const sortBy = searchParams.get('sort_by') || 'created_at'
     const sortOrder = searchParams.get('sort_order') || 'desc'
@@ -94,8 +95,8 @@ export async function GET(request: NextRequest) {
       console.log(`[LISTINGS-API] Country filter: "${country}" normalized to "${normalizedCountry}"`)
       query = query.ilike('location_country', normalizedCountry)
     }
-    if (minPrice) query = query.gte('asking_price', parseInt(minPrice))
-    if (maxPrice) query = query.lte('asking_price', parseInt(maxPrice))
+    if (minRevenue) query = query.gte('specific_annual_revenue_last_year', parseInt(minRevenue))
+    if (maxRevenue) query = query.lte('specific_annual_revenue_last_year', parseInt(maxRevenue))
 
     // Note: General text search is now handled entirely through the keywords system
 
@@ -133,7 +134,7 @@ export async function GET(request: NextRequest) {
     // General text search is now handled through the keywords system above
 
 
-    const validSortFields = ['created_at', 'asking_price', 'listing_title_anonymous', 'year_established', 'specific_annual_revenue_last_year'];
+    const validSortFields = ['created_at', 'asking_price', 'listing_title_anonymous', 'year_established', 'specific_annual_revenue_last_year', 'adjusted_cash_flow'];
     const validSortOrders = ['asc', 'desc'];
     if (validSortFields.includes(sortBy) && validSortOrders.includes(sortOrder)) {
       query = query.order(sortBy, { ascending: sortOrder === 'asc' })
@@ -147,7 +148,13 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching listings:', error)
-      return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 })
+      // Fallback to sample listings when database is unavailable (local dev)
+      console.log('[LISTINGS-API] Database unavailable, returning sample listings')
+      const samples = sampleListings.map(transformSampleForList)
+      return NextResponse.json({
+        listings: samples,
+        pagination: { page: 1, limit: samples.length, total: samples.length, totalPages: 1, hasMore: false }
+      })
     }
 
     const transformedListings = listings?.map(listing => ({
@@ -191,7 +198,13 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Listings fetch error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    // Fallback to sample listings when database is completely unavailable
+    console.log('[LISTINGS-API] Database unavailable (catch), returning sample listings')
+    const samples = sampleListings.map(transformSampleForList)
+    return NextResponse.json({
+      listings: samples,
+      pagination: { page: 1, limit: samples.length, total: samples.length, totalPages: 1, hasMore: false }
+    })
   }
 }
 

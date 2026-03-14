@@ -228,7 +228,7 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
         <CardContent className="p-0">
           <div
             className={cn(
-              "shadow-inner bg-muted aspect-[16/10] flex items-center justify-center relative cursor-pointer group w-full",
+              "shadow-inner bg-muted aspect-square flex items-center justify-center relative cursor-pointer group w-full",
             )}
             onClick={openPreview}
           >
@@ -246,7 +246,7 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
             />
             <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
             {validImageUrls.length > 1 && (
-              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm flex items-center gap-1">
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-none backdrop-blur-sm flex items-center gap-1">
                 <ImagesIcon className="h-3 w-3" />
                 <span>+{validImageUrls.length - 1}</span>
               </div>
@@ -256,11 +256,11 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
       </Card>
 
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-w-3xl p-2 sm:p-4 !rounded-lg">
+        <DialogContent className="max-w-3xl p-2 sm:p-4 !rounded-none">
           <DialogHeader className="sr-only">
             <DialogTitle>Image Preview: {listingTitle}</DialogTitle>
           </DialogHeader>
-          <div className="relative aspect-video bg-black rounded-md">
+          <div className="relative aspect-video bg-black rounded-none">
             <Image
               src={currentDialogImage}
               alt={`Enlarged image for ${listingTitle} (${currentIndex + 1} of ${validImageUrls.length})`}
@@ -271,12 +271,12 @@ function ImageGallery({ imageUrls, listingTitle }: { imageUrls?: string[]; listi
             />
             {validImageUrls.length > 1 && (
               <>
-                <Button variant="ghost" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full h-10 w-10" onClick={handlePrevImage} aria-label="Previous image"><ChevronLeft className="h-6 w-6" /></Button>
-                <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full h-10 w-10" onClick={handleNextImage} aria-label="Next image"><ChevronRight className="h-6 w-6" /></Button>
+                <Button variant="ghost" size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-none h-10 w-10" onClick={handlePrevImage} aria-label="Previous image"><ChevronLeft className="h-6 w-6" /></Button>
+                <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-none h-10 w-10" onClick={handleNextImage} aria-label="Next image"><ChevronRight className="h-6 w-6" /></Button>
               </>
             )}
             <DialogClose asChild>
-              <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-full h-8 w-8">
+              <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-black/40 hover:bg-black/60 text-white rounded-none h-8 w-8">
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close preview</span>
               </Button>
@@ -403,7 +403,7 @@ export default function ListingDetailPage() {
   }, []);
 
   if (listing === undefined || currentUser === undefined || isCheckingInquiry) {
-    return <div className="container py-8 text-center min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <p className="ml-3">Loading listing details...</p></div>;
+    return <div className="container pt-32 md:pt-36 pb-16 text-center min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <p className="ml-3">Loading listing details...</p></div>;
   }
 
   if (!listing) { notFound(); return null; }
@@ -516,10 +516,10 @@ export default function ListingDetailPage() {
 
   const FinancialValue = ({ usdAmount }: { usdAmount: number | null | undefined }) => {
     if (usdAmount === null || usdAmount === undefined) {
-      return <span className="text-lg font-normal text-white">N/A</span>;
+      return <span className="text-lg font-medium text-white">N/A</span>;
     }
     return (
-      <span className="text-lg font-normal text-white">
+      <span className="text-lg font-medium text-white">
         {formatCurrency(usdAmount, selectedCurrency, rates)}
       </span>
     );
@@ -528,99 +528,103 @@ export default function ListingDetailPage() {
   return (
     <>
       <AnimatedBackground />
-      <div className="container py-8 md:py-12 relative z-10">
+      <div className="container pt-32 md:pt-36 pb-16 md:pb-24 relative z-10">
         <Card className="shadow-xl overflow-hidden bg-white/10 backdrop-blur-md border-white/20 text-white">
 
           <CardHeader className="p-4 md:p-6 border-white/10 border-b">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
-              <div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-normal text-white tracking-tight">{listing.title}</h1>
-                <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary" className="bg-white/10 text-white border border-white/20">{listing.industry}</Badge>
-                  {listing.is_seller_verified ? (
-                    <Badge variant="secondary" className="bg-green-500/10 text-green-400 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
-                  ) : (
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-400 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
-                  )}
-                  {/* Listing Verification Badge */}
-                  {(() => {
-                    const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
-                    if (verificationStatus === 'verified') {
-                      return (
-                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                          <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
-                        </Badge>
-                      );
-                    } else if (verificationStatus === 'deactivated') {
-                      return (
-                        <Badge variant="secondary" className="bg-red-500/10 text-red-400 border border-red-500/30">
-                          <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
-                        </Badge>
-                      );
-                    }
-                    // Don't show badge for 'unverified' to avoid clutter
-                    return null;
-                  })()}
-                </div>
+            <div className="mb-4">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-white tracking-tight">{listing.title}</h1>
+              <Separator className="bg-white/10 my-4" />
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant="secondary" className="bg-white/10 text-white border border-white/20">{listing.industry}</Badge>
+                {listing.is_seller_verified ? (
+                  <Badge variant="secondary" className="bg-green-500/10 text-green-400 border border-green-500/30"><ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Seller</Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-amber-500/10 text-amber-400 border border-amber-500/30"><Info className="h-4 w-4 mr-1.5" /> Unverified Seller</Badge>
+                )}
+                {/* Listing Verification Badge */}
+                {(() => {
+                  const verificationStatus = (listing as any).listingVerificationStatus || 'unverified';
+                  if (verificationStatus === 'verified') {
+                    return (
+                      <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                        <ShieldCheck className="h-4 w-4 mr-1.5" /> Verified Listing
+                      </Badge>
+                    );
+                  } else if (verificationStatus === 'deactivated') {
+                    return (
+                      <Badge variant="secondary" className="bg-red-500/10 text-red-400 border border-red-500/30">
+                        <Info className="h-4 w-4 mr-1.5" /> Listing Deactivated
+                      </Badge>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
-              <Button
-                onClick={handleInquireClick}
-                className="bg-brand-sky-blue text-white hover:bg-white hover:text-brand-dark-blue font-normal shadow-lg transition-all duration-300 border border-white/20 shrink-0"
-                disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry}
-              >
-                {inquirySent ? 'Inquiry Sent' : 'Inquire Now'}
-              </Button>
             </div>
             {/* Financial Highlights Bubble */}
-            <Card className="bg-white/5 p-4 md:p-6 rounded-lg shadow-sm border border-white/10 mt-4 backdrop-blur-sm">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-xl font-normal text-white flex items-center"><Banknote className="h-6 w-6 mr-2" />Financial Snapshot</h2>
-                {isLoadingRates ? <Skeleton className="h-9 w-40" /> : !ratesError && (
-                  <div className="flex items-center gap-2 bg-white/10 p-2 rounded-lg border border-white/20 shadow-sm">
-                    <span className="text-sm text-white font-medium">Currency:</span>
-                    <Select onValueChange={setSelectedCurrency} defaultValue="USD">
-                      <SelectTrigger className="w-[80px] border-0 bg-transparent p-0 h-6 focus:ring-0 text-white">
-                        <SelectValue placeholder="USD" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-brand-dark-blue text-white border-white/20">
-                        {SUPPORTED_CURRENCIES.map(currency => (
-                          <SelectItem key={currency.code} value={currency.code} className="focus:bg-white/10 focus:text-white">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{currency.code}</span>
-                              <span className="text-xs text-gray-300">{currency.symbol}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+            <Card className="bg-white/5 p-4 md:p-6 rounded-none shadow-sm border border-white/10 mt-4 backdrop-blur-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-medium text-white flex items-center"><Banknote className="h-6 w-6 mr-2" />Financial Snapshot</h2>
+                {isLoadingRates ? <Skeleton className="h-9 w-48" /> : !ratesError && (
+                  <div className="flex items-center border border-white/20 rounded-none">
+                    <span className="text-sm text-white font-medium px-3 py-2">Currency</span>
+                    <div className="border-l border-white/20">
+                      <Select onValueChange={setSelectedCurrency} defaultValue="USD">
+                        <SelectTrigger className="w-[140px] border-0 bg-white/10 rounded-none px-3 py-2 h-auto focus:ring-0 text-white">
+                          <SelectValue placeholder="USD" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-brand-dark-blue text-white border-white/20 w-[140px]">
+                          {SUPPORTED_CURRENCIES.map(currency => (
+                            <SelectItem key={currency.code} value={currency.code} className="focus:bg-white/10 focus:text-white">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{currency.code}</span>
+                                <span className="text-xs text-gray-300">{currency.symbol}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <div>
-                  <p className="text-xs text-gray-300 uppercase tracking-wider">Annual Revenue</p>
-                  <p className="text-lg font-normal text-white">
+              <Separator className="bg-white/10 mb-4" />
+              <div className="flex flex-col sm:flex-row">
+                <div className="flex-1 text-center py-4 px-4">
+                  <p className="text-xs text-gray-300 uppercase tracking-wider mb-1">Annual Revenue</p>
+                  <p className="text-lg font-medium text-white">
                     {listing.annual_revenue_range
                       ? convertRevenueRange(listing.annual_revenue_range, selectedCurrency, rates) || listing.annual_revenue_range
                       : <FinancialValue usdAmount={listing.verified_annual_revenue} />
                     }
                   </p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-300 uppercase tracking-wider">EBITDA (TTM)</p>
+                <div className="hidden sm:block w-px bg-white/10 self-stretch" />
+                <div className="sm:hidden h-px bg-white/10 w-full" />
+                <div className="flex-1 text-center py-4 px-4">
+                  <p className="text-xs text-gray-300 uppercase tracking-wider mb-1">EBITDA (TTM)</p>
                   <FinancialValue usdAmount={listing.ebitda} />
                 </div>
                 {(listing.adjusted_cash_flow || listing.verified_cash_flow) && (
-                  <div>
-                    <p className="text-xs text-gray-300 uppercase tracking-wider">Adj. Cash Flow (TTM)</p>
-                    <FinancialValue usdAmount={listing.adjusted_cash_flow || listing.verified_cash_flow} />
-                  </div>
+                  <>
+                    <div className="hidden sm:block w-px bg-white/10 self-stretch" />
+                    <div className="sm:hidden h-px bg-white/10 w-full" />
+                    <div className="flex-1 text-center py-4 px-4">
+                      <p className="text-xs text-gray-300 uppercase tracking-wider mb-1">Adj. Cash Flow (TTM)</p>
+                      <FinancialValue usdAmount={listing.adjusted_cash_flow || listing.verified_cash_flow} />
+                    </div>
+                  </>
                 )}
                 {cfMultiple !== 'N/A' && (
-                  <div>
-                    <p className="text-xs text-gray-300 uppercase tracking-wider">Est. C.F. Multiple</p>
-                    <p className="text-lg font-normal text-white">{cfMultiple}</p>
-                  </div>
+                  <>
+                    <div className="hidden sm:block w-px bg-white/10 self-stretch" />
+                    <div className="sm:hidden h-px bg-white/10 w-full" />
+                    <div className="flex-1 text-center py-4 px-4">
+                      <p className="text-xs text-gray-300 uppercase tracking-wider mb-1">Est. C.F. Multiple</p>
+                      <p className="text-lg font-medium text-white">{cfMultiple}</p>
+                    </div>
+                  </>
                 )}
               </div>
             </Card>
@@ -628,32 +632,122 @@ export default function ListingDetailPage() {
           <CardContent className="p-6 md:p-8 pt-6 grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-8 space-y-8 border-r border-white/10 pr-0 lg:pr-8">
               {/* Alerts Section */}
-              {listing.is_seller_verified && !currentUser && (<Card className="bg-brand-light-gray border-brand-dark-blue/20 dark:bg-white/5 dark:border-white/10"><CardHeader><CardTitle className="text-brand-dark-blue dark:text-white flex items-center"><UserCircle className="h-5 w-5 mr-2" />Access Full Details</CardTitle></CardHeader><CardContent><p className="text-sm text-brand-dark-blue/80 dark:text-gray-300">This listing is from a verified seller. <Link href={`/auth/login?redirect=/listings/${listing.id}`} className="font-normal underline hover:text-brand-dark-blue dark:hover:text-white">Login</Link> or <Link href={`/auth/register?redirect=/listings/${listing.id}`} className="font-normal underline hover:text-brand-dark-blue dark:hover:text-white">Register</Link> as a buyer and complete verification to view detailed information and documents.</p></CardContent></Card>)}
-              {listing.is_seller_verified && currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && (<Card className="bg-amber-50 border-amber-300 dark:bg-amber-900/20 dark:border-amber-700"><CardHeader><CardTitle className="text-amber-700 dark:text-amber-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2" />Unlock Verified Access</CardTitle></CardHeader><CardContent><p className="text-sm text-amber-600 dark:text-amber-400">This listing is from a seller who has completed Due Diligence. To view specific company details, financials, and documents, please <Link href="/dashboard/verification" className="font-normal underline hover:text-amber-700">complete buyer verification</Link>.</p></CardContent></Card>)}
+              {listing.is_seller_verified && !currentUser && (<Card className="bg-brand-light-gray border-brand-dark-blue/20 dark:bg-white/5 dark:border-white/10"><CardHeader><CardTitle className="text-brand-dark-blue dark:text-white flex items-center"><UserCircle className="h-5 w-5 mr-2" />Access Full Details</CardTitle></CardHeader><CardContent><p className="text-sm text-brand-dark-blue/80 dark:text-gray-300">This listing is from a verified seller. <Link href={`/auth/login?redirect=/listings/${listing.id}`} className="font-medium underline hover:text-brand-dark-blue dark:hover:text-white">Login</Link> or <Link href={`/auth/register?redirect=/listings/${listing.id}`} className="font-medium underline hover:text-brand-dark-blue dark:hover:text-white">Register</Link> as a buyer and complete verification to view detailed information and documents.</p></CardContent></Card>)}
+              {listing.is_seller_verified && currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && (<Card className="bg-amber-50 border-amber-300 dark:bg-amber-900/20 dark:border-amber-700"><CardHeader><CardTitle className="text-amber-700 dark:text-amber-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2" />Unlock Verified Access</CardTitle></CardHeader><CardContent><p className="text-sm text-amber-600 dark:text-amber-400">This listing is from a seller who has completed Due Diligence. To view specific company details, financials, and documents, please <Link href="/dashboard/verification" className="font-medium underline hover:text-amber-700">complete buyer verification</Link>.</p></CardContent></Card>)}
               {listing.is_seller_verified && currentUser && currentUser.id === listing.seller_id && (<Card className="bg-green-50 border-green-300 dark:bg-green-900/20 dark:border-green-700"><CardHeader><CardTitle className="text-green-700 dark:text-green-300 flex items-center"><Eye className="h-5 w-5 mr-2" />Seller View</CardTitle></CardHeader><CardContent><p className="text-sm text-green-600 dark:text-green-400">You are viewing your own verified listing. All details and documents are visible to you. Buyers will need to complete verification to see this level of detail.</p></CardContent></Card>)}
               {currentUser && currentUser.role === 'admin' && (<Card className="bg-purple-50 border-purple-300 dark:bg-purple-900/20 dark:border-purple-700"><CardHeader><CardTitle className="text-purple-700 dark:text-purple-300 flex items-center"><ShieldCheck className="h-5 w-5 mr-2" />Admin Access</CardTitle></CardHeader><CardContent><p className="text-sm text-purple-600 dark:text-purple-400">You have administrative access to view all listing content for moderation purposes. All details and documents are visible regardless of seller verification status.</p></CardContent></Card>)}
 
-              <section id="business-overview"><h2 className="text-2xl font-normal text-white mb-3 flex items-center"><BookOpen className="h-6 w-6 mr-2 text-white/90" />Business Overview</h2><p className="text-gray-200 leading-relaxed whitespace-pre-wrap text-justify">{listing.short_description}</p></section><Separator className="bg-white/10" />
-              {keyStrengths.length > 0 && (<><section id="key-strengths"><h2 className="text-2xl font-normal text-white mb-3 flex items-center"><TrendingUp className="h-6 w-6 mr-2 text-white/90" />Key Strengths</h2><ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{keyStrengths.map((strength, index) => (<li key={index}>{strength}</li>))}</ul></section><Separator className="bg-white/10" /></>)}
-              {listing.reason_for_selling_anonymous && (<><section id="reason-for-selling"><h2 className="text-2xl font-normal text-white mb-3 flex items-center"><Tag className="h-6 w-6 mr-2 text-white/90" />Reason for Selling</h2><p className="text-gray-200 leading-relaxed text-justify">{listing.reason_for_selling_anonymous}</p></section><Separator className="bg-white/10" /></>)}
-              {growthOpportunities.length > 0 && (<><section id="growth-potential"><h2 className="text-2xl font-normal text-white mb-3 flex items-center"><Brain className="h-6 w-6 mr-2 text-white/90" />Specific Growth Opportunities</h2><ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{growthOpportunities.map((opportunity, index) => (<li key={index}>{opportunity.replace(/^[•\-]\s*/, '')}</li>))}</ul></section><Separator className="bg-white/10" /></>)}
-              <section id="verified-details" className={`p-6 rounded-lg border ${canViewVerifiedDetails ? 'bg-white/5 border-white/10' : 'bg-white/5 border-white/10'}`}>
-                <h2 className="text-2xl font-normal text-white mb-4 flex items-center"><ShieldCheck className="h-6 w-6 mr-2" />{canViewVerifiedDetails ? "Verified Information & Documents" : "Verified Information (Restricted Access)"}</h2>
+              <section id="business-overview" className="border border-white/15 p-6">
+                <h2 className="text-2xl font-medium text-white mb-3 flex items-center"><BookOpen className="h-6 w-6 mr-2 text-white/90" />Business Overview</h2>
+                <Separator className="bg-white/10 mb-4" />
+                <p className="text-gray-200 leading-relaxed whitespace-pre-wrap text-justify">{listing.short_description}</p>
+              </section>
+              {keyStrengths.length > 0 && (
+                <section id="key-strengths" className="border border-white/15 p-6">
+                  <h2 className="text-2xl font-medium text-white mb-3 flex items-center"><TrendingUp className="h-6 w-6 mr-2 text-white/90" />Key Strengths</h2>
+                  <Separator className="bg-white/10 mb-4" />
+                  <ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{keyStrengths.map((strength, index) => (<li key={index}>{strength}</li>))}</ul>
+                </section>
+              )}
+              {listing.reason_for_selling_anonymous && (
+                <section id="reason-for-selling" className="border border-white/15 p-6">
+                  <h2 className="text-2xl font-medium text-white mb-3 flex items-center"><Tag className="h-6 w-6 mr-2 text-white/90" />Reason for Selling</h2>
+                  <Separator className="bg-white/10 mb-4" />
+                  <p className="text-gray-200 leading-relaxed text-justify">{listing.reason_for_selling_anonymous}</p>
+                </section>
+              )}
+              {growthOpportunities.length > 0 && (
+                <section id="growth-potential" className="border border-white/15 p-6">
+                  <h2 className="text-2xl font-medium text-white mb-3 flex items-center"><Brain className="h-6 w-6 mr-2 text-white/90" />Specific Growth Opportunities</h2>
+                  <Separator className="bg-white/10 mb-4" />
+                  <ul className="list-disc list-inside space-y-1 text-gray-200 pl-5">{growthOpportunities.map((opportunity, index) => (<li key={index}>{opportunity.replace(/^[•\-]\s*/, '')}</li>))}</ul>
+                </section>
+              )}
+              <section id="verified-details" className={`p-6 rounded-none border ${canViewVerifiedDetails ? 'bg-white/5 border-white/10' : 'bg-white/5 border-white/10'}`}>
+                <h2 className="text-2xl font-medium text-white mb-3 flex items-center"><ShieldCheck className="h-6 w-6 mr-2" />{canViewVerifiedDetails ? "Verified Information & Documents" : "Verified Information (Restricted Access)"}</h2>
+                <Separator className="bg-white/10 mb-4" />
                 <div className="space-y-6">
-                  <div><h3 className="font-normal text-white flex items-center gap-2 mb-2"><Building className="h-5 w-5" />Company Details</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Registered Business Name:</span> {listing.registered_business_name || 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Year Established:</span> {listing.established_year || 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Number of Employees:</span> {listing.number_of_employees || 'N/A'}</p></div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view detailed company information</p>)}</div>
-                  <div><h3 className="font-normal text-white flex items-center gap-2 mb-2"><Globe className="h-5 w-5" />Web Presence</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Business Website:</span> {listing.website_url ? <Link href={listing.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-200 hover:underline font-medium">{listing.website_url}</Link> : 'N/A'}</p>{listing.social_media_links && <p className="text-sm text-gray-200"><span className="font-medium text-white">Social Media:</span> <span className="whitespace-pre-wrap">{listing.social_media_links}</span></p>}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view web presence details</p>)}</div>
-                  <div><h3 className="font-normal text-white flex items-center gap-2 mb-2"><DollarSign className="h-5 w-5" />Specific Financials</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Specific Annual Revenue (TTM):</span> {listing.verified_annual_revenue ? <FinancialValue usdAmount={listing.verified_annual_revenue} /> : 'N/A'}</p><p className="text-sm text-gray-200"><span className="font-medium text-white">Specific Net Profit (TTM):</span> {listing.verified_net_profit ? <FinancialValue usdAmount={listing.verified_net_profit} /> : 'N/A'}</p>{listing.net_profit_margin_range && <p className="text-sm text-gray-200"><span className="font-medium text-white">Net Profit Margin Range:</span> {listing.net_profit_margin_range}</p>}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view specific financial details</p>)}</div>
-                  <div><h3 className="font-normal text-white flex items-center gap-2 mb-2"><UsersIcon className="h-5 w-5" />Seller & Deal Information</h3>{canViewVerifiedDetails ? (<div className="space-y-1"><p className="text-sm text-gray-200"><span className="font-medium text-white">Detailed Reason for Selling:</span> <span className="whitespace-pre-wrap">{listing.detailed_reason_for_selling || 'N/A'}</span></p>{(() => {
-                    const dealStructure = listing.deal_structure_looking_for
-                      ? (typeof listing.deal_structure_looking_for === 'string'
-                        ? JSON.parse(listing.deal_structure_looking_for)
-                        : listing.deal_structure_looking_for)
-                      : null;
-                    return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
-                      <p className="text-sm text-gray-200"><span className="font-medium text-white">Deal Structure Preferences:</span> {dealStructure.join(', ')}</p>
-                    );
-                  })()}</div>) : (<p className="text-sm text-gray-300 italic">Complete buyer verification to view seller and deal information</p>)}</div>
-                  <div><h3 className="font-normal text-white flex items-center gap-2 mb-2"><FileText className="h-5 w-5" />Supporting Documents</h3><div className="grid grid-cols-1 md:grid-cols-2 gap-3"><div><p className="text-xs font-medium text-white mb-1">Financial Documents</p><DocumentLink href={listing.financial_documents_url}>Financial Statements (P&L, Balance Sheet)</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Business Metrics</p><DocumentLink href={listing.key_metrics_report_url}>Key Performance Indicators Report</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Ownership Documents</p><DocumentLink href={listing.ownership_documents_url}>Company Registration & Certificates</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Financial Summary</p><DocumentLink href={listing.financial_snapshot_url}>Recent Financial Summary</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Location & Assets</p><DocumentLink href={listing.location_real_estate_info_url}>Real Estate & Location Info</DocumentLink></div><div><p className="text-xs font-medium text-white mb-1">Digital Presence</p><DocumentLink href={listing.web_presence_info_url}>Website Analytics & SEO Data</DocumentLink></div>{listing.secure_data_room_link && (<div className="md:col-span-2"><p className="text-xs font-medium text-white mb-1">Additional Documents</p><DocumentLink href={listing.secure_data_room_link}>Secure Data Room Access</DocumentLink></div>)}</div></div>
+                  {/* CIM & Specific Financials - 2 column table */}
+                  <div className="border border-white/15 divide-y divide-white/10">
+                    <div className="flex items-center justify-between px-4 py-3">
+                      <div className="flex items-center gap-2 font-medium text-white"><Building className="h-5 w-5" />CIM (Confidential Information Memorandum)</div>
+                      {canViewVerifiedDetails ? (
+                        <Button asChild size="sm" className="bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 rounded-none">
+                          <Link href={listing.financial_documents_url || '#'} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4 mr-1.5" />Access Document</Link>
+                        </Button>
+                      ) : (
+                        <Button asChild size="sm" variant="outline" className="rounded-none border-white/20 text-gray-400 hover:bg-white/10 hover:text-white">
+                          <Link href="/auth/register">Restricted Access</Link>
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3">
+                      <div className="flex items-center gap-2 font-medium text-white"><DollarSign className="h-5 w-5" />Specific Financials</div>
+                      {canViewVerifiedDetails ? (
+                        <Button asChild size="sm" className="bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 rounded-none">
+                          <Link href={listing.financial_snapshot_url || '#'} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4 mr-1.5" />Access Document</Link>
+                        </Button>
+                      ) : (
+                        <Button asChild size="sm" variant="outline" className="rounded-none border-white/20 text-gray-400 hover:bg-white/10 hover:text-white">
+                          <Link href="/auth/register">Restricted Access</Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Seller & Deal Information */}
+                  <div>
+                    <h3 className="font-medium text-white flex items-center gap-2 mb-2"><UsersIcon className="h-5 w-5" />Seller & Deal Information</h3>
+                    {canViewVerifiedDetails ? (
+                      <div className="space-y-1">
+                        <p className="text-sm text-gray-200"><span className="font-medium text-white">Detailed Reason for Selling:</span> <span className="whitespace-pre-wrap">{listing.detailed_reason_for_selling || 'N/A'}</span></p>
+                        {(() => {
+                          const dealStructure = listing.deal_structure_looking_for
+                            ? (typeof listing.deal_structure_looking_for === 'string'
+                              ? JSON.parse(listing.deal_structure_looking_for)
+                              : listing.deal_structure_looking_for)
+                            : null;
+                          return dealStructure && Array.isArray(dealStructure) && dealStructure.length > 0 && (
+                            <p className="text-sm text-gray-200"><span className="font-medium text-white">Deal Structure Preferences:</span> {dealStructure.join(', ')}</p>
+                          );
+                        })()}
+                      </div>
+                    ) : (
+                      <div className="border border-white/15 p-4 select-none">
+                        <div className="text-sm text-gray-200 space-y-1 blur-[6px]">
+                          <p>The seller is looking to exit this business due to a strategic pivot toward other ventures in the region. They have been operating the company for over eight years and are seeking a buyer who can continue growing the brand.</p>
+                          <p>Preferred deal structures include full acquisition with an earn-out period, or a majority stake sale with the seller remaining in an advisory role during the transition period of 6-12 months.</p>
+                          <p>The seller is open to negotiations on payment terms and is willing to provide comprehensive training and handover support to ensure business continuity post-acquisition.</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Separator className="bg-white/10" />
+
+                  {/* Supporting Documents */}
+                  <div>
+                    <h3 className="font-medium text-white flex items-center gap-2 mb-3"><FileText className="h-5 w-5" />Supporting Documents</h3>
+                    <div className="border border-white/15">
+                      <div className="p-4">
+                        <div className="grid grid-cols-[1fr_1fr] gap-y-2 text-sm text-gray-200">
+                          <p className="flex items-center gap-2"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Financial Statements (P&L, Balance Sheet)</p>
+                          <p className="flex items-center gap-2 pl-[25%]"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Recent Financial Summary</p>
+                          <p className="flex items-center gap-2"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Key Performance Indicators Report</p>
+                          <p className="flex items-center gap-2 pl-[25%]"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Real Estate & Location Info</p>
+                          <p className="flex items-center gap-2"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Company Registration & Certificates</p>
+                          <p className="flex items-center gap-2 pl-[25%]"><span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span>Website Analytics & SEO Data</p>
+                        </div>
+                      </div>
+                      {!canViewVerifiedDetails && (
+                        <div className="border-t border-white/15 p-2">
+                          <Button asChild size="sm" variant="outline" className="w-full rounded-none border-white/20 text-gray-400 hover:bg-white/10 hover:text-white">
+                            <Link href="/auth/register">Restricted Access to Virtual Data Room</Link>
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </section>
             </div>
@@ -674,7 +768,6 @@ export default function ListingDetailPage() {
                 <CardContent className="space-y-3 text-sm">
                   <div className="flex items-center"><Briefcase className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Industry</p><p className="text-gray-300">{listing.industry}</p></div></div>
                   <div className="flex items-center"><MapPin className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Location</p><p className="text-gray-300">{listing.location_city}, {listing.location_country}</p></div></div>
-                  <div className="flex items-center"><DollarSign className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Asking Price</p><p className="text-gray-300">{listing.asking_price > 0 ? formatCurrency(listing.asking_price, selectedCurrency, rates) : 'Contact for Price'}</p></div></div>
                   {(() => {
                     const dealStructure = listing.deal_structure_looking_for
                       ? (typeof listing.deal_structure_looking_for === 'string'
@@ -688,7 +781,7 @@ export default function ListingDetailPage() {
                   <div className="flex items-center"><UserCircle className="h-5 w-5 mr-3 text-white/80 flex-shrink-0" /><div><p className="font-medium text-white">Seller Status</p><p className="text-gray-300">{listing.is_seller_verified ? 'Verified Seller' : 'Unverified Seller'}</p></div></div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-2">
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry} onClick={handleInquireClick}>
+                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-none" disabled={!currentUser || currentUser.role === 'seller' || inquirySent || isSubmittingInquiry || isCheckingInquiry} onClick={handleInquireClick}>
                     {(isSubmittingInquiry || isCheckingInquiry) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {isCheckingInquiry ? 'Checking...' : isSubmittingInquiry ? 'Sending...' : inquirySent ? 'Inquiry Sent' : 'Inquire About Business'}
                     {!isSubmittingInquiry && !isCheckingInquiry && <MessageSquare className="h-4 w-4 ml-2" />}
@@ -709,10 +802,10 @@ export default function ListingDetailPage() {
               </Card>
               {!currentUser && (
                 <>
-                  <Card className="shadow-md bg-brand-sky-blue/10 border-brand-sky-blue/30">
+                  <Card className="shadow-md bg-white/5 backdrop-blur-md border-white/10">
                     <CardContent className="p-4 text-center">
                       <p className="text-sm text-white mb-2">Want to learn more or see verified details?</p>
-                      <Button variant="outline" asChild className="w-full border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5">
+                      <Button variant="outline" asChild className="w-full border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 rounded-none">
                         <Link href={`/auth/login?redirect=/listings/${listing.id}`}>Login / Register as a Buyer to Inquire</Link>
                       </Button>
                     </CardContent>
@@ -721,14 +814,14 @@ export default function ListingDetailPage() {
                   <Card className="shadow-md bg-white/5 border-white/10 mt-4">
                     <CardContent className="p-4 text-center">
                       <p className="text-sm text-gray-300 mb-2">Have questions or need assistance?</p>
-                      <Button variant="ghost" asChild className="w-full text-white hover:text-brand-sky-blue hover:bg-white/5 border border-white/20">
+                      <Button variant="ghost" asChild className="w-full text-white hover:text-brand-sky-blue hover:bg-white/5 border border-white/20 rounded-none">
                         <Link href="/contact">Contact Support</Link>
                       </Button>
                     </CardContent>
                   </Card>
                 </>
               )}
-              {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
+              {currentUser && currentUser.role === 'buyer' && !isVerifiedBuyer(currentUser) && listing.is_seller_verified && (<Card className="shadow-md bg-amber-500/10 border-amber-500/30"><CardContent className="p-4 text-center"><p className="text-sm text-amber-700 dark:text-amber-300 mb-2">Complete buyer verification to access full details and documents for verified listings.</p><Button variant="outline" asChild className="border-amber-600 text-amber-700 hover:bg-amber-600/20 rounded-none"><Link href="/dashboard/verification">Get Verified</Link></Button></CardContent></Card>)}
             </aside>
           </CardContent>
         </Card>
@@ -760,8 +853,8 @@ export default function ListingDetailPage() {
               </p>
             </div>
             <DialogFooter>
-              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-              <Button onClick={handleInquirySubmit} disabled={isSubmittingInquiry}>
+              <DialogClose asChild><Button variant="outline" className="rounded-none">Cancel</Button></DialogClose>
+              <Button onClick={handleInquirySubmit} disabled={isSubmittingInquiry} className="rounded-none">
                 {isSubmittingInquiry && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {isSubmittingInquiry ? "Submitting..." : "Submit Inquiry"}
               </Button>

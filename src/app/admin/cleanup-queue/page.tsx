@@ -148,7 +148,7 @@ export default function CleanupQueuePage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-heading">Account Cleanup Queue</h1>
+          <h1 className="text-3xl font-semibold tracking-tight font-heading">Account Cleanup Queue</h1>
           <p className="text-muted-foreground">
             Manage unverified accounts and cleanup process
           </p>
@@ -169,7 +169,7 @@ export default function CleanupQueuePage() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-semibold">
               {isLoading ? '...' : cleanupData?.data?.statistics?.unverified || 0}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -184,7 +184,7 @@ export default function CleanupQueuePage() {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-semibold text-red-600">
               {isLoading ? '...' : cleanupData?.data?.statistics?.pending_deletion || 0}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -199,7 +199,7 @@ export default function CleanupQueuePage() {
             <UserX className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-semibold">
               {isLoading ? '...' : cleanupData?.data?.statistics?.total || 0}
             </div>
             <p className="text-xs text-muted-foreground">

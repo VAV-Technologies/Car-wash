@@ -164,7 +164,7 @@ export default function EditListingPage({ params }: EditListingPageProps) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">Edit Listing: {listing.listingTitleAnonymous}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Edit Listing: {listing.listingTitleAnonymous}</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Sections identical to CreateListingPage, but pre-filled */}

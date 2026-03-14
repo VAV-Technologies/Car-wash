@@ -9,9 +9,10 @@ import {
   FileCheck,
   TrendingUp,
   ExternalLink,
+  ArrowRight,
 } from "lucide-react";
 import { FadeIn } from "@/components/ui/fade-in";
-import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const certificationTiers = [
   {
@@ -118,9 +119,9 @@ export default function ACFICertificatePage() {
   return (
     <div className="bg-white">
       {/* Section 1 — Hero */}
-      <section className="w-full min-h-[60vh] bg-brand-dark-blue flex items-center py-24 text-white">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24">
-          <FadeIn direction="up" delay={200} className="text-center space-y-6">
+      <section className="w-full min-h-[60vh] bg-brand-dark-blue flex items-center py-24 text-white section-lines-light">
+        <div className="container mx-auto">
+          <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4">
             <div className="flex justify-center mb-4">
               <div className="bg-brand-sky-blue/20 p-5 rounded-full">
                 <ShieldCheck className="h-14 w-14 text-brand-sky-blue" />
@@ -148,194 +149,211 @@ export default function ACFICertificatePage() {
       </section>
 
       {/* Section 2 — Certification Overview */}
-      <section className="w-full py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+      <section className="w-full py-24 md:py-32 bg-white section-lines-dark">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto space-y-12">
-              <div className="text-center space-y-6">
-                <h2 className="text-3xl md:text-5xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                  Certification Overview
-                </h2>
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-justify">
-                  The Asia Corporate Finance Institute (ACFI) is an
-                  industry body that sets professional standards for corporate
-                  finance and M&A advisory firms operating across Asia. ACFI
-                  certification signals to clients, partners, and regulators that
-                  a firm meets rigorous benchmarks for professional competence,
-                  ethical conduct, and transaction quality.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {certificationTiers.map((tier) => (
-                  <Card
-                    key={tier.name}
-                    className={
-                      tier.highlighted
-                        ? "border-2 border-brand-dark-blue bg-brand-dark-blue text-white shadow-lg"
-                        : "border border-gray-200"
-                    }
-                  >
-                    <CardContent className="pt-6 text-center space-y-3">
-                      <Award
-                        className={`h-8 w-8 mx-auto ${tier.highlighted ? "text-brand-sky-blue" : "text-brand-dark-blue/60"}`}
-                      />
-                      <h3
-                        className={`text-lg font-semibold ${tier.highlighted ? "text-white" : "text-brand-dark-blue"}`}
-                      >
-                        {tier.name}
-                      </h3>
-                      <p
-                        className={`text-sm leading-relaxed ${tier.highlighted ? "text-blue-100" : "text-muted-foreground"}`}
-                      >
-                        {tier.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <div className="text-center space-y-6 mb-16 px-4">
+              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight">
+                Certification Overview
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-4xl mx-auto">
+                The Asia Corporate Finance Institute (ACFI) is an
+                industry body that sets professional standards for corporate
+                finance and M&A advisory firms operating across Asia. ACFI
+                certification signals to clients, partners, and regulators that
+                a firm meets rigorous benchmarks for professional competence,
+                ethical conduct, and transaction quality.
+              </p>
             </div>
           </FadeIn>
+
+          <div className="flex flex-col md:flex-row">
+            {certificationTiers.map((tier, index) => (
+              <FadeIn key={tier.name} delay={index * 100} className="flex-1">
+                <div className={cn(
+                  "border border-brand-dark-blue/10 p-8 h-full flex flex-col items-center text-center",
+                  index > 0 && "border-t-0 md:border-t md:border-l-0",
+                  tier.highlighted && "bg-brand-dark-blue text-white border-brand-dark-blue"
+                )}>
+                  <Award className={cn("h-8 w-8 mb-4", tier.highlighted ? "text-brand-sky-blue" : "text-brand-dark-blue/60")} />
+                  <h3 className={cn("text-lg font-semibold mb-2", tier.highlighted ? "text-white" : "text-brand-dark-blue")}>
+                    {tier.name}
+                  </h3>
+                  <p className={cn("text-sm leading-relaxed", tier.highlighted ? "text-blue-100" : "text-muted-foreground")}>
+                    {tier.description}
+                  </p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Section 3 — Evaluation Criteria */}
-      <section className="w-full py-24 md:py-32 bg-brand-dark-blue text-white">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+      <section className="w-full py-24 md:py-32 bg-brand-dark-blue text-white section-lines-light">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <h2 className="text-3xl md:text-5xl font-normal text-center font-heading tracking-tight mb-4">
-              Evaluation Criteria
-            </h2>
-            <p className="text-lg text-blue-100 text-center max-w-3xl mx-auto mb-16">
-              ACFI evaluates firms across six key dimensions to determine
-              certification eligibility and tier placement.
-            </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {evaluationCriteria.map((criterion, index) => {
-                const Icon = criterion.icon;
-                return (
-                  <FadeIn key={criterion.title} delay={index * 100}>
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 bg-brand-sky-blue/15 p-3 rounded-full">
-                        <Icon className="h-6 w-6 text-brand-sky-blue" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold mb-2">
-                          {criterion.title}
-                        </h4>
-                        <p className="text-blue-100 text-sm leading-relaxed">
-                          {criterion.description}
-                        </p>
-                      </div>
-                    </div>
-                  </FadeIn>
-                );
-              })}
+            <div className="text-center mb-16 px-4">
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
+                Evaluation Criteria
+              </h2>
+              <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto">
+                ACFI evaluates firms across six key dimensions to determine
+                certification eligibility and tier placement.
+              </p>
             </div>
           </FadeIn>
+
+          <div className="flex flex-col md:flex-row">
+            {evaluationCriteria.slice(0, 3).map((criterion, index) => {
+              const Icon = criterion.icon;
+              return (
+                <FadeIn key={criterion.title} delay={index * 100} className="flex-1">
+                  <div className={cn(
+                    "border border-white/15 p-8 h-full flex flex-col",
+                    index > 0 && "border-t-0 md:border-t md:border-l-0"
+                  )}>
+                    <Icon className="h-6 w-6 text-brand-sky-blue mb-4" />
+                    <h4 className="text-lg font-semibold mb-2">{criterion.title}</h4>
+                    <p className="text-blue-100 text-sm leading-relaxed">{criterion.description}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+          <div className="flex flex-col md:flex-row">
+            {evaluationCriteria.slice(3, 6).map((criterion, index) => {
+              const Icon = criterion.icon;
+              return (
+                <FadeIn key={criterion.title} delay={(index + 3) * 100} className="flex-1">
+                  <div className={cn(
+                    "border border-white/15 border-t-0 p-8 h-full flex flex-col",
+                    index > 0 && "md:border-l-0"
+                  )}>
+                    <Icon className="h-6 w-6 text-brand-sky-blue mb-4" />
+                    <h4 className="text-lg font-semibold mb-2">{criterion.title}</h4>
+                    <p className="text-blue-100 text-sm leading-relaxed">{criterion.description}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Section 4 — Report Summary */}
-      <section className="w-full py-24 md:py-32 bg-white">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+      {/* Section 4 — Assessment Findings */}
+      <section className="w-full py-24 md:py-32 bg-white section-lines-dark">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto space-y-12">
-              <div className="text-center space-y-4">
-                <h2 className="text-3xl md:text-5xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                  Assessment Findings
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  Based on ACFI's comprehensive review, Nobridge has been
-                  awarded Gold Certification reflecting the following strengths.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {assessmentFindings.map((finding, index) => (
-                  <FadeIn key={index} delay={index * 80}>
-                    <div className="flex items-start space-x-4 p-4 rounded-lg border border-gray-100 hover:border-brand-dark-blue/20 transition-colors">
-                      <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-brand-dark-blue/80 leading-relaxed">
-                        {finding}
-                      </p>
-                    </div>
-                  </FadeIn>
-                ))}
-              </div>
+            <div className="text-center mb-16 px-4">
+              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight mb-4">
+                Assessment Findings
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                Based on ACFI's comprehensive review, Nobridge has been
+                awarded Gold Certification reflecting the following strengths.
+              </p>
             </div>
           </FadeIn>
+
+          <div className="flex flex-col">
+            {assessmentFindings.map((finding, index) => (
+              <FadeIn key={index} delay={index * 80}>
+                <div className={cn(
+                  "border border-brand-dark-blue/10 p-6 flex items-start gap-4",
+                  index > 0 && "border-t-0"
+                )}>
+                  <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                  <p className="text-brand-dark-blue/80 leading-relaxed">{finding}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Section 5 — Code of Ethics */}
-      <section className="w-full py-24 md:py-32 bg-brand-light-gray/30">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24">
+      <section className="w-full py-24 md:py-32 bg-brand-light-gray/30 section-lines-dark">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto space-y-12">
-              <div className="text-center space-y-4">
-                <h2 className="text-3xl md:text-5xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                  Code of Ethics
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                  As an ACFI Gold Certified firm, Nobridge is bound by the ACFI
-                  Code of Ethics, upholding the highest standards of
-                  professional conduct.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {ethicsCommitments.map((commitment, index) => (
-                  <FadeIn key={commitment.title} delay={index * 100}>
-                    <Card className="border border-gray-200 h-full">
-                      <CardContent className="pt-6 space-y-2">
-                        <div className="flex items-center space-x-3">
-                          <ShieldCheck className="h-5 w-5 text-brand-dark-blue" />
-                          <h4 className="text-lg font-semibold text-brand-dark-blue">
-                            {commitment.title}
-                          </h4>
-                        </div>
-                        <p className="text-muted-foreground text-sm leading-relaxed">
-                          {commitment.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </FadeIn>
-                ))}
-              </div>
+            <div className="text-center mb-16 px-4">
+              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight mb-4">
+                Code of Ethics
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                As an ACFI Gold Certified firm, Nobridge is bound by the ACFI
+                Code of Ethics, upholding the highest standards of
+                professional conduct.
+              </p>
             </div>
           </FadeIn>
+
+          <div className="flex flex-col md:flex-row">
+            {ethicsCommitments.slice(0, 3).map((commitment, index) => (
+              <FadeIn key={commitment.title} delay={index * 100} className="flex-1">
+                <div className={cn(
+                  "border border-brand-dark-blue/10 bg-white p-8 h-full flex flex-col",
+                  index > 0 && "border-t-0 md:border-t md:border-l-0"
+                )}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <ShieldCheck className="h-5 w-5 text-brand-dark-blue" />
+                    <h4 className="text-lg font-semibold text-brand-dark-blue">{commitment.title}</h4>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{commitment.description}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+          <div className="flex flex-col md:flex-row">
+            {ethicsCommitments.slice(3, 6).map((commitment, index) => (
+              <FadeIn key={commitment.title} delay={(index + 3) * 100} className="flex-1">
+                <div className={cn(
+                  "border border-brand-dark-blue/10 bg-white border-t-0 p-8 h-full flex flex-col",
+                  index > 0 && "md:border-l-0"
+                )}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <ShieldCheck className="h-5 w-5 text-brand-dark-blue" />
+                    <h4 className="text-lg font-semibold text-brand-dark-blue">{commitment.title}</h4>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{commitment.description}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Section 6 — CTA */}
-      <section className="w-full py-24 bg-white">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
+      <div className="border-t border-brand-dark-blue/10" />
+      <section className="w-full py-12 md:py-12 bg-brand-white section-lines-dark">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading mb-4">
-              Verify Our Certification
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-              Confirm Nobridge's Gold Certified status directly through the ACFI
-              directory, or get in touch with our team to learn more.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://acfi.asia/directory/nobridge"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-8 py-3 text-lg font-normal text-white bg-brand-dark-blue hover:bg-brand-dark-blue/90 rounded-md transition-colors"
-              >
-                <ShieldCheck className="mr-2 h-5 w-5" />
-                Verify on ACFI Directory
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center px-8 py-3 text-lg font-normal text-brand-dark-blue bg-white border-2 border-brand-dark-blue hover:bg-brand-light-gray rounded-md transition-colors"
-              >
-                Contact Us
-              </Link>
+            <div className="relative border border-brand-dark-blue/10 bg-brand-dark-blue/5 py-36 md:py-48 px-8 md:px-16 text-center overflow-hidden">
+              <div className="relative z-10">
+                <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">
+                  Verify Our Certification
+                </h2>
+                <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-10 text-center">
+                  Confirm Nobridge's Gold Certified status directly through the ACFI
+                  directory, or get in touch with our team to learn more.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                  <a
+                    href="https://acfi.asia/directory/nobridge"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base transition-colors"
+                  >
+                    Verify on ACFI Directory
+                  </a>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base transition-colors"
+                  >
+                    Contact Us
+                  </Link>
+                </div>
+              </div>
             </div>
           </FadeIn>
         </div>

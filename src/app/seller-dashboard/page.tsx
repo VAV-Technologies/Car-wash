@@ -202,7 +202,7 @@ export default function SellerDashboard() {
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground font-heading">Seller Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-foreground font-heading">Seller Dashboard</h1>
             <div className="text-muted-foreground mt-1">
               Welcome back, {user?.fullName || 'User'}!
             </div>
@@ -325,7 +325,7 @@ export default function SellerDashboard() {
               <NobridgeIcon icon="business-listing" size="sm" className="text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.activeListingsCount}</div>
+              <div className="text-2xl font-semibold text-primary">{stats.activeListingsCount}</div>
               <p className="text-xs text-muted-foreground">
                 Listings currently visible to buyers
               </p>
@@ -338,7 +338,7 @@ export default function SellerDashboard() {
               <NobridgeIcon icon="interaction" size="sm" className="text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.totalInquiriesReceived}</div>
+              <div className="text-2xl font-semibold text-primary">{stats.totalInquiriesReceived}</div>
               <p className="text-xs text-muted-foreground">
                 All-time inquiries received
               </p>
@@ -351,7 +351,7 @@ export default function SellerDashboard() {
               <NobridgeIcon icon="verification" size="sm" className="text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">{stats.inquiriesAwaitingEngagement}</div>
+              <div className="text-2xl font-semibold text-destructive">{stats.inquiriesAwaitingEngagement}</div>
               <p className="text-xs text-muted-foreground">
                 New inquiries needing attention
               </p>

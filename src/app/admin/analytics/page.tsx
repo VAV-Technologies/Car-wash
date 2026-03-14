@@ -107,7 +107,7 @@ export default function AdminAnalyticsPage() {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
           <Button disabled variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
             Loading...
@@ -135,7 +135,7 @@ export default function AdminAnalyticsPage() {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
           <Button onClick={handleRefreshAll} variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry All
@@ -185,7 +185,7 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">Platform Analytics</h1>
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="text-green-600">
             Live Data
@@ -205,7 +205,7 @@ export default function AdminAnalyticsPage() {
             <Users className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{totalUsers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{totalUsers}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.totalActiveSellers} Sellers, {metrics.totalActiveBuyers} Buyers</p>
           </CardContent>
         </Card>
@@ -215,7 +215,7 @@ export default function AdminAnalyticsPage() {
             <ListChecks className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.totalListingsAllStatuses}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.totalListingsAllStatuses}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.totalActiveListingsVerified + metrics.totalActiveListingsAnonymous} active</p>
             {metrics.totalListingsAllStatuses === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -228,7 +228,7 @@ export default function AdminAnalyticsPage() {
             <ListX className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.closedOrDeactivatedListings}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.closedOrDeactivatedListings}</div>
             <p className="text-xs text-brand-dark-blue/70">Inactive or deal finalized</p>
             {metrics.closedOrDeactivatedListings === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -241,7 +241,7 @@ export default function AdminAnalyticsPage() {
             <Handshake className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.successfulConnectionsMTD}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.successfulConnectionsMTD}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.activeSuccessfulConnections} active, {metrics.closedSuccessfulConnections} closed (MTD)</p>
             {metrics.successfulConnectionsMTD === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -261,7 +261,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.newUserRegistrations7dSellers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.newUserRegistrations7dSellers}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.newUserRegistrations24hSellers} in last 24h</p>
           </CardContent>
         </Card>
@@ -273,7 +273,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.newUserRegistrations7dBuyers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.newUserRegistrations7dBuyers}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.newUserRegistrations24hBuyers} in last 24h</p>
           </CardContent>
         </Card>
@@ -285,7 +285,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.newListingsCreated7d}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.newListingsCreated7d}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.newListingsCreated24h} in last 24h</p>
             {metrics.newListingsCreated7d === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -300,7 +300,7 @@ export default function AdminAnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.buyerVerificationQueueCount + metrics.sellerVerificationQueueCount}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.buyerVerificationQueueCount + metrics.sellerVerificationQueueCount}</div>
             <p className="text-xs text-brand-dark-blue/70">{metrics.buyerVerificationQueueCount} buyers, {metrics.sellerVerificationQueueCount} sellers</p>
           </CardContent>
         </Card>
@@ -312,7 +312,7 @@ export default function AdminAnalyticsPage() {
         <Card className="shadow-md bg-brand-white">
           <CardHeader className="pb-2"> <CardTitle className="text-sm font-medium flex items-center justify-between text-brand-dark-blue">Paid Buyers <UserPlus className="h-5 w-5 text-green-500" /></CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.totalPaidBuyers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.totalPaidBuyers}</div>
             {metrics.totalPaidBuyers === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
             )}
@@ -321,14 +321,14 @@ export default function AdminAnalyticsPage() {
         <Card className="shadow-md bg-brand-white">
           <CardHeader className="pb-2"> <CardTitle className="text-sm font-medium flex items-center justify-between text-brand-dark-blue">Free Buyers <UserMinus className="h-5 w-5 text-orange-500" /></CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.totalFreeBuyers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.totalFreeBuyers}</div>
             <p className="text-xs text-brand-dark-blue/70">All users currently free</p>
           </CardContent>
         </Card>
         <Card className="shadow-md bg-brand-white">
          <CardHeader className="pb-2"> <CardTitle className="text-sm font-medium flex items-center justify-between text-brand-dark-blue">Paid Sellers <UserPlus className="h-5 w-5 text-green-500" /></CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.totalPaidSellers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.totalPaidSellers}</div>
             {metrics.totalPaidSellers === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
             )}
@@ -337,7 +337,7 @@ export default function AdminAnalyticsPage() {
         <Card className="shadow-md bg-brand-white">
           <CardHeader className="pb-2"> <CardTitle className="text-sm font-medium flex items-center justify-between text-brand-dark-blue">Free Sellers <UserMinus className="h-5 w-5 text-orange-500" /></CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">{metrics.totalFreeSellers}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.totalFreeSellers}</div>
             <p className="text-xs text-brand-dark-blue/70">All users currently free</p>
           </CardContent>
         </Card>
@@ -352,7 +352,7 @@ export default function AdminAnalyticsPage() {
             <Banknote className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">${(metrics.totalRevenueMTD || 0).toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">${(metrics.totalRevenueMTD || 0).toLocaleString()}</div>
             <p className="text-xs text-brand-dark-blue/70">Sum from subscriptions</p>
             {(metrics.totalRevenueMTD || 0) === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -365,7 +365,7 @@ export default function AdminAnalyticsPage() {
             <DollarSign className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">${(metrics.revenueFromBuyers || 0).toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">${(metrics.revenueFromBuyers || 0).toLocaleString()}</div>
             <p className="text-xs text-brand-dark-blue/70">Buyer subscriptions</p>
             {(metrics.revenueFromBuyers || 0) === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -378,7 +378,7 @@ export default function AdminAnalyticsPage() {
             <DollarSign className="h-5 w-5 text-brand-dark-blue/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-brand-dark-blue">${(metrics.revenueFromSellers || 0).toLocaleString()}</div>
+            <div className="text-2xl font-semibold text-brand-dark-blue">${(metrics.revenueFromSellers || 0).toLocaleString()}</div>
             <p className="text-xs text-brand-dark-blue/70">Seller subscriptions/services</p>
             {(metrics.revenueFromSellers || 0) === 0 && (
               <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -396,7 +396,7 @@ export default function AdminAnalyticsPage() {
                 <Handshake className="h-5 w-5 text-brand-sky-blue"/>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold text-brand-dark-blue">{metrics.activeSuccessfulConnections}</div>
+                <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.activeSuccessfulConnections}</div>
                 <p className="text-xs text-brand-dark-blue/70">Connections facilitated, ongoing</p>
                 {metrics.activeSuccessfulConnections === 0 && (
                   <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -409,7 +409,7 @@ export default function AdminAnalyticsPage() {
                 <CheckCircle className="h-5 w-5 text-green-500"/>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold text-brand-dark-blue">{metrics.closedSuccessfulConnections}</div>
+                <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.closedSuccessfulConnections}</div>
                 <p className="text-xs text-brand-dark-blue/70">Connections marked as deal closed/archived</p>
                 {metrics.closedSuccessfulConnections === 0 && (
                   <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>
@@ -422,7 +422,7 @@ export default function AdminAnalyticsPage() {
                 <TrendingUp className="h-5 w-5 text-brand-sky-blue"/>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold text-brand-dark-blue">{metrics.readyToEngageQueueCount}</div>
+                <div className="text-2xl font-semibold text-brand-dark-blue">{metrics.readyToEngageQueueCount}</div>
                 <p className="text-xs text-brand-dark-blue/70">Pending admin facilitation</p>
                 {metrics.readyToEngageQueueCount === 0 && (
                   <Badge variant="outline" className="text-orange-600 mt-1">Coming Soon</Badge>

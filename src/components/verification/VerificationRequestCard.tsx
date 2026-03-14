@@ -76,7 +76,7 @@ export default function VerificationRequestCard({
       case 'Contacted':
         return 'bg-purple-100 text-purple-800 border-purple-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-brand-dark-blue border-gray-200';
     }
   };
 
@@ -173,7 +173,7 @@ export default function VerificationRequestCard({
         {/* Bump Disabled Status */}
         {!request.bump_enabled && request.bump_disabled_reason && (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-gray-800">
+            <div className="flex items-center gap-2 text-brand-dark-blue">
               <Lock className="h-4 w-4" />
               <span className="font-medium">Bumping Temporarily Disabled</span>
             </div>
@@ -195,7 +195,7 @@ export default function VerificationRequestCard({
           {request.user_notes && (
             <div className="text-sm">
               <span className="font-medium text-muted-foreground">Your Message:</span>
-              <p className="mt-1 text-gray-900 bg-gray-50 p-2 rounded border">
+              <p className="mt-1 text-brand-dark-blue bg-gray-50 p-2 rounded border">
                 {request.user_notes}
               </p>
             </div>
@@ -204,7 +204,7 @@ export default function VerificationRequestCard({
           {request.reason && request.reason !== request.user_notes && (
             <div className="text-sm">
               <span className="font-medium text-muted-foreground">Original Reason:</span>
-              <p className="mt-1 text-gray-900">
+              <p className="mt-1 text-brand-dark-blue">
                 {request.reason}
               </p>
             </div>

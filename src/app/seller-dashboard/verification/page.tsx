@@ -192,7 +192,7 @@ function VerificationContent() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Seller Verification</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Seller Verification</h1>
             <p className="text-muted-foreground">
               Get verified to build trust with potential buyers and access premium features.
             </p>
@@ -235,7 +235,7 @@ function VerificationContent() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Seller Verification</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Seller Verification</h1>
             <p className="text-muted-foreground">
               You are a verified seller with full platform access.
             </p>
@@ -369,7 +369,7 @@ function VerificationContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Seller Verification</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Seller Verification</h1>
           <p className="text-muted-foreground">
             Get verified to build trust with potential buyers and access premium features.
           </p>

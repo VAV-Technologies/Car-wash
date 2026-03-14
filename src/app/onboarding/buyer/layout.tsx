@@ -31,7 +31,7 @@ export default function BuyerOnboardingLayout({
           <Link href="/" className="inline-block mb-6">
             <Logo size="xl" forceTheme="light" />
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-dark-blue mt-4 mb-2 font-heading">
+          <h1 className="text-3xl md:text-4xl font-semibold text-brand-dark-blue mt-4 mb-2 font-heading">
             Become a Verified Nobridge Buyer
           </h1>
           <p className="text-muted-foreground">

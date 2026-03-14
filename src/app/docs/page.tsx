@@ -73,7 +73,7 @@ export default function DocsPage() {
     <div className="container py-12 md:py-16">
       <Card className="shadow-xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl md:text-4xl font-bold text-primary font-heading">
+          <CardTitle className="text-3xl md:text-4xl font-semibold text-primary font-heading">
             Nobridge Documentation Hub
           </CardTitle>
           <CardDescription className="text-lg max-w-2xl mx-auto">

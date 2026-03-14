@@ -123,7 +123,7 @@ export default function CreateListingPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">Create New Business Listing</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Create New Business Listing</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <Card className="shadow-md">

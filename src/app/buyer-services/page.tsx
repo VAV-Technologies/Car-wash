@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatedBackground } from "@/components/ui/animated-background";
 import { FadeIn } from "@/components/ui/fade-in";
-import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -13,10 +11,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    ArrowRight,
     ChevronRight,
     Plus,
-    Quote,
     Compass,
     Search,
     Calculator,
@@ -26,18 +22,19 @@ import {
     GitMerge,
     Rocket
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-
-// Content Data
 const services = [
     {
         id: "strategy",
+        num: "01",
         title: "Acquisition Strategy",
         icon: Compass,
-        summary: "We develop M&A strategies aligned with growth objectives and establish target criteria.",
+        summary: "We develop a clear acquisition strategy aligned with your corporate vision and growth objectives, defining target criteria across size, geography, capabilities, and financial parameters to guide every subsequent step.",
         fullDescription: `This foundational service develops a clear acquisition strategy that aligns with your corporate vision and growth objectives. We conduct thorough analysis of build-versus-buy alternatives, market expansion opportunities, capability gap assessments, competitive positioning requirements, and return on investment thresholds. This strategic planning encompasses industry landscape mapping, value chain analysis, technology and talent acquisition priorities, geographic expansion opportunities, and portfolio optimization strategies.
 
-Our approach begins with understanding your core strategic drivers – whether seeking market share growth, geographic expansion, technology acquisition, or vertical integration. We analyze your competitive position and identify where acquisitions could create sustainable advantages versus organic development. This includes examining successful acquisition programs in your industry, understanding regulatory and market dynamics that affect consolidation, and identifying windows of opportunity created by industry disruption or generational transitions.
+Our approach begins with understanding your core strategic drivers, whether seeking market share growth, geographic expansion, technology acquisition, or vertical integration. We analyze your competitive position and identify where acquisitions could create sustainable advantages versus organic development. This includes examining successful acquisition programs in your industry, understanding regulatory and market dynamics that affect consolidation, and identifying windows of opportunity created by industry disruption or generational transitions.
 
 We develop detailed acquisition criteria that guide target identification and evaluation. This includes defining optimal target characteristics such as size, geography, capabilities, and culture, establishing financial parameters including valuation ranges and return requirements, identifying synergy potential across revenue, cost, and capability dimensions, and setting integration complexity thresholds. The output is a comprehensive acquisition playbook that guides all subsequent activity.
 
@@ -45,9 +42,10 @@ The strategy also addresses execution capabilities and governance structures nee
     },
     {
         id: "identification",
+        num: "02",
         title: "Target Identification",
         icon: Search,
-        summary: "We identify on and off-market opportunities through proprietary networks and research.",
+        summary: "We go beyond standard databases to uncover on-market and off-market acquisition opportunities through proprietary networks, industry relationships, local contacts, and systematic market mapping tailored to your specific criteria.",
         fullDescription: `This service employs sophisticated research and networking to identify acquisition targets that match your strategic criteria. We go beyond standard databases to uncover off-market opportunities through industry relationships, supply chain analysis, competitive intelligence, technology scouting, and international market scanning. Our identification process typically evaluates 200-500 companies to yield 20-30 qualified targets, ultimately focusing on 3-5 actionable opportunities.
 
 Our multi-channel approach ensures comprehensive market coverage. We leverage proprietary databases and industry intelligence, engage sector advisors and industry insiders, monitor distressed situations and special opportunities, and identify succession-driven sales before they reach market. For international targets, particularly in Asia, we utilize local networks that provide early access to opportunities that might never reach Western buyers.
@@ -58,9 +56,10 @@ We also conduct pre-approach intelligence gathering to understand seller motivat
     },
     {
         id: "valuation",
+        num: "03",
         title: "Valuation Analysis",
         icon: Calculator,
-        summary: "We provide rigorous modeling and synergy quantification for fair pricing and returns.",
+        summary: "We provide rigorous financial modeling and synergy quantification using multiple valuation methodologies, ensuring you pay fair prices that protect downside while enabling attractive risk-adjusted returns on your investment.",
         fullDescription: `This service provides rigorous valuation analysis to ensure you pay fair prices that enable attractive returns. We develop detailed financial models incorporating historical analysis and quality of earnings adjustments, growth projections under various scenarios, synergy quantification and achievement timelines, integration cost estimates, and sensitivity analysis across key value drivers. Our valuation approach combines multiple methodologies to triangulate appropriate pricing ranges.
 
 We begin by reconstructing historical financial performance, making appropriate adjustments for non-recurring items, accounting policies, and hidden assets or liabilities. This quality of earnings analysis reveals true business performance and identifies sustainable EBITDA for valuation purposes. We examine revenue quality, customer concentration, and margin sustainability to understand business resilience. This includes analyzing contract terms, pricing power, and competitive dynamics that affect future performance.
@@ -71,9 +70,10 @@ We benchmark our valuations against comparable transactions and public market mu
     },
     {
         id: "duediligence",
+        num: "04",
         title: "Due Diligence",
         icon: Microscope,
-        summary: "We coordinate evaluations to validate thesis, uncover risks, and find opportunities.",
+        summary: "We coordinate multi-disciplinary due diligence across financial, legal, commercial, operational, and technical workstreams to validate your investment thesis, uncover hidden risks, and identify value creation opportunities.",
         fullDescription: `This critical service manages multi-disciplinary due diligence efforts that validate investment thesis and uncover hidden risks or opportunities. We coordinate specialized workstreams including financial and tax diligence, commercial and market assessment, operational and technology review, legal and regulatory compliance, environmental and social governance, and human capital and culture evaluation. Our orchestration ensures comprehensive coverage while maintaining efficiency and confidentiality.
 
 Our financial due diligence goes beyond validating historical numbers to understand business drivers and sustainability. We examine revenue recognition and quality, cost structure and scalability, working capital requirements and cash generation, capital expenditure needs and asset condition, and off-balance sheet items and contingent liabilities. This analysis identifies both risks that might reduce price and opportunities that could enhance value post-acquisition.
@@ -84,9 +84,10 @@ Operational due diligence identifies both integration challenges and improvement
     },
     {
         id: "dealstructuring",
+        num: "05",
         title: "Deal Structuring",
         icon: Building,
-        summary: "We design optimal structures and negotiate favorable terms across all deal dimensions.",
+        summary: "We design and negotiate optimal deal structures that balance purchase price, risk allocation, and post-close alignment, using creative mechanisms like earnouts, escrows, and contingent payments to bridge valuation gaps.",
         fullDescription: `This service designs and negotiates deal structures that balance purchase price, risk allocation, and post-close alignment to maximize success probability. We structure transactions considering cash versus stock consideration, upfront versus deferred payments, earnouts and performance-based adjustments, escrows and indemnification provisions, working capital and debt-like item adjustments, and representation and warranty insurance. Our creative structuring often bridges valuation gaps while protecting downside.
 
 Our negotiation strategy leverages competitive dynamics and seller motivations to achieve favorable terms. We understand how to create competitive tension even in proprietary deals, when to push hard versus showing flexibility, and how to trade across multiple deal dimensions for optimal outcomes. This includes negotiating purchase price and payment timing, defining working capital targets and adjustment mechanisms, structuring earnouts that motivate without enabling manipulation, limiting survival periods and liability caps, and securing appropriate transition support and non-compete agreements.
@@ -97,9 +98,10 @@ The deal structure must also facilitate successful integration and value capture
     },
     {
         id: "financing",
+        num: "06",
         title: "Acquisition Financing",
         icon: Wallet,
-        summary: "We arrange optimal financing that balances cost, flexibility, and risk requirements.",
+        summary: "We arrange optimal financing packages from diverse capital sources, including senior debt, mezzanine, equity co-investment, and vendor financing, structured to fund the acquisition while maintaining flexibility for integration and growth.",
         fullDescription: `This service arranges optimal financing packages that fund acquisitions while maintaining financial flexibility for integration and growth. We evaluate and arrange various funding sources including senior bank debt and asset-based lending, subordinated debt and mezzanine financing, equity co-investment and partnership structures, vendor financing and deferred consideration, and government grants and incentives. Our capital structuring balances cost, flexibility, and risk to support both acquisition and post-close value creation.
 
 We begin by modeling capital requirements including purchase price and transaction fees, integration and restructuring costs, working capital and growth investments, and contingency buffers for uncertainty. This comprehensive funding need drives capital structure design that maintains appropriate leverage while preserving operational flexibility. We model various structures to optimize weighted average cost of capital while maintaining covenant compliance through various scenarios.
@@ -110,9 +112,10 @@ We also design creative financing solutions that enhance returns or enable other
     },
     {
         id: "integrationplanning",
+        num: "07",
         title: "Integration Planning",
         icon: GitMerge,
-        summary: "We develop integration plans that capture synergies while maintaining continuity.",
+        summary: "We develop and execute comprehensive integration blueprints covering organizational design, systems integration, commercial synergies, operational consolidation, cultural alignment, and stakeholder communication from day one through full integration.",
         fullDescription: `This crucial service develops and executes comprehensive integration plans that capture synergies while maintaining business continuity. We create detailed integration blueprints covering organizational design and talent retention, systems and process integration, commercial integration and revenue synergies, operational consolidation and cost synergies, cultural alignment and change management, and stakeholder communication and engagement. Our structured approach dramatically improves integration success rates.
 
 Integration planning begins during due diligence, not after closing. We develop Day 1 readiness plans ensuring operational continuity, 100-day plans that capture quick wins and build momentum, and longer-term transformation roadmaps that realize full potential. This includes defining integration governance and decision rights, establishing integration management office and workstreams, creating detailed project plans with clear accountabilities, and developing tracking mechanisms for synergy realization.
@@ -123,9 +126,10 @@ Our execution support ensures plans translate into results. We provide hands-on 
     },
     {
         id: "optimization",
+        num: "08",
         title: "Value Creation",
         icon: Rocket,
-        summary: "We drive post-acquisition transformation, generating 25-50% returns above initial cases.",
+        summary: "We drive post-acquisition transformation beyond initial synergy capture, implementing revenue growth initiatives, operational excellence programs, digital transformation, and portfolio optimization that generate returns above the original investment case.",
         fullDescription: `This service focuses on value creation initiatives that transform acquired businesses beyond initial synergy capture. We implement comprehensive improvement programs addressing revenue growth acceleration, operational excellence and efficiency, strategic repositioning and portfolio optimization, digital transformation and technology enablement, and talent development and organizational capability. These initiatives often generate returns exceeding initial acquisition synergies.
 
 Revenue growth initiatives expand beyond cost synergies that dominate early integration. We identify and execute cross-selling and customer expansion opportunities, new product development and innovation, geographic expansion and market penetration, pricing optimization and value capture, and channel development and partnership strategies. These growth programs leverage combined capabilities to accelerate organic expansion beyond what either organization could achieve independently.
@@ -134,6 +138,29 @@ Operational transformation goes beyond initial cost synergies to fundamentally i
 
 We also support portfolio optimization for serial acquirers, identifying follow-on acquisition opportunities that build on the initial platform, divestiture candidates that no longer fit strategic criteria, and internal reorganization that maximizes value across holdings. This dynamic portfolio management ensures capital deploys to highest-return opportunities while maintaining strategic coherence. Our comprehensive value creation approach typically generates 25-50% returns above initial investment cases through systematic post-acquisition improvement.`
     }
+];
+
+const processSteps = [
+    {
+        num: "01",
+        title: "Strategy and Criteria",
+        body: "We begin by understanding your growth objectives, investment thesis, and operational capabilities. Together we define acquisition criteria across industry, geography, size, and financial parameters, creating a focused playbook that guides every subsequent step and ensures we pursue the right opportunities.",
+    },
+    {
+        num: "02",
+        title: "Sourcing and Screening",
+        body: "We activate our network across Asia and globally to identify on-market and off-market targets that match your criteria. Through systematic market mapping, proprietary deal flow, and industry relationships, we build a qualified pipeline and develop detailed dossiers on the most promising opportunities.",
+    },
+    {
+        num: "03",
+        title: "Evaluation and Structuring",
+        body: "We conduct rigorous valuation analysis and coordinate multi-workstream due diligence to validate the investment thesis and uncover risks. We then design deal structures that balance price, risk allocation, and post-close alignment, negotiating terms that protect your downside while enabling value creation.",
+    },
+    {
+        num: "04",
+        title: "Execution and Integration",
+        body: "We manage the transaction through closing, arrange optimal financing, and execute comprehensive integration plans that capture synergies from day one. Our support continues post-close with value creation programs that drive performance beyond the original investment case.",
+    },
 ];
 
 const whyUs = [
@@ -147,11 +174,11 @@ const whyUs = [
     },
     {
         title: "Risk Mitigation",
-        description: "We understand the unique risks in Asian acquisitions – from informal business practices to regulatory complexities. Our due diligence approach uncovers issues that standard Western playbooks miss, while our local presence enables ongoing verification and relationship management."
+        description: "We understand the unique risks in Asian acquisitions, from informal business practices to regulatory complexities. Our due diligence approach uncovers issues that standard Western playbooks miss, while our local presence enables ongoing verification and relationship management."
     },
     {
         title: "Integration Success",
-        description: "Our support doesn't end at closing. We provide structured integration planning that respects local practices while achieving your strategic objectives. This balanced approach dramatically improves success rates for international acquisitions in Asian markets."
+        description: "Our support does not end at closing. We provide structured integration planning that respects local practices while achieving your strategic objectives. This balanced approach dramatically improves success rates for international acquisitions in Asian markets."
     }
 ];
 
@@ -167,8 +194,8 @@ const testimonials = [
         role: "Director of Wu Holdings"
     },
     {
-        quote: "We've worked with many advisory firms, but Nobridge's ability to bridge the cultural gap in cross-border deals is unmatched. They facilitated a smooth acquisition of a Japanese manufacturing firm that transformed our supply chain.",
-        author: "Robert Müller",
+        quote: "We have worked with many advisory firms, but Nobridge's ability to bridge the cultural gap in cross-border deals is unmatched. They facilitated a smooth acquisition of a Japanese manufacturing firm that transformed our supply chain.",
+        author: "Robert Muller",
         role: "COO of AutoParts Global"
     },
     {
@@ -180,43 +207,36 @@ const testimonials = [
 
 function TestimonialCarousel() {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    const next = () => {
-        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    };
-
-    const prev = () => {
-        setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-    };
+    const next = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+    const prev = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <div className="max-w-4xl">
-            <div className="min-h-[200px] md:min-h-[180px] flex items-center">
-                <p className="text-3xl md:text-4xl font-medium leading-tight text-brand-dark-blue mb-12 transition-all duration-500 ease-in-out">
-                    "{testimonials[currentIndex].quote}"
+        <div className="w-full">
+            <div className="border border-brand-dark-blue/10 p-8 md:p-10 min-h-[280px] flex flex-col justify-between transition-all duration-500 ease-in-out">
+                <p className="text-xl md:text-2xl font-normal leading-relaxed text-brand-dark-blue text-justify">
+                    &ldquo;{testimonials[currentIndex].quote}&rdquo;
                 </p>
-            </div>
-
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mt-8">
-                <div>
-                    <h4 className="text-lg font-medium text-brand-dark-blue transition-all duration-300">{testimonials[currentIndex].author}</h4>
-                    <p className="text-brand-dark-blue/60 transition-all duration-300">{testimonials[currentIndex].role}</p>
-                </div>
-                <div className="flex gap-3">
-                    <button
-                        onClick={prev}
-                        className="w-12 h-12 rounded border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 hover:bg-brand-dark-blue/10 hover:text-brand-dark-blue transition-colors"
-                        aria-label="Previous testimonial"
-                    >
-                        <ChevronRight className="w-5 h-5 rotate-180" />
-                    </button>
-                    <button
-                        onClick={next}
-                        className="w-12 h-12 rounded border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 hover:bg-brand-dark-blue/10 hover:text-brand-dark-blue transition-colors"
-                        aria-label="Next testimonial"
-                    >
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mt-8 pt-6 border-t border-brand-dark-blue/10">
+                    <div>
+                        <h4 className="text-base font-medium text-brand-dark-blue">{testimonials[currentIndex].author}</h4>
+                        <p className="text-sm text-muted-foreground">{testimonials[currentIndex].role}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={prev}
+                            className="w-10 h-10 border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 hover:bg-brand-dark-blue/10 hover:text-brand-dark-blue transition-colors"
+                            aria-label="Previous testimonial"
+                        >
+                            <ChevronRight className="w-4 h-4 rotate-180" />
+                        </button>
+                        <button
+                            onClick={next}
+                            className="w-10 h-10 border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 hover:bg-brand-dark-blue/10 hover:text-brand-dark-blue transition-colors"
+                            aria-label="Next testimonial"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,178 +245,296 @@ function TestimonialCarousel() {
 
 export default function BuyerServicesPage() {
     return (
-        <div className="relative min-h-screen w-full overflow-hidden bg-white text-white font-sans">
-            {/* Main Content Wrapper */}
-            <div className="relative z-10">
-
-                {/* --- HEADER SECTION --- */}
-                <section className="py-24 md:py-32 px-6 text-center border-b border-gray-200 bg-white">
-                    <div className="container mx-auto max-w-5xl">
-                        <FadeIn direction="up">
-                            <span className="inline-flex items-center text-brand-dark-blue mb-6 tracking-wide font-medium">
-                                <Plus className="w-4 h-4 mr-2" /> Strategic Acquisition Advisory
-                            </span>
-                            <h1 className="text-5xl md:text-7xl font-medium tracking-tight mb-8 text-brand-dark-blue">
-                                Buy Right. Integrate Smart. Grow Fast.
-                            </h1>
-                            <p className="text-lg md:text-xl text-brand-dark-blue/80 max-w-2xl mx-auto leading-relaxed">
-                                We find hidden acquisition gems before they hit the market, negotiate deals that protect your downside, and transform acquisitions into growth engines. Our clients achieve 25-50% returns above their initial investment cases through systematic value creation.
+        <div className="bg-white">
+            {/* Hero */}
+            <section className="w-full min-h-[60vh] bg-brand-dark-blue flex items-center text-white section-lines-light">
+                <div className="container mx-auto">
+                    <FadeIn direction="up" delay={200}>
+                        <div className="text-center px-4 space-y-6">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider font-heading">
+                                Buy-Side Advisory
                             </p>
-                        </FadeIn>
-                    </div>
-                </section>
+                            <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
+                                Find the right business. Acquire it on the right terms.
+                            </h1>
+                            <p className="text-lg md:text-xl text-blue-100 font-light max-w-2xl mx-auto leading-relaxed">
+                                We source proprietary deal flow, run rigorous target screening, coordinate due diligence, structure creative deals, and sit across the table with you through close and beyond.
+                            </p>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
 
-                {/* --- INTRO SECTION --- */}
-                <section className="py-20 px-6 border-b border-white/10 bg-brand-dark-blue">
-                    <div className="container mx-auto max-w-6xl">
-                        <FadeIn direction="up" delay={100}>
-                            <span className="inline-flex items-center text-brand-sky-blue mb-4 tracking-wide font-medium">
-                                <Plus className="w-4 h-4 mr-2" /> The Complete Acquisition System
-                            </span>
-                            <div className="max-w-2xl mt-4">
-                                <h2 className="text-4xl md:text-5xl font-medium mb-6 text-white">
-                                    Accelerate Growth Through Strategic M&A
-                                </h2>
-                                <p className="text-xl text-blue-100/70 leading-relaxed text-justify">
-                                    Why build when you can buy better? We identify off-market targets, structure creative deals that minimize risk, execute flawless integrations, and unlock synergies competitors miss. From your first acquisition to building a portfolio, we turn M&A into your competitive weapon.
+            {/* Overview */}
+            <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="px-4 mb-16">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-3 font-heading">
+                                What We Do
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading mb-6">
+                                End-to-end acquisition advisory for buyers targeting Asia
+                            </h2>
+                            <div className="max-w-3xl">
+                                <p className="text-muted-foreground text-lg leading-relaxed">
+                                    Whether you are making your first acquisition or building a portfolio through serial M&A, we provide the local intelligence, cross-border expertise, and deal execution capability that international buyers need to succeed in Asian markets. Our eight-step process covers everything from strategy definition through post-close value creation, so nothing falls through the cracks.
                                 </p>
                             </div>
-                        </FadeIn>
-                    </div>
-                </section>
+                        </div>
+                    </FadeIn>
 
-                {/* --- SERVICES GRID --- */}
-                <section className="border-b border-gray-200 bg-white">
-                    <div className="container mx-auto max-w-7xl">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                            {services.map((service, index) => (
+                    <FadeIn>
+                        <div className="flex flex-col md:flex-row">
+                            <div className="flex-1 border border-brand-dark-blue/10 p-8 md:p-10">
+                                <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-2 font-heading">Target Range</p>
+                                <p className="text-3xl md:text-4xl font-heading text-brand-dark-blue">$2M - $50M</p>
+                                <p className="text-muted-foreground mt-2">Enterprise value for acquisition targets</p>
+                            </div>
+                            <div className="flex-1 border border-brand-dark-blue/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10">
+                                <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-2 font-heading">Market Coverage</p>
+                                <p className="text-3xl md:text-4xl font-heading text-brand-dark-blue">Asia-Wide</p>
+                                <p className="text-muted-foreground mt-2">On-the-ground presence and local networks</p>
+                            </div>
+                            <div className="flex-1 border border-brand-dark-blue/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10">
+                                <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-2 font-heading">Deal Flow</p>
+                                <p className="text-3xl md:text-4xl font-heading text-brand-dark-blue">On + Off Market</p>
+                                <p className="text-muted-foreground mt-2">Proprietary sourcing and marketplace access</p>
+                            </div>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
+
+            {/* Process */}
+            <div className="border-t border-brand-dark-blue/10" />
+            <section className="w-full py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="px-4 mb-16">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-3 font-heading">
+                                How It Works
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-normal tracking-tight font-heading mb-6">
+                                From strategy to value creation, in four phases
+                            </h2>
+                            <p className="text-blue-100 text-lg max-w-3xl leading-relaxed">
+                                Our acquisition process is structured into four clear phases, each supported by specialized service areas. This gives you visibility into where you are, what comes next, and exactly what our team is delivering at every stage.
+                            </p>
+                        </div>
+                    </FadeIn>
+
+                    <div className="flex flex-col">
+                        {processSteps.map((step, index) => (
+                            <FadeIn key={step.num} delay={index * 80}>
+                                <div className={cn(
+                                    "border border-white/15 p-8 md:p-10 flex flex-col md:flex-row gap-6 md:gap-12",
+                                    index > 0 && "border-t-0"
+                                )}>
+                                    <div className="shrink-0">
+                                        <span className="text-5xl md:text-6xl font-heading text-white/10">{step.num}</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-medium text-white mb-3">{step.title}</h3>
+                                        <p className="text-blue-100/70 leading-relaxed">{step.body}</p>
+                                    </div>
+                                </div>
+                            </FadeIn>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Services Grid */}
+            <div className="border-t border-brand-dark-blue/10" />
+            <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="px-4 mb-16">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-3 font-heading">
+                                Our Services
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading mb-6">
+                                Eight specialized service areas, one seamless process
+                            </h2>
+                            <p className="text-muted-foreground text-lg max-w-3xl leading-relaxed">
+                                Each service area is designed to address a specific phase of the acquisition journey. Click any card to explore the full scope of what we deliver.
+                            </p>
+                        </div>
+                    </FadeIn>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                        {services.map((service, index) => {
+                            const Icon = service.icon;
+                            return (
                                 <Dialog key={service.id}>
                                     <DialogTrigger asChild>
-                                        <div className={`
-                                            group relative p-10 min-h-[400px] flex flex-col justify-between cursor-pointer transition-all duration-300
-                                            border-b border-gray-200
-                                            ${index < 4 ? 'lg:border-b' : 'lg:border-b-0'}
-                                            ${(index % 4) < 3 ? 'lg:border-r' : ''}
-                                            ${index % 2 === 0 ? 'md:border-r' : 'md:border-r-0'}
-                                            hover:bg-brand-light-gray/50
-                                        `}>
-                                            <div>
-                                                <div className="mb-6">
-                                                    <service.icon className="w-10 h-10 text-brand-dark-blue/40 group-hover:text-brand-sky-blue transition-colors" />
+                                        <FadeIn delay={index * 60}>
+                                            <div className={cn(
+                                                "group relative p-8 md:p-10 min-h-[340px] flex flex-col justify-between cursor-pointer transition-all duration-300 hover:bg-brand-light-gray/50",
+                                                "border border-brand-dark-blue/10",
+                                                index >= 4 && "border-t-0",
+                                                index % 4 !== 0 && "lg:border-l-0",
+                                                index % 2 !== 0 && "md:border-l-0 lg:border-l-0",
+                                                index >= 1 && index < 4 && "border-t-0 md:border-t lg:border-t",
+                                                index >= 4 && "md:border-t-0",
+                                            )}>
+                                                <div>
+                                                    <span className="text-sm font-heading text-brand-sky-blue mb-4 block">{service.num}</span>
+                                                    <div className="mb-4">
+                                                        <Icon className="w-8 h-8 text-brand-dark-blue/30 group-hover:text-brand-sky-blue transition-colors" />
+                                                    </div>
+                                                    <h3 className="text-lg font-medium mb-3 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors leading-tight">
+                                                        {service.title}
+                                                    </h3>
+                                                    <p className="text-muted-foreground leading-relaxed text-sm line-clamp-3">
+                                                        {service.summary}
+                                                    </p>
                                                 </div>
-                                                <h3 className="text-xl font-medium mb-4 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors leading-tight min-h-[3rem]">
-                                                    {service.title}
-                                                </h3>
-                                                <p className="text-brand-dark-blue/60 leading-relaxed text-sm text-justify line-clamp-4">
-                                                    {service.summary}
-                                                </p>
-                                            </div>
-                                            <div className="mt-8">
-                                                <div className="w-10 h-10 rounded border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 group-hover:bg-brand-dark-blue group-hover:text-white group-hover:border-brand-dark-blue transition-all">
-                                                    <ChevronRight className="w-5 h-5" />
+                                                <div className="mt-6">
+                                                    <div className="w-9 h-9 border border-brand-dark-blue/20 flex items-center justify-center text-brand-dark-blue/50 group-hover:bg-brand-dark-blue group-hover:text-white group-hover:border-brand-dark-blue transition-all">
+                                                        <ChevronRight className="w-4 h-4" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </FadeIn>
                                     </DialogTrigger>
-                                    <DialogContent className="bg-brand-dark-blue/95 backdrop-blur-2xl border-white/20 text-white max-w-2xl p-0 overflow-hidden">
-                                        <div className="p-8 md:p-10 max-h-[80vh] overflow-y-auto">
-                                            <DialogHeader className="mb-6">
-                                                <DialogTitle className="text-3xl font-normal font-heading text-white mb-2">
-                                                    {service.title}
-                                                </DialogTitle>
-                                                <DialogDescription className="text-brand-sky-blue text-lg font-normal">
-                                                    Service Details
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <div className="space-y-4 text-blue-100 leading-relaxed text-lg whitespace-pre-wrap text-justify">
-                                                {service.fullDescription}
+                                    <DialogContent className="bg-brand-dark-blue border-white/10 text-white max-w-4xl p-0 overflow-hidden rounded-none">
+                                        <div className="flex flex-col max-h-[85vh]">
+                                            <div className="px-8 md:px-10 pt-8 md:pt-10 pb-6">
+                                                <DialogHeader>
+                                                    <DialogDescription className="text-brand-sky-blue text-sm font-normal uppercase tracking-wider mb-2">
+                                                        {service.num} / Service Details
+                                                    </DialogDescription>
+                                                    <DialogTitle className="text-2xl md:text-3xl font-normal font-heading text-white">
+                                                        {service.title}
+                                                    </DialogTitle>
+                                                </DialogHeader>
                                             </div>
-                                            <div className="mt-8 pt-6 border-t border-white/10 flex justify-end">
-                                                <Button asChild className="bg-brand-sky-blue text-brand-dark-blue hover:bg-white">
-                                                    <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
-                                                        Schedule Consultation
-                                                    </a>
-                                                </Button>
+                                            <div className="mx-8 md:mx-10 border-t border-white/10" />
+                                            <div className="px-8 md:px-10 py-6 overflow-y-auto flex-1">
+                                                <div className="space-y-4 text-blue-100/80 leading-relaxed text-base whitespace-pre-wrap text-justify">
+                                                    {service.fullDescription}
+                                                </div>
+                                            </div>
+                                            <div className="mx-8 md:mx-10 border-t border-white/10" />
+                                            <div className="px-8 md:px-10 py-6 flex justify-end">
+                                                <a
+                                                    href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-brand-dark-blue bg-white hover:bg-white/90 rounded-none transition-colors"
+                                                >
+                                                    Schedule Consultation
+                                                </a>
                                             </div>
                                         </div>
                                     </DialogContent>
                                 </Dialog>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Why Choose */}
+            <div className="border-t border-brand-dark-blue/10" />
+            <section className="w-full py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="px-4 mb-16">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-3 font-heading">
+                                Why Nobridge
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-normal tracking-tight font-heading">
+                                Your boots on the ground in Asia
+                            </h2>
+                        </div>
+                    </FadeIn>
+
+                    <FadeIn>
+                        <div className="flex flex-col md:flex-row">
+                            {whyUs.slice(0, 2).map((item, index) => (
+                                <div key={index} className={cn(
+                                    "flex-1 border border-white/15 p-8 md:p-10",
+                                    index > 0 && "border-t-0 md:border-t md:border-l-0"
+                                )}>
+                                    <h3 className="text-xl font-medium text-white mb-4">{item.title}</h3>
+                                    <p className="text-blue-100/70 leading-relaxed">{item.description}</p>
+                                </div>
                             ))}
                         </div>
-                    </div>
-                </section>
+                        <div className="flex flex-col md:flex-row">
+                            {whyUs.slice(2, 4).map((item, index) => (
+                                <div key={index} className={cn(
+                                    "flex-1 border border-white/15 border-t-0 p-8 md:p-10",
+                                    index > 0 && "md:border-l-0"
+                                )}>
+                                    <h3 className="text-xl font-medium text-white mb-4">{item.title}</h3>
+                                    <p className="text-blue-100/70 leading-relaxed">{item.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
 
-                {/* --- TESTIMONIAL / WHY US SECTION --- */}
-                {/* Replaced Testimonial with Why Us grid to fit content better, or keep testimonial style but use Why Us content?
-                    The user said "copy of seller-services page... only text will change".
-                    Seller page had a testimonial. Buyer content has "Why Us".
-                    I will adapt the "Why Us" content into a section that fits the design.
-                    Actually, let's keep the testimonial section structure but maybe use one of the "Why Us" points as a featured quote or just replace the section with a grid if that makes more sense.
-                    However, strictly following "layout is gonna be the same", I should probably keep the testimonial section structure.
-                    But "Why Us" has 4 points. The seller page had a "Why Choose Nobridge" section BEFORE the new design.
-                    The NEW design (from reference) has a Testimonial section.
-                    The user provided "Why Us" content for the buyer page.
-                    I will replace the Testimonial section with a "Why Choose Us" section that matches the visual weight of the testimonial section, or perhaps a grid.
-                    Let's try to fit the "Why Us" into a grid layout similar to the services but maybe 2x2, or just a list.
-                    Actually, the reference design had a testimonial. If I strictly follow the layout, I should put a testimonial.
-                    But I don't have a buyer testimonial.
-                    I will use the "Why Us" content in a new section that replaces the testimonial section, keeping the same background and padding.
-                */}
-                <section className="py-24 px-6 border-b border-white/10 bg-brand-dark-blue">
-                    <div className="container mx-auto max-w-6xl">
-                        <FadeIn direction="up">
-                            <span className="inline-flex items-center text-brand-sky-blue mb-12 tracking-wide font-medium">
-                                <Plus className="w-4 h-4 mr-2" /> Why Choose Nobridge
-                            </span>
-
-                            <div className="grid md:grid-cols-2 gap-12">
-                                {whyUs.map((item, index) => (
-                                    <div key={index} className="flex flex-col">
-                                        <h3 className="text-xl font-medium text-white mb-4">{item.title}</h3>
-                                        <p className="text-blue-100/70 leading-relaxed text-justify">{item.description}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </FadeIn>
-                    </div>
-                </section>
-
-                {/* --- TESTIMONIAL SECTION --- */}
-                <section className="py-24 px-6 border-b border-gray-200 bg-white">
-                    <div className="container mx-auto max-w-5xl">
-                        <FadeIn direction="up">
-                            <span className="inline-flex items-center text-brand-dark-blue mb-8 tracking-wide font-medium">
-                                <Plus className="w-4 h-4 mr-2" /> What our clients say
-                            </span>
+            {/* Testimonials */}
+            <div className="border-t border-brand-dark-blue/10" />
+            <section className="w-full py-20 md:py-24 bg-brand-light-gray/30 section-lines-dark">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="px-4">
+                            <p className="text-sm font-normal uppercase text-brand-sky-blue tracking-wider mb-3 font-heading">
+                                Client Feedback
+                            </p>
+                            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading mb-12">
+                                What our clients say
+                            </h2>
                             <TestimonialCarousel />
-                        </FadeIn>
-                    </div>
-                </section>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
 
-                {/* --- CTA SECTION --- */}
-                <section className="relative h-[600px] flex items-center px-6 overflow-hidden">
-                    <AnimatedBackground position="absolute" className="z-0" />
-                    <div className="container mx-auto max-w-6xl relative z-10">
-                        <FadeIn direction="up">
-                            <div className="max-w-2xl">
-                                <h2 className="text-5xl md:text-6xl font-normal leading-tight text-white mb-6">
-                                    Ready to accelerate <br />
-                                    your growth?
-                                </h2>
-                                <p className="text-xl text-white/90 mb-10 leading-relaxed font-normal text-justify">
-                                    Whether you're making your first acquisition or building through serial M&A, we provide the insights and execution support needed to achieve your objectives.
-                                </p>
-                                <Button asChild size="lg" className="bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-brand-dark-blue font-normal text-lg h-14 px-8 rounded transition-all duration-300 shadow-lg">
-                                    <a href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer" target="_blank" rel="noopener noreferrer">
-                                        Start Your Acquisition Journey <ChevronRight className="ml-2 h-5 w-5" />
-                                    </a>
-                                </Button>
+            {/* CTA */}
+            <div className="border-t border-brand-dark-blue/10" />
+            <section className="w-full py-12 md:py-12 bg-brand-white section-lines-dark">
+                <div className="container mx-auto">
+                    <FadeIn direction="up">
+                        <div className="border border-brand-dark-blue/10">
+                            <div className="relative px-8 md:px-16 text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: '100% 100%', backgroundPosition: 'center', aspectRatio: '21/9' }}>
+                                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                                    <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-10 md:px-16 py-10 md:py-14">
+                                        <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">
+                                            Ready to accelerate your growth?
+                                        </h2>
+                                        <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-10 text-center">
+                                            Whether you are making your first acquisition or building through serial M&A, we provide the insights and execution support needed to achieve your objectives.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                                            <a
+                                                href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base transition-colors"
+                                            >
+                                                Start Your Acquisition Journey
+                                            </a>
+                                            <Link
+                                                href="/contact"
+                                                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base transition-colors"
+                                            >
+                                                Contact Our Team
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </FadeIn>
-                    </div>
-                </section>
-
-            </div>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
         </div>
     );
 }

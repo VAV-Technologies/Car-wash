@@ -204,7 +204,7 @@ export default function AdminAppealsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-heading">Appeal Management</h1>
+          <h1 className="text-3xl font-semibold tracking-tight font-heading">Appeal Management</h1>
           <p className="text-muted-foreground">Review and manage listing rejection appeals.</p>
         </div>
         <Button onClick={fetchAppeals} variant="outline" size="sm"> <RefreshCw className="h-4 w-4 mr-2" /> Refresh Appeals </Button>

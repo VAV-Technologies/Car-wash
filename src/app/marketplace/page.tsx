@@ -12,8 +12,10 @@ import { SortDropdown } from '@/components/marketplace/sort-dropdown';
 import { PaginationControls } from '@/components/shared/pagination-controls';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { SlidersHorizontal, Briefcase, AlertCircle, Filter } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { SlidersHorizontal, Briefcase, AlertCircle, Filter, Globe, ShieldCheck, Handshake, Building2, Users2, Lock, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useMarketplaceFilters } from '@/hooks/use-marketplace-filters';
 import { AnimatedBackground } from '@/components/ui/animated-background';
@@ -55,6 +57,7 @@ function MarketplaceContent() {
   const [totalListings, setTotalListings] = useState(0);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   // Fetch listings whenever appliedFilters change (these are the filters after "Apply" is clicked)
   useEffect(() => {
@@ -93,17 +96,28 @@ function MarketplaceContent() {
   return (
     <>
       <AnimatedBackground />
-      <div className="container py-8 md:py-12 relative z-10">
-        <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-lg border border-white/20 shadow-xl">
-          <h1 className="text-3xl font-normal tracking-tight text-white font-heading">Business Marke<span style={{ fontSize: '1.06em' }}>t</span>place</h1>
-          <p className="text-gray-200 mt-2 text-lg">
-            {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
-            {hasActiveFilters && !isLoading && (
-              <span className="ml-2 text-brand-sky-blue font-medium">
-                (Filtered results)
-              </span>
-            )}
-          </p>
+      <div className="container pt-32 md:pt-36 pb-16 md:pb-24 relative z-10">
+        <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-none border border-white/20 shadow-xl">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-normal tracking-tight text-white font-heading">Business Marke<span style={{ fontSize: '1.06em' }}>t</span>place</h1>
+            <Globe className="h-8 w-8 text-white shrink-0" />
+          </div>
+          <Separator className="bg-white/10 my-4" />
+          <div className="flex items-center justify-between">
+            <p className="text-gray-200 text-lg">
+              {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
+              {hasActiveFilters && !isLoading && (
+                <span className="ml-2 text-brand-sky-blue font-medium">
+                  (Filtered results)
+                </span>
+              )}
+            </p>
+            <div className="border border-white/20 shrink-0 ml-4">
+              <Button onClick={() => setShowHowItWorks(true)} className="rounded-none bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 h-9 text-sm px-4 border-0">
+                How Does It Work?
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Mobile filter button and sort */}
@@ -111,11 +125,11 @@ function MarketplaceContent() {
           <div className="flex-grow">
             <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 h-11">
+                <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 h-11 rounded-none">
                   <Filter className="mr-2 h-4 w-4" />
                   Filters
                   {hasActiveFilters && (
-                    <span className="ml-2 bg-brand-sky-blue text-white text-xs rounded-full px-2 py-1">
+                    <span className="ml-2 bg-brand-sky-blue text-white text-xs rounded-none px-2 py-1">
                       Active
                     </span>
                   )}
@@ -127,7 +141,7 @@ function MarketplaceContent() {
                     <Filters />
                   </div>
                   <SheetClose asChild>
-                    <Button variant="outline" className="m-4 border-white/20 text-white hover:bg-white/10 hover:text-white">Close Filters</Button>
+                    <Button variant="outline" className="m-4 border-white/20 text-white hover:bg-white/10 hover:text-white rounded-none">Close Filters</Button>
                   </SheetClose>
                 </div>
               </SheetContent>
@@ -150,37 +164,37 @@ function MarketplaceContent() {
               <SortDropdown />
             </div>
             {error ? (
-              <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-red-900/20 backdrop-blur-md rounded-md border border-red-500/30">
+              <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-red-900/20 backdrop-blur-md rounded-none border border-red-500/30">
                 <AlertCircle className="h-16 w-16 text-red-400 mb-4" />
                 <p className="text-xl text-red-300 font-normal mb-2">Failed to Load Listings</p>
                 <p className="text-sm text-red-200 mb-4">{error}</p>
                 <Button
                   onClick={() => window.location.reload()}
                   variant="outline"
-                  className="border-red-500/50 text-red-300 hover:bg-red-500/20"
+                  className="border-red-500/50 text-red-300 hover:bg-red-500/20 rounded-none"
                 >
                   Try Again
                 </Button>
               </div>
             ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-96 w-full rounded-lg bg-white/5" />)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-96 w-full rounded-none bg-white/5" />)}
               </div>
             ) : listings.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {listings.map((listing) => (
                   <ListingCard key={listing.id} listing={listing} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-white/5 backdrop-blur-md rounded-md border border-white/10 border-dashed">
+              <div className="text-center py-12 col-span-full flex flex-col items-center justify-center h-[400px] bg-white/5 backdrop-blur-md rounded-none border border-white/10 border-dashed">
                 <Briefcase className="h-16 w-16 text-gray-400 mb-4" />
                 <p className="text-xl text-gray-200 font-normal">No listings available, but we can help.</p>
                 <div className="text-sm text-gray-300 mt-2 max-w-md leading-relaxed">
                   <p>If you have a buyer mandate, please reach out to <a href="mailto:business@nobridge.co" className="text-brand-sky-blue hover:underline">business@nobridge.co</a>.</p>
                   <p className="mt-1">We have the most advanced systems to find and reach out to any company that meet your criteria.</p>
                 </div>
-                <Button variant="link" asChild className="mt-4 text-brand-sky-blue hover:text-white">
+                <Button variant="link" asChild className="mt-4 text-brand-sky-blue hover:text-white rounded-none">
                   <Link href="/marketplace">Clear all filters</Link>
                 </Button>
               </div>
@@ -195,6 +209,124 @@ function MarketplaceContent() {
           </main>
         </div>
       </div>
+
+      {/* How Does It Work Dialog */}
+      <Dialog open={showHowItWorks} onOpenChange={setShowHowItWorks}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-brand-dark-blue/95 backdrop-blur-xl border border-white/20 rounded-none text-white p-0 [&>button:last-child]:hidden">
+          <DialogHeader className="px-8 pt-8 pb-0">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-2xl font-normal text-white font-heading flex items-center gap-3">
+                <Globe className="h-6 w-6 text-brand-sky-blue" />
+                How Does It Work?
+              </DialogTitle>
+              <DialogClose className="text-white hover:text-gray-300">
+                <X className="h-5 w-5" />
+              </DialogClose>
+            </div>
+          </DialogHeader>
+
+          <div className="px-8 pb-8 pt-4 space-y-8">
+            {/* What Is This Section */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-brand-sky-blue uppercase tracking-wider">What Is This Business Marketplace?</h3>
+              <Separator className="bg-white/10" />
+              <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-2">
+                <p className="text-sm text-gray-300 text-justify">The Nobridge Business Marketplace is where prospective buyers can browse acquisition opportunities listed directly by Nobridge as well as through our trusted external partners. Each listing provides key business details, financials, and deal structure information to help you evaluate opportunities before making an inquiry.</p>
+                <p className="text-sm text-gray-300 text-justify">Whether you are looking for a full acquisition, a partial stake, or a fundraising opportunity, this marketplace is designed to connect you with the right businesses across Asia.</p>
+              </div>
+            </div>
+
+            {/* Badge Types Section */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-brand-sky-blue uppercase tracking-wider">Listing Badge Types</h3>
+              <Separator className="bg-white/10" />
+              <div className="space-y-3">
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4 text-green-400" />
+                    <span className="font-medium text-white">Nobridge / Full Acquisition</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">100% acquisition opportunity. The business is listed directly by Nobridge and is available for a complete buyout.</p>
+                </div>
+
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Users2 className="h-4 w-4 text-green-400" />
+                    <span className="font-medium text-white">Nobridge / Partial Acquisition / Fundraising</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">The business is seeking a partial stake sale or fundraising round. You can acquire a percentage of the company or invest as part of a capital raise.</p>
+                </div>
+
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Handshake className="h-4 w-4 text-green-400" />
+                    <span className="font-medium text-white">Nobridge / Open to Talks</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">The seller is open to both full and partial acquisition discussions. Deal structure is flexible and can be negotiated.</p>
+                </div>
+
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Handshake className="h-4 w-4 text-amber-400" />
+                    <span className="font-medium text-white">External Party / Full Acquisition</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">This listing was provided by an external partner. Nobridge can represent you as a buyer and conduct due diligence on your behalf.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Nobridge vs External Party */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-brand-sky-blue uppercase tracking-wider">Nobridge vs External Party Listings</h3>
+              <Separator className="bg-white/10" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-green-400" />
+                    <span className="font-medium text-white">Nobridge Listings</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">Listed directly by Nobridge. You can communicate with us directly, submit inquiries through the platform, and access verified information after completing buyer verification.</p>
+                </div>
+                <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Handshake className="h-5 w-5 text-amber-400" />
+                    <span className="font-medium text-white">External Party Listings</span>
+                  </div>
+                  <Separator className="bg-white/10" />
+                  <p className="text-sm text-gray-300 text-justify">Listed by a trusted partner. Nobridge can act as your representative buyer to conduct due diligence and negotiations on your behalf.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Why Verification & NDA */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-brand-sky-blue uppercase tracking-wider">Why Verification & NDA?</h3>
+                <Lock className="h-5 w-5 text-brand-sky-blue shrink-0" />
+              </div>
+              <Separator className="bg-white/10" />
+              <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 space-y-2">
+                <p className="text-sm text-gray-300 text-justify">Certain listing details, such as the CIM, specific financials, seller information, and the Virtual Data Room, are restricted access.</p>
+                <p className="text-sm text-gray-300 text-justify">This is because the information is confidential and requires a Non-Disclosure Agreement (NDA) to be executed within the correct legal framework, protecting both the seller and the buyer.</p>
+                <p className="text-sm text-gray-300 text-justify">To access restricted content, create an account and complete the buyer verification process. Once verified, you will be able to view all confidential materials and submit inquiries.</p>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="border border-white/15 bg-white/5 backdrop-blur-sm p-4 flex items-center justify-between">
+              <p className="text-sm text-gray-300 text-justify">Ready to explore opportunities?</p>
+              <Button asChild className="rounded-none bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 h-9 text-sm px-4 border-0">
+                <Link href="/auth/register">Create an Account</Link>
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

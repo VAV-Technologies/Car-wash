@@ -117,7 +117,7 @@ function BuyerVerificationContent() {
       <div className="space-y-8 text-center max-w-md mx-auto">
         <AlertCircle className="h-16 w-16 text-amber-500 mx-auto" />
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Profile Loading Issue</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Profile Loading Issue</h1>
           <p className="text-muted-foreground mt-2">
             We're having trouble loading your profile data. This is usually temporary.
           </p>
@@ -140,7 +140,7 @@ function BuyerVerificationContent() {
       <div className="space-y-8 text-center max-w-md mx-auto">
         <AlertCircle className="h-16 w-16 text-amber-500 mx-auto" />
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Incorrect Role</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Incorrect Role</h1>
           <p className="text-muted-foreground mt-2">
             This is the buyer verification page. Your current role: {profile.role}
           </p>
@@ -288,7 +288,7 @@ function BuyerVerificationContent() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight">Buyer Verification</h1>
+          <h1 className="text-4xl font-semibold tracking-tight">Buyer Verification</h1>
           <p className="text-xl text-muted-foreground">
             Get verified to unlock full marketplace access and build trust with sellers.
           </p>

@@ -15,7 +15,7 @@
 
 @layer base {
   :root {
-    --brand-dark-blue-hsl: 225 66% 13%;    /* #0D0D39 */
+    --brand-dark-blue-hsl: 240 63% 14%;    /* #0D0D39 */
     --brand-light-gray-hsl: 220 33% 95%;   /* #F4F6FC */
     --brand-white-hsl: 0 0% 100%;          /* #FFFFFF */
     --brand-sky-blue-hsl: 220 80% 65%;     /* Adjusted for a bit more pop: Was 220 50% 55% */
@@ -51,7 +51,7 @@
     --input: var(--brand-light-gray-hsl); /* Input background: Light Gray */
     --ring: var(--brand-sky-blue-hsl);   /* Focus ring: Sky Blue (Nobridge Accent) */
 
-    --radius: 0.5rem;
+    --radius: 0rem;
 
     /* Sidebar specific colors - Light Mode */
     --sidebar-background: var(--brand-white-hsl);
@@ -157,4 +157,52 @@
 /* Utility class to explicitly use Montserrat Arabic font for headings */
 .font-heading {
   font-family: 'Montserrat Arabic', 'Satoshi', sans-serif;
+}
+
+/* Page section vertical guide lines */
+:root {
+  --guide-container-max: 100%;
+}
+@media (min-width: 640px)  { :root { --guide-container-max: 640px; } }
+@media (min-width: 768px)  { :root { --guide-container-max: 768px; } }
+@media (min-width: 1024px) { :root { --guide-container-max: 1024px; } }
+@media (min-width: 1280px) { :root { --guide-container-max: 1280px; } }
+@media (min-width: 1536px) { :root { --guide-container-max: 1536px; } }
+
+.section-lines-dark,
+.section-lines-light {
+  position: relative;
+}
+
+.section-lines-dark::before,
+.section-lines-dark::after,
+.section-lines-light::before,
+.section-lines-light::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.section-lines-dark::before,
+.section-lines-light::before {
+  left: calc((100% - var(--guide-container-max)) / 2);
+}
+
+.section-lines-dark::after,
+.section-lines-light::after {
+  right: calc((100% - var(--guide-container-max)) / 2);
+}
+
+.section-lines-dark::before,
+.section-lines-dark::after {
+  background-color: hsl(var(--brand-dark-blue-hsl) / 0.12);
+}
+
+.section-lines-light::before,
+.section-lines-light::after {
+  background-color: hsl(0 0% 100% / 0.35);
 }

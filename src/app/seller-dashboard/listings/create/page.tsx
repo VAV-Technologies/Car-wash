@@ -504,7 +504,7 @@ export default function CreateSellerListingPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue font-heading">Create New Business Listing</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue font-heading">Create New Business Listing</h1>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Save className="h-4 w-4" /><span>Form auto-saves as you type</span>
         </div>

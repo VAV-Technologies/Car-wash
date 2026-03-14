@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import styles from './navbar.module.css';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,17 +47,18 @@ const navLinkGroups: NavLinkGroup[] = [
     label: "Buy a Business",
     triggerIcon: ShoppingCart,
     items: [
-      { href: "/marketplace", label: "Browse Listings", icon: Search },
+      { href: "/marketplace", label: "Visit Marketplace", icon: Search },
       { href: "/how-buying-works", label: "How Buying Works", icon: Info },
       { href: "/buyer-services", label: "Buyer Services", icon: ShoppingCart },
     ],
   },
   {
-    label: "Company",
+    label: "Our Company",
     triggerIcon: Building2,
     items: [
       { href: "/about", label: "About Us", icon: Users2 },
       { href: "/faq", label: "FAQ", icon: Info },
+      { href: "/acfi-certificate", label: "ACFI Certificate", icon: Award },
     ],
   },
 ];
@@ -72,20 +72,32 @@ export function Navbar() {
   const { user, profile: userProfile, isLoading, logout } = useAuth();
   const isAuthenticated = !!user;
 
-  const [sellMenuOpen, setSellMenuOpen] = useState(false);
-  const [buyMenuOpen, setBuyMenuOpen] = useState(false);
-  const [companyMenuOpen, setCompanyMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // Pages with dark hero backgrounds where navbar should start transparent with white text
+  const darkHeroPages = ['/', '/marketplace'];
+  const hasDarkHero = darkHeroPages.includes(pathname);
+
+  const [scrolled, setScrolled] = useState(!hasDarkHero);
 
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 20);
+    setScrolled(hasDarkHero ? latest > 20 : true);
   });
 
-  const sellMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const buyMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const companyMenuTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const openMenu = (label: string) => {
+    if (menuTimerRef.current) clearTimeout(menuTimerRef.current);
+    setActiveMenu(label);
+  };
+
+  const closeMenu = () => {
+    menuTimerRef.current = setTimeout(() => setActiveMenu(null), 150);
+  };
+
+  const cancelClose = () => {
+    if (menuTimerRef.current) clearTimeout(menuTimerRef.current);
+  };
 
   const handleLogout = async () => {
     try {
@@ -130,181 +142,128 @@ export function Navbar() {
     }
   };
 
-  const handleMouseEnter = (setOpen: React.Dispatch<React.SetStateAction<boolean>>, timerRef: React.MutableRefObject<NodeJS.Timeout | null>) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setOpen(true);
-  };
+  const activeGroup = navLinkGroups.find((g) => g.label === activeMenu);
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const navbarRef = useRef<HTMLDivElement | null>(null);
+  const [dropdownOffset, setDropdownOffset] = useState(0);
 
-  const handleMouseLeave = (setOpen: React.Dispatch<React.SetStateAction<boolean>>, timerRef: React.MutableRefObject<NodeJS.Timeout | null>) => {
-    timerRef.current = setTimeout(() => setOpen(false), 150);
-  };
-
-  const getMenuOpenState = (label: string) => {
-    if (label === "Sell Your Business") return sellMenuOpen;
-    if (label === "Buy a Business") return buyMenuOpen;
-    if (label === "Company") return companyMenuOpen;
-    return false;
-  };
-
-  const getSetMenuOpenFn = (label: string): React.Dispatch<React.SetStateAction<boolean>> => {
-    if (label === "Sell Your Business") return setSellMenuOpen;
-    if (label === "Buy a Business") return setBuyMenuOpen;
-    if (label === "Company") return setCompanyMenuOpen;
-    return setSellMenuOpen; // Fallback
-  };
-
-  const getTimerRef = (label: string): React.MutableRefObject<NodeJS.Timeout | null> => {
-    if (label === "Sell Your Business") return sellMenuTimerRef;
-    if (label === "Buy a Business") return buyMenuTimerRef;
-    if (label === "Company") return companyMenuTimerRef;
-    return { current: null };
-  };
+  React.useEffect(() => {
+    if (activeMenu && triggerRefs.current[activeMenu] && navbarRef.current) {
+      const trigger = triggerRefs.current[activeMenu]!;
+      const navbar = navbarRef.current;
+      const triggerRect = trigger.getBoundingClientRect();
+      const navbarRect = navbar.getBoundingClientRect();
+      const triggerCenter = triggerRect.left + triggerRect.width / 2 - navbarRect.left;
+      setDropdownOffset(triggerCenter);
+    }
+  }, [activeMenu]);
 
   return (
     <motion.header
-      className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300 border-b",
-        scrolled
-          ? "bg-white/90 backdrop-blur-xl border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/80"
-          : "bg-white/80 backdrop-blur-lg border-white/10 supports-[backdrop-filter]:bg-white/60"
-      )}
+      className="fixed top-0 left-0 right-0 z-50 pt-6 pointer-events-none"
     >
-      <div className="container mx-auto flex h-20 items-center justify-between px-6 md:px-8">
-        <div className="flex items-center gap-x-6 lg:gap-x-8">
-          <Logo size="xl" forceTheme="light" />
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
-            {navLinkGroups.map((group, index) => {
-              const TriggerIcon = group.triggerIcon;
-              return (
-                <DropdownMenu
-                  key={group.label}
-                  open={getMenuOpenState(group.label)}
-                  onOpenChange={getSetMenuOpenFn(group.label)}
-                >
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="px-3 py-2 text-sm font-normal text-brand-dark-blue hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90 focus-visible:ring-brand-sky-blue flex items-center"
-                      onMouseEnter={() => handleMouseEnter(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
-                      onMouseLeave={() => handleMouseLeave(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
-                    >
-                      <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
-                      {group.label}
-                      <ChevronDown className="ml-1 h-4 w-4 opacity-70" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="bg-brand-white text-brand-dark-blue border-brand-light-gray/80 shadow-lg rounded-md w-56"
-                    onMouseEnter={() => handleMouseEnter(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
-                    onMouseLeave={() => handleMouseLeave(getSetMenuOpenFn(group.label), getTimerRef(group.label))}
-                  >
-                    {group.items.map((item) => {
-                      const ItemIcon = item.icon;
-                      return (
-                        <DropdownMenuItem key={item.label} asChild className="text-sm hover:bg-brand-light-gray focus:bg-brand-light-gray cursor-pointer">
-                          <Link href={item.href} className="flex items-center text-brand-dark-blue hover:text-brand-dark-blue px-3 py-2">
-                            <ItemIcon className="mr-2 h-4 w-4 opacity-80" />
-                            {item.label}
-                          </Link>
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              );
-            })}
-            <Button
-              variant="ghost"
-              asChild
-              className={cn("px-3 py-2 text-sm font-normal text-brand-dark-blue hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90 focus-visible:ring-brand-sky-blue flex items-center", pathname === "/acfi-certificate" && "bg-brand-light-gray/50")}
-            >
-              <Link href="/acfi-certificate">
-                <Award className="mr-2 h-4 w-4 opacity-80" />
-                ACFI Certificate
-              </Link>
-            </Button>
-          </nav>
+      <div className="container mx-auto">
+      <div
+        ref={navbarRef}
+        className="relative pointer-events-auto"
+        onMouseLeave={closeMenu}
+      >
+      <div className={cn(
+        "relative flex h-[72px] items-center justify-between px-4 transition-all duration-300",
+        scrolled
+          ? activeMenu
+            ? "bg-white border border-brand-dark-blue/10 shadow-sm border-b-0"
+            : "bg-white/90 backdrop-blur-xl shadow-sm border border-brand-dark-blue/10 supports-[backdrop-filter]:bg-white/80"
+          : activeMenu
+            ? "bg-brand-dark-blue border border-white/15 border-b-0"
+            : "bg-white/5 backdrop-blur-sm border border-white/15"
+      )}>
+        {/* Left - Logo */}
+        <div className="flex items-center">
+          <Logo size="lg" forceTheme={scrolled ? "light" : "dark"} />
         </div>
 
-        <div className="hidden md:flex items-center space-x-3">
+        {/* Center - Nav items */}
+        <nav className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
+          {navLinkGroups.map((group) => {
+            const TriggerIcon = group.triggerIcon;
+            const isActive = activeMenu === group.label;
+            return (
+              <button
+                key={group.label}
+                ref={(el) => { triggerRefs.current[group.label] = el; }}
+                className={cn(
+                  "h-10 w-[200px] text-sm font-medium flex items-center justify-center transition-colors rounded-none",
+                  scrolled
+                    ? cn(
+                        "text-brand-dark-blue",
+                        isActive ? "bg-brand-light-gray/70" : "hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90"
+                      )
+                    : cn(
+                        "text-white",
+                        isActive ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
+                      )
+                )}
+                onMouseEnter={() => openMenu(group.label)}
+              >
+                <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
+                {group.label}
+                <ChevronDown className={cn("ml-1 h-4 w-4 opacity-70 transition-transform duration-200", isActive && "rotate-180")} />
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right - Auth buttons */}
+
+        <div className="hidden md:flex items-center space-x-2.5">
+          <Link href="/contact" className={cn(
+            "inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors",
+            scrolled
+              ? "bg-brand-dark-blue text-white hover:bg-brand-dark-blue/90"
+              : "bg-white text-brand-dark-blue hover:bg-white/90"
+          )}>Contact Us</Link>
+
           {isLoading ? (
-            <div className="flex items-center space-x-2">
-              <Loader2 className="h-5 w-5 animate-spin text-brand-dark-blue/50" />
-              <span className="text-sm text-brand-dark-blue/50">Loading...</span>
+            <div className="flex items-center justify-center h-10 w-10">
+              <Loader2 className={cn("h-5 w-5 animate-spin", scrolled ? "text-brand-dark-blue/50" : "text-white/50")} />
             </div>
           ) : isAuthenticated ? (
-            <>
-              <Button variant="outline" asChild className="border-brand-dark-blue/30 text-brand-dark-blue hover:bg-brand-light-gray/50 hover:border-brand-dark-blue/50 py-2 px-4 font-medium text-sm">
-                <Link href={getDashboardUrl(userProfile)}>Dashboard</Link>
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-9 w-9 rounded-full bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 text-sm font-normal">
-                    {getUserInitials(userProfile)}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-brand-white text-brand-dark-blue border-brand-light-gray/80 shadow-lg rounded-md w-56">
-                  <div className="px-3 py-2 text-sm">
-                    <div className="font-medium">{userProfile?.full_name || 'User'}</div>
-                    <div className="text-brand-dark-blue/60 text-xs">{userProfile?.email}</div>
-                    <div className="text-brand-dark-blue/60 text-xs capitalize">{userProfile?.role}</div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-brand-light-gray focus:bg-brand-light-gray">
-                    <Link href={getDashboardUrl(userProfile)} className="flex items-center px-3 py-2">
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer text-sm hover:bg-brand-light-gray focus:bg-brand-light-gray">
-                    <Link href={`${getDashboardUrl(userProfile)}/settings`} className="flex items-center px-3 py-2">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="cursor-pointer text-red-600 hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700 text-sm"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
+            <button
+              ref={(el) => { triggerRefs.current["__account"] = el; }}
+              onMouseEnter={() => openMenu("__account")}
+              className={cn(
+                "h-10 w-10 flex items-center justify-center rounded-none transition-colors",
+                scrolled
+                  ? "bg-brand-dark-blue text-white hover:bg-brand-dark-blue/90"
+                  : "bg-white/15 text-white hover:bg-white/25",
+                activeMenu === "__account" && (scrolled ? "bg-brand-dark-blue/80" : "bg-white/25")
+              )}
+            >
+              {getUserInitials(userProfile)}
+            </button>
           ) : (
-            <>
-              <Button variant="outline" asChild className="border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue hover:text-white px-4 py-2 text-sm font-medium rounded-md transition-colors">
-                <Link href="/auth/login">Login</Link>
-              </Button>
-              <Button asChild className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 px-4 py-2 text-sm font-medium rounded-md">
-                <Link href="/auth/register">Register</Link>
-              </Button>
-            </>
+            <button
+              ref={(el) => { triggerRefs.current["__account"] = el; }}
+              onMouseEnter={() => openMenu("__account")}
+              className={cn(
+                "h-10 w-10 flex items-center justify-center rounded-none border transition-colors",
+                scrolled
+                  ? "border-brand-dark-blue/30 text-brand-dark-blue hover:bg-brand-light-gray/50"
+                  : "border-white/30 text-white hover:bg-white/10",
+                activeMenu === "__account" && (scrolled ? "bg-brand-light-gray/70" : "bg-white/15")
+              )}
+            >
+              <UserCircle className="h-5 w-5" />
+            </button>
           )}
-
-          {/* Contact Us button with wavy animation */}
-          <Button
-            asChild
-            className={cn(
-              "relative text-white px-4 py-2 text-sm font-medium rounded-md transition-all duration-300",
-              styles.contactButton
-            )}
-          >
-            <Link href="/contact">
-              <Phone className="mr-2 h-4 w-4 text-white" />
-              Contact Us
-            </Link>
-          </Button>
         </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-brand-dark-blue hover:bg-brand-light-gray/50">
+              <Button variant="ghost" size="icon" className={cn(scrolled ? "text-brand-dark-blue hover:bg-brand-light-gray/50" : "text-white hover:bg-white/10")}>
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open menu</span>
               </Button>
@@ -336,16 +295,6 @@ export function Navbar() {
                             </SheetClose>
                           );
                         })}
-                        {group.label === "Company" && (
-                          <SheetClose asChild>
-                            <Button variant="ghost" asChild className={cn("justify-start text-base font-normal px-3 py-2 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray", pathname === "/acfi-certificate" && "bg-brand-light-gray font-medium")}>
-                              <Link href="/acfi-certificate" className="flex items-center">
-                                <Award className="mr-2 h-4 w-4 opacity-80" />
-                                ACFI Certificate
-                              </Link>
-                            </Button>
-                          </SheetClose>
-                        )}
                       </div>
                     </div>
                   )
@@ -400,6 +349,150 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
         </div>
+      </div>
+
+      {/* Mega dropdown panel */}
+      <AnimatePresence>
+        {activeMenu && (activeGroup || activeMenu === "__account") && (
+          <motion.div
+            key={activeMenu}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className={cn(
+              "overflow-hidden border-x border-b",
+              scrolled
+                ? "bg-white border-brand-dark-blue/10"
+                : "bg-brand-dark-blue border-white/15"
+            )}
+            onMouseEnter={cancelClose}
+            onMouseLeave={closeMenu}
+          >
+            {/* Separator line */}
+            <div className={cn(
+              "mx-4",
+              scrolled ? "border-t border-brand-dark-blue/10" : "border-t border-white/15"
+            )} />
+            <div className="py-5 relative">
+              <div className={cn("inline-flex items-center", activeMenu === "__account" ? "w-full justify-center" : "")} style={activeMenu === "__account" ? {} : { position: 'relative', left: `${dropdownOffset}px`, transform: 'translateX(-50%)' }}>
+                {activeMenu === "__account" ? (
+                  /* Account dropdown items */
+                  isAuthenticated ? (
+                    <>
+                      <Link
+                        href={getDashboardUrl(userProfile)}
+                        onClick={() => setActiveMenu(null)}
+                        className={cn(
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                          scrolled
+                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                            : "text-white/70 hover:text-white hover:bg-white/10",
+                          pathname === getDashboardUrl(userProfile) && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                        )}
+                      >
+                        <LayoutDashboard className="h-4 w-4 opacity-80 shrink-0" />
+                        Dashboard
+                      </Link>
+                      <div className={cn("h-4 w-px mx-2", scrolled ? "bg-brand-dark-blue/15" : "bg-white/20")} />
+                      <Link
+                        href="/settings"
+                        onClick={() => setActiveMenu(null)}
+                        className={cn(
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                          scrolled
+                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                            : "text-white/70 hover:text-white hover:bg-white/10",
+                          pathname === "/settings" && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                        )}
+                      >
+                        <Settings className="h-4 w-4 opacity-80 shrink-0" />
+                        Settings
+                      </Link>
+                      <div className={cn("h-4 w-px mx-2", scrolled ? "bg-brand-dark-blue/15" : "bg-white/20")} />
+                      <button
+                        onClick={() => { setActiveMenu(null); handleLogout(); }}
+                        className={cn(
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                          scrolled
+                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                            : "text-white/70 hover:text-white hover:bg-white/10"
+                        )}
+                      >
+                        <LogOut className="h-4 w-4 opacity-80 shrink-0" />
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/auth/login"
+                        onClick={() => setActiveMenu(null)}
+                        className={cn(
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                          scrolled
+                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                            : "text-white/70 hover:text-white hover:bg-white/10",
+                          pathname === "/auth/login" && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                        )}
+                      >
+                        <LogIn className="h-4 w-4 opacity-80 shrink-0" />
+                        Login
+                      </Link>
+                      <div className={cn("h-4 w-px mx-2", scrolled ? "bg-brand-dark-blue/15" : "bg-white/20")} />
+                      <Link
+                        href="/auth/register"
+                        onClick={() => setActiveMenu(null)}
+                        className={cn(
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                          scrolled
+                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                            : "text-white/70 hover:text-white hover:bg-white/10",
+                          pathname === "/auth/register" && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                        )}
+                      >
+                        <UserPlus className="h-4 w-4 opacity-80 shrink-0" />
+                        Register
+                      </Link>
+                    </>
+                  )
+                ) : activeGroup && (
+                  /* Nav group dropdown items */
+                  activeGroup.items.map((item, idx) => {
+                    const ItemIcon = item.icon;
+                    return (
+                      <React.Fragment key={item.label}>
+                        {idx > 0 && (
+                          <div className={cn(
+                            "h-4 w-px mx-2",
+                            scrolled ? "bg-brand-dark-blue/15" : "bg-white/20"
+                          )} />
+                        )}
+                        <Link
+                          href={item.href}
+                          onClick={() => setActiveMenu(null)}
+                          className={cn(
+                            "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
+                            scrolled
+                              ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
+                              : "text-white/70 hover:text-white hover:bg-white/10",
+                            pathname === item.href && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                          )}
+                        >
+                          <ItemIcon className="h-4 w-4 opacity-80 shrink-0" />
+                          {item.label}
+                        </Link>
+                      </React.Fragment>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      </div>
       </div>
     </motion.header>
   );

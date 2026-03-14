@@ -453,7 +453,7 @@ export default function ManageSellerListingsPage() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground font-heading">My Business Listings</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground font-heading">My Business Listings</h1>
         {/* "Create New Listing" button is in the sidebar and empty state card, removed from header */}
       </div>
 

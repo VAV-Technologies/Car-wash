@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Star, CheckCircle, Search as SearchIconLucide, MapPin, Briefcase, ListChecks, DollarSign, ShieldCheck, FileText, MessageSquare, Info, Phone, Home, ExternalLink, Users2 as UsersIcon, Images as ImagesIcon, Banknote, BookOpen, Brain, HandCoins, Globe, Link as LinkIconLucide, ArrowRight, Zap, UsersRound, CheckCircle2, TrendingUp, Loader2 } from 'lucide-react'; // Added TrendingUp
+import { Star, CheckCircle, Search as SearchIconLucide, MapPin, Briefcase, ListChecks, DollarSign, ShieldCheck, FileText, MessageSquare, Info, Phone, Home, ExternalLink, Users2 as UsersIcon, Images as ImagesIcon, Banknote, BookOpen, Brain, HandCoins, Globe, Link as LinkIconLucide, ArrowRight, Zap, UsersRound, CheckCircle2, TrendingUp, Loader2, Clock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,6 +13,11 @@ import { cn } from '@/lib/utils';
 import { NobridgeIcon, NobridgeIconType } from '@/components/ui/nobridge-icon';
 import { AnimatedBackground } from '@/components/ui/animated-background';
 import { FadeIn } from '@/components/ui/fade-in';
+import dynamic from 'next/dynamic';
+
+const World = dynamic(() => import('@/components/ui/globe').then((m) => m.World), {
+  ssr: false,
+});
 
 
 const PlaceholderLogo = ({ text = "Logo", className = "" }: { text?: string, className?: string }) => (
@@ -73,18 +78,20 @@ export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="w-full relative text-brand-white">
+      <section className="w-full relative text-brand-white section-lines-light">
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/assets/hero_section_new.png"
-            alt="Nobridge Hero"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/50" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/assets/hero-video.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/30" />
         </div>
-        <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-[calc(80vh-theme(spacing.20))] px-4 py-24 md:py-32 lg:py-40 relative z-10">
+        <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-screen px-4 py-24 md:py-32 lg:py-40 relative z-10">
           <a href="https://acfi.asia/directory/nobridge" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex flex-col md:flex-row items-center gap-2 md:gap-0 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-75">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-brand-light-gray md:hidden">
               <ShieldCheck className="h-4 w-4 opacity-90" />
@@ -94,10 +101,10 @@ export default function HomePage() {
             </span>
           </a>
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
-            F<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nd Your Next Bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>ness Venture<br />w<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>th Nobr<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>dge
+            Where As<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>an bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nesses<br />meet global cap<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>tal
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl text-brand-light-gray max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200">
-            Nobridge is the premier M&A advisory firm and marketplace connecting both SME owners with investors. Discover, inquire, and engage with off-market opportunities.
+            Nobridge is the advisory firm built for Asian SMEs, connecting sellers with global acquirers, guiding buyers into new markets, and powering deals through a live deal marketplace.
           </p>
           <div className="mb-10 flex items-center justify-center text-sm md:text-base text-brand-light-gray animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
             <div className="flex items-center">
@@ -113,305 +120,32 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
-            <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base">
-              List Your Business <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base min-w-[260px]">
+              Talk to Us <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-            <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base">
-              Browse Businesses <SearchIconLucide className="ml-2 h-5 w-5" />
+            <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[260px]">
+              Browse Marketplace <SearchIconLucide className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Business Listings Preview */}
-      <section id="marketplace-preview" className="py-16 md:py-24 bg-brand-light-gray">
-        <div className="container mx-auto px-4">
-          <FadeIn direction="up">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">Fea<span style={{ fontSize: '1.06em' }}>t</span>ured Oppor<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span>uni<span style={{ fontSize: '1.06em' }}>t</span>ies</h2>
-              <p className="text-muted-foreground mt-3 text-lg">A Glimpse into Our Curated Marketplace</p>
-            </div>
-          </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? (
-              // Loading skeletons
-              Array.from({ length: 3 }).map((_, index) => (
-                <FadeIn key={index} delay={index * 100} className="h-full">
-                  <Card className="bg-brand-white shadow-xl rounded-lg flex flex-col overflow-hidden h-full">
-                    <div className="p-0 relative">
-                      <Skeleton className="w-full h-48" />
-                    </div>
-                    <CardContent className="p-6 flex-grow">
-                      <Skeleton className="h-4 w-20 mb-2" />
-                      <Skeleton className="h-6 w-full mb-2" />
-                      <div className="space-y-2">
-                        <Skeleton className="h-4 w-3/4" />
-                        <Skeleton className="h-4 w-2/3" />
-                        <Skeleton className="h-4 w-4/5" />
-                        <Skeleton className="h-4 w-3/5" />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="p-6 border-t border-brand-light-gray/80">
-                      <Skeleton className="h-10 w-full" />
-                    </CardFooter>
-                  </Card>
-                </FadeIn>
-              ))
-            ) : featuredListings.length > 0 ? (
-              featuredListings.map((listing, index) => (
-                <FadeIn key={listing.id} delay={index * 100} className="h-full">
-                  <Card className="bg-brand-white shadow-xl hover:shadow-2xl transition-shadow duration-300 rounded-lg flex flex-col overflow-hidden h-full">
-                    <CardHeader className="p-0 relative">
-                      <Image
-                        src={
-                          listing.images
-                            ? (typeof listing.images === 'string'
-                              ? JSON.parse(listing.images)[0]
-                              : listing.images[0]) || "https://placehold.co/400x250.png"
-                            : "https://placehold.co/400x250.png"
-                        }
-                        alt={listing.title}
-                        width={400}
-                        height={250}
-                        className="w-full h-48 object-cover"
-                        data-ai-hint={listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business"}
-                      />
-                      {listing.verification_status === 'verified' && (
-                        <Badge variant="outline" className="absolute top-3 right-3 text-xs border-green-600 text-green-700 bg-green-100 dark:bg-green-700/20 dark:text-green-300 dark:border-green-500/50">
-                          <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
-                        </Badge>
-                      )}
-                    </CardHeader>
-                    <CardContent className="p-6 flex-grow">
-                      <div className="flex justify-between items-start mb-2">
-                        <Badge variant="secondary" className="bg-brand-dark-blue/5 text-brand-dark-blue text-xs">{listing.industry}</Badge>
-                      </div>
-                      <CardTitle className="text-xl font-normal text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
-                        <Link href={`/listings/${listing.id}`}>{listing.title}</Link>
-                      </CardTitle>
-                      <div className="space-y-1 text-sm text-muted-foreground">
-                        <p className="flex items-center"><Briefcase className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> {listing.industry}</p>
-                        <p className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> {listing.location_city}, {listing.location_country}</p>
-                        {listing.annual_revenue_range && (
-                          <p className="flex items-center"><TrendingUp className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Revenue: {listing.annual_revenue_range}</p>
-                        )}
-                        <p className="flex items-center"><DollarSign className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Asking: ${(listing.asking_price / 1000000).toFixed(1)}M USD</p>
-                      </div>
-                      {listing.short_description && (
-                        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                          {listing.short_description.substring(0, 120)}...
-                        </p>
-                      )}
-                    </CardContent>
-                    <CardFooter className="p-6 border-t border-brand-light-gray/80 mt-auto">
-                      <Link href={`/listings/${listing.id}`} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-10 px-4 py-2">
-                        View Details <SearchIconLucide className="ml-2 h-4 w-4" />
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                </FadeIn>
-              ))
-            ) : (
-              // Fallback if no listings
-              <div className="col-span-full text-center py-8">
-                <FadeIn>
-                  <div className="flex flex-col items-center gap-4">
-                    <Briefcase className="h-12 w-12 text-muted-foreground" />
-                    <p className="text-muted-foreground">No featured listings available at the moment.</p>
-                    <Link href="/marketplace" className="inline-flex items-center text-brand-dark-blue hover:text-brand-sky-blue">
-                      Browse all listings <ArrowRight className="ml-1 h-4 w-4" />
-                    </Link>
-                  </div>
-                </FadeIn>
-              </div>
-            )}
-          </div>
-          <FadeIn direction="up" delay={300}>
-            <div className="mt-16 text-center">
-              <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">
-                Explore Full Marketplace
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Your Journey with Nobridge Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-white to-brand-light-gray/30">
-        <div className="container mx-auto px-4">
-          <FadeIn direction="up">
-            <div className="text-center mb-16 md:mb-20">
-              <h2 className="text-3xl md:text-5xl font-normal tracking-tight text-brand-dark-blue font-heading mb-6">Your Journey with Nobridge</h2>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Whether you're selling your life's work or seeking your next strategic investment, Nobridge provides the premium tools and exclusive network you need.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
-            {/* Selling Card */}
-            <FadeIn direction="right" delay={200} className="h-full">
-              <div className="group relative bg-white rounded-2xl p-8 md:p-12 shadow-lg hover:shadow-2xl transition-all duration-500 border border-brand-light-gray/50 hover:border-brand-sky-blue/30 overflow-hidden h-full flex flex-col">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-sky-blue/5 rounded-full blur-3xl -mr-32 -mt-32 transition-all duration-500 group-hover:bg-brand-sky-blue/10" />
-
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="mb-8 w-fit group-hover:scale-105 transition-transform duration-500">
-                    <TrendingUp className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
-                  </div>
-
-                  <h3 className="text-3xl font-normal text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">List Your Business</h3>
-                  <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-                    Connect with verified buyers across Asia through a secure, efficient platform designed to maximize your business value.
-                  </p>
-
-                  <ul className="space-y-6 mb-10">
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <UsersRound className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Access to Verified Buyers</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Reach serious investors pre-vetted for financial capability.</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <ListChecks className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Step-by-Step Guidance</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Expert support from valuation to final negotiation.</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <ShieldCheck className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Secure Management</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Control who sees your sensitive data with our secure data room.</p>
-                      </div>
-                    </li>
-                  </ul>
-
-                  <div className="mt-auto pt-6">
-                    <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-8 text-base">
-                      Start Selling
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-
-            {/* Buying Card */}
-            <FadeIn direction="left" delay={400} className="h-full">
-              <div className="group relative bg-white rounded-2xl p-8 md:p-12 shadow-lg hover:shadow-2xl transition-all duration-500 border border-brand-light-gray/50 hover:border-brand-sky-blue/30 overflow-hidden h-full flex flex-col">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-dark-blue/5 rounded-full blur-3xl -mr-32 -mt-32 transition-all duration-500 group-hover:bg-brand-dark-blue/10" />
-
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="mb-8 w-fit group-hover:scale-105 transition-transform duration-500">
-                    <HandCoins className="w-20 h-20 text-brand-dark-blue group-hover:text-brand-sky-blue transition-colors" />
-                  </div>
-
-                  <h3 className="text-3xl font-normal text-brand-dark-blue mb-4 font-heading group-hover:text-brand-sky-blue transition-colors">Find Opportunities</h3>
-                  <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-                    Discover curated, high-potential businesses with detailed insights. Make informed decisions and engage directly with verified sellers.
-                  </p>
-
-                  <ul className="space-y-6 mb-10">
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <CheckCircle2 className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Vetted Listings</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Every business is verified for authenticity and operational status.</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <SearchIconLucide className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Advanced Filtering</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Find exactly what matches your investment criteria instantly.</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="mt-1 mr-4 p-3 bg-brand-dark-blue rounded-xl shadow-md group-hover:bg-brand-sky-blue transition-colors duration-300 shrink-0">
-                        <MessageSquare className="w-6 h-6 text-white drop-shadow-md" />
-                      </div>
-                      <div>
-                        <h4 className="font-normal text-brand-dark-blue text-lg">Direct Engagement</h4>
-                        <p className="text-sm text-muted-foreground mt-1">Connect directly with business owners after verification.</p>
-                      </div>
-                    </li>
-                  </ul>
-
-                  <div className="mt-auto pt-6">
-                    <Link href="/marketplace" className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-8 text-base">
-                      Explore Marketplace
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof / Testimonials */}
-      <section className="py-16 md:py-24 relative overflow-hidden">
-        <AnimatedBackground position="absolute" className="z-0" />
-        <div className="container mx-auto px-4 relative z-10">
-          <FadeIn direction="up">
-            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white text-center mb-4 font-heading"><span style={{ fontSize: '1.06em' }}>T</span>rus<span style={{ fontSize: '1.06em' }}>t</span>ed by <span style={{ fontSize: '1.06em' }}>t</span>he Business Communi<span style={{ fontSize: '1.06em', marginRight: '0.05em' }}>t</span>y</h2>
-            <p className="text-center text-brand-light-gray/90 text-lg mb-12 md:mb-16">Hear from entrepreneurs and investors who have found success with Nobridge.</p>
-          </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { quote: "We were skeptical about listing our logistics firm online, but Nobridge's verification process brought us three serious offers within a month. The due diligence support was exceptional.", name: "Wei Chen", role: "Founder of SwiftLogistics, Singapore" },
-              { quote: "As a family office looking to diversify into Vietnamese manufacturing, finding trustworthy deals is hard. Nobridge's curated marketplace allowed us to bypass the usual noise and connect directly with vetted sellers.", name: "Sarah Thong", role: "Managing Partner at Horizon Ventures, Malaysia" },
-              { quote: "Selling a 20-year-old family business is emotional. The team at Nobridge understood that. They didn't just find a buyer; they found a successor who respected our legacy.", name: "Budi Santoso", role: "Former Owner of Santoso Textiles, Indonesia" },
-            ].map((testimonial, index) => (
-              <FadeIn key={index} delay={index * 100} className="h-full">
-                <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-xl hover:shadow-2xl transition-shadow rounded-lg text-white h-full">
-                  <CardContent className="p-8">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <svg key={i} className="h-5 w-5 text-amber-400 drop-shadow-sm" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
-                        </svg>
-                      ))}
-                    </div>
-                    <p className="text-gray-200 mb-4 italic text-base leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-                    <p className="font-normal text-white">{testimonial.name}</p>
-                    <p className="text-sm text-gray-300">{testimonial.role}</p>
-                  </CardContent>
-                </Card>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* "As Mentioned In" / Credibility Logos - REPLACED */}
-      <section className="py-12 md:py-16 bg-brand-white">
-        <div className="container mx-auto px-4 text-center">
+      {/* Featured In - Credibility Logos */}
+      <div className="border-t border-brand-dark-blue/10" />
+      <section className="py-10 md:py-14 bg-brand-white section-lines-dark">
+        <div className="container mx-auto">
           <FadeIn>
-            <h3 className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-10 font-heading">Featured In</h3>
+            <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider text-center mb-8 font-heading">Featured In</p>
           </FadeIn>
           <FadeIn delay={200}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 lg:gap-14 place-items-center">
+            <div className="flex flex-wrap">
               {featuredCompanyLogos.map((logo, index) => (
-                <div key={index} className="h-20 md:h-24 lg:h-28 flex items-center"> {/* Made even bigger */}
+                <div key={index} className="flex items-center justify-center h-20 md:h-24 w-1/2 md:w-1/4 border border-brand-dark-blue/10 px-6">
                   <Image
                     src={logo.src}
                     alt={logo.alt}
-                    width={220} // Increased width more
-                    height={90} // Increased height more
+                    width={180}
+                    height={70}
                     className="object-contain max-h-full"
                     data-ai-hint={logo.dataAiHint}
                   />
@@ -422,37 +156,493 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Our Mission Section */}
-      <section className="py-20 md:py-32 bg-brand-dark-blue text-brand-white">
-        <div className="container mx-auto px-4 text-center">
+      {/* Separator */}
+      <div className="border-t border-brand-dark-blue/10" />
+
+      {/* What We Do */}
+      <section className="py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <p className="text-sm font-normal uppercase tracking-wider text-brand-light-gray/70 mb-3">OUR COMMITMENT</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight mb-6 font-heading">Empowering SME Grow<span style={{ fontSize: '1.06em', marginLeft: '0.05em' }}>t</span>h and <span style={{ fontSize: '1.06em' }}>T</span>ransi<span style={{ fontSize: '1.06em' }}>t</span>ions Across Asia</h2>
-            <p className="text-lg md:text-xl text-brand-light-gray/90 max-w-3xl mx-auto mb-10">
-              At Nobridge, we believe in the power of small and medium-sized enterprises. Our mission is to provide a transparent, efficient, and supportive platform that connects business owners with the right investors and buyers, fostering growth and successful transitions throughout the continent.
-            </p>
-            <Link href="/about" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-brand-white text-brand-dark-blue bg-brand-white hover:bg-brand-light-gray h-11 py-3 px-8 text-base">
-              Learn More About Us
-            </Link>
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm font-normal uppercase text-brand-light-gray/70 tracking-wider mb-3 font-heading">What We Do</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
+                Three ways we move deals forward
+              </h2>
+              <p className="text-blue-100 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+                Whether you&apos;re exiting a business you&apos;ve built, acquiring your next platform in Asia, or looking to discover opportunities, Nobridge covers the full M&amp;A journey.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Image row */}
+          <div className="flex flex-col md:flex-row">
+            {[
+              { num: "01", src: "/assets/what-we-do-sell-side.png", alt: "Sell-Side Advisory" },
+              { num: "02", src: "/assets/what-we-do-marketplace.png", alt: "Buy-Side Advisory" },
+              { num: "03", src: "/assets/what-we-do-buy-side.png", alt: "Deal Marketplace" },
+            ].map((img, index) => (
+              <FadeIn key={img.num} delay={index * 100} className="flex-1">
+                <div className={cn(
+                  "border border-brand-dark-blue/10 h-48 md:h-56 bg-white relative overflow-hidden",
+                  index > 0 && "border-t-0 md:border-t md:border-l-0"
+                )}>
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    fill
+                    className="object-contain scale-[0.8]"
+                  />
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* Content cards row */}
+          <div className="flex flex-col md:flex-row">
+            {[
+              {
+                num: "01",
+                title: "Sell-Side Advisory",
+                body: "You've built something valuable. We make sure the market knows it. From business positioning and valuation to buyer outreach, negotiation, and close, we run your exit so you can stay focused on the business.",
+                tags: ["Exit Planning", "Valuation", "Buyer Matching", "Negotiation", "Due Diligence Support"],
+              },
+              {
+                num: "02",
+                title: "Buy-Side Advisory",
+                body: "Looking to acquire in Asia? We source proprietary off-market deals, run target screening, coordinate due diligence, and sit across the table with you through close. Your boots on the ground.",
+                tags: ["Deal Sourcing", "Target Screening", "Market Entry", "LOI Support", "Local Intelligence"],
+              },
+              {
+                num: "03",
+                title: "Deal Marketplace",
+                body: "A curated, live listing of pre-screened Asian businesses available for acquisition, accessible to qualified buyers globally. Structured data. Verified financials. Real opportunities.",
+                tags: ["Live Listings", "Pre-Screened", "Buyer Access", "Teaser Packages", "NDA-Gated CIMs"],
+              },
+            ].map((card, index) => (
+              <FadeIn key={card.num} delay={index * 100} className="flex-1">
+                <div className={cn(
+                  "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-8 md:p-10 h-full flex flex-col overflow-hidden",
+                  index > 0 && "md:border-l-0"
+                )}>
+                  {/* Hover top accent */}
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  {/* Number label */}
+                  <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">
+                    {card.num}
+                  </span>
+                  <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">
+                    {card.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed mb-6 text-justify flex-grow">
+                    {card.body}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {card.tags.map((tag) => (
+                      <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <div className="border-t border-brand-dark-blue/10" />
+      <section className="py-20 md:py-24 bg-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">How It Works</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">
+                From first conversation to signed deal
+              </h2>
+            </div>
+          </FadeIn>
+
+          <div className="flex flex-col">
+            {[
+              {
+                num: "01",
+                title: "Discovery & Scoping",
+                body: "We start with a confidential consultation to understand your goals, timeline, and deal parameters, whether you're selling or acquiring.",
+                image: "/assets/how-it-works-step-1.png",
+              },
+              {
+                num: "02",
+                title: "Value Creation (Optional)",
+                body: "Before going to market, we can help optimize your business for sale through operational improvements, financial clean-up, and strategic repositioning to maximize deal value.",
+                image: "/assets/how-it-works-step-2.png",
+              },
+              {
+                num: "03",
+                title: "Preparation & Positioning",
+                body: "For sellers: business valuation, CIM preparation, and buyer targeting. For buyers: target criteria setting, market mapping, and initial deal origination.",
+                image: "/assets/how-it-works-step-3.png",
+              },
+              {
+                num: "04",
+                title: "Outreach & Matching",
+                body: "Our outreach engine connects sellers with our global buyer network. Buyers get curated target pipelines built around their acquisition thesis.",
+                image: "/assets/how-it-works-step-4.png",
+              },
+              {
+                num: "05",
+                title: "Negotiation & Close",
+                body: "We sit at the table through LOI, due diligence, and definitive agreements, protecting your interests and keeping deals moving forward to close.",
+                image: "/assets/how-it-works-step-5.png",
+              },
+            ].map((step, index) => (
+              <FadeIn key={step.num} delay={index * 100}>
+                <div className={cn(
+                  "border border-brand-dark-blue/10 flex flex-col md:flex-row",
+                  index > 0 && "border-t-0"
+                )}>
+                  <div className="md:w-[23%] shrink-0 p-8 md:p-10 flex items-center justify-center">
+                    <span className="text-5xl md:text-6xl font-heading font-medium text-brand-dark-blue/10 leading-none">
+                      {step.num}
+                    </span>
+                  </div>
+                  <div className="flex-1 p-8 md:p-10 border-t md:border-t-0 md:border-l border-brand-dark-blue/10 flex items-center">
+                    <div>
+                      <h3 className="text-lg font-normal text-brand-dark-blue font-heading mb-2">{step.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{step.body}</p>
+                    </div>
+                  </div>
+                  <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-brand-dark-blue/10 relative overflow-hidden shrink-0 bg-brand-dark-blue">
+                    <Image
+                      src={step.image}
+                      alt={step.title}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Marketplace Preview */}
+      <div className="border-t border-brand-dark-blue/10" />
+      <section id="marketplace-preview" className="py-20 md:py-24 bg-brand-light-gray section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-12 md:mb-16 px-4">
+              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">Deal Marketplace</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">Browse live acquisi<span style={{ fontSize: '1.06em' }}>t</span>ion <span style={{ fontSize: '1.06em', marginRight: '0.05em' }}>t</span>arge<span style={{ fontSize: '1.06em' }}>t</span>s in Asia</h2>
+            </div>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={100}>
+            <div className="flex flex-col md:flex-row border border-brand-dark-blue/10 mb-12 md:mb-16">
+              <div className="md:w-1/2 min-h-[350px] border-b md:border-b-0 md:border-r border-brand-dark-blue/10 relative overflow-hidden shrink-0 bg-white">
+                <Image
+                  src="/assets/marketplace-preview-v4.png"
+                  alt="Browse live acquisition targets in Asia"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <div className="flex-1 bg-brand-white p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-brand-dark-blue text-base leading-relaxed text-justify mb-4 font-medium">A curated, always-current directory of pre-screened Asian businesses seeking acquisition. Each listing is verified, structured, and ready for qualified buyer engagement.</p>
+                <p className="text-muted-foreground text-base leading-relaxed text-justify mb-6">Whether you are a strategic acquirer, private equity fund, family office, or independent sponsor, our marketplace gives you direct access to deal-ready opportunities across Asia, filtered by sector, geography, deal size, and financial profile, so you spend less time searching and more time evaluating.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                  {[
+                    "Teaser packages available without NDA",
+                    "Full CIMs released under NDA",
+                    "Sector, geography, and deal size filters",
+                    "Direct access to Nobridge deal team",
+                    "Verified financials and structured data",
+                    "New opportunities added weekly",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <span className="text-muted-foreground text-[5px] shrink-0">&#x25CF;</span>
+                      <p className="text-base text-muted-foreground leading-relaxed">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={200}>
+            <div className="text-center mb-12 md:mb-16 px-4">
+              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">Featured Opportunities</p>
+            </div>
+          </FadeIn>
+
+          {isLoading ? (
+            <div className="flex flex-col md:flex-row">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <FadeIn key={index} delay={index * 100} className="flex-1">
+                  <div className={cn(
+                    "border border-brand-dark-blue/10 bg-brand-white p-6 flex flex-col",
+                    index > 0 && "border-t-0 md:border-t md:border-l-0"
+                  )}>
+                    <Skeleton className="w-full h-40 mb-4" />
+                    <Skeleton className="h-4 w-20 mb-2" />
+                    <Skeleton className="h-6 w-full mb-3" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-4 w-3/5" />
+                    </div>
+                    <Skeleton className="h-10 w-full mt-6" />
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          ) : featuredListings.length > 0 ? (
+            <div className="flex flex-col md:flex-row">
+              {featuredListings.map((listing, index) => (
+                <FadeIn key={listing.id} delay={index * 100} className="flex-1">
+                  <div className={cn(
+                    "border border-brand-dark-blue/10 bg-brand-white flex flex-col h-full",
+                    index > 0 && "border-t-0 md:border-t md:border-l-0"
+                  )}>
+                    <div className="relative aspect-square">
+                      <Image
+                        src={
+                          listing.images
+                            ? (typeof listing.images === 'string'
+                              ? JSON.parse(listing.images)[0]
+                              : listing.images[0]) || "https://placehold.co/400x400.png"
+                            : "https://placehold.co/400x400.png"
+                        }
+                        alt={listing.title}
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover"
+                        data-ai-hint={listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business"}
+                      />
+                      {listing.verification_status === 'verified' && (
+                        <Badge variant="outline" className="absolute top-3 right-3 text-xs border-green-600 text-green-700 bg-green-100">
+                          <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="p-6 flex flex-col flex-grow">
+                      <Badge variant="secondary" className="bg-brand-dark-blue/5 text-brand-dark-blue text-xs w-fit mb-2">{listing.industry}</Badge>
+                      <h3 className="text-lg font-normal text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
+                        <Link href={`/listings/${listing.id}`}>{listing.title}</Link>
+                      </h3>
+                      <div className="space-y-1 text-sm text-muted-foreground mb-4">
+                        <p className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> {listing.location_city}, {listing.location_country}</p>
+                        {listing.annual_revenue_range && (
+                          <p className="flex items-center"><TrendingUp className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Revenue: {listing.annual_revenue_range}</p>
+                        )}
+                        <p className="flex items-center"><DollarSign className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Asking: ${(listing.asking_price / 1000000).toFixed(1)}M USD</p>
+                      </div>
+                      <div className="mt-auto pt-4 border-t border-brand-dark-blue/10">
+                        <Link href={`/listings/${listing.id}`} className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
+                          View Details <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-brand-dark-blue/10 bg-brand-white p-8 text-center">
+              <FadeIn>
+                <div className="flex flex-col items-center gap-4">
+                  <Briefcase className="h-12 w-12 text-muted-foreground" />
+                  <p className="text-muted-foreground">No featured listings available at the moment.</p>
+                  <Link href="/marketplace" className="inline-flex items-center text-brand-dark-blue hover:text-brand-sky-blue">
+                    Browse all listings <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </div>
+              </FadeIn>
+            </div>
+          )}
+
+          <FadeIn direction="up" delay={300}>
+            <div className="border border-brand-dark-blue/10 border-t-0 bg-brand-white py-6 text-center">
+              <Link href="/marketplace" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
+                Access the Marketplace <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* Final Call to Action Section */}
-      <section className="py-16 md:py-24 bg-brand-white">
-        <div className="container mx-auto px-4 text-center">
+      {/* Why Nobridge */}
+      <div className="border-t border-brand-dark-blue/10" />
+      <section className="py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">Ready to Begin Your Journey?</h2>
-            <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10">
-              Whether you&apos;re looking to sell your business, find your next investment, or simply learn more, our team is here to help.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <Link href="/auth/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
-                Register Now
-              </Link>
-              <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">
-                Contact Our Team
-              </Link>
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm font-normal uppercase text-brand-light-gray/70 tracking-wider mb-3 font-heading">Why Nobridge</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
+                The M&amp;A firm built for this region
+              </h2>
+            </div>
+          </FadeIn>
+
+          {/* Manifesto card - image left, content right */}
+          <FadeIn direction="up" delay={100}>
+            <div className="border border-white/15 flex flex-col md:flex-row">
+              {/* Left - Interactive globe */}
+              <div className="md:w-1/2 bg-white border-b md:border-b-0 md:border-r border-brand-dark-blue/10 flex items-center justify-center aspect-square relative overflow-hidden">
+                <World
+                  data={[
+                    /* === Asian routes (dark blue #0D0D39) === */
+                    { order: 1, startLat: 1.3521, startLng: 103.8198, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.25, color: "#0D0D39" },
+                    { order: 1, startLat: -6.2088, startLng: 106.8456, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.15, color: "#0D0D39" },
+                    { order: 2, startLat: 3.139, startLng: 101.6869, endLat: 37.5665, endLng: 126.978, arcAlt: 0.25, color: "#0D0D39" },
+                    { order: 2, startLat: 13.7563, startLng: 100.5018, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.1, color: "#0D0D39" },
+                    { order: 3, startLat: 21.0278, startLng: 105.8342, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.15, color: "#0D0D39" },
+                    { order: 3, startLat: 14.5995, startLng: 120.9842, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.2, color: "#0D0D39" },
+                    { order: 4, startLat: 22.3193, startLng: 114.1694, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.1, color: "#0D0D39" },
+                    { order: 4, startLat: 35.6762, startLng: 139.6503, endLat: 37.5665, endLng: 126.978, arcAlt: 0.08, color: "#0D0D39" },
+                    { order: 5, startLat: 11.5564, startLng: 104.9282, endLat: 13.7563, endLng: 100.5018, arcAlt: 0.06, color: "#0D0D39" },
+                    { order: 5, startLat: 1.3521, startLng: 103.8198, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.08, color: "#0D0D39" },
+                    { order: 6, startLat: 19.076, startLng: 72.8777, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.25, color: "#0D0D39" },
+                    { order: 6, startLat: 3.139, startLng: 101.6869, endLat: 14.5995, endLng: 120.9842, arcAlt: 0.15, color: "#0D0D39" },
+                    { order: 7, startLat: 22.3193, startLng: 114.1694, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.2, color: "#0D0D39" },
+                    { order: 7, startLat: 37.5665, startLng: 126.978, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.3, color: "#0D0D39" },
+                    { order: 8, startLat: 25.0343, startLng: 121.5645, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.2, color: "#0D0D39" },
+                    { order: 8, startLat: 16.8661, startLng: 96.1951, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.15, color: "#0D0D39" },
+                    { order: 9, startLat: 28.6139, startLng: 77.209, endLat: 3.139, endLng: 101.6869, arcAlt: 0.2, color: "#0D0D39" },
+                    { order: 9, startLat: 31.2304, startLng: 121.4737, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.1, color: "#0D0D39" },
+                    { order: 10, startLat: 39.9042, startLng: 116.4074, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.15, color: "#0D0D39" },
+                    { order: 10, startLat: -6.2088, startLng: 106.8456, endLat: 3.139, endLng: 101.6869, arcAlt: 0.08, color: "#0D0D39" },
+
+                    /* === Global routes (dark lines, white dots) === */
+                    { order: 1, startLat: 1.3521, startLng: 103.8198, endLat: 51.5074, endLng: -0.1278, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 2, startLat: 22.3193, startLng: 114.1694, endLat: 40.7128, endLng: -74.006, arcAlt: 0.55, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 3, startLat: 35.6762, startLng: 139.6503, endLat: 37.7749, endLng: -122.4194, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 3, startLat: -6.2088, startLng: 106.8456, endLat: 25.2048, endLng: 55.2708, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 4, startLat: 3.139, startLng: 101.6869, endLat: -33.8688, endLng: 151.2093, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 5, startLat: 1.3521, startLng: 103.8198, endLat: 48.8566, endLng: 2.3522, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 5, startLat: 22.3193, startLng: 114.1694, endLat: 52.52, endLng: 13.405, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 6, startLat: 35.6762, startLng: 139.6503, endLat: 34.0522, endLng: -118.2437, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 6, startLat: 37.5665, startLng: 126.978, endLat: 51.5074, endLng: -0.1278, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 7, startLat: 1.3521, startLng: 103.8198, endLat: 47.6062, endLng: -122.3321, arcAlt: 0.55, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 7, startLat: -6.2088, startLng: 106.8456, endLat: -23.5505, endLng: -46.6333, arcAlt: 0.6, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 8, startLat: 51.5074, startLng: -0.1278, endLat: 40.7128, endLng: -74.006, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 8, startLat: 48.8566, startLng: 2.3522, endLat: 25.2048, endLng: 55.2708, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 9, startLat: 40.7128, startLng: -74.006, endLat: -23.5505, endLng: -46.6333, arcAlt: 0.4, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 9, startLat: 52.52, startLng: 13.405, endLat: 55.7558, endLng: 37.6173, arcAlt: 0.15, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 10, startLat: 37.7749, startLng: -122.4194, endLat: 19.4326, endLng: -99.1332, arcAlt: 0.2, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 10, startLat: 25.2048, startLng: 55.2708, endLat: -1.2921, endLng: 36.8219, arcAlt: 0.25, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 11, startLat: 51.5074, startLng: -0.1278, endLat: 43.6532, endLng: -79.3832, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 11, startLat: -33.8688, startLng: 151.2093, endLat: -36.8485, endLng: 174.7633, arcAlt: 0.1, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 12, startLat: 34.0522, startLng: -118.2437, endLat: 41.8781, endLng: -87.6298, arcAlt: 0.15, color: "#0D0D39", dotColor: "#0D0D39" },
+                    { order: 12, startLat: 55.7558, startLng: 37.6173, endLat: 59.3293, endLng: 18.0686, arcAlt: 0.12, color: "#0D0D39", dotColor: "#0D0D39" },
+                  ]}
+                  globeConfig={{
+                    pointSize: 4,
+                    globeColor: "#F4F6FC",
+                    showAtmosphere: true,
+                    atmosphereColor: "#0D0D39",
+                    atmosphereAltitude: 0.1,
+                    emissive: "#F4F6FC",
+                    emissiveIntensity: 1.0,
+                    shininess: 0.05,
+                    polygonColor: "rgba(13,13,57,0.8)",
+                    ambientLight: "#ffffff",
+                    directionalLeftLight: "#ffffff",
+                    directionalTopLight: "#ffffff",
+                    pointLight: "#ffffff",
+                    arcTime: 1000,
+                    arcLength: 0.9,
+                    rings: 1,
+                    maxRings: 3,
+                    initialPosition: { lat: 1.3521, lng: 103.8198 },
+                    autoRotate: true,
+                    autoRotateSpeed: 0.5,
+                  }}
+                />
+              </div>
+              {/* Right - Quote, body, stats */}
+              <div className="md:w-1/2 bg-white p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-2xl md:text-3xl font-heading font-normal text-brand-dark-blue leading-snug pb-8">
+                  &ldquo;Traditional M&amp;A firms weren&apos;t built for Asian SMEs. We were.&rdquo;
+                </p>
+                <div className="border-t border-brand-dark-blue/10" />
+                <p className="text-muted-foreground leading-relaxed text-justify py-8">
+                  Most global advisory firms ignore deals under $100M. Local brokers lack the buyer networks and process to execute efficiently. Nobridge fills this gap, combining deep regional expertise with technology-enabled deal execution and a global buyer network that most mid-market firms can&apos;t access.
+                </p>
+                <p className="text-muted-foreground leading-relaxed text-justify pb-8">
+                  We work exclusively with founders, family businesses, and institutional owners across Asia, guiding them through every stage of the transaction,from preparation and positioning to negotiation and close. Our process is built around discretion, speed, and outcomes that reflect the true value of what you&apos;ve built.
+                </p>
+                <div className="flex flex-col sm:flex-row border-t border-brand-dark-blue/10 pt-8">
+                  {[
+                    { stat: "3-6 months", label: "Average time to LOI", icon: Clock },
+                    { stat: "500+", label: "Qualified buyer network", icon: UsersRound },
+                    { stat: "AI-Enabled", label: "Deal infrastructure", icon: Brain },
+                  ].map((item, index) => (
+                    <div key={item.stat} className={cn(
+                      "flex-1 py-4 sm:py-0 sm:px-6 text-center border-brand-dark-blue/10 flex flex-col items-center",
+                      index > 0 && "border-t sm:border-t-0 sm:border-l"
+                    )}>
+                      <item.icon className="h-5 w-5 text-brand-dark-blue/70 mb-3" strokeWidth={1.5} />
+                      <p className="text-xl font-medium text-brand-dark-blue">{item.stat}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* 2x2 feature grid - separate from manifesto */}
+          <div className="grid grid-cols-1 md:grid-cols-2 mt-10 border border-brand-dark-blue/10">
+            {[
+              { title: "Regional Expertise", body: "Built by practitioners with deep roots in Indonesian and Malaysian markets. We understand local business culture, regulatory environments, and what makes a deal actually close.", icon: Globe },
+              { title: "Technology-Enabled Process", body: "Our systems streamline deal sourcing, buyer outreach, and due diligence coordination, allowing our advisory team to move faster and match more effectively than traditional firms.", icon: Zap },
+              { title: "Confidential by Design", body: "Every deal is handled with strict confidentiality protocols. NDA-gated information flow, anonymous teasers, and controlled buyer access keep your business protected throughout.", icon: ShieldCheck },
+              { title: "Aligned Incentives", body: "Success-fee based pricing means we only win when you do. Optional retainer structures for buyers ensure dedicated sourcing without misaligned incentives.", icon: HandCoins },
+            ].map((card, index) => (
+              <FadeIn key={card.title} delay={(index + 2) * 100}>
+                <div className={cn(
+                  "bg-white p-8 md:p-10 h-full flex flex-col",
+                  (index === 1) && "md:border-l border-brand-dark-blue/10",
+                  (index === 2) && "border-t border-brand-dark-blue/10",
+                  (index === 3) && "border-t md:border-l border-brand-dark-blue/10"
+                )}>
+                  <card.icon className="h-5 w-5 text-brand-dark-blue/70 mb-4" strokeWidth={1.5} />
+                  <h4 className="text-lg font-normal text-brand-dark-blue font-heading mb-3">{card.title}</h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed text-justify">{card.body}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* Final Call to Action Section */}
+      <div className="border-t border-brand-dark-blue/10" />
+      <section className="py-12 bg-brand-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="border border-brand-dark-blue/10">
+              <div className="relative px-8 md:px-16 text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: '100% 100%', backgroundPosition: 'center', aspectRatio: '21/9' }}>
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-10 md:px-16 py-10 md:py-14">
+                    <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">Speak Wi<span style={{ fontSize: '1.06em' }}>t</span>h Our <span style={{ fontSize: '1.06em' }}>T</span>eam</h2>
+                    <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-10">
+                      Whether you&apos;re planning an exit, seeking an acquisition, or exploring strategic options, our advisors are ready to help.
+                    </p>
+                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                      <Link href="/auth/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
+                        Get Started
+                      </Link>
+                      <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">
+                        Contact Our Team
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </FadeIn>
         </div>

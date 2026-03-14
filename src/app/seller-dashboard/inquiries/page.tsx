@@ -218,7 +218,7 @@ export default function SellerInquiriesPage() {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Inquiries</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Inquiries</h1>
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -233,7 +233,7 @@ export default function SellerInquiriesPage() {
   if (error) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Inquiries</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Inquiries</h1>
         <Card className="shadow-md text-center py-12 bg-brand-white">
           <CardContent>
             <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
@@ -253,7 +253,7 @@ export default function SellerInquiriesPage() {
   if (!currentUser) {
     return (
       <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Access Denied</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Access Denied</h1>
         <p className="text-muted-foreground">You must be logged in as a seller to view this page.</p>
         <Button asChild><Link href="/auth/login">Login</Link></Button>
       </div>
@@ -264,7 +264,7 @@ export default function SellerInquiriesPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">
+          <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">
             My Inquiries {inquiries.length > 0 && `(${inquiries.length})`}
           </h1>
           <p className="text-muted-foreground">

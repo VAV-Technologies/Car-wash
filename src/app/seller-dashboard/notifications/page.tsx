@@ -57,7 +57,7 @@ export default function SellerNotificationsPage() {
   if (typeof window !== 'undefined' && !currentUser) { // Added typeof window check for currentUser access
      return (
       <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Access Denied</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Access Denied</h1>
         <p className="text-muted-foreground">You must be logged in as a seller to view this page.</p>
         <Button asChild><Link href="/auth/login">Login</Link></Button>
       </div>
@@ -82,7 +82,7 @@ export default function SellerNotificationsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">My Notifications</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">My Notifications</h1>
       <p className="text-muted-foreground">
         Stay updated with important alerts and messages related to your activity.
       </p>

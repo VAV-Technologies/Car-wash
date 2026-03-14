@@ -51,23 +51,23 @@ export function Filters() {
     return JSON.stringify(draftFilters) !== JSON.stringify(appliedFilters);
   }, [draftFilters, appliedFilters]);
 
-  // Handle price input with validation
-  const handlePriceChange = useCallback((type: 'min' | 'max', value: string) => {
+  // Handle revenue input with validation
+  const handleRevenueChange = useCallback((type: 'min' | 'max', value: string) => {
     const numericValue = parsePriceInput(value);
 
     if (type === 'min') {
-      updateDraftFilter('minPrice', numericValue);
+      updateDraftFilter('minRevenue', numericValue);
     } else {
-      updateDraftFilter('maxPrice', numericValue);
+      updateDraftFilter('maxRevenue', numericValue);
     }
 
-    // Validate price range
-    const minPrice = type === 'min' ? numericValue : draftFilters.minPrice;
-    const maxPrice = type === 'max' ? numericValue : draftFilters.maxPrice;
+    // Validate revenue range
+    const minRevenue = type === 'min' ? numericValue : draftFilters.minRevenue;
+    const maxRevenue = type === 'max' ? numericValue : draftFilters.maxRevenue;
 
-    const validation = validatePriceRange(minPrice, maxPrice);
+    const validation = validatePriceRange(minRevenue, maxRevenue);
     setPriceErrors(validation.errors);
-  }, [draftFilters.minPrice, draftFilters.maxPrice, updateDraftFilter]);
+  }, [draftFilters.minRevenue, draftFilters.maxRevenue, updateDraftFilter]);
 
   // Handle predefined keyword toggle
   const handlePredefinedKeywordToggle = useCallback((keyword: string) => {
@@ -127,7 +127,7 @@ export function Filters() {
   }, [resetAndApplyFilters]);
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-6 space-y-6 text-white">
+    <div className="bg-white/10 backdrop-blur-md rounded-none border border-white/20 p-6 space-y-6 text-white">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Filter className="h-5 w-5 text-brand-sky-blue" />
@@ -138,7 +138,7 @@ export function Filters() {
             variant="ghost"
             size="sm"
             onClick={handleReset}
-            className="text-gray-300 hover:text-white hover:bg-white/10"
+            className="text-gray-300 hover:text-white hover:bg-white/10 rounded-none"
           >
             <RotateCcw className="h-4 w-4 mr-1" />
             Clear all
@@ -225,18 +225,18 @@ export function Filters() {
           </Select>
         </div>
 
-        {/* Price Range */}
+        {/* Revenue Range */}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-gray-200">
-            Asking Price Range (USD)
+            Revenue Range (USD)
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Input
                 type="text"
-                placeholder="Min price"
-                value={draftFilters.minPrice ? formatPrice(draftFilters.minPrice) : ''}
-                onChange={(e) => handlePriceChange('min', e.target.value)}
+                placeholder="Min revenue"
+                value={draftFilters.minRevenue ? formatPrice(draftFilters.minRevenue) : ''}
+                onChange={(e) => handleRevenueChange('min', e.target.value)}
                 className={`bg-white/5 border-white/20 text-white placeholder:text-gray-500 ${priceErrors.min ? 'border-red-500' : ''}`}
               />
               {priceErrors.min && (
@@ -246,9 +246,9 @@ export function Filters() {
             <div className="space-y-1">
               <Input
                 type="text"
-                placeholder="Max price"
-                value={draftFilters.maxPrice ? formatPrice(draftFilters.maxPrice) : ''}
-                onChange={(e) => handlePriceChange('max', e.target.value)}
+                placeholder="Max revenue"
+                value={draftFilters.maxRevenue ? formatPrice(draftFilters.maxRevenue) : ''}
+                onChange={(e) => handleRevenueChange('max', e.target.value)}
                 className={`bg-white/5 border-white/20 text-white placeholder:text-gray-500 ${priceErrors.max ? 'border-red-500' : ''}`}
               />
               {priceErrors.max && (
@@ -259,41 +259,41 @@ export function Filters() {
         </div>
 
         {/* Keywords Section - Main Search Functionality */}
-        <div className="space-y-4">
-          <Label className="text-sm font-medium text-gray-200">
-            Search by Keywords
-          </Label>
-          <p className="text-xs text-gray-400">
-            Add keywords to search across listings titles, descriptions, and business details
-          </p>
+        <div className="space-y-3">
+          <div>
+            <Label className="text-sm font-medium text-gray-200">
+              Search by Keywords
+            </Label>
+            <p className="text-xs text-gray-400 mt-1">
+              Add keywords to search across listings titles, descriptions, and business details
+            </p>
+          </div>
 
           {/* Custom Keyword Input */}
-          <div className="space-y-2">
-            <div className="flex space-x-2">
-              <Input
-                type="text"
-                placeholder="Add keywords to search for..."
-                value={customKeywordInput}
-                onChange={(e) => setCustomKeywordInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddCustomKeyword();
-                  }
-                }}
-                className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-gray-500"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddCustomKeyword}
-                disabled={!customKeywordInput.trim()}
-                className="bg-white/5 border-white/20 text-white hover:bg-white/10"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="flex gap-3 items-stretch">
+            <Input
+              type="text"
+              placeholder="Add keywords to search for..."
+              value={customKeywordInput}
+              onChange={(e) => setCustomKeywordInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddCustomKeyword();
+                }
+              }}
+              className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-gray-500 h-auto"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleAddCustomKeyword}
+              disabled={!customKeywordInput.trim()}
+              className="bg-white/5 border-white/20 text-white hover:bg-white/10 rounded-none h-auto"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
 
           {/* Predefined Keywords */}
@@ -311,7 +311,7 @@ export function Filters() {
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePredefinedKeywordToggle(keyword)}
-                    className={`text-xs ${isSelected ? 'bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90' : 'bg-white/5 border-white/20 text-gray-300 hover:bg-white/10 hover:text-white'}`}
+                    className={`text-xs rounded-none ${isSelected ? 'bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90' : 'bg-white/5 border-white/20 text-gray-300 hover:bg-white/10 hover:text-white'}`}
                   >
                     {keyword}
                   </Button>
@@ -337,7 +337,7 @@ export function Filters() {
                     <button
                       type="button"
                       onClick={() => handleRemoveKeyword(keyword)}
-                      className="ml-1 hover:bg-brand-sky-blue/30 rounded-full p-0.5"
+                      className="ml-1 hover:bg-brand-sky-blue/30 rounded-none p-0.5"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -349,11 +349,12 @@ export function Filters() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-3 pt-4 border-t border-white/20">
+        <div className="border border-white/15 p-2 space-y-2">
           <Button
             type="submit"
+            size="sm"
             disabled={isLoading || (priceErrors.min || priceErrors.max) ? true : false}
-            className="flex-1 bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90"
+            className="w-full bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 rounded-none"
           >
             <Search className="h-4 w-4 mr-2" />
             {isLoading ? 'Searching...' : 'Apply Filters'}
@@ -369,7 +370,8 @@ export function Filters() {
                 setCustomKeywordInput('');
                 setPriceErrors({});
               }}
-              className="bg-transparent border-white/20 text-white hover:bg-white/10"
+              className="w-full bg-transparent border-white/20 text-white hover:bg-white/10 rounded-none"
+              size="sm"
             >
               Cancel
             </Button>
@@ -378,7 +380,7 @@ export function Filters() {
 
         {/* Unsaved Changes Indicator */}
         {hasUnsavedChanges && (
-          <div className="text-xs text-amber-300 bg-amber-900/30 p-2 rounded border border-amber-500/50">
+          <div className="text-xs text-amber-300 bg-amber-900/30 p-2 rounded-none border border-amber-500/50">
             You have unsaved filter changes. Click "Apply Filters" to search with these settings.
           </div>
         )}

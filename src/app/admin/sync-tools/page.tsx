@@ -57,7 +57,7 @@ export default function AdminSyncTools() {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-6">Admin Sync Tools</h1>
+      <h1 className="text-3xl font-semibold mb-6">Admin Sync Tools</h1>
 
       <Tabs defaultValue="seller-verification" className="w-full">
         <TabsList className="mb-4">

@@ -199,7 +199,7 @@ export default function BuyerDashboardPage() {
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue font-heading">
+          <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue font-heading">
               Welcome back, {user.fullName}!
           </h1>
             <p className="text-muted-foreground">Here's an overview of your buyer activity.</p>
@@ -328,7 +328,7 @@ export default function BuyerDashboardPage() {
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-              <div className="text-2xl font-bold">{stats.activeInquiriesCount}</div>
+              <div className="text-2xl font-semibold">{stats.activeInquiriesCount}</div>
               <p className="text-xs text-muted-foreground">
                 Inquiries awaiting response
               </p>
@@ -343,7 +343,7 @@ export default function BuyerDashboardPage() {
               <Inbox className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-              <div className="text-2xl font-bold">{stats.newMessagesCount}</div>
+              <div className="text-2xl font-semibold">{stats.newMessagesCount}</div>
               <p className="text-xs text-muted-foreground">
                 Unread conversations
               </p>

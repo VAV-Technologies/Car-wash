@@ -168,7 +168,7 @@ export default function PricingPage() {
       <section className="py-16 md:py-24 bg-brand-light-gray">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-sky-blue mb-3">PRICING PLANS FOR SELLERS</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-brand-dark-blue mb-6 font-heading">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-brand-dark-blue mb-6 font-heading">
             Select the Best Plan to Sell Your Business
           </h1>
           <p className="mt-4 text-lg md:text-xl text-brand-dark-blue/80 max-w-3xl mx-auto">
@@ -194,7 +194,7 @@ export default function PricingPage() {
                   <div className="mb-4 flex justify-center">
                     <NobridgeIcon icon={plan.icon} size="xl" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-brand-dark-blue mb-2 font-heading">{plan.name}</CardTitle>
+                  <CardTitle className="text-2xl font-semibold text-brand-dark-blue mb-2 font-heading">{plan.name}</CardTitle>
                   <p className="text-4xl font-extrabold text-brand-dark-blue">
                     {plan.price}
                     {(plan.price !== "$0" && plan.priceDetails) && <span className="text-base font-normal text-brand-dark-blue/70">{plan.priceDetails.replace('/month', '').replace('Success Fee','').trim()}</span>}
@@ -230,7 +230,7 @@ export default function PricingPage() {
       {/* Get Started Central CTA */}
       <section className="py-16 bg-brand-white text-center">
         <div className="container mx-auto px-4">
-          <Button size="xl" className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 py-4 px-10 text-lg font-semibold rounded-md">
+          <Button size="xl" className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 py-4 px-10 text-lg font-semibold rounded-none">
             Get Started with Nobridge <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
@@ -239,18 +239,18 @@ export default function PricingPage() {
       {/* Detailed Feature Comparison Table */}
       <section className="py-16 md:py-24 bg-brand-light-gray">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-blue text-center mb-12 font-heading">
+          <h2 className="text-3xl md:text-4xl font-semibold text-brand-dark-blue text-center mb-12 font-heading">
             Compare Our Seller Plans
           </h2>
           <div className="overflow-x-auto rounded-lg border border-brand-light-gray/70 shadow-lg">
             <table className="min-w-full divide-y divide-brand-light-gray/70 bg-brand-white">
               <thead className="bg-brand-light-gray/50">
                 <tr>
-                  <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-brand-dark-blue uppercase tracking-wider sticky left-0 bg-brand-light-gray/50 z-10 font-heading">
+                  <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-brand-dark-blue uppercase tracking-wider sticky left-0 bg-brand-light-gray/50 z-10 font-heading">
                     Feature
                   </th>
                   {plans.map((plan) => (
-                    <th key={plan.name} scope="col" className={`px-6 py-4 text-center text-sm font-bold text-brand-dark-blue uppercase tracking-wider ${plan.popular ? 'bg-brand-sky-blue/10' : ''} font-heading`}>
+                    <th key={plan.name} scope="col" className={`px-6 py-4 text-center text-sm font-semibold text-brand-dark-blue uppercase tracking-wider ${plan.popular ? 'bg-brand-sky-blue/10' : ''} font-heading`}>
                       {plan.name}
                       {plan.popular && <div className="text-xs font-normal text-brand-sky-blue normal-case">(Most Popular)</div>}
                     </th>
@@ -298,7 +298,7 @@ export default function PricingPage() {
       {/* Another "Get Started" Central CTA */}
       <section className="py-16 bg-brand-white text-center">
         <div className="container mx-auto px-4">
-            <Button size="xl" className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 py-4 px-10 text-lg font-semibold rounded-md">
+            <Button size="xl" className="bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 py-4 px-10 text-lg font-semibold rounded-none">
              Get Started with Nobridge <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
         </div>
@@ -307,7 +307,7 @@ export default function PricingPage() {
       {/* FAQ Section */}
       <section className="py-16 md:py-24 bg-brand-light-gray">
         <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-blue text-center mb-12 font-heading">
+          <h2 className="text-3xl md:text-4xl font-semibold text-brand-dark-blue text-center mb-12 font-heading">
             Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="w-full">

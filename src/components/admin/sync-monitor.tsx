@@ -168,7 +168,7 @@ export function SyncMonitor() {
               <CardTitle className="text-sm font-medium">Events (Last Hour)</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{syncStats.total_events_last_hour}</div>
+              <div className="text-2xl font-semibold">{syncStats.total_events_last_hour}</div>
             </CardContent>
           </Card>
 
@@ -177,7 +177,7 @@ export function SyncMonitor() {
               <CardTitle className="text-sm font-medium">Avg Processing Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-semibold">
                 {syncStats.avg_processing_time_ms?.toFixed(1) || '0'}ms
               </div>
             </CardContent>
@@ -188,7 +188,7 @@ export function SyncMonitor() {
               <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{syncStats.active_subscriptions}</div>
+              <div className="text-2xl font-semibold">{syncStats.active_subscriptions}</div>
             </CardContent>
           </Card>
 
@@ -197,7 +197,7 @@ export function SyncMonitor() {
               <CardTitle className="text-sm font-medium">Pending Webhooks</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{syncStats.pending_webhooks}</div>
+              <div className="text-2xl font-semibold">{syncStats.pending_webhooks}</div>
             </CardContent>
           </Card>
         </div>

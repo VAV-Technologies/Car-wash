@@ -12,12 +12,12 @@ export default function NotFound() {
         <CardContent className="pt-10 pb-8 px-8 text-center">
           {/* 404 Icon */}
           <div className="mb-6">
-            <div className="text-8xl font-bold text-gray-300 mb-2">404</div>
+            <div className="text-8xl font-semibold text-gray-300 mb-2">404</div>
             <Search className="h-16 w-16 text-gray-400 mx-auto" />
           </div>
 
           {/* Error Message */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-semibold text-brand-dark-blue mb-2">
             Page Not Found
           </h1>
           <p className="text-gray-600 mb-8">

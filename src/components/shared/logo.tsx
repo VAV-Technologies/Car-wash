@@ -42,9 +42,6 @@ export function Logo({ size = 'xl', forceTheme }: LogoProps) {
     useDarkElementsLogoFile = true;
   }
 
-  // Based on user confirmation:
-  // nobriage_logo_light_trimmed@2x.png = DARK elements (for light backgrounds)
-  // nobriage_logo_dark_trimmed@2x.png = LIGHT elements (for dark backgrounds)
   const logoSrc = useDarkElementsLogoFile
     ? '/assets/nobridge_logo_light_trimmed@2x.png'
     : '/assets/nobridge_logo_dark_trimmed@2x.png';

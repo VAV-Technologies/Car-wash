@@ -9,8 +9,8 @@ export interface MarketplaceFilters {
   industry?: string;
   country?: string;
   verificationStatus?: string;
-  minPrice?: number;
-  maxPrice?: number;
+  minRevenue?: number;
+  maxRevenue?: number;
   keywords: string[];
   sortBy: string;
   sortOrder: 'asc' | 'desc';
@@ -20,7 +20,7 @@ const DEFAULT_FILTERS: MarketplaceFilters = {
   page: 1,
   limit: 9,
   keywords: [],
-  sortBy: 'asking_price',
+  sortBy: 'specific_annual_revenue_last_year',
   sortOrder: 'desc',
 };
 
@@ -36,8 +36,8 @@ export function useMarketplaceFilters() {
       industry: searchParams.get('industry') || undefined,
       country: searchParams.get('country') || undefined,
       verificationStatus: searchParams.get('verificationStatus') || undefined,
-      minPrice: searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!, 10) : undefined,
-      maxPrice: searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!, 10) : undefined,
+      minRevenue: searchParams.get('minRevenue') ? parseInt(searchParams.get('minRevenue')!, 10) : undefined,
+      maxRevenue: searchParams.get('maxRevenue') ? parseInt(searchParams.get('maxRevenue')!, 10) : undefined,
       keywords: searchParams.get('keywords')?.split(',').filter(Boolean) || [],
       sortBy: searchParams.get('sort_by') || DEFAULT_FILTERS.sortBy,
       sortOrder: (searchParams.get('sort_order') as 'asc' | 'desc') || DEFAULT_FILTERS.sortOrder,
@@ -65,8 +65,8 @@ export function useMarketplaceFilters() {
     if (filterValues.industry && filterValues.industry !== 'all') params.set('industry', filterValues.industry);
     if (filterValues.country && filterValues.country !== 'all') params.set('country', filterValues.country);
     if (filterValues.verificationStatus) params.set('verificationStatus', filterValues.verificationStatus);
-    if (filterValues.minPrice !== undefined) params.set('minPrice', filterValues.minPrice.toString());
-    if (filterValues.maxPrice !== undefined) params.set('maxPrice', filterValues.maxPrice.toString());
+    if (filterValues.minRevenue !== undefined) params.set('minRevenue', filterValues.minRevenue.toString());
+    if (filterValues.maxRevenue !== undefined) params.set('maxRevenue', filterValues.maxRevenue.toString());
     if (filterValues.keywords.length > 0) params.set('keywords', filterValues.keywords.join(','));
     if (filterValues.sortBy !== DEFAULT_FILTERS.sortBy) params.set('sort_by', filterValues.sortBy);
     if (filterValues.sortOrder !== DEFAULT_FILTERS.sortOrder) params.set('sort_order', filterValues.sortOrder);
@@ -121,8 +121,8 @@ export function useMarketplaceFilters() {
     if (appliedFilters.industry && appliedFilters.industry !== 'all') params.industry = appliedFilters.industry;
     if (appliedFilters.country && appliedFilters.country !== 'all') params.country = appliedFilters.country;
     if (appliedFilters.verificationStatus) params.verificationStatus = appliedFilters.verificationStatus;
-    if (appliedFilters.minPrice !== undefined) params.min_price = appliedFilters.minPrice.toString();
-    if (appliedFilters.maxPrice !== undefined) params.max_price = appliedFilters.maxPrice.toString();
+    if (appliedFilters.minRevenue !== undefined) params.min_revenue = appliedFilters.minRevenue.toString();
+    if (appliedFilters.maxRevenue !== undefined) params.max_revenue = appliedFilters.maxRevenue.toString();
     if (appliedFilters.keywords.length > 0) params.keywords = appliedFilters.keywords.join(',');
     return params;
   }, [appliedFilters]);
@@ -143,8 +143,8 @@ export function useMarketplaceFilters() {
         !!appliedFilters.industry ||
         !!appliedFilters.country ||
         !!appliedFilters.verificationStatus ||
-        appliedFilters.minPrice !== undefined ||
-        appliedFilters.maxPrice !== undefined ||
+        appliedFilters.minRevenue !== undefined ||
+        appliedFilters.maxRevenue !== undefined ||
         appliedFilters.keywords.length > 0 ||
         appliedFilters.sortBy !== DEFAULT_FILTERS.sortBy ||
         appliedFilters.sortOrder !== DEFAULT_FILTERS.sortOrder

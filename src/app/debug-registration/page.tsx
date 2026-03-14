@@ -58,7 +58,7 @@ export default function DebugRegistrationPage() {
 
   return (
     <div className="container mx-auto p-8 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6">Debug Registration</h1>
+      <h1 className="text-2xl font-semibold mb-6">Debug Registration</h1>
 
       <div className="space-y-4 mb-6">
         <div>

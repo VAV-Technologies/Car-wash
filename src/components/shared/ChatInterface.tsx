@@ -702,10 +702,10 @@ export default function ChatInterface({ conversationId, currentUser, onBack }: C
                         isAdminUser
                           ? (isBuyerMessage
                             ? "bg-blue-900 text-white rounded-bl-none"
-                            : "bg-white text-gray-900 border border-gray-200 rounded-br-none"
+                            : "bg-white text-brand-dark-blue border border-gray-200 rounded-br-none"
                             )
                           : (isOwn
-                            ? "bg-white text-gray-900 border border-gray-200 rounded-br-none"
+                            ? "bg-white text-brand-dark-blue border border-gray-200 rounded-br-none"
                             : "bg-blue-900 text-white rounded-bl-none"
                             )
                       )}

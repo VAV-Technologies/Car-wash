@@ -78,7 +78,7 @@ export const asianCountries = ["Singapore", "Malaysia", "Indonesia", "Thailand",
 export type EmployeeCountRange = "Sole Operator" | "1-5" | "6-10" | "11-25" | "26-50" | "50+";
 export const employeeCountRanges: EmployeeCountRange[] = ["Sole Operator", "1-5", "6-10", "11-25", "26-50", "50+"];
 
-export const placeholderKeywords: string[] = ["SaaS", "E-commerce", "Retail", "Service Business", "High Growth", "Profitable", "Fintech", "Logistics", "Healthcare Tech"];
+export const placeholderKeywords: string[] = ["SaaS", "E-commerce", "Retail", "Service", "Business", "High Growth"];
 
 
 export interface User {

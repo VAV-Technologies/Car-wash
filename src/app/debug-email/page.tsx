@@ -165,7 +165,7 @@ export default function DebugEmailPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Email Verification Debug</h1>
+        <h1 className="text-3xl font-semibold mb-8">Email Verification Debug</h1>
 
         <div className="bg-white p-6 rounded-lg shadow space-y-4">
           <div>
@@ -227,7 +227,7 @@ export default function DebugEmailPage() {
 
         {result && (
           <div className="mt-8 bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-bold mb-4">Result ({result.type})</h2>
+            <h2 className="text-xl font-semibold mb-4">Result ({result.type})</h2>
             <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
               {JSON.stringify(result, null, 2)}
             </pre>

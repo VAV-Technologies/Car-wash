@@ -3,11 +3,9 @@
 import * as React from "react";
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, DollarSign, Briefcase, CheckCircle2, ExternalLink, TrendingUp } from 'lucide-react'; // Replaced ShieldCheck with CheckCircle2
-import { NobridgeIcon } from '@/components/ui/nobridge-icon';
+import { MapPin, DollarSign, Briefcase, CheckCircle2, ExternalLink, TrendingUp } from 'lucide-react';
 
 interface ApiListing {
   id: string;
@@ -47,64 +45,66 @@ export function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`} className="block h-full group">
-      <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:border-brand-sky-blue/50 transition-all duration-300 rounded-lg bg-white/10 backdrop-blur-md border-white/20 text-white cursor-pointer">
-        <CardHeader className="p-0 relative">
-          <div className="overflow-hidden h-48 w-full">
+      <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:border-brand-sky-blue/50 transition-all duration-300 rounded-none bg-white/10 backdrop-blur-md border-white/20 text-white cursor-pointer p-4 gap-3">
+        {/* Square image - inner box */}
+        <div className="relative border border-white/15 overflow-hidden">
+          <div className="aspect-square w-full">
             <Image
               src={
                 listing.images
                   ? (typeof listing.images === 'string'
                     ? JSON.parse(listing.images)[0]
-                    : listing.images[0]) || "https://placehold.co/400x250.png"
-                  : "https://placehold.co/400x250.png"
+                    : listing.images[0]) || "https://placehold.co/400x400.png"
+                  : "https://placehold.co/400x400.png"
               }
               alt={listing.title}
               width={400}
-              height={250}
+              height={400}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               data-ai-hint={listing.images ? (listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business") : "generic business"}
             />
           </div>
           {listing.verification_status === 'verified' && (
-            <Badge variant="outline" className="absolute top-2 right-2 bg-green-500/20 border-green-400 text-green-100 backdrop-blur-sm">
+            <Badge variant="outline" className="absolute top-2 right-2 bg-green-600 border-green-500 text-white">
               <CheckCircle2 className="h-3 w-3 mr-1" />
               Verified Seller
             </Badge>
           )}
-        </CardHeader>
-        <CardContent className="p-4 flex-grow">
-          <CardTitle className="text-lg text-white mb-2 leading-tight group-hover:text-brand-sky-blue transition-colors">
+        </div>
+
+        {/* Title - inner box */}
+        <div className="border border-white/15 px-4 py-3">
+          <h3 className="text-lg font-medium text-white leading-tight group-hover:text-brand-sky-blue transition-colors">
             {listing.title}
-          </CardTitle>
-          <div className="space-y-2 text-sm text-gray-300">
-            <div className="flex items-center">
-              <Briefcase className="h-4 w-4 mr-2 text-brand-sky-blue" />
-              <span>{listing.industry}</span>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-2 text-brand-sky-blue" />
-              <span>{listing.location_city}, {listing.location_country}</span>
-            </div>
-            <div className="flex items-center">
-              <TrendingUp className="h-4 w-4 mr-2 text-brand-sky-blue" />
-              <span>Revenue: {formatRevenueDisplay(listing)}</span>
-            </div>
-            <div className="flex items-center">
-              <DollarSign className="h-4 w-4 mr-2 text-brand-sky-blue" />
-              <span>Asking Price: {displayPrice}</span>
-            </div>
-            <p className="text-sm text-gray-200 pt-1">{truncatedDescription}</p>
+          </h3>
+        </div>
+
+        {/* Detail rows - merged into one box */}
+        <div className="border border-white/15 text-sm text-gray-300">
+          <div className="flex items-center px-4 py-2.5">
+            <Briefcase className="h-4 w-4 mr-2 text-brand-sky-blue shrink-0" />
+            <span>{listing.industry}</span>
           </div>
-        </CardContent>
-        <CardFooter className="p-4 border-t border-white/10">
-          <div className="flex justify-end items-center w-full">
-            <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-3 bg-white/20 text-white group-hover:bg-brand-sky-blue group-hover:text-brand-dark-blue border border-white/20 backdrop-blur-sm">
-              View Details <ExternalLink className="ml-2 h-4 w-4" />
-            </div>
+          <div className="flex items-center px-4 py-2.5 border-t border-white/10">
+            <MapPin className="h-4 w-4 mr-2 text-brand-sky-blue shrink-0" />
+            <span>{listing.location_city}, {listing.location_country}</span>
           </div>
-        </CardFooter>
+          <div className="flex items-center px-4 py-2.5 border-t border-white/10">
+            <TrendingUp className="h-4 w-4 mr-2 text-brand-sky-blue shrink-0" />
+            <span>Revenue: {formatRevenueDisplay(listing)}</span>
+          </div>
+        </div>
+
+        {/* Description - inner box */}
+        <div className="border border-white/15 px-4 py-3 flex-grow">
+          <p className="text-sm text-gray-200 leading-relaxed">{truncatedDescription}</p>
+        </div>
+
+        {/* View Details - full width inner box */}
+        <div className="border border-white/15 flex items-center justify-center w-full h-11 text-sm font-medium bg-white/10 text-white group-hover:bg-brand-sky-blue group-hover:text-brand-dark-blue transition-colors">
+          View Details <ExternalLink className="ml-2 h-4 w-4" />
+        </div>
       </Card>
     </Link>
   );
 }
-

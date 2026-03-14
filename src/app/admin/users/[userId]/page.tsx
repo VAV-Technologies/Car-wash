@@ -283,7 +283,7 @@ export default function AdminUserDetailPage() {
             Back
           </Button>
           <div>
-        <h1 className="text-3xl font-bold tracking-tight flex items-center text-brand-dark-blue font-heading">
+        <h1 className="text-3xl font-semibold tracking-tight flex items-center text-brand-dark-blue font-heading">
               <UserCircle className="h-8 w-8 mr-3 text-primary" />
               {user.fullName}
         </h1>
@@ -500,7 +500,7 @@ export default function AdminUserDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2 text-purple-700">
                   <Zap className="h-5 w-5" />
-                  <h4 className="font-bold text-lg">Admin Powers Activated!</h4>
+                  <h4 className="font-semibold text-lg">Admin Powers Activated!</h4>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center space-x-2">
@@ -531,7 +531,7 @@ export default function AdminUserDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2 text-pink-700">
                   <Sparkles className="h-5 w-5" />
-                  <h4 className="font-bold text-lg">Admin Mood Booster</h4>
+                  <h4 className="font-semibold text-lg">Admin Mood Booster</h4>
                 </div>
 
                 {memeLoading && (

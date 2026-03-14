@@ -225,7 +225,7 @@ export default function SellerProfilePage() {
       <div className="space-y-8">
         <div className="flex flex-col items-center justify-center min-h-[400px]">
           <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold text-destructive mb-2">
+          <h1 className="text-2xl font-semibold text-destructive mb-2">
             {error || "Failed to Load Profile"}
           </h1>
           <p className="text-muted-foreground mb-6 text-center max-w-md">
@@ -255,7 +255,7 @@ export default function SellerProfilePage() {
   if (!user && !profileLoading) {
     return (
       <div className="container py-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Profile Not Found</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Profile Not Found</h1>
         <p className="text-muted-foreground mb-4">Unable to load your profile. Please try logging in again.</p>
         <Button asChild>
           <Link href="/auth/login?redirectTo=/seller-dashboard/profile">Login</Link>
@@ -266,7 +266,7 @@ export default function SellerProfilePage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">My Seller Profile</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">My Seller Profile</h1>
 
       <Card className="shadow-md">
         <CardHeader>

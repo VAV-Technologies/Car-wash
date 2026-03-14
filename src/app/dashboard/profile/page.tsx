@@ -241,7 +241,7 @@ export default function BuyerProfilePage() {
       <div className="space-y-8">
         <div className="flex flex-col items-center justify-center min-h-[400px]">
           <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-          <h1 className="text-2xl font-bold text-destructive mb-2">Session Error</h1>
+          <h1 className="text-2xl font-semibold text-destructive mb-2">Session Error</h1>
           <p className="text-muted-foreground mb-6 text-center max-w-md">
             We're having trouble accessing your profile. This can happen if your session has expired.
             {retryCount > 0 && " Please try logging in again."}
@@ -267,7 +267,7 @@ export default function BuyerProfilePage() {
   if (currentProfile && currentProfile.role !== 'buyer') {
     return (
       <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Access Denied</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Access Denied</h1>
         <p className="text-muted-foreground">This page is only accessible to buyer accounts.</p>
         <Button asChild>
           <Link href="/seller-dashboard">Go to Seller Dashboard</Link>
@@ -280,7 +280,7 @@ export default function BuyerProfilePage() {
     <div className="space-y-8">
       <div className="flex items-center gap-3">
         <User className="h-8 w-8" />
-        <h1 className="text-3xl font-bold tracking-tight">My Buyer Profile</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">My Buyer Profile</h1>
       </div>
 
       <Card className="shadow-md">

@@ -26,28 +26,32 @@ export function AnimatedBackground({ className = '', position = 'fixed' }: Anima
         style={{ pointerEvents: 'none' }}
       >
         <defs>
+          {/* Deep: brand base to slightly lighter */}
           <linearGradient id={`${uniqueId}-gradDeep`} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#1e2142', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#2a2f5c', stopOpacity: 0.8 }} />
+            <stop offset="0%" style={{ stopColor: '#0D0D39', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#1E1E4D', stopOpacity: 0.9 }} />
           </linearGradient>
 
+          {/* Mid: lighter tint fading back to brand */}
           <linearGradient id={`${uniqueId}-gradMid`} x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#363c7a', stopOpacity: 0.9 }} />
-            <stop offset="100%" style={{ stopColor: '#242a52', stopOpacity: 0.2 }} />
+            <stop offset="0%" style={{ stopColor: '#272754', stopOpacity: 0.85 }} />
+            <stop offset="100%" style={{ stopColor: '#0D0D39', stopOpacity: 0.4 }} />
           </linearGradient>
 
+          {/* Light: most visible highlight, brand + white */}
           <linearGradient id={`${uniqueId}-gradLight`} x1="50%" y1="0%" x2="50%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#4f5791', stopOpacity: 0.8 }} />
-            <stop offset="100%" style={{ stopColor: '#32386e', stopOpacity: 0 }} />
+            <stop offset="0%" style={{ stopColor: '#30305E', stopOpacity: 0.7 }} />
+            <stop offset="100%" style={{ stopColor: '#0D0D39', stopOpacity: 0 }} />
           </linearGradient>
 
+          {/* Ribbon: subtle accent sweep */}
           <linearGradient id={`${uniqueId}-gradRibbon`} x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" style={{ stopColor: '#5c64a3', stopOpacity: 0.4 }} />
-            <stop offset="100%" style={{ stopColor: '#242a52', stopOpacity: 0 }} />
+            <stop offset="0%" style={{ stopColor: '#1E1E4D', stopOpacity: 0.5 }} />
+            <stop offset="100%" style={{ stopColor: '#0D0D39', stopOpacity: 0 }} />
           </linearGradient>
         </defs>
 
-        <rect width="1440" height="900" fill="#242a52" />
+        <rect width="1440" height="900" fill="#0D0D39" />
 
         <path
           className={`${styles.wave} ${styles.layer1}`}

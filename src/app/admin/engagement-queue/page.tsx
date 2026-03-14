@@ -274,7 +274,7 @@ export default function AdminEngagementQueuePage() {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight">Engagement Queue</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Engagement Queue</h1>
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -289,7 +289,7 @@ export default function AdminEngagementQueuePage() {
   if (error) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight">Engagement Queue</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Engagement Queue</h1>
         <Card>
           <CardContent className="text-center py-12">
             <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
@@ -310,7 +310,7 @@ export default function AdminEngagementQueuePage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Engagement Queue</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Engagement Queue</h1>
           <p className="text-muted-foreground">
             Manage and facilitate chat connections between verified buyers and sellers.
           </p>
@@ -329,7 +329,7 @@ export default function AdminEngagementQueuePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Ready for Connection</p>
-                  <p className="text-2xl font-bold">{stats.ready_for_connection}</p>
+                  <p className="text-2xl font-semibold">{stats.ready_for_connection}</p>
                 </div>
                 <Users className="h-8 w-8 text-blue-500" />
               </div>
@@ -341,7 +341,7 @@ export default function AdminEngagementQueuePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Pending Verification</p>
-                  <p className="text-2xl font-bold">{stats.pending_verification}</p>
+                  <p className="text-2xl font-semibold">{stats.pending_verification}</p>
                 </div>
                 <Clock className="h-8 w-8 text-amber-500" />
               </div>
@@ -353,7 +353,7 @@ export default function AdminEngagementQueuePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Facilitated Today</p>
-                  <p className="text-2xl font-bold">{stats.total_facilitated_today}</p>
+                  <p className="text-2xl font-semibold">{stats.total_facilitated_today}</p>
                 </div>
                 <CheckCircle2 className="h-8 w-8 text-green-500" />
               </div>
@@ -365,7 +365,7 @@ export default function AdminEngagementQueuePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Active Conversations</p>
-                  <p className="text-2xl font-bold">{stats.total_active_conversations}</p>
+                  <p className="text-2xl font-semibold">{stats.total_active_conversations}</p>
                 </div>
                 <MessageSquare className="h-8 w-8 text-primary" />
               </div>

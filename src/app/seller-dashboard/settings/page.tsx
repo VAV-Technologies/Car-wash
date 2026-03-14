@@ -47,7 +47,7 @@ export default function SellerSettingsPage() {
   if (error) {
     return (
       <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-red-600">Error Loading Settings</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-red-600">Error Loading Settings</h1>
         <p className="text-muted-foreground">{error}</p>
         <Button onClick={() => window.location.reload()}>Try Again</Button>
       </div>
@@ -57,7 +57,7 @@ export default function SellerSettingsPage() {
   if (isLoading) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight">Seller Account Settings</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Seller Account Settings</h1>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -70,7 +70,7 @@ export default function SellerSettingsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">Seller Account Settings</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Seller Account Settings</h1>
 
       <Card className="shadow-md">
         <CardHeader>

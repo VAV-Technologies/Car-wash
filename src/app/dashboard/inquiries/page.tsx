@@ -146,7 +146,7 @@ export default function InquiriesPage() {
   if (isAuthLoading) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Inquiries</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Inquiries</h1>
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -161,7 +161,7 @@ export default function InquiriesPage() {
   if (!user || !profile || profile.role !== 'buyer') {
     return (
       <div className="space-y-8 text-center p-8">
-        <h1 className="text-3xl font-bold tracking-tight text-destructive">Access Denied</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-destructive">Access Denied</h1>
         <p className="text-muted-foreground">You must be logged in as a buyer to view this page.</p>
         <Button asChild><Link href="/auth/login">Login</Link></Button>
       </div>
@@ -172,7 +172,7 @@ export default function InquiriesPage() {
   if (isLoadingInquiries) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Inquiries</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Inquiries</h1>
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -187,7 +187,7 @@ export default function InquiriesPage() {
   if (error) {
     return (
       <div className="space-y-8">
-        <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">My Inquiries</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">My Inquiries</h1>
         <Card className="shadow-md bg-red-50 border-red-200">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -207,7 +207,7 @@ export default function InquiriesPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-start">
         <div>
-      <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">
+      <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">
         My Inquiries {inquiries.length > 0 && `(${inquiries.length})`}
       </h1>
       <p className="text-muted-foreground">

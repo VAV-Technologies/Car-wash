@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MessageCircle, Clock, AlertCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -211,7 +212,7 @@ export function ConversationButton({
         disabled={isLoading}
         variant={variant}
         size={size}
-        className={className}
+        className={cn("rounded-md", className)}
       >
         {isLoading ? (
           <>

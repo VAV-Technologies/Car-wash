@@ -77,7 +77,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight text-brand-dark-blue">Account Settings</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-brand-dark-blue">Account Settings</h1>
 
       <Card className="shadow-md bg-brand-white">
         <CardHeader>

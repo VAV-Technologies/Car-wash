@@ -94,7 +94,7 @@ export default function RootLayout({
         <link rel="icon" href="/nobridge-favicon.ico?v=3" sizes="any" />
         <link rel="icon" href="/nobridge-favicon.png?v=3" type="image/png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=3" />
-        <meta name="theme-color" content="#1e3a8a" />
+        <meta name="theme-color" content="#0D0D39" />
 
         {/* Satoshi Font from Fontshare CDN */}
         <link rel="preconnect" href="https://api.fontshare.com" />
