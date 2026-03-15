@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, UserCircle, LogIn, UserPlus, LogOut, LayoutDashboard, Settings, Bell, Briefcase, ShoppingCart, Building2, Phone, Info, FileText, Search, Users2, DollarSign, Loader2, Award } from 'lucide-react';
+import { Menu, ChevronDown, UserCircle, LogIn, UserPlus, LogOut, LayoutDashboard, Settings, Bell, Briefcase, ShoppingCart, Building2, Phone, Info, FileText, Search, Users2, DollarSign, Loader2, Award, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -59,6 +59,7 @@ const navLinkGroups: NavLinkGroup[] = [
       { href: "/about", label: "About Us", icon: Users2 },
       { href: "/faq", label: "FAQ", icon: Info },
       { href: "/acfi-certificate", label: "ACFI Certificate", icon: Award },
+      { href: "/resources", label: "Resources", icon: BookOpen },
     ],
   },
 ];

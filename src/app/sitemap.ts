@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
+import { getAllPublishedSlugs } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.nobridge.co'
@@ -72,6 +73,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly' as const,
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/resources`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    },
   ]
 
   try {
@@ -93,7 +100,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     })) || []
 
-    return [...staticPages, ...listingPages]
+    // Fetch blog post pages
+    const blogSlugs = await getAllPublishedSlugs()
+    const blogPages = blogSlugs.map((post) => ({
+      url: `${baseUrl}/resources/${post.slug}`,
+      lastModified: new Date(post.updated_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
+
+    return [...staticPages, ...listingPages, ...blogPages]
   } catch (error) {
     console.error('Error generating sitemap:', error)
     // Return static pages only if database query fails

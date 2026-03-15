@@ -37,8 +37,9 @@ export async function middleware(req: NextRequest) {
     '/about', '/contact', '/pricing', '/terms', '/privacy',
     // Public information pages
     '/faq', '/docs', '/help', '/how-selling-works', '/how-buying-works', '/seller-services', '/buyer-services', '/acfi-certificate',
-    // Marketplace and listing pages - now public
+    // Marketplace, listing, and resources pages - public
     '/marketplace',
+    '/resources',
     // Public API endpoints
     '/api/test', '/api/health', '/api/debug', // Allow health and debug endpoints
     '/api/listings', // Allow public access to listings API for marketplace
@@ -60,6 +61,7 @@ export async function middleware(req: NextRequest) {
                        pathname.startsWith('/_next/') || // Next.js internals
                        pathname.startsWith('/assets/') || // Static assets
                        pathname.startsWith('/listings/') || // Listing detail pages - now public
+                       pathname.startsWith('/resources/') || // Blog post detail pages - public
                        pathname.includes('.') // Files like .png, .svg etc.
 
   // Allow public paths (except auth pages - they need special handling)
