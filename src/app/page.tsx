@@ -191,15 +191,14 @@ export default function HomePage() {
             </div>
           </FadeIn>
 
-          {/* Service cards — image + content paired together */}
-          <div className="flex flex-col md:flex-row">
-            {[
+          {(() => {
+            const services = [
               {
                 num: "01",
                 src: "/assets/what-we-do-sell-side.png",
                 alt: "Sell-Side Advisory",
                 title: "Sell-Side Advisory",
-                body: "You've built something valuable. We make sure the market knows it. From business positioning and valuation to buyer outreach, negotiation, and close, we run your exit so you can stay focused on the business.",
+                body: "You've built something valuable. We make sure the market knows it. From business positioning and valuation to buyer outreach, negotiation, and close, we run your entire exit process so you can stay focused on the business.",
                 tags: ["Exit Planning", "Valuation", "Buyer Matching", "Negotiation", "Due Diligence Support"],
               },
               {
@@ -218,51 +217,74 @@ export default function HomePage() {
                 body: "A curated, live listing of pre-screened Asian businesses available for acquisition, accessible to qualified buyers globally. Structured data. Verified financials. Real opportunities.",
                 tags: ["Live Listings", "Pre-Screened", "Buyer Access", "Teaser Packages", "NDA-Gated CIMs"],
               },
-            ].map((card, index) => (
-              <FadeIn key={card.num} delay={index * 100} className="flex-1">
-                <div className={cn(
-                  "flex flex-col",
-                  index > 0 && "border-t-0 md:border-t"
-                )}>
-                  {/* Image */}
-                  <div className={cn(
-                    "border border-brand-dark-blue/10 h-48 md:h-56 bg-white relative overflow-hidden",
-                    index > 0 && "border-t-0 md:border-t md:border-l-0"
-                  )}>
-                    <Image
-                      src={card.src}
-                      alt={card.alt}
-                      fill
-                      className="object-contain scale-[0.8]"
-                    />
+            ];
+            return (
+              <>
+                {/* Desktop: separate image row + content row (guarantees equal heights) */}
+                <div className="hidden md:block">
+                  <div className="flex flex-row">
+                    {services.map((card, index) => (
+                      <FadeIn key={card.num} delay={index * 100} className="flex-1">
+                        <div className={cn(
+                          "border border-brand-dark-blue/10 h-56 bg-white relative overflow-hidden",
+                          index > 0 && "border-l-0"
+                        )}>
+                          <Image src={card.src} alt={card.alt} fill className="object-contain scale-[0.8]" />
+                        </div>
+                      </FadeIn>
+                    ))}
                   </div>
-                  {/* Content */}
-                  <div className={cn(
-                    "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-6 sm:p-8 md:p-10 h-full flex flex-col overflow-hidden",
-                    index > 0 && "md:border-l-0"
-                  )}>
-                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                    <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">
-                      {card.num}
-                    </span>
-                    <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">
-                      {card.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed mb-6 text-justify flex-grow">
-                      {card.body}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {card.tags.map((tag) => (
-                        <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="flex flex-row">
+                    {services.map((card, index) => (
+                      <FadeIn key={card.num} delay={index * 100} className="flex-1">
+                        <div className={cn(
+                          "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-10 h-full flex flex-col overflow-hidden",
+                          index > 0 && "border-l-0"
+                        )}>
+                          <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                          <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">{card.num}</span>
+                          <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">{card.title}</h3>
+                          <p className="text-muted-foreground leading-relaxed mb-6 text-justify flex-grow">{card.body}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {card.tags.map((tag) => (
+                              <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">{tag}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </FadeIn>
+                    ))}
                   </div>
                 </div>
-              </FadeIn>
-            ))}
-          </div>
+
+                {/* Mobile: image + content paired per card */}
+                <div className="md:hidden flex flex-col">
+                  {services.map((card, index) => (
+                    <FadeIn key={card.num} delay={index * 100}>
+                      <div className={cn(
+                        "border border-brand-dark-blue/10 h-48 bg-white relative overflow-hidden",
+                        index > 0 && "border-t-0"
+                      )}>
+                        <Image src={card.src} alt={card.alt} fill className="object-contain scale-[0.8]" />
+                      </div>
+                      <div className={cn(
+                        "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-6 sm:p-8 flex flex-col overflow-hidden"
+                      )}>
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                        <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">{card.num}</span>
+                        <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">{card.title}</h3>
+                        <p className="text-muted-foreground leading-relaxed mb-6 text-justify">{card.body}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {card.tags.map((tag) => (
+                            <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </FadeIn>
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
 
