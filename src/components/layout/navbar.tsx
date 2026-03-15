@@ -269,24 +269,28 @@ export function Navbar() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 bg-brand-white text-brand-dark-blue">
-              <div className="p-6 border-b border-brand-light-gray">
-                <Logo size="xl" forceTheme="light" />
+              <div className="px-4 pt-14 pb-4 border-b border-brand-dark-blue/10">
+                <Logo size="lg" forceTheme="light" />
               </div>
-              <nav className="flex flex-col space-y-1 p-4">
+              <nav className="flex flex-col gap-3 p-4">
                 {navLinkGroups.map((group) => {
                   const TriggerIcon = group.triggerIcon;
                   return (
-                    <div key={group.label} className="flex flex-col space-y-1">
-                      <h4 className="text-base font-normal px-3 py-3 w-full text-brand-dark-blue flex items-center">
-                        <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
+                    <div key={group.label} className="border border-brand-dark-blue/10">
+                      <h4 className="text-sm font-medium uppercase tracking-wider px-4 py-3 text-brand-dark-blue/50 flex items-center border-b border-brand-dark-blue/10 bg-brand-light-gray/30">
+                        <TriggerIcon className="mr-2 h-4 w-4 opacity-60" />
                         {group.label}
                       </h4>
-                      <div className="pl-4 flex flex-col space-y-1">
-                        {group.items.map((item) => {
+                      <div className="flex flex-col">
+                        {group.items.map((item, itemIndex) => {
                           const IconComponent = item.icon;
                           return (
                             <SheetClose asChild key={item.label}>
-                              <Button variant="ghost" asChild className={cn("justify-start text-base font-normal px-3 py-2 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray", pathname === item.href && "bg-brand-light-gray font-medium")}>
+                              <Button variant="ghost" asChild className={cn(
+                                "justify-start text-base font-normal rounded-none px-4 py-3 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray/50",
+                                itemIndex > 0 && "border-t border-brand-dark-blue/10",
+                                pathname === item.href && "bg-brand-light-gray font-medium text-brand-dark-blue"
+                              )}>
                                 <Link href={item.href} className="flex items-center">
                                   <IconComponent className="mr-2 h-4 w-4 opacity-80" />
                                   {item.label}
@@ -299,52 +303,57 @@ export function Navbar() {
                     </div>
                   )
                 })}
-                <DropdownMenuSeparator className="my-4 bg-brand-light-gray/80" />
+
+                {/* Contact — primary CTA */}
                 <SheetClose asChild>
-                  <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
-                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-5 w-5" /> Contact Us</Link>
+                  <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
+                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-4 w-4" /> Contact Us</Link>
                   </Button>
                 </SheetClose>
-                {isLoading ? (
-                  <div className="px-3 py-2 text-sm text-brand-dark-blue/60 flex items-center">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading user...
-                  </div>
-                ) : isAuthenticated ? (
-                  <>
-                    <div className="px-3 py-2 text-sm border-b border-brand-light-gray/60 mb-2">
-                      <div className="font-medium">{userProfile?.full_name || 'User'}</div>
-                      <div className="text-brand-dark-blue/60 text-xs">{userProfile?.email}</div>
-                      <div className="text-brand-dark-blue/60 text-xs capitalize">{userProfile?.role}</div>
+
+                {/* Auth section */}
+                <div className="border border-brand-dark-blue/10">
+                  {isLoading ? (
+                    <div className="px-4 py-3 text-sm text-brand-dark-blue/60 flex items-center">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading user...
                     </div>
-                    <SheetClose asChild>
-                      <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
-                        <Link href={getDashboardUrl(userProfile)} className="flex items-center"><LayoutDashboard className="mr-2 h-5 w-5" />Dashboard</Link>
-                      </Button>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Button
-                        variant="ghost"
-                        onClick={handleLogout}
-                        className="justify-start text-lg px-3 py-3 text-red-600 hover:bg-red-100 hover:text-red-700 w-full"
-                      >
-                        <LogOut className="mr-2 h-5 w-5" /> Logout
-                      </Button>
-                    </SheetClose>
-                  </>
-                ) : (
-                  <>
-                    <SheetClose asChild>
-                      <Button variant="ghost" asChild className="justify-start text-lg px-3 py-3 text-brand-dark-blue hover:bg-brand-light-gray">
-                        <Link href="/auth/login" className="flex items-center"><LogIn className="mr-2 h-5 w-5" /> Login</Link>
-                      </Button>
-                    </SheetClose>
-                    <SheetClose asChild>
-                      <Button asChild className="justify-start text-lg px-3 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
-                        <Link href="/auth/register" className="flex items-center"><UserPlus className="mr-2 h-5 w-5" /> Register</Link>
-                      </Button>
-                    </SheetClose>
-                  </>
-                )}
+                  ) : isAuthenticated ? (
+                    <>
+                      <div className="px-4 py-3 text-sm border-b border-brand-dark-blue/10 bg-brand-light-gray/30">
+                        <div className="font-medium">{userProfile?.full_name || 'User'}</div>
+                        <div className="text-brand-dark-blue/60 text-xs">{userProfile?.email}</div>
+                        <div className="text-brand-dark-blue/60 text-xs capitalize">{userProfile?.role}</div>
+                      </div>
+                      <SheetClose asChild>
+                        <Button variant="ghost" asChild className="justify-start text-base font-normal rounded-none px-4 py-3 text-brand-dark-blue hover:bg-brand-light-gray/50 w-full border-b border-brand-dark-blue/10">
+                          <Link href={getDashboardUrl(userProfile)} className="flex items-center"><LayoutDashboard className="mr-2 h-4 w-4 opacity-80" />Dashboard</Link>
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button
+                          variant="ghost"
+                          onClick={handleLogout}
+                          className="justify-start text-base font-normal rounded-none px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 w-full"
+                        >
+                          <LogOut className="mr-2 h-4 w-4" /> Logout
+                        </Button>
+                      </SheetClose>
+                    </>
+                  ) : (
+                    <>
+                      <SheetClose asChild>
+                        <Button variant="ghost" asChild className="justify-start text-base font-normal rounded-none px-4 py-3 text-brand-dark-blue hover:bg-brand-light-gray/50 w-full border-b border-brand-dark-blue/10">
+                          <Link href="/auth/login" className="flex items-center"><LogIn className="mr-2 h-4 w-4 opacity-80" /> Login</Link>
+                        </Button>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
+                          <Link href="/auth/register" className="flex items-center"><UserPlus className="mr-2 h-4 w-4" /> Register</Link>
+                        </Button>
+                      </SheetClose>
+                    </>
+                  )}
+                </div>
               </nav>
             </SheetContent>
           </Sheet>

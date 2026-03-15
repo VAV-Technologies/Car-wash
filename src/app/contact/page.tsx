@@ -250,7 +250,7 @@ export default function ContactPage() {
           <FadeIn delay={200}>
             <div className="flex flex-col md:flex-row">
               {/* Form */}
-              <div className="flex-[2] border border-white/15 p-8 md:p-12">
+              <div className="flex-[2] border border-white/15 p-5 sm:p-8 md:p-12">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
                     <div className="space-y-2">
@@ -336,7 +336,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact Info */}
-              <div className="flex-1 border border-white/15 border-t-0 md:border-t md:border-l-0 p-8 md:p-12 flex flex-col justify-between">
+              <div className="flex-1 border border-white/15 border-t-0 md:border-t md:border-l-0 p-5 sm:p-8 md:p-12 flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-white font-heading mb-6">
                     Contact Information

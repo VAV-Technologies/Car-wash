@@ -31,8 +31,8 @@ export function SortDropdown() {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center border border-white/20 rounded-none">
+    <div className="flex items-center gap-2 w-full md:w-auto">
+      <div className="flex items-center border border-white/20 rounded-none w-full md:w-auto">
         <span className="text-sm font-medium text-white px-3 h-9 flex items-center whitespace-nowrap">
           Sort by
         </span>
@@ -44,11 +44,11 @@ export function SortDropdown() {
           >
             <SelectTrigger
               id="sort-by"
-              className="w-[260px] border-0 bg-white/10 rounded-none px-3 h-9 focus:ring-0 text-white"
+              className="w-full md:w-[260px] border-0 bg-white/10 rounded-none px-3 h-9 focus:ring-0 text-white"
             >
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent className="bg-brand-dark-blue border-white/20 text-white w-[260px]">
+            <SelectContent className="bg-brand-dark-blue border-white/20 text-white w-[var(--radix-select-trigger-width)]">
               {Object.entries(SORT_OPTIONS).map(([key, _]) => (
                 <SelectItem
                   key={key}

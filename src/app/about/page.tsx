@@ -38,22 +38,25 @@ const values = [
 
 const team = [
   {
-    name: "Vilca",
-    role: "Founder and Managing Director",
-    bio: "Leads business development, deal origination, and client advisory across Nobridge's Asian engagements. Specialises in sell-side mandates for SMEs in consumer, industrial, and services sectors.",
-    tags: ["Asia", "Sell-Side", "Deal Origination", "Client Advisory"],
+    name: "Partners",
+    role: "Client Advisory & Deal Origination",
+    bio: "Our partners lead every client relationship from first conversation to close. They connect sellers with qualified buyers, advise on positioning and deal strategy, and negotiate terms that reflect the true value of your business.",
+    tags: ["Buyer Matching", "Seller Advisory", "Deal Strategy", "Negotiations", "Client Management"],
+    image: "/assets/team-partners.png",
   },
   {
-    name: "Advisory Team",
-    role: "Deal Execution and Due Diligence",
-    bio: "Experienced deal professionals managing CIM preparation, buyer coordination, financial analysis, and transaction structuring from LOI through close.",
-    tags: ["Financial Analysis", "Due Diligence", "Structuring"],
+    name: "Execution Team",
+    role: "Due Diligence, Valuations & Deal Structuring",
+    bio: "Our execution team drives the analytical backbone of every transaction. From business valuations and financial modelling to CIM preparation and due diligence coordination, every deal is built on rigorous analysis.",
+    tags: ["Valuations", "Due Diligence", "Financial Modelling", "CIM Preparation", "Transaction Structuring"],
+    image: "/assets/team-execution.png",
   },
   {
     name: "Network Partners",
     role: "Legal, Tax and Cross-Border",
-    bio: "A trusted network of legal, tax, and regulatory advisors across Asia who integrate into our deal teams on every transaction.",
-    tags: ["Legal", "Tax Advisory", "Cross-Border", "Regulatory"],
+    bio: "A curated network of specialist advisors across Southeast Asia providing on-the-ground expertise in corporate law, tax optimisation, and cross-border compliance. They embed directly into our deal teams on every transaction.",
+    tags: ["Legal", "Tax Advisory", "Cross-Border", "Regulatory", "Corporate Law", "Compliance"],
+    image: "/assets/team-network.png",
   },
 ];
 
@@ -147,11 +150,13 @@ export default function AboutPage() {
           {/* Full-width image above content */}
           <FadeIn delay={50}>
             <div className="border border-brand-dark-blue/10 overflow-hidden">
-              <div
-                className="w-full h-[28rem] md:h-[36rem] bg-brand-dark-blue/5 flex items-center justify-center"
-                data-ai-hint="office team meeting"
-              >
-                <span className="text-sm text-muted-foreground">Image placeholder</span>
+              <div className="w-full h-[28rem] md:h-[36rem] bg-white relative overflow-hidden">
+                <Image
+                  src="/assets/about-origin-cityscape.png"
+                  alt="Asian cityscape skyline"
+                  fill
+                  className="object-contain"
+                />
               </div>
             </div>
           </FadeIn>
@@ -292,12 +297,13 @@ export default function AboutPage() {
                   "border border-white/15 h-full flex flex-col",
                   index > 0 && "border-t-0 md:border-t md:border-l-0"
                 )}>
-                  {/* Image placeholder */}
-                  <div
-                    className="aspect-[3/2.5] bg-white/5 flex items-center justify-center"
-                    data-ai-hint="professional headshot"
-                  >
-                    <span className="text-sm text-white/30">Photo</span>
+                  <div className="aspect-[3/2.5] relative overflow-hidden bg-white">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-contain scale-[0.85]"
+                    />
                   </div>
 
                   <div className="p-6 flex flex-col flex-grow">
@@ -473,13 +479,13 @@ export default function AboutPage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border border-brand-dark-blue/10">
-              <div className="relative px-8 md:px-16 text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: '100% 100%', backgroundPosition: 'center', aspectRatio: '21/9' }}>
+              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-0 md:aspect-[21/9] text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-10 md:px-16 py-10 md:py-14">
+                  <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
                     <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">
                       Ready to start a conversation?
                     </h2>
-                    <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-10 text-center">
+                    <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
                       Whether you&apos;re considering an exit, looking to acquire in Asia, or want to understand what your business is worth, we start with a confidential, no-obligation conversation.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">

@@ -45,7 +45,7 @@ export function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Link href={`/listings/${listing.id}`} className="block h-full group">
-      <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:border-brand-sky-blue/50 transition-all duration-300 rounded-none bg-white/10 backdrop-blur-md border-white/20 text-white cursor-pointer p-4 gap-3">
+      <Card className="flex flex-col h-full overflow-hidden shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:border-brand-sky-blue/50 transition-all duration-300 rounded-none bg-white/10 backdrop-blur-md border-white/20 text-white cursor-pointer p-3 sm:p-4 gap-2 sm:gap-3">
         {/* Square image - inner box */}
         <div className="relative border border-white/15 overflow-hidden">
           <div className="aspect-square w-full">

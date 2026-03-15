@@ -15,7 +15,7 @@ export function Footer() {
       <div className="container mx-auto py-12">
         <div className="flex flex-col lg:flex-row mb-8">
           {/* Logo + description */}
-          <div className="lg:w-1/3 p-8 md:p-10 border border-white/15">
+          <div className="lg:w-1/3 p-6 sm:p-8 md:p-10 border border-white/15">
             <Logo size="2xl" forceTheme="dark" />
             <div className="border-t border-white/15 mt-4 mb-4" />
             <p className="text-sm">
@@ -25,7 +25,7 @@ export function Footer() {
 
           {/* Nav columns in a 4-col grid */}
           <div className="flex-1 grid grid-cols-2 lg:grid-cols-4">
-            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Sell Your Business
               </p>
@@ -42,7 +42,7 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Buy a Business
               </p>
@@ -59,7 +59,7 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Company
               </p>
@@ -79,7 +79,7 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Legal
               </p>

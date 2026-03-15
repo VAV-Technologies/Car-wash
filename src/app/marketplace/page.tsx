@@ -97,14 +97,14 @@ function MarketplaceContent() {
     <>
       <AnimatedBackground />
       <div className="container pt-32 md:pt-36 pb-16 md:pb-24 relative z-10">
-        <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-none border border-white/20 shadow-xl">
+        <div className="mb-6 w-full bg-white/10 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-none border border-white/20 shadow-xl">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-normal tracking-tight text-white font-heading">Business Marke<span style={{ fontSize: '1.06em' }}>t</span>place</h1>
-            <Globe className="h-8 w-8 text-white shrink-0" />
+            <h1 className="text-2xl sm:text-3xl font-normal tracking-tight text-white font-heading">Business Marke<span style={{ fontSize: '1.06em' }}>t</span>place</h1>
+            <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-white shrink-0" />
           </div>
           <Separator className="bg-white/10 my-4" />
-          <div className="flex items-center justify-between">
-            <p className="text-gray-200 text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-gray-200 text-base sm:text-lg">
               {isLoading ? 'Loading listings...' : `Explore all available business opportunities. Found ${totalListings} listings.`}
               {hasActiveFilters && !isLoading && (
                 <span className="ml-2 text-brand-sky-blue font-medium">
@@ -112,8 +112,8 @@ function MarketplaceContent() {
                 </span>
               )}
             </p>
-            <div className="border border-white/20 shrink-0 ml-4">
-              <Button onClick={() => setShowHowItWorks(true)} className="rounded-none bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 h-9 text-sm px-4 border-0">
+            <div className="border border-white/20 shrink-0 w-full sm:w-auto">
+              <Button onClick={() => setShowHowItWorks(true)} className="rounded-none bg-brand-sky-blue text-white hover:bg-brand-sky-blue/90 h-9 text-sm px-4 border-0 w-full sm:w-auto">
                 How Does It Work?
               </Button>
             </div>
@@ -121,8 +121,8 @@ function MarketplaceContent() {
         </div>
 
         {/* Mobile filter button and sort */}
-        <div className="md:hidden mb-6 flex justify-end items-center gap-4">
-          <div className="flex-grow">
+        <div className="md:hidden mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex-1">
             <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="w-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 h-11 rounded-none">
@@ -147,7 +147,7 @@ function MarketplaceContent() {
               </SheetContent>
             </Sheet>
           </div>
-          <div className="w-full md:w-auto">
+          <div className="flex-1">
             <SortDropdown />
           </div>
         </div>
@@ -213,7 +213,7 @@ function MarketplaceContent() {
       {/* How Does It Work Dialog */}
       <Dialog open={showHowItWorks} onOpenChange={setShowHowItWorks}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-brand-dark-blue/95 backdrop-blur-xl border border-white/20 rounded-none text-white p-0 [&>button:last-child]:hidden">
-          <DialogHeader className="px-8 pt-8 pb-0">
+          <DialogHeader className="px-4 sm:px-8 pt-6 sm:pt-8 pb-0">
             <div className="flex items-center justify-between">
               <DialogTitle className="text-2xl font-normal text-white font-heading flex items-center gap-3">
                 <Globe className="h-6 w-6 text-brand-sky-blue" />
@@ -225,7 +225,7 @@ function MarketplaceContent() {
             </div>
           </DialogHeader>
 
-          <div className="px-8 pb-8 pt-4 space-y-8">
+          <div className="px-4 sm:px-8 pb-6 sm:pb-8 pt-4 space-y-6 sm:space-y-8">
             {/* What Is This Section */}
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-brand-sky-blue uppercase tracking-wider">What Is This Business Marketplace?</h3>
