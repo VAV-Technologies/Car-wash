@@ -1,5 +1,4 @@
 import { MetadataRoute } from 'next'
-import { createClient } from '@supabase/supabase-js'
 import { getAllPublishedSlugs } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -12,12 +11,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/marketplace`,
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/how-buying-works`,
@@ -81,38 +74,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  try {
-    // Fetch dynamic listing pages
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-    const { data: listings } = await supabase
-      .from('listings')
-      .select('id, updated_at, verification_status')
-      .eq('verification_status', 'verified') // Only include verified listings
-      .order('updated_at', { ascending: false })
+  // Fetch blog post pages (static data)
+  const blogSlugs = await getAllPublishedSlugs()
+  const blogPages = blogSlugs.map((post) => ({
+    url: `${baseUrl}/resources/${post.slug}`,
+    lastModified: new Date(post.updated_at),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
 
-    const listingPages = listings?.map((listing) => ({
-      url: `${baseUrl}/listings/${listing.id}`,
-      lastModified: new Date(listing.updated_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    })) || []
-
-    // Fetch blog post pages
-    const blogSlugs = await getAllPublishedSlugs()
-    const blogPages = blogSlugs.map((post) => ({
-      url: `${baseUrl}/resources/${post.slug}`,
-      lastModified: new Date(post.updated_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    }))
-
-    return [...staticPages, ...listingPages, ...blogPages]
-  } catch (error) {
-    console.error('Error generating sitemap:', error)
-    // Return static pages only if database query fails
-    return staticPages
-  }
+  return [...staticPages, ...blogPages]
 }

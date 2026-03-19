@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Mail,
-  Loader2,
   ArrowRight,
   Network,
   MapPin,
@@ -44,7 +43,6 @@ export default function ContactPage() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -69,7 +67,7 @@ export default function ContactPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {
       toast({
@@ -79,46 +77,17 @@ export default function ContactPage() {
       });
       return;
     }
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({
-            variant: "destructive",
-            title: "Rate Limit Exceeded",
-            description: result.error || "Too many submissions. Please wait before trying again."
-          });
-        } else {
-          toast({
-            variant: "destructive",
-            title: "Submission Failed",
-            description: result.error || "Failed to send your message. Please try again."
-          });
-        }
-        return;
-      }
-      toast({
-        title: "Message Sent Successfully!",
-        description: result.message || "Thank you for your message! We will get back to you soon."
-      });
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setErrors({});
-    } catch (error) {
-      console.error('Contact form error:', error);
-      toast({
-        variant: "destructive",
-        title: "Network Error",
-        description: "Unable to send your message. Please check your connection and try again."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+
+    const subject = encodeURIComponent(formData.subject || `Contact from ${formData.name}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
+    );
+    window.location.href = `mailto:Business@nobridge.co?subject=${subject}&body=${body}`;
+
+    toast({
+      title: "Opening email client",
+      description: "Your default email client should open with the message pre-filled."
+    });
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -264,7 +233,6 @@ export default function ContactPage() {
                           "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
                           errors.name && "border-red-400"
                         )}
-                        disabled={isLoading}
                         required
                       />
                       {errors.name && <p className="text-sm text-red-300 mt-1">{errors.name}</p>}
@@ -281,7 +249,6 @@ export default function ContactPage() {
                           "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
                           errors.email && "border-red-400"
                         )}
-                        disabled={isLoading}
                         required
                       />
                       {errors.email && <p className="text-sm text-red-300 mt-1">{errors.email}</p>}
@@ -296,7 +263,6 @@ export default function ContactPage() {
                       onChange={(e) => handleInputChange('subject', e.target.value)}
                       placeholder="Inquiry about advisory services"
                       className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none"
-                      disabled={isLoading}
                     />
                   </div>
 
@@ -312,7 +278,6 @@ export default function ContactPage() {
                         "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
                         errors.message && "border-red-400"
                       )}
-                      disabled={isLoading}
                       required
                     />
                     {errors.message && <p className="text-sm text-red-300 mt-1">{errors.message}</p>}
@@ -320,17 +285,9 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-brand-dark-blue bg-white hover:bg-white/90 rounded-none transition-colors disabled:opacity-50 disabled:pointer-events-none"
-                    disabled={isLoading}
+                    className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-brand-dark-blue bg-white hover:bg-white/90 rounded-none transition-colors"
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Sending Message...
-                      </>
-                    ) : (
-                      "Send Message"
-                    )}
+                    Send Message
                   </button>
                 </form>
               </div>

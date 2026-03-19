@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Home, Search, ArrowLeft } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -13,7 +13,6 @@ export default function NotFound() {
           {/* 404 Icon */}
           <div className="mb-6">
             <div className="text-8xl font-semibold text-gray-300 mb-2">404</div>
-            <Search className="h-16 w-16 text-gray-400 mx-auto" />
           </div>
 
           {/* Error Message */}
@@ -30,13 +29,6 @@ export default function NotFound() {
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
                 Go to Homepage
-              </Link>
-            </Button>
-
-            <Button variant="outline" asChild className="w-full">
-              <Link href="/marketplace">
-                <Search className="mr-2 h-4 w-4" />
-                Browse Listings
               </Link>
             </Button>
 

@@ -1,11 +1,1 @@
-{
-  "crons": [
-    {
-      "path": "/api/cleanup/process",
-      "schedule": "0 2 * * *"
-    }
-  ],
-  "env": {
-    "CLEANUP_SERVICE_TOKEN": "f576047f57078cd102b3e195c9f6a5de1dbc1d56aa529fc4df8bd62bec33c436"
-  }
-}
+{}

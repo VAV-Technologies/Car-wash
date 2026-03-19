@@ -1,14 +1,10 @@
 'use client';
 
 import * as React from "react";
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Star, CheckCircle, Search as SearchIconLucide, MapPin, Briefcase, ListChecks, DollarSign, ShieldCheck, FileText, MessageSquare, Info, Phone, Home, ExternalLink, Users2 as UsersIcon, Images as ImagesIcon, Banknote, BookOpen, Brain, HandCoins, Globe, Link as LinkIconLucide, ArrowRight, Zap, UsersRound, CheckCircle2, TrendingUp, Loader2, Clock } from 'lucide-react';
+import { Star, Search as SearchIconLucide, ListChecks, ShieldCheck, FileText, MessageSquare, Info, Phone, Home, ExternalLink, Banknote, BookOpen, Brain, HandCoins, Globe, ArrowRight, Zap, UsersRound, Clock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { NobridgeIcon, NobridgeIconType } from '@/components/ui/nobridge-icon';
 import { AnimatedBackground } from '@/components/ui/animated-background';
@@ -29,20 +25,6 @@ const PlaceholderLogo = ({ text = "Logo", className = "" }: { text?: string, cla
   </div>
 );
 
-// Listing interface for real data from API response
-interface FeaturedListing {
-  id: string;
-  title: string; // API returns 'title' not 'listing_title_anonymous'
-  industry: string;
-  location_city: string; // API returns 'location_city'
-  location_country: string;
-  asking_price: number;
-  annual_revenue_range?: string;
-  images?: string; // API returns 'images' as JSON string
-  verification_status: string; // API returns 'verification_status'
-  short_description?: string; // API returns 'short_description'
-}
-
 const featuredCompanyLogos = [
   { src: "/assets/featured-harian-jabar.png", alt: "Harian Jabar", dataAiHint: "company logo" },
   { src: "/assets/featured-merdeka.png", alt: "Merdeka.com", dataAiHint: "company logo" },
@@ -51,30 +33,6 @@ const featuredCompanyLogos = [
 ];
 
 export default function HomePage() {
-  const [featuredListings, setFeaturedListings] = useState<FeaturedListing[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch featured listings on component mount
-  useEffect(() => {
-    const fetchFeaturedListings = async () => {
-      try {
-        const response = await fetch('/api/listings?limit=3&sort=created_at&order=desc');
-        if (response.ok) {
-          const data = await response.json();
-          setFeaturedListings(data.listings || []);
-        } else {
-          console.error('Failed to fetch featured listings');
-        }
-      } catch (error) {
-        console.error('Error fetching featured listings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchFeaturedListings();
-  }, []);
-
   return (
     <>
       {/* Hero Section */}
@@ -137,11 +95,11 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
-            <Link href="/seller-dashboard/listings/create" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
+            <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
               Talk to Us <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-            <Link href="/marketplace" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
-              Browse Marketplace <SearchIconLucide className="ml-2 h-5 w-5" />
+            <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
+              Get in Touch <SearchIconLucide className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </div>
@@ -419,163 +377,22 @@ export default function HomePage() {
             </div>
           </FadeIn>
 
-          {isLoading ? (
-            <>
-              {/* Mobile: 2-col grid */}
-              <div className="grid grid-cols-2 gap-px bg-brand-dark-blue/10 border border-brand-dark-blue/10 md:hidden">
-                {Array.from({ length: 2 }).map((_, index) => (
-                  <div key={index} className="bg-brand-white p-4 flex flex-col h-full">
-                    <Skeleton className="w-full h-40 mb-4" />
-                    <Skeleton className="h-4 w-20 mb-2" />
-                    <Skeleton className="h-6 w-full mb-3" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-2/3" />
-                    </div>
-                    <Skeleton className="h-10 w-full mt-6" />
-                  </div>
-                ))}
-              </div>
-              {/* Desktop: original flex layout */}
-              <div className="hidden md:flex flex-row">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <FadeIn key={index} delay={index * 100} className="flex-1">
-                    <div className={cn(
-                      "border border-brand-dark-blue/10 bg-brand-white p-6 flex flex-col",
-                      index > 0 && "border-l-0"
-                    )}>
-                      <Skeleton className="w-full h-40 mb-4" />
-                      <Skeleton className="h-4 w-20 mb-2" />
-                      <Skeleton className="h-6 w-full mb-3" />
-                      <div className="space-y-2">
-                        <Skeleton className="h-4 w-3/4" />
-                        <Skeleton className="h-4 w-2/3" />
-                        <Skeleton className="h-4 w-3/5" />
-                      </div>
-                      <Skeleton className="h-10 w-full mt-6" />
-                    </div>
-                  </FadeIn>
-                ))}
-              </div>
-            </>
-          ) : featuredListings.length > 0 ? (
-            <>
-              {/* Mobile: 2-col grid */}
-              <div className="grid grid-cols-2 gap-px bg-brand-dark-blue/10 border border-brand-dark-blue/10 md:hidden">
-                {featuredListings.map((listing) => (
-                  <div key={listing.id} className="bg-brand-white flex flex-col h-full">
-                    <div className="relative aspect-square">
-                      <Image
-                        src={
-                          listing.images
-                            ? (typeof listing.images === 'string'
-                              ? JSON.parse(listing.images)[0]
-                              : listing.images[0]) || "https://placehold.co/400x400.png"
-                            : "https://placehold.co/400x400.png"
-                        }
-                        alt={listing.title}
-                        width={400}
-                        height={400}
-                        className="w-full h-full object-cover"
-                        data-ai-hint={listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business"}
-                      />
-                      {listing.verification_status === 'verified' && (
-                        <Badge variant="outline" className="absolute top-2 right-2 text-[10px] border-green-600 text-green-700 bg-green-100">
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="p-3 flex flex-col flex-grow">
-                      <Badge variant="secondary" className="bg-brand-dark-blue/5 text-brand-dark-blue text-[10px] w-fit mb-2">{listing.industry}</Badge>
-                      <h3 className="text-sm font-normal text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
-                        <Link href={`/listings/${listing.id}`}>{listing.title}</Link>
-                      </h3>
-                      <div className="space-y-1 text-xs text-muted-foreground mb-4">
-                        <p className="flex items-center"><MapPin className="h-3 w-3 mr-1 text-brand-dark-blue/70 shrink-0" /> {listing.location_city}, {listing.location_country}</p>
-                        {listing.annual_revenue_range && (
-                          <p className="flex items-center"><TrendingUp className="h-3 w-3 mr-1 text-brand-dark-blue/70 shrink-0" /> {listing.annual_revenue_range}</p>
-                        )}
-                        <p className="flex items-center"><DollarSign className="h-3 w-3 mr-1 text-brand-dark-blue/70 shrink-0" /> ${(listing.asking_price / 1000000).toFixed(1)}M USD</p>
-                      </div>
-                      <div className="mt-auto pt-3 border-t border-brand-dark-blue/10">
-                        <Link href={`/listings/${listing.id}`} className="inline-flex items-center text-xs font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
-                          View Details <ArrowRight className="ml-1 h-3 w-3" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {/* Desktop: original flex layout */}
-              <div className="hidden md:flex flex-row">
-                {featuredListings.map((listing, index) => (
-                  <FadeIn key={listing.id} delay={index * 100} className="flex-1">
-                    <div className={cn(
-                      "border border-brand-dark-blue/10 bg-brand-white flex flex-col h-full",
-                      index > 0 && "border-l-0"
-                    )}>
-                      <div className="relative aspect-square">
-                        <Image
-                          src={
-                            listing.images
-                              ? (typeof listing.images === 'string'
-                                ? JSON.parse(listing.images)[0]
-                                : listing.images[0]) || "https://placehold.co/400x400.png"
-                              : "https://placehold.co/400x400.png"
-                          }
-                          alt={listing.title}
-                          width={400}
-                          height={400}
-                          className="w-full h-full object-cover"
-                          data-ai-hint={listing.industry ? listing.industry.toLowerCase().replace(/\s+/g, '-') : "business"}
-                        />
-                        {listing.verification_status === 'verified' && (
-                          <Badge variant="outline" className="absolute top-3 right-3 text-xs border-green-600 text-green-700 bg-green-100">
-                            <CheckCircle2 className="h-3 w-3 mr-1" /> Verified
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="p-6 flex flex-col flex-grow">
-                        <Badge variant="secondary" className="bg-brand-dark-blue/5 text-brand-dark-blue text-xs w-fit mb-2">{listing.industry}</Badge>
-                        <h3 className="text-lg font-normal text-brand-dark-blue mb-2 leading-tight hover:text-brand-sky-blue transition-colors font-heading">
-                          <Link href={`/listings/${listing.id}`}>{listing.title}</Link>
-                        </h3>
-                        <div className="space-y-1 text-sm text-muted-foreground mb-4">
-                          <p className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> {listing.location_city}, {listing.location_country}</p>
-                          {listing.annual_revenue_range && (
-                            <p className="flex items-center"><TrendingUp className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Revenue: {listing.annual_revenue_range}</p>
-                          )}
-                          <p className="flex items-center"><DollarSign className="h-4 w-4 mr-2 text-brand-dark-blue/70" /> Asking: ${(listing.asking_price / 1000000).toFixed(1)}M USD</p>
-                        </div>
-                        <div className="mt-auto pt-4 border-t border-brand-dark-blue/10">
-                          <Link href={`/listings/${listing.id}`} className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
-                            View Details <ArrowRight className="ml-2 h-4 w-4" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </FadeIn>
-                ))}
-              </div>
-            </>
-          ) : (
+          <FadeIn direction="up" delay={250}>
             <div className="border border-brand-dark-blue/10 bg-brand-white p-8 text-center">
-              <FadeIn>
-                <div className="flex flex-col items-center gap-4">
-                  <Briefcase className="h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground">No featured listings available at the moment.</p>
-                  <Link href="/marketplace" className="inline-flex items-center text-brand-dark-blue hover:text-brand-sky-blue">
-                    Browse all listings <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </div>
-              </FadeIn>
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-lg font-normal text-brand-dark-blue font-heading">Featured opportunities are available upon request.</p>
+                <p className="text-muted-foreground max-w-xl">Contact us to learn about current acquisition targets across Asia, including pre-screened businesses with verified financials.</p>
+                <Link href="/contact" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
+                  Contact us to learn more <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
             </div>
-          )}
+          </FadeIn>
 
           <FadeIn direction="up" delay={300}>
             <div className="border border-brand-dark-blue/10 border-t-0 bg-brand-white py-6 text-center">
-              <Link href="/marketplace" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
-                Access the Marketplace <ArrowRight className="ml-2 h-4 w-4" />
+              <Link href="/contact" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
+                Get in Touch <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </FadeIn>
@@ -743,7 +560,7 @@ export default function HomePage() {
                       Whether you&apos;re planning an exit, seeking an acquisition, or exploring strategic options, our advisors are ready to help.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                      <Link href="/auth/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
+                      <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
                         Get Started
                       </Link>
                       <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">
@@ -760,4 +577,3 @@ export default function HomePage() {
     </>
   );
 }
-

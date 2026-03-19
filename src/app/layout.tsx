@@ -2,17 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import GlobalLayoutWrapper from '@/components/layout/GlobalLayoutWrapper';
-import NoticeListener from '@/components/NoticeListener';
-import { DebugState } from '@/components/shared/DebugState';
-import { AuthProvider } from '@/contexts/auth-context';
-import { SWRProvider } from '@/contexts/swr-provider';
-import { QueryProvider } from '@/contexts/query-provider';
-import { GeistSans } from 'geist/font/sans';
-import { Toaster as SonnerToaster } from "sonner";
 import StructuredData from '@/components/seo/StructuredData';
-
-// Force all pages to be dynamic
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: {
@@ -105,18 +95,10 @@ export default function RootLayout({
         <StructuredData type="organization" />
       </head>
       <body className="font-sans antialiased flex flex-col min-h-screen bg-background text-foreground">
-        <QueryProvider>
-          <SWRProvider>
-            <AuthProvider>
-              <GlobalLayoutWrapper>
-                {children}
-              </GlobalLayoutWrapper>
-              <NoticeListener />
-              <Toaster />
-              <DebugState />
-            </AuthProvider>
-          </SWRProvider>
-        </QueryProvider>
+        <GlobalLayoutWrapper>
+          {children}
+        </GlobalLayoutWrapper>
+        <Toaster />
       </body>
     </html>
   );

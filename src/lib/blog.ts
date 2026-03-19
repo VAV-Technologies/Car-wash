@@ -1,21 +1,3 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { z } from 'zod'
-
-// --- Supabase admin client (lazy, bypasses RLS) ---
-let _supabaseAdmin: SupabaseClient | null = null
-function getSupabaseAdmin(): SupabaseClient | null {
-  if (_supabaseAdmin) return _supabaseAdmin
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) return null
-  try {
-    _supabaseAdmin = createClient(url, key)
-    return _supabaseAdmin
-  } catch {
-    return null
-  }
-}
-
 // --- Types ---
 export type BlogCategory = 'news' | 'insights' | 'guides' | 'company'
 
@@ -41,7 +23,7 @@ export interface BlogPost {
 
 export type BlogPostListItem = Omit<BlogPost, 'content'>
 
-// --- Sample data (fallback when DB unavailable) ---
+// --- Sample data (static content) ---
 const now = new Date().toISOString()
 
 const samplePosts: BlogPost[] = [
@@ -285,45 +267,7 @@ function getSampleListItems(): BlogPostListItem[] {
   return samplePosts.map(({ content, ...rest }) => rest)
 }
 
-// --- Zod schemas ---
-export const blogCategoryEnum = z.enum(['news', 'insights', 'guides', 'company'])
-
-export const createBlogPostSchema = z.object({
-  title: z.string().min(1).max(300),
-  slug: z.string().min(1).max(300).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be URL-safe lowercase with hyphens'),
-  excerpt: z.string().min(1).max(1000),
-  content: z.string().min(1),
-  cover_image_url: z.string().url().nullable().optional(),
-  category: blogCategoryEnum,
-  tags: z.array(z.string()).default([]),
-  author_name: z.string().min(1).max(200),
-  author_role: z.string().max(200).nullable().optional(),
-  published_at: z.string().datetime().nullable().optional(),
-  is_published: z.boolean().default(false),
-  meta_title: z.string().max(200).nullable().optional(),
-  meta_description: z.string().max(500).nullable().optional(),
-  reading_time_minutes: z.number().int().min(1).max(120).default(5),
-})
-
-export const updateBlogPostSchema = createBlogPostSchema.partial()
-
-export const listBlogPostsSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(12),
-  category: blogCategoryEnum.optional(),
-  search: z.string().optional(),
-})
-
-// --- Auth ---
-export function verifyBlogAuth(request: Request): boolean {
-  const apiKey = request.headers.get('x-api-key')
-  if (apiKey && apiKey === process.env.BLOG_API_KEY) {
-    return true
-  }
-  return false
-}
-
-// --- Query helpers ---
+// --- Query helpers (static data only) ---
 export async function getPublishedPosts(params: {
   page?: number
   limit?: number
@@ -334,177 +278,26 @@ export async function getPublishedPosts(params: {
   const limit = params.limit ?? 12
   const from = (page - 1) * limit
 
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) {
-    console.log('[BLOG] DB unavailable, returning sample posts')
-    let items = getSampleListItems()
-    if (params.category) items = items.filter((p) => p.category === params.category)
-    if (params.search) {
-      const s = params.search.toLowerCase()
-      items = items.filter((p) => p.title.toLowerCase().includes(s) || p.excerpt.toLowerCase().includes(s))
-    }
-    const total = items.length
-    return { posts: items.slice(from, from + limit), total }
+  let items = getSampleListItems()
+  if (params.category) items = items.filter((p) => p.category === params.category)
+  if (params.search) {
+    const s = params.search.toLowerCase()
+    items = items.filter((p) => p.title.toLowerCase().includes(s) || p.excerpt.toLowerCase().includes(s))
   }
-
-  try {
-    const to = from + limit - 1
-
-    let query = supabaseAdmin
-      .from('blog_posts')
-      .select(
-        'id, title, slug, excerpt, cover_image_url, category, tags, author_name, author_role, published_at, created_at, updated_at, is_published, meta_title, meta_description, reading_time_minutes',
-        { count: 'exact' }
-      )
-      .eq('is_published', true)
-      .order('published_at', { ascending: false })
-
-    if (params.category) {
-      query = query.eq('category', params.category)
-    }
-
-    if (params.search) {
-      query = query.or(`title.ilike.%${params.search}%,excerpt.ilike.%${params.search}%`)
-    }
-
-    query = query.range(from, to)
-
-    const { data, error, count } = await query
-
-    if (error) {
-      console.error('[BLOG] Error fetching posts:', error)
-      let items = getSampleListItems()
-      if (params.category) items = items.filter((p) => p.category === params.category)
-      const total = items.length
-      return { posts: items.slice(from, from + limit), total }
-    }
-
-    return { posts: (data as BlogPostListItem[]) ?? [], total: count ?? 0 }
-  } catch (error) {
-    console.error('[BLOG] DB query failed, returning samples:', error)
-    let items = getSampleListItems()
-    if (params.category) items = items.filter((p) => p.category === params.category)
-    const total = items.length
-    return { posts: items.slice(from, from + limit), total }
-  }
+  const total = items.length
+  return { posts: items.slice(from, from + limit), total }
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) {
-    return samplePosts.find((p) => p.slug === slug) ?? null
-  }
-
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single()
-
-    if (error || !data) {
-      return samplePosts.find((p) => p.slug === slug) ?? null
-    }
-    return data as BlogPost
-  } catch {
-    return samplePosts.find((p) => p.slug === slug) ?? null
-  }
+  return samplePosts.find((p) => p.slug === slug) ?? null
 }
 
 export async function getRelatedPosts(category: BlogCategory, excludeSlug: string, limit = 3): Promise<BlogPostListItem[]> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) {
-    return getSampleListItems()
-      .filter((p) => p.category === category && p.slug !== excludeSlug)
-      .slice(0, limit)
-  }
-
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('blog_posts')
-      .select(
-        'id, title, slug, excerpt, cover_image_url, category, tags, author_name, author_role, published_at, created_at, updated_at, is_published, meta_title, meta_description, reading_time_minutes'
-      )
-      .eq('is_published', true)
-      .eq('category', category)
-      .neq('slug', excludeSlug)
-      .order('published_at', { ascending: false })
-      .limit(limit)
-
-    if (error) {
-      console.error('[BLOG] Error fetching related posts:', error)
-      return getSampleListItems()
-        .filter((p) => p.category === category && p.slug !== excludeSlug)
-        .slice(0, limit)
-    }
-
-    return (data as BlogPostListItem[]) ?? []
-  } catch {
-    return getSampleListItems()
-      .filter((p) => p.category === category && p.slug !== excludeSlug)
-      .slice(0, limit)
-  }
-}
-
-// --- Admin helpers (for API routes) ---
-export async function createPost(data: z.infer<typeof createBlogPostSchema>): Promise<BlogPost> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) throw new Error('Database unavailable')
-
-  const { data: post, error } = await supabaseAdmin
-    .from('blog_posts')
-    .insert(data)
-    .select('*')
-    .single()
-
-  if (error) throw error
-  return post as BlogPost
-}
-
-export async function updatePost(slug: string, data: z.infer<typeof updateBlogPostSchema>): Promise<BlogPost> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) throw new Error('Database unavailable')
-
-  const { data: post, error } = await supabaseAdmin
-    .from('blog_posts')
-    .update(data)
-    .eq('slug', slug)
-    .select('*')
-    .single()
-
-  if (error) throw error
-  return post as BlogPost
-}
-
-export async function deletePost(slug: string): Promise<void> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) throw new Error('Database unavailable')
-
-  const { error } = await supabaseAdmin
-    .from('blog_posts')
-    .delete()
-    .eq('slug', slug)
-
-  if (error) throw error
+  return getSampleListItems()
+    .filter((p) => p.category === category && p.slug !== excludeSlug)
+    .slice(0, limit)
 }
 
 export async function getAllPublishedSlugs(): Promise<{ slug: string; updated_at: string }[]> {
-  const supabaseAdmin = getSupabaseAdmin()
-  if (!supabaseAdmin) {
-    return samplePosts.map((p) => ({ slug: p.slug, updated_at: p.updated_at }))
-  }
-
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('blog_posts')
-      .select('slug, updated_at')
-      .eq('is_published', true)
-      .order('published_at', { ascending: false })
-
-    if (error) return samplePosts.map((p) => ({ slug: p.slug, updated_at: p.updated_at }))
-    return data ?? []
-  } catch {
-    return samplePosts.map((p) => ({ slug: p.slug, updated_at: p.updated_at }))
-  }
+  return samplePosts.map((p) => ({ slug: p.slug, updated_at: p.updated_at }))
 }

@@ -2,16 +2,13 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const pathname = usePathname();
-  const isMarketplace = pathname === '/marketplace' || pathname.startsWith('/listings/');
 
   return (
-    <footer className={`bg-brand-dark-blue text-brand-light-gray/80${isMarketplace ? '' : ' section-lines-light'}`}>
+    <footer className="bg-brand-dark-blue text-brand-light-gray/80 section-lines-light">
       <div className="container mx-auto py-12">
         <div className="flex flex-col lg:flex-row mb-8">
           {/* Logo + description */}
@@ -30,7 +27,7 @@ export function Footer() {
                 Sell Your Business
               </p>
               <div className="flex flex-col space-y-2">
-                <Link href="/seller-dashboard/listings/create" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> List Your Business
                 </Link>
                 <Link href="/seller-services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
@@ -47,7 +44,7 @@ export function Footer() {
                 Buy a Business
               </p>
               <div className="flex flex-col space-y-2">
-                <Link href="/marketplace" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Browse Listings
                 </Link>
                 <Link href="/buyer-services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
@@ -100,7 +97,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-brand-light-gray/20 pt-8 flex flex-col-reverse justify-between items-center sm:flex-row">
           <p className="text-sm">
-            © {currentYear} Nobridge. All rights reserved.
+            &copy; {currentYear} Nobridge. All rights reserved.
           </p>
         </div>
       </div>
