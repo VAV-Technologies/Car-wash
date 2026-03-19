@@ -8,7 +8,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-dark-blue text-brand-light-gray/80 section-lines-light">
+    <footer className="bg-brand-black text-white/80 section-lines-light">
       <div className="container mx-auto py-12">
         <div className="flex flex-col lg:flex-row mb-8">
           {/* Logo + description */}
@@ -16,7 +16,7 @@ export function Footer() {
             <Logo size="2xl" forceTheme="dark" />
             <div className="border-t border-white/15 mt-4 mb-4" />
             <p className="text-sm">
-              Connecting SME owners with investors and buyers across Asia. Your trusted partner for business transitions.
+              Premium car wash and detailing studio in Indonesia. Professional care for drivers who demand the best.
             </p>
           </div>
 
@@ -24,39 +24,22 @@ export function Footer() {
           <div className="flex-1 grid grid-cols-2 lg:grid-cols-4">
             <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
-                Sell Your Business
+                Services
               </p>
               <div className="flex flex-col space-y-2">
-                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> List Your Business
+                <Link href="/services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Wash
                 </Link>
-                <Link href="/seller-services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Services for sellers
+                <Link href="/services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Detailing
                 </Link>
-                <Link href="/how-selling-works" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> How Selling Works
+                <Link href="/pricing" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Subscriptions
                 </Link>
               </div>
             </div>
 
             <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
-              <p className="text-base font-medium tracking-wide text-brand-white">
-                Buy a Business
-              </p>
-              <div className="flex flex-col space-y-2">
-                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Browse Listings
-                </Link>
-                <Link href="/buyer-services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Services for buyers
-                </Link>
-                <Link href="/how-buying-works" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> How Buying Works
-                </Link>
-              </div>
-            </div>
-
-            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Company
               </p>
@@ -70,16 +53,13 @@ export function Footer() {
                 <Link href="/faq" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> FAQ
                 </Link>
-                <Link href="/acfi-certificate" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> ACFI Certificate
-                </Link>
                 <Link href="/resources" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Resources
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Care Tips
                 </Link>
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Legal
               </p>
@@ -92,12 +72,26 @@ export function Footer() {
                 </Link>
               </div>
             </div>
+
+            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
+              <p className="text-base font-medium tracking-wide text-brand-white">
+                Support
+              </p>
+              <div className="flex flex-col space-y-2">
+                <Link href="/help" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Help Center
+                </Link>
+                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Book a Wash
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-brand-light-gray/20 pt-8 flex flex-col-reverse justify-between items-center sm:flex-row">
+        <div className="mt-12 border-t border-white/20 pt-8 flex flex-col-reverse justify-between items-center sm:flex-row">
           <p className="text-sm">
-            &copy; {currentYear} Nobridge. All rights reserved.
+            &copy; {currentYear} Castudio. All rights reserved.
           </p>
         </div>
       </div>

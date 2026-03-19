@@ -29,15 +29,14 @@ export default {
     },
   	extend: {
       fontFamily: {
-        sans: ["Satoshi", ...fontFamily.sans], // Prioritize Satoshi
-        // mono: ['var(--font-geist-mono)', ...fontFamily.mono], // Keep if you use a specific mono font elsewhere
+        sans: ["Satoshi", ...fontFamily.sans],
       },
   		colors: {
-        // Direct brand colors (optional, primarily for utility classes if needed outside theme context)
-        'brand-dark-blue': 'hsl(var(--brand-dark-blue-hsl))',      // #0D0D39
-        'brand-light-gray': 'hsl(var(--brand-light-gray-hsl))',   // #F4F6FC
-        'brand-white': 'hsl(var(--brand-white-hsl))',           // #FFFFFF
-        'brand-green': 'hsl(var(--brand-green-hsl))', // For hack tool glow
+        'brand-black': 'hsl(var(--brand-black-hsl))',
+        'brand-dark-gray': 'hsl(var(--brand-dark-gray-hsl))',
+        'brand-white': 'hsl(var(--brand-white-hsl))',
+        'brand-orange': 'hsl(var(--brand-orange-hsl))',
+        'brand-orange-dark': 'hsl(var(--brand-orange-dark-hsl))',
 
         // ShadCN UI theme colors mapped to CSS variables from globals.css
   			background: 'hsl(var(--background))',
@@ -113,15 +112,7 @@ export default {
   					height: '0'
   				}
   			},
-        subtleGlow: {
-          '0%, 100%': { textShadow: '0 0 5px hsl(var(--brand-green-hsl) / 0.4)', opacity: '0.95' },
-          '50%': { textShadow: '0 0 15px hsl(var(--brand-green-hsl) / 0.6)', opacity: '1' },
-        },
-        pulseSubtlePrefix: {
-          '0%, 100%': { opacity: '0.6' },
-          '50%': { opacity: '1' },
-        },
-        spin: { // Ensure spin is defined if spin-slow is used
+        spin: {
           to: {
             transform: 'rotate(360deg)',
           },
@@ -130,8 +121,6 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-        'subtle-glow': 'subtleGlow 3s infinite ease-in-out',
-        'pulse-subtle-prefix': 'pulseSubtlePrefix 1.5s infinite ease-in-out',
         'spin-slow': 'spin 3s linear infinite',
   		}
   	}

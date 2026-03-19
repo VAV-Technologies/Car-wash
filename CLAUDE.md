@@ -1,14 +1,13 @@
-# Nobridge — Static Frontend
+# Castudio — Static Frontend
 
 ## Overview
-Nobridge is a static marketing site built with Next.js 15, TypeScript, and Tailwind CSS. It serves as the public-facing website for the Nobridge M&A advisory firm. There is no backend, database, or authentication — all content is static.
+Castudio is a static marketing site built with Next.js 15, TypeScript, and Tailwind CSS. It serves as the public-facing website for Castudio, a premium car wash and car detailing company in Indonesia. There is no backend, database, or authentication — all content is static.
 
 ## Tech Stack
 - **Next.js 15** with App Router
 - **TypeScript**
 - **Tailwind CSS** + Radix UI primitives
 - **Framer Motion** for animations
-- **Three.js / react-three-fiber** for the interactive globe
 - **Lucide React** for icons
 
 ## Project Structure
@@ -30,7 +29,7 @@ src/
 ```
 
 ## Pages
-`/` `/about` `/pricing` `/terms` `/privacy` `/contact` `/faq` `/help` `/docs` `/acfi-certificate` `/how-selling-works` `/how-buying-works` `/seller-services` `/buyer-services` `/resources` `/resources/[slug]`
+`/` `/about` `/pricing` `/services` `/terms` `/privacy` `/contact` `/faq` `/help` `/resources` `/resources/[slug]`
 
 ## Development
 ```bash
@@ -44,3 +43,5 @@ npm run start        # Serve production build
 - Blog/resources content comes from static `samplePosts` array in `src/lib/blog.ts`
 - No authentication, no database, no API routes
 - Deployed on Vercel as a static site
+- Dark theme: brand-black (#0A0A0A), brand-dark-gray (#171717), brand-orange (#F97316)
+- Currency: Indonesian Rupiah (IDR)

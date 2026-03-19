@@ -6,157 +6,151 @@ import { cn } from "@/lib/utils";
 const values = [
   {
     num: "01",
-    title: "Confidentiality first, always",
-    body: "Every engagement begins with strict confidentiality protocols. Anonymous teasers, NDA-gated information flow, and controlled buyer access ensure your business and your intentions are never exposed prematurely.",
+    title: "Quality over speed",
+    body: "We never rush a job. Every car gets the time and attention it deserves.",
   },
   {
     num: "02",
-    title: "Aligned incentives, no exceptions",
-    body: "We succeed when you do. Our success-fee model means we are only compensated when a transaction closes, eliminating any incentive to rush, inflate, or misrepresent a deal.",
+    title: "Premium products, always",
+    body: "We use only pH-balanced, paint-safe products. No cheap chemicals.",
   },
   {
     num: "03",
-    title: "Regional depth, global reach",
-    body: "We are not a global firm applying a generic playbook to Asia. We are a regional firm with deep cultural fluency, regulatory knowledge, and local relationships, connected to a global buyer network.",
+    title: "Trained, not guessing",
+    body: "Every technician completes our training program before touching a car.",
   },
   {
     num: "04",
-    title: "Process over improvisation",
-    body: "Every deal follows a disciplined, repeatable process from initial positioning through final close. Our structured approach reduces execution risk, keeps timelines on track, and protects both parties throughout.",
+    title: "Transparent pricing",
+    body: "What you see is what you pay. No hidden fees, no surprise upsells.",
   },
   {
     num: "05",
-    title: "Technology as an advantage",
-    body: "As an AI-enabled firm, we move faster and cover more ground than traditional advisory. Technology gives us the ability to reach more qualified buyers, manage larger pipelines, and deliver better market coverage without compromising on quality.",
+    title: "Convenience built in",
+    body: "Online booking, WhatsApp support, mobile service — we fit your schedule.",
   },
   {
     num: "06",
-    title: "Honest counsel, not flattery",
-    body: "We tell clients what they need to hear, not what they want to hear. If a business isn't ready for market, we say so and we help fix it. Our reputation depends on deals that close, not engagements that start.",
+    title: "Satisfaction guaranteed",
+    body: "Not happy with the result? We'll redo it for free. No questions asked.",
   },
 ];
 
 const team = [
   {
-    name: "Partners",
-    role: "Client Advisory & Deal Origination",
-    bio: "Our partners lead every client relationship from first conversation to close. They connect sellers with qualified buyers, advise on positioning and deal strategy, and negotiate terms that reflect the true value of your business.",
-    tags: ["Buyer Matching", "Seller Advisory", "Deal Strategy", "Negotiations", "Client Management"],
-    image: "/assets/team-partners.png",
+    name: "Founders",
+    role: "Vision & Operations",
+    bio: "Driven by a passion for car care and a frustration with the status quo, our founders built Castudio from the ground up. They oversee every aspect of operations, from product sourcing to technician training, ensuring every car gets the treatment it deserves.",
+    tags: ["Strategy", "Operations", "Product Quality", "Growth", "Customer Experience"],
+    image: "",
   },
   {
-    name: "Execution Team",
-    role: "Due Diligence, Valuations & Deal Structuring",
-    bio: "Our execution team drives the analytical backbone of every transaction. From business valuations and financial modelling to CIM preparation and due diligence coordination, every deal is built on rigorous analysis.",
-    tags: ["Valuations", "Due Diligence", "Financial Modelling", "CIM Preparation", "Transaction Structuring"],
-    image: "/assets/team-execution.png",
+    name: "Wash Technicians",
+    role: "Expert Car Wash",
+    bio: "Our wash technicians are trained professionals who treat every vehicle with care. Each one completes a structured training program covering hand wash techniques, product knowledge, and quality standards before they ever touch a customer's car.",
+    tags: ["Hand Wash", "Interior Clean", "Quality Check", "Product Knowledge", "Care"],
+    image: "",
   },
   {
-    name: "Network Partners",
-    role: "Legal, Tax and Cross-Border",
-    bio: "A curated network of specialist advisors across Southeast Asia providing on-the-ground expertise in corporate law, tax optimisation, and cross-border compliance. They embed directly into our deal teams on every transaction.",
-    tags: ["Legal", "Tax Advisory", "Cross-Border", "Regulatory", "Corporate Law", "Compliance"],
-    image: "/assets/team-network.png",
+    name: "Detail Specialists",
+    role: "Advanced Detailing",
+    bio: "Our detail specialists handle paint correction, ceramic coating, and interior restoration. With advanced training and experience across a wide range of vehicles, they deliver results that protect and transform your car's finish.",
+    tags: ["Paint Correction", "Ceramic Coating", "Interior Restoration", "Polish", "Protection"],
+    image: "",
   },
 ];
 
 const steps = [
   {
     num: "01",
-    title: "We prepare before we go to market",
-    body: "A business that isn't positioned well won't attract the right buyers, regardless of how good the outreach is. We invest time upfront in valuation, financial normalisation, and narrative so that when we go to market, we go with conviction.",
+    title: "We use the right products",
+    body: "Premium, pH-balanced shampoos, ceramic-grade sealants, microfiber everything. The products we use are chosen because they deliver results and protect your paint — not because they're cheap.",
   },
   {
     num: "02",
-    title: "We reach the right buyers at scale",
-    body: "Being AI-enabled means we can cover the market more thoroughly than any traditional firm. We identify and prioritise the specific buyers, strategic acquirers, holding companies, family offices, and PE funds, most likely to close on a given opportunity.",
+    title: "We train every technician",
+    body: "Formal training program before anyone touches a car. Regular skill assessments ensure standards don't slip over time.",
   },
   {
     num: "03",
-    title: "We manage the process end-to-end",
-    body: "Owners shouldn't have to become M&A experts to execute a good exit. We run the process, coordinating buyers, managing information flow, and navigating due diligence, so you stay focused on the business.",
+    title: "We follow a system",
+    body: "Every wash and detail follows a documented, multi-step process. Consistency isn't luck — it's built into how we work.",
   },
   {
     num: "04",
-    title: "We stay at the table through close",
-    body: "Many deals fall apart between LOI and close. We stay deeply involved through due diligence, legal negotiation, and final sign-off, protecting your interests and keeping momentum when it matters most.",
+    title: "We inspect before handover",
+    body: "Multi-point quality check on every car. We don't release it until it's right. If something's off, we fix it before you see it.",
   },
 ];
 
 const regions = [
-  { region: "Asia", sub: "Our home market with deep operational presence and local expertise across the region", type: "Primary Market" },
-  { region: "Asia-Pacific", sub: "Extended network of strategic buyers, PE firms, and family offices", type: "Secondary Market" },
-  { region: "Europe", sub: "Active acquirer network across the UK, Western and Northern Europe", type: "Acquirer Network" },
-  { region: "North America", sub: "PE funds, family offices, and strategic buyers seeking Asian exposure", type: "Acquirer Network" },
+  { region: "Jakarta", sub: "Our flagship studio with full detailing capabilities", type: "Flagship" },
+  { region: "Bandung", sub: "Full-service studio serving West Java", type: "Studio" },
+  { region: "Surabaya", sub: "Expanding to East Java — coming soon", type: "Coming Soon" },
 ];
 
-const buyerTypes = [
-  "Strategic Acquirers",
-  "PE Funds",
-  "Family Offices",
-  "Holding Companies",
-  "Search Funds",
-  "Independent Sponsors",
-  "HNW Individuals",
-  "Aggregators",
+const serviceTypes = [
+  "Express Wash",
+  "Full Wash",
+  "Interior Deep Clean",
+  "Exterior Polish",
+  "Ceramic Coating",
+  "Premium Detail",
+  "Mobile Service",
+  "Subscription Plans",
 ];
 
-const techBullets = [
-  "Broader buyer coverage than traditional firms",
-  "Faster time from mandate to market",
-  "Real-time pipeline tracking and reporting",
-  "Multi-market reach across multiple regions",
-  "Efficient CIM and teaser distribution",
-  "Data-driven engagement and follow-up",
+const edgeBullets = [
+  "Safer for your paint long-term",
+  "Better shine and protection",
+  "Consistent results every visit",
+  "Products that actually protect",
+  "Technicians who know what they're doing",
+  "No shortcuts, ever",
 ];
 
 export default function AboutPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-brand-black">
       {/* ── 1. Hero ── */}
-      <section className="w-full min-h-[60vh] bg-brand-dark-blue flex items-center py-24 text-white section-lines-light">
+      <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
-            <p className="text-sm uppercase tracking-wider text-brand-sky-blue font-heading">
-              About Nobridge
+            <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
+              About Castudio
             </p>
-            <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-              We exist because this market deserved a better firm.
+            <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight text-white">
+              Built for Drivers Who Care
             </h1>
-            <p className="text-lg md:text-xl text-blue-100 font-light max-w-3xl mx-auto leading-relaxed">
-              Nobridge was built to serve the businesses that global advisory firms overlook and local brokers can&apos;t properly represent. Asian SMEs with real value, real businesses, and no real exit path. Until now.
+            <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
+              Castudio was founded because Indonesian drivers deserve better than a rushed, automated car wash. We built a studio where quality products, trained technicians, and real attention to detail come standard — not as an upsell.
             </p>
           </FadeIn>
         </div>
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
-      {/* ── 2. Our Origin ── */}
-      <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+      {/* ── 2. Our Story ── */}
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
-                Our Origin
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                Our Story
               </p>
-              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                Built from a gap no one was filling
+              <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
+                Started from a simple frustration
               </h2>
             </div>
           </FadeIn>
 
-          {/* Full-width image above content */}
+          {/* Full-width image placeholder */}
           <FadeIn delay={50}>
-            <div className="border border-brand-dark-blue/10 overflow-hidden">
-              <div className="w-full h-[28rem] md:h-[36rem] bg-white relative overflow-hidden">
-                <Image
-                  src="/assets/about-origin-cityscape.png"
-                  alt="Asian cityscape skyline"
-                  fill
-                  className="object-contain"
-                />
+            <div className="border border-white/10 overflow-hidden">
+              <div className="w-full h-[28rem] md:h-[36rem] bg-brand-dark-gray relative overflow-hidden flex items-center justify-center">
+                <p className="text-white/20 text-sm uppercase tracking-wider font-heading">Image Placeholder</p>
               </div>
             </div>
           </FadeIn>
@@ -164,49 +158,49 @@ export default function AboutPage() {
           <div className="flex flex-col lg:flex-row">
             {/* Left column: paragraphs */}
             <FadeIn delay={100} className="flex-1">
-              <div className="border border-brand-dark-blue/10 border-t-0 p-8 md:p-10 h-full space-y-6">
-                <p className="text-muted-foreground leading-relaxed">
-                  The M&amp;A advisory industry has a blind spot. Global firms won&apos;t touch deals under $100M. Local brokers lack the buyer networks, process discipline, and cross-border capability to execute with any consistency. The middle market in Asia was and largely still is underserved.
+              <div className="border border-white/10 border-t-0 p-8 md:p-10 h-full space-y-6">
+                <p className="text-white/60 leading-relaxed">
+                  Like most car owners in Indonesia, we spent years cycling through car washes that left swirl marks, used harsh chemicals, and rushed through every job. The &ldquo;premium&rdquo; options weren&apos;t much better — just the same shortcuts at a higher price.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Nobridge was founded to fix that. We built an advisory firm specifically for Asian SMEs doing between $2M and $50M in enterprise value. Businesses with strong fundamentals, loyal customers, and owners ready for their next chapter.
+                <p className="text-white/60 leading-relaxed">
+                  So we built Castudio. A studio designed around one idea: every car that comes in should leave genuinely clean, properly protected, and handled by someone who knows what they&apos;re doing. We sourced premium, paint-safe products. We built a real training program for our technicians. We created a process that doesn&apos;t skip steps.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  We combine the rigour of institutional M&amp;A with the speed and access that only a technology-enabled, regionally-embedded firm can offer. The result is faster deals, better outcomes, and a market that finally works for the businesses that power this region&apos;s economy.
+                <p className="text-white/60 leading-relaxed">
+                  Today, we serve hundreds of cars every month across our studios. But the standard hasn&apos;t changed — every car still gets the same attention to detail we demanded for our own.
                 </p>
               </div>
             </FadeIn>
 
             {/* Right column: pull quote + metrics */}
             <FadeIn delay={200} className="flex-1">
-              <div className="border border-brand-dark-blue/10 border-t-0 lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
+              <div className="border border-white/10 border-t-0 lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
                 {/* Pull quote */}
-                <div className="border-l-2 border-brand-sky-blue pl-6 mb-8">
-                  <p className="text-xl md:text-2xl font-heading text-brand-dark-blue leading-snug mb-3">
-                    &ldquo;The SMEs that built Asia deserve an exit process that respects what they&apos;ve built.&rdquo;
+                <div className="border-l-2 border-brand-orange pl-6 mb-8">
+                  <p className="text-xl md:text-2xl font-heading text-white leading-snug mb-3">
+                    &ldquo;Every car that leaves our studio should look better than when it arrived. No exceptions.&rdquo;
                   </p>
-                  <p className="text-sm text-muted-foreground">Nobridge Founding Team</p>
+                  <p className="text-sm text-white/60">Castudio Founding Team</p>
                 </div>
 
                 {/* 2x2 metrics grid */}
                 <div className="grid grid-cols-2">
                   {[
-                    { value: "$2M", label: "Minimum deal size" },
-                    { value: "$50M", label: "Maximum deal size" },
-                    { value: "APAC", label: "Primary markets" },
-                    { value: "AI", label: "Enabled infrastructure" },
+                    { value: "500+", label: "Cars per month" },
+                    { value: "30 min", label: "Avg wash time" },
+                    { value: "Jakarta", label: "Home base" },
+                    { value: "Premium", label: "Products only" },
                   ].map((metric, index) => (
                     <div
                       key={metric.value}
                       className={cn(
-                        "border border-brand-dark-blue/10 p-5 text-center",
+                        "border border-white/10 p-5 text-center",
                         index === 1 && "border-l-0",
                         index === 2 && "border-t-0",
                         index === 3 && "border-t-0 border-l-0"
                       )}
                     >
-                      <p className="text-2xl md:text-3xl font-heading text-brand-dark-blue mb-1">{metric.value}</p>
-                      <p className="text-xs text-muted-foreground">{metric.label}</p>
+                      <p className="text-2xl md:text-3xl font-heading text-white mb-1">{metric.value}</p>
+                      <p className="text-xs text-white/60">{metric.label}</p>
                     </div>
                   ))}
                 </div>
@@ -217,22 +211,19 @@ export default function AboutPage() {
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* ── 3. What We Stand For ── */}
-      <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 What We Stand For
               </p>
-              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight mb-4">
-                The principles that guide every engagement
+              <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight mb-4">
+                The standards we hold ourselves to
               </h2>
-              <p className="text-muted-foreground text-lg max-w-3xl leading-relaxed">
-                M&amp;A is a high-stakes, high-trust business. The principles we operate by aren&apos;t marketing. They&apos;re the reason clients come back and refer others.
-              </p>
             </div>
           </FadeIn>
 
@@ -241,12 +232,12 @@ export default function AboutPage() {
             {values.slice(0, 3).map((card, index) => (
               <FadeIn key={card.num} delay={index * 100} className="flex-1">
                 <div className={cn(
-                  "border border-brand-dark-blue/10 p-8 h-full flex flex-col",
+                  "border border-white/10 bg-brand-dark-gray p-8 h-full flex flex-col",
                   index > 0 && "border-t-0 md:border-t md:border-l-0"
                 )}>
-                  <span className="text-sm font-heading text-brand-sky-blue mb-4">{card.num}</span>
-                  <h4 className="text-lg font-medium text-brand-dark-blue mb-2">{card.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed">{card.body}</p>
+                  <span className="text-sm font-heading text-brand-orange mb-4">{card.num}</span>
+                  <h4 className="text-lg font-medium text-white mb-2">{card.title}</h4>
+                  <p className="text-white/60 leading-relaxed">{card.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -257,12 +248,12 @@ export default function AboutPage() {
             {values.slice(3, 6).map((card, index) => (
               <FadeIn key={card.num} delay={(index + 3) * 100} className="flex-1">
                 <div className={cn(
-                  "border border-brand-dark-blue/10 border-t-0 p-8 h-full flex flex-col",
+                  "border border-white/10 bg-brand-dark-gray border-t-0 p-8 h-full flex flex-col",
                   index > 0 && "md:border-l-0"
                 )}>
-                  <span className="text-sm font-heading text-brand-sky-blue mb-4">{card.num}</span>
-                  <h4 className="text-lg font-medium text-brand-dark-blue mb-2">{card.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed">{card.body}</p>
+                  <span className="text-sm font-heading text-brand-orange mb-4">{card.num}</span>
+                  <h4 className="text-lg font-medium text-white mb-2">{card.title}</h4>
+                  <p className="text-white/60 leading-relaxed">{card.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -271,21 +262,21 @@ export default function AboutPage() {
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* ── 4. The Team ── */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center space-y-4 mb-16 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-sky-blue font-heading">
+              <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
                 The Team
               </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Practitioners, not intermediaries
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight text-white">
+                People who care about your car
               </h2>
-              <p className="text-lg text-blue-100 max-w-3xl mx-auto leading-relaxed">
-                Our team has operated businesses, structured deals, and navigated the specific complexities of Asian markets. We advise from experience, not theory.
+              <p className="text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
+                From our founders to our wash technicians, everyone at Castudio shares the same obsession with quality.
               </p>
             </div>
           </FadeIn>
@@ -297,19 +288,14 @@ export default function AboutPage() {
                   "border border-white/15 h-full flex flex-col",
                   index > 0 && "border-t-0 md:border-t md:border-l-0"
                 )}>
-                  <div className="aspect-[3/2.5] relative overflow-hidden bg-white">
-                    <Image
-                      src={member.image}
-                      alt={member.name}
-                      fill
-                      className="object-contain scale-[0.85]"
-                    />
+                  <div className="aspect-[3/2.5] relative overflow-hidden bg-brand-dark-gray flex items-center justify-center">
+                    <p className="text-white/20 text-sm uppercase tracking-wider font-heading">{member.name}</p>
                   </div>
 
                   <div className="p-6 flex flex-col flex-grow">
-                    <h4 className="text-lg font-heading">{member.name}</h4>
-                    <p className="text-sm text-brand-sky-blue mb-3">{member.role}</p>
-                    <p className="text-blue-100/80 text-sm leading-relaxed mb-4 flex-grow">{member.bio}</p>
+                    <h4 className="text-lg font-heading text-white">{member.name}</h4>
+                    <p className="text-sm text-brand-orange mb-3">{member.role}</p>
+                    <p className="text-white/70 text-sm leading-relaxed mb-4 flex-grow">{member.bio}</p>
                     <div className="border-t border-white/15 pt-4 flex flex-wrap gap-2">
                       {member.tags.map((tag) => (
                         <span key={tag} className="text-xs px-3 py-1 border border-white/15 text-white/70">
@@ -326,18 +312,18 @@ export default function AboutPage() {
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* ── 5. Our Approach ── */}
-      <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Our Approach
               </p>
-              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                How we think about every deal
+              <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
+                How we deliver consistent quality
               </h2>
             </div>
           </FadeIn>
@@ -348,37 +334,37 @@ export default function AboutPage() {
               {steps.map((step, index) => (
                 <FadeIn key={step.num} delay={index * 100}>
                   <div className={cn(
-                    "border border-brand-dark-blue/10 p-8 md:p-10 flex items-start gap-8",
+                    "border border-white/10 p-8 md:p-10 flex items-start gap-8",
                     index > 0 && "border-t-0"
                   )}>
-                    <span className="text-5xl md:text-6xl font-heading font-medium text-brand-dark-blue/10 leading-none shrink-0">
+                    <span className="text-5xl md:text-6xl font-heading font-medium text-white/10 leading-none shrink-0">
                       {step.num}
                     </span>
                     <div>
-                      <h3 className="text-lg font-normal text-brand-dark-blue font-heading mb-2">{step.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{step.body}</p>
+                      <h3 className="text-lg font-normal text-white font-heading mb-2">{step.title}</h3>
+                      <p className="text-white/60 leading-relaxed">{step.body}</p>
                     </div>
                   </div>
                 </FadeIn>
               ))}
             </div>
 
-            {/* Right: Sticky Technology Edge card */}
+            {/* Right: Sticky Our Edge card */}
             <FadeIn delay={200} className="lg:w-[400px] xl:w-[440px]">
-              <div className="border border-brand-dark-blue/10 border-t-0 lg:border-t lg:border-l-0 bg-brand-dark-blue text-white p-8 md:p-10 sticky top-24 h-fit">
-                <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
-                  Technology Edge
+              <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 bg-brand-dark-gray text-white p-8 md:p-10 sticky top-24 h-fit">
+                <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                  Our Edge
                 </p>
-                <h3 className="text-xl font-heading mb-4">
-                  Better coverage, faster execution
+                <h3 className="text-xl font-heading mb-4 text-white">
+                  Why premium matters
                 </h3>
-                <p className="text-blue-100/80 leading-relaxed mb-6 text-sm">
-                  As an AI-enabled firm, we deliver the market coverage and execution speed that traditional advisory simply cannot match. Our technology infrastructure lets us reach more buyers, manage more opportunities, and move deals forward faster.
+                <p className="text-white/70 leading-relaxed mb-6 text-sm">
+                  Cheap products and untrained staff might get the dirt off, but they also leave swirl marks, strip wax, and degrade your paint over time. Premium products and proper technique don&apos;t just clean — they protect. That&apos;s the difference between a car wash and a studio.
                 </p>
                 <ul className="space-y-3">
-                  {techBullets.map((bullet) => (
-                    <li key={bullet} className="flex items-start gap-3 text-sm text-blue-100/80">
-                      <span className="text-brand-sky-blue mt-1 text-xs">&#x25C6;</span>
+                  {edgeBullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-3 text-sm text-white/70">
+                      <span className="text-brand-orange mt-1 text-xs">&#x25C6;</span>
                       {bullet}
                     </li>
                   ))}
@@ -390,18 +376,18 @@ export default function AboutPage() {
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* ── 6. Where We Operate ── */}
-      <section className="w-full py-20 md:py-24 bg-white section-lines-dark">
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Where We Operate
               </p>
-              <h2 className="text-3xl md:text-4xl font-normal text-brand-dark-blue font-heading tracking-tight">
-                Rooted in the region, connected globally
+              <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
+                Growing across Indonesia
               </h2>
             </div>
           </FadeIn>
@@ -409,26 +395,26 @@ export default function AboutPage() {
           <div className="flex flex-col lg:flex-row">
             {/* Left: Region table */}
             <FadeIn delay={100} className="flex-1">
-              <div className="border border-brand-dark-blue/10 h-full">
+              <div className="border border-white/10 h-full">
                 {regions.map((r, index) => (
                   <div
                     key={r.region}
                     className={cn(
                       "flex items-center gap-4 px-6 py-5",
-                      index > 0 && "border-t border-brand-dark-blue/10"
+                      index > 0 && "border-t border-white/10"
                     )}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-brand-dark-blue">{r.region}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{r.sub}</p>
+                      <p className="font-medium text-white">{r.region}</p>
+                      <p className="text-xs text-white/60 mt-1">{r.sub}</p>
                     </div>
                     <span className={cn(
                       "text-xs px-3 py-1 border shrink-0",
-                      r.type === "Primary Market"
-                        ? "border-brand-sky-blue/30 text-brand-sky-blue bg-brand-sky-blue/5"
-                        : r.type === "Secondary Market"
-                          ? "border-brand-dark-blue/20 text-brand-dark-blue/70 bg-brand-dark-blue/5"
-                          : "border-brand-dark-blue/10 text-muted-foreground"
+                      r.type === "Flagship"
+                        ? "border-brand-orange/30 text-brand-orange bg-brand-orange/5"
+                        : r.type === "Studio"
+                          ? "border-white/20 text-white/70 bg-white/5"
+                          : "border-white/10 text-white/60"
                     )}>
                       {r.type}
                     </span>
@@ -439,29 +425,29 @@ export default function AboutPage() {
 
             {/* Right: Body text */}
             <FadeIn delay={200} className="flex-1">
-              <div className="border border-brand-dark-blue/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full space-y-6">
-                <p className="text-muted-foreground leading-relaxed">
-                  Asia is our primary market. We have deep operational presence, local expertise, and cultural fluency across the region, giving our clients an advisory partner that truly understands how business gets done here.
+              <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full space-y-6">
+                <p className="text-white/60 leading-relaxed">
+                  Jakarta is home — our flagship studio with full wash and detailing capabilities. It&apos;s where we developed the processes and standards that define every Castudio experience.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  On the buy side, we connect sellers to a curated network of global acquirers spanning Europe, North America, and the broader Asia-Pacific. Our reach covers strategic buyers, private equity funds, family offices, and high-net-worth individuals actively seeking opportunities in Asia.
+                <p className="text-white/60 leading-relaxed">
+                  We&apos;re expanding to serve more Indonesian cities, starting with Bandung and Surabaya. Every new location follows the same playbook: premium products, trained technicians, and a process that doesn&apos;t cut corners.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  The result is a genuinely cross-border deal process, with local expertise on one side and global capital on the other.
+                <p className="text-white/60 leading-relaxed">
+                  Whether you visit us at a studio or book our mobile service, the quality is the same. That&apos;s the point.
                 </p>
               </div>
             </FadeIn>
           </div>
 
-          {/* Buyer network tag cloud */}
+          {/* Service types tag cloud */}
           <FadeIn delay={300}>
-            <div className="border border-brand-dark-blue/10 border-t-0 p-6">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-4 font-heading">
-                Buyer Types in Our Network
+            <div className="border border-white/10 border-t-0 p-6">
+              <p className="text-xs uppercase tracking-wider text-white/60 mb-4 font-heading">
+                Services We Offer
               </p>
               <div className="flex flex-wrap gap-2">
-                {buyerTypes.map((type) => (
-                  <span key={type} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">
+                {serviceTypes.map((type) => (
+                  <span key={type} className="text-xs px-3 py-1 border border-white/10 text-white/70">
                     {type}
                   </span>
                 ))}
@@ -472,34 +458,34 @@ export default function AboutPage() {
       </section>
 
       {/* ── Separator ── */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* ── 7. CTA ── */}
-      <section className="w-full py-12 md:py-12 bg-brand-white section-lines-dark">
+      <section className="w-full py-12 md:py-12 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="border border-brand-dark-blue/10">
-              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-0 md:aspect-[21/9] text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
-                    <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">
-                      Ready to start a conversation?
+            <div className="border border-white/10">
+              <div className="px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center">
+                <div className="flex flex-col items-center justify-center h-full">
+                  <div className="border border-white/10 bg-brand-dark-gray/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
+                    <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">
+                      Ready to experience the difference?
                     </h2>
-                    <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
-                      Whether you&apos;re considering an exit, looking to acquire in Asia, or want to understand what your business is worth, we start with a confidential, no-obligation conversation.
+                    <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
+                      Book your first wash and see why hundreds of drivers trust Castudio with their cars every month. No contracts, no commitments — just a better car wash.
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                       <Link
                         href="/contact"
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base transition-colors"
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                       >
-                        Book a Consultation
+                        Book a Wash
                       </Link>
                       <Link
-                        href="/marketplace"
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base transition-colors"
+                        href="/pricing"
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
                       >
-                        Browse the Marketplace
+                        View Plans
                       </Link>
                     </div>
                   </div>

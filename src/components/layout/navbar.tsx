@@ -6,7 +6,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, Briefcase, ShoppingCart, Building2, Phone, Info, FileText, Search, Users2, Award, BookOpen } from 'lucide-react';
+import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, DollarSign, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
@@ -26,31 +26,20 @@ interface NavLinkGroup {
 
 const navLinkGroups: NavLinkGroup[] = [
   {
-    label: "Sell Your Business",
-    triggerIcon: Briefcase,
+    label: "Services",
+    triggerIcon: Droplets,
     items: [
-      { href: "/contact", label: "List Your Business", icon: FileText },
-      { href: "/how-selling-works", label: "How Selling Works", icon: Info },
-      { href: "/seller-services", label: "Seller Services", icon: Briefcase },
+      { href: "/services", label: "Our Services", icon: Droplets },
+      { href: "/pricing", label: "Pricing & Plans", icon: DollarSign },
     ],
   },
   {
-    label: "Buy a Business",
-    triggerIcon: ShoppingCart,
-    items: [
-      { href: "/contact", label: "Visit Marketplace", icon: Search },
-      { href: "/how-buying-works", label: "How Buying Works", icon: Info },
-      { href: "/buyer-services", label: "Buyer Services", icon: ShoppingCart },
-    ],
-  },
-  {
-    label: "Our Company",
+    label: "Company",
     triggerIcon: Building2,
     items: [
-      { href: "/about", label: "About Us", icon: Users2 },
-      { href: "/faq", label: "FAQ", icon: Info },
-      { href: "/acfi-certificate", label: "ACFI Certificate", icon: Award },
-      { href: "/resources", label: "Resources", icon: BookOpen },
+      { href: "/about", label: "About Us", icon: Info },
+      { href: "/faq", label: "FAQ", icon: HelpCircle },
+      { href: "/resources", label: "Car Care Tips", icon: BookOpen },
     ],
   },
 ];
@@ -61,8 +50,8 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
   // Pages with dark hero backgrounds where navbar should start transparent with white text
-  const darkHeroPages = ['/'];
-  const hasDarkHero = darkHeroPages.includes(pathname);
+  const darkHeroPages = ['/', '/about', '/contact', '/faq', '/services', '/terms', '/privacy', '/resources'];
+  const hasDarkHero = darkHeroPages.includes(pathname) || pathname.startsWith('/resources/');
 
   const [scrolled, setScrolled] = useState(!hasDarkHero);
 
@@ -115,15 +104,15 @@ export function Navbar() {
         "relative flex h-[72px] items-center justify-between px-4 transition-all duration-300",
         scrolled
           ? activeMenu
-            ? "bg-white border border-brand-dark-blue/10 shadow-sm border-b-0"
-            : "bg-white/90 backdrop-blur-xl shadow-sm border border-brand-dark-blue/10 supports-[backdrop-filter]:bg-white/80"
+            ? "bg-brand-black border border-white/10 shadow-sm border-b-0"
+            : "bg-brand-black/90 backdrop-blur-xl shadow-sm border border-white/10 supports-[backdrop-filter]:bg-brand-black/80"
           : activeMenu
-            ? "bg-brand-dark-blue border border-white/15 border-b-0"
+            ? "bg-brand-black border border-white/15 border-b-0"
             : "bg-white/5 backdrop-blur-sm border border-white/15"
       )}>
         {/* Left - Logo */}
         <div className="flex items-center">
-          <Logo size="lg" forceTheme={scrolled ? "light" : "dark"} />
+          <Logo size="lg" forceTheme="dark" />
         </div>
 
         {/* Center - Nav items */}
@@ -136,16 +125,8 @@ export function Navbar() {
                 key={group.label}
                 ref={(el) => { triggerRefs.current[group.label] = el; }}
                 className={cn(
-                  "h-10 w-[200px] text-sm font-medium flex items-center justify-center transition-colors rounded-none",
-                  scrolled
-                    ? cn(
-                        "text-brand-dark-blue",
-                        isActive ? "bg-brand-light-gray/70" : "hover:bg-brand-light-gray/50 hover:text-brand-dark-blue/90"
-                      )
-                    : cn(
-                        "text-white",
-                        isActive ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
-                      )
+                  "h-10 w-[200px] text-sm font-medium flex items-center justify-center transition-colors rounded-none text-white",
+                  isActive ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
                 )}
                 onMouseEnter={() => openMenu(group.label)}
               >
@@ -159,33 +140,28 @@ export function Navbar() {
 
         {/* Right - Contact button */}
         <div className="hidden md:flex items-center space-x-2.5">
-          <Link href="/contact" className={cn(
-            "inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors",
-            scrolled
-              ? "bg-brand-dark-blue text-white hover:bg-brand-dark-blue/90"
-              : "bg-white text-brand-dark-blue hover:bg-white/90"
-          )}>Contact Us</Link>
+          <Link href="/contact" className="inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors bg-brand-orange text-black hover:bg-brand-orange-dark">Contact Us</Link>
         </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className={cn(scrolled ? "text-brand-dark-blue hover:bg-brand-light-gray/50" : "text-white hover:bg-white/10")}>
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 bg-brand-white text-brand-dark-blue">
-              <div className="px-4 pt-14 pb-4 border-b border-brand-dark-blue/10">
-                <Logo size="lg" forceTheme="light" />
+            <SheetContent side="right" className="w-[300px] sm:w-[350px] p-0 bg-brand-black text-white border-white/10">
+              <div className="px-4 pt-14 pb-4 border-b border-white/10">
+                <Logo size="lg" forceTheme="dark" />
               </div>
               <nav className="flex flex-col gap-3 p-4">
                 {navLinkGroups.map((group) => {
                   const TriggerIcon = group.triggerIcon;
                   return (
-                    <div key={group.label} className="border border-brand-dark-blue/10">
-                      <h4 className="text-sm font-medium uppercase tracking-wider px-4 py-3 text-brand-dark-blue/50 flex items-center border-b border-brand-dark-blue/10 bg-brand-light-gray/30">
+                    <div key={group.label} className="border border-white/10">
+                      <h4 className="text-sm font-medium uppercase tracking-wider px-4 py-3 text-white/50 flex items-center border-b border-white/10 bg-brand-dark-gray/50">
                         <TriggerIcon className="mr-2 h-4 w-4 opacity-60" />
                         {group.label}
                       </h4>
@@ -195,9 +171,9 @@ export function Navbar() {
                           return (
                             <SheetClose asChild key={item.label}>
                               <Button variant="ghost" asChild className={cn(
-                                "justify-start text-base font-normal rounded-none px-4 py-3 text-brand-dark-blue/80 hover:text-brand-dark-blue hover:bg-brand-light-gray/50",
-                                itemIndex > 0 && "border-t border-brand-dark-blue/10",
-                                pathname === item.href && "bg-brand-light-gray font-medium text-brand-dark-blue"
+                                "justify-start text-base font-normal rounded-none px-4 py-3 text-white/80 hover:text-white hover:bg-white/10",
+                                itemIndex > 0 && "border-t border-white/10",
+                                pathname === item.href && "bg-white/10 font-medium text-white"
                               )}>
                                 <Link href={item.href} className="flex items-center">
                                   <IconComponent className="mr-2 h-4 w-4 opacity-80" />
@@ -214,7 +190,7 @@ export function Navbar() {
 
                 {/* Contact — primary CTA */}
                 <SheetClose asChild>
-                  <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 w-full">
+                  <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-orange text-black hover:bg-brand-orange-dark w-full">
                     <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-4 w-4" /> Contact Us</Link>
                   </Button>
                 </SheetClose>
@@ -233,20 +209,12 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className={cn(
-              "overflow-hidden border-x border-b",
-              scrolled
-                ? "bg-white border-brand-dark-blue/10"
-                : "bg-brand-dark-blue border-white/15"
-            )}
+            className="overflow-hidden border-x border-b bg-brand-black border-white/15"
             onMouseEnter={cancelClose}
             onMouseLeave={closeMenu}
           >
             {/* Separator line */}
-            <div className={cn(
-              "mx-4",
-              scrolled ? "border-t border-brand-dark-blue/10" : "border-t border-white/15"
-            )} />
+            <div className="mx-4 border-t border-white/15" />
             <div className="py-5 relative">
               <div className="inline-flex items-center" style={{ position: 'relative', left: `${dropdownOffset}px`, transform: 'translateX(-50%)' }}>
                 {activeGroup.items.map((item, idx) => {
@@ -254,20 +222,14 @@ export function Navbar() {
                   return (
                     <React.Fragment key={item.label}>
                       {idx > 0 && (
-                        <div className={cn(
-                          "h-4 w-px mx-2",
-                          scrolled ? "bg-brand-dark-blue/15" : "bg-white/20"
-                        )} />
+                        <div className="h-4 w-px mx-2 bg-white/20" />
                       )}
                       <Link
                         href={item.href}
                         onClick={() => setActiveMenu(null)}
                         className={cn(
-                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors",
-                          scrolled
-                            ? "text-brand-dark-blue/70 hover:text-brand-dark-blue hover:bg-brand-light-gray/50"
-                            : "text-white/70 hover:text-white hover:bg-white/10",
-                          pathname === item.href && (scrolled ? "text-brand-dark-blue font-medium bg-brand-light-gray/50" : "text-white font-medium bg-white/10")
+                          "flex items-center justify-center gap-2 text-sm font-medium h-10 w-[200px] transition-colors text-white/70 hover:text-white hover:bg-white/10",
+                          pathname === item.href && "text-white font-medium bg-white/10"
                         )}
                       >
                         <ItemIcon className="h-4 w-4 opacity-80 shrink-0" />

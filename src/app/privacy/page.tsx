@@ -2,16 +2,16 @@ import { FadeIn } from "@/components/ui/fade-in";
 
 export default function PrivacyPage() {
   return (
-    <div className="bg-white">
+    <div className="bg-brand-dark-gray">
       {/* Hero */}
-      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-dark-blue text-white section-lines-light">
+      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
         <div className="container mx-auto py-24 md:py-32">
           <FadeIn direction="up">
             <div className="text-center space-y-4 px-4">
               <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
                 Privacy Policy
               </h1>
-              <p className="text-lg text-blue-100">
+              <p className="text-lg text-white/70">
                 Last Updated: March 10, 2026
               </p>
             </div>
@@ -20,63 +20,59 @@ export default function PrivacyPage() {
       </section>
 
       {/* Content */}
-      <section className="w-full py-24 md:py-32 bg-white section-lines-dark">
+      <section className="w-full py-24 md:py-32 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
-          <div className="prose prose-lg max-w-4xl mx-auto px-4 text-justify [&_h2]:text-left [&_h3]:text-left [&_h2]:mt-20 [&_h2]:mb-6 [&_h2]:pt-10 [&_h2]:border-t [&_h2]:border-brand-dark-blue/10 [&_h3]:mt-10 [&_h3]:mb-4 [&_p]:!mb-[1.5em] [&_p]:leading-relaxed [&_li]:!mb-[0.5em] [&_ul]:!mb-[1.5em] [&_strong]:font-semibold">
+          <div className="prose prose-lg prose-invert max-w-4xl mx-auto px-4 text-justify text-white/80 [&_h2]:text-left [&_h2]:text-white [&_h3]:text-left [&_h3]:text-white [&_h2]:mt-20 [&_h2]:mb-6 [&_h2]:pt-10 [&_h2]:border-t [&_h2]:border-white/10 [&_h3]:mt-10 [&_h3]:mb-4 [&_p]:!mb-[1.5em] [&_p]:leading-relaxed [&_li]:!mb-[0.5em] [&_ul]:!mb-[1.5em] [&_strong]:font-semibold">
 
-            {/* ── Introduction ── */}
+            {/* -- Introduction -- */}
             <p>
-              PT Vav Technologies Indonesia, operating under the name Nobridge, and its affiliates (collectively, <strong>&quot;Nobridge,&quot;</strong> <strong>&quot;we,&quot;</strong> <strong>&quot;us,&quot;</strong> or <strong>&quot;our&quot;</strong>) is committed to protecting your privacy and handling your personal data responsibly. This Privacy Policy (&quot;Policy&quot;) explains how we collect, use, disclose, store, and safeguard your information when you access or use our website, platform, applications, tools, and all related services (collectively, the <strong>&quot;Services&quot;</strong>).
+              PT Vav Technologies Indonesia, operating under the name Castudio, and its affiliates (collectively, <strong>&quot;Castudio,&quot;</strong> <strong>&quot;we,&quot;</strong> <strong>&quot;us,&quot;</strong> or <strong>&quot;our&quot;</strong>) is committed to protecting your privacy and handling your personal data responsibly. This Privacy Policy (&quot;Policy&quot;) explains how we collect, use, disclose, store, and safeguard your information when you access or use our website, platform, applications, tools, and all related services (collectively, the <strong>&quot;Services&quot;</strong>).
             </p>
             <p>
               By accessing or using our Services, you acknowledge that you have read, understood, and agree to be bound by this Privacy Policy. If you do not agree with this Policy, you must immediately cease all use of our Services. This Policy forms part of and is incorporated into our Terms of Service.
             </p>
             <p>
-              Our Services are designed to facilitate mergers and acquisitions (&quot;M&amp;A&quot;) advisory, deal-sourcing, and marketplace transactions for small and medium-sized enterprises (&quot;SMEs&quot;) across Asia and globally. Given the commercially sensitive nature of M&amp;A transactions, we take data protection with the utmost seriousness.
+              Our Services are designed to provide premium car wash, car detailing, ceramic coating, paint correction, interior restoration, and related vehicle care services. We collect information necessary to provide our car care services, process bookings, manage subscriptions, and communicate with you. Given the personal nature of the data we handle, we take data protection with the utmost seriousness.
             </p>
 
-            {/* ── 1. Definitions ── */}
+            {/* -- 1. Definitions -- */}
             <h2 className="font-heading">1. Definitions</h2>
             <p>For the purposes of this Privacy Policy, the following terms shall have the meanings set out below:</p>
             <ul>
               <li><strong>&quot;Personal Data&quot;</strong> means any information relating to an identified or identifiable natural person (&quot;Data Subject&quot;), including but not limited to name, identification number, location data, online identifiers, and factors specific to the physical, physiological, genetic, mental, economic, cultural, or social identity of that person.</li>
-              <li><strong>&quot;Business Data&quot;</strong> means any information relating to a business entity, including financial statements, operational data, customer lists, trade secrets, proprietary methodologies, intellectual property, and any other information provided in connection with a potential M&amp;A transaction.</li>
-              <li><strong>&quot;Processing&quot;</strong> means any operation or set of operations performed on Personal Data or Business Data, whether by automated means or not, including collection, recording, organization, structuring, storage, adaptation, alteration, retrieval, consultation, use, disclosure by transmission, dissemination, alignment, combination, restriction, erasure, or destruction.</li>
-              <li><strong>&quot;Controller&quot;</strong> means the entity that determines the purposes and means of Processing Personal Data. Nobridge acts as the Controller for Personal Data collected through the Services.</li>
+              <li><strong>&quot;Vehicle Data&quot;</strong> means any information relating to a Customer&apos;s vehicle, including make, model, year, color, license plate number, VIN, service history, vehicle condition records, and any other information provided in connection with Car Care Services.</li>
+              <li><strong>&quot;Processing&quot;</strong> means any operation or set of operations performed on Personal Data or Vehicle Data, whether by automated means or not, including collection, recording, organization, structuring, storage, adaptation, alteration, retrieval, consultation, use, disclosure by transmission, dissemination, alignment, combination, restriction, erasure, or destruction.</li>
+              <li><strong>&quot;Controller&quot;</strong> means the entity that determines the purposes and means of Processing Personal Data. Castudio acts as the Controller for Personal Data collected through the Services.</li>
               <li><strong>&quot;Processor&quot;</strong> means any entity that processes Personal Data on behalf of the Controller.</li>
-              <li><strong>&quot;User&quot;</strong> or <strong>&quot;you&quot;</strong> means any individual or entity that accesses or uses the Services, including but not limited to Buyers, Sellers, advisors, brokers, and general visitors.</li>
-              <li><strong>&quot;Buyer&quot;</strong> means any User who uses the Services to browse, evaluate, or acquire businesses or business interests.</li>
-              <li><strong>&quot;Seller&quot;</strong> means any User who uses the Services to list, market, or divest businesses or business interests.</li>
-              <li><strong>&quot;Platform&quot;</strong> means the Nobridge website, web application, mobile applications, APIs, and any other digital interface through which the Services are delivered.</li>
+              <li><strong>&quot;User&quot;</strong> or <strong>&quot;you&quot;</strong> means any individual or entity that accesses or uses the Services, including but not limited to Customers and general visitors.</li>
+              <li><strong>&quot;Customer&quot;</strong> means any User who uses the Services to book, purchase, or receive car care services.</li>
+              <li><strong>&quot;Platform&quot;</strong> means the Castudio website, web application, mobile applications, APIs, and any other digital interface through which the Services are delivered.</li>
               <li><strong>&quot;Cookies&quot;</strong> means small data files placed on your device when you visit the Platform, used to store information about your browsing activity and preferences.</li>
               <li><strong>&quot;Applicable Law&quot;</strong> means all applicable laws, regulations, guidelines, and codes of practice relating to the Processing of Personal Data in any jurisdiction where we operate or where our Users are located.</li>
             </ul>
 
-            {/* ── 2. Information We Collect ── */}
+            {/* -- 2. Information We Collect -- */}
             <h2 className="font-heading">2. Information We Collect</h2>
             <p>We collect information from and about you through various means when you interact with our Services. The types of information we collect include the following:</p>
 
             <h3 className="font-heading">2.1 Personal Information You Provide Directly</h3>
             <p>When you register for an account, submit forms, use our Services, or communicate with us, we may collect:</p>
             <ul>
-              <li><strong>Identity Information:</strong> Full legal name, date of birth, nationality, government-issued identification numbers and documents (passport, national ID, driver&apos;s license), photographs, and professional headshots.</li>
-              <li><strong>Contact Information:</strong> Email address, telephone number, mobile number, mailing address, business address, and other contact details.</li>
-              <li><strong>Account Information:</strong> Username, password (stored in encrypted form), account preferences, role designation (Buyer, Seller, Advisor), and account settings.</li>
-              <li><strong>Professional Information:</strong> Job title, company name, industry, professional qualifications, licenses, certifications, LinkedIn profile, professional biography, and areas of expertise or investment interest.</li>
-              <li><strong>Financial Information:</strong> Bank account details, payment card information (processed through secure third-party payment processors), billing address, tax identification numbers, proof of funds, and financial capacity documentation.</li>
-              <li><strong>Verification Information:</strong> Documents and information submitted for identity verification, anti-money laundering (&quot;AML&quot;) checks, know-your-customer (&quot;KYC&quot;) procedures, and accredited investor verification, including source of wealth declarations.</li>
+              <li><strong>Identity Information:</strong> Full legal name, date of birth, nationality, government-issued identification numbers and documents (for verification purposes), and photographs.</li>
+              <li><strong>Contact Information:</strong> Email address, telephone number, mobile number, mailing address, and other contact details.</li>
+              <li><strong>Account Information:</strong> Username, password (stored in encrypted form), account preferences, and account settings.</li>
+              <li><strong>Payment Information:</strong> Payment card information (processed through secure third-party payment processors), billing address, and tax identification numbers where applicable.</li>
               <li><strong>Communication Content:</strong> The content of messages, inquiries, emails, feedback, reviews, and other communications you send through or in connection with the Services.</li>
             </ul>
 
-            <h3 className="font-heading">2.2 Business Information</h3>
-            <p>In connection with M&amp;A transactions facilitated through the Platform, we may collect:</p>
+            <h3 className="font-heading">2.2 Vehicle Information</h3>
+            <p>In connection with Car Care Services provided through the Platform, we may collect:</p>
             <ul>
-              <li><strong>Listing Information (Sellers):</strong> Business name, industry classification, location, operating history, number of employees, business description, reason for sale, asking price, deal structure preferences, and anonymized business summaries.</li>
-              <li><strong>Financial Data:</strong> Revenue figures, net income, EBITDA, cash flow statements, balance sheets, profit and loss statements, financial projections, tax returns, audit reports, and other financial records.</li>
-              <li><strong>Operational Data:</strong> Customer and supplier information (in aggregated or anonymized form where possible), contracts, leases, intellectual property registrations, employee details, organizational charts, and standard operating procedures.</li>
-              <li><strong>Legal and Compliance Data:</strong> Corporate registration documents, shareholder agreements, articles of incorporation, regulatory licenses and permits, pending or past litigation records, and compliance certifications.</li>
-              <li><strong>Due Diligence Materials:</strong> Any documents, data, or information uploaded to or shared through the Platform&apos;s virtual data room or document exchange features in connection with a potential transaction.</li>
-              <li><strong>Transaction Data:</strong> Details of expressions of interest, letters of intent, offers, bids, counteroffers, deal terms, closing conditions, and post-closing adjustments.</li>
+              <li><strong>Vehicle Details:</strong> Car make, model, year, color, body type, and any special features or modifications relevant to the service.</li>
+              <li><strong>License Plate and Identification:</strong> License plate number, vehicle identification number (VIN), and registration details.</li>
+              <li><strong>Service History:</strong> Records of previous services performed by Castudio, including dates, service types, products used, and notes from technicians.</li>
+              <li><strong>Vehicle Condition Records:</strong> Pre-service inspection notes, photographs documenting vehicle condition before and after service, and records of any pre-existing damage.</li>
+              <li><strong>Booking Data:</strong> Details of service bookings, preferred service times, special instructions, subscription plan details, and cancellation history.</li>
             </ul>
 
             <h3 className="font-heading">2.3 Information Collected Automatically</h3>
@@ -84,8 +80,8 @@ export default function PrivacyPage() {
             <ul>
               <li><strong>Device Information:</strong> Device type, operating system and version, unique device identifiers, hardware model, browser type and version, screen resolution, and language preferences.</li>
               <li><strong>Log Data:</strong> IP address, access times and dates, pages viewed, time spent on pages, clickstream data, referring/exit URLs, and error logs.</li>
-              <li><strong>Usage Data:</strong> Features used, actions taken on the Platform, search queries, listings viewed, documents accessed, interaction patterns, and frequency and duration of use.</li>
-              <li><strong>Location Data:</strong> Approximate geographic location inferred from your IP address, and, where you provide consent, more precise location data from your mobile device.</li>
+              <li><strong>Usage Data:</strong> Features used, actions taken on the Platform, search queries, services viewed, booking patterns, and frequency and duration of use.</li>
+              <li><strong>Location Data:</strong> Approximate geographic location inferred from your IP address, and, where you provide consent, more precise location data from your mobile device to help you find our nearest service location.</li>
               <li><strong>Network Information:</strong> Internet service provider, connection type, connection speed, and network configuration data.</li>
             </ul>
 
@@ -102,33 +98,30 @@ export default function PrivacyPage() {
             <h3 className="font-heading">2.5 Information from Third Parties</h3>
             <p>We may receive information about you from third-party sources, including:</p>
             <ul>
-              <li><strong>Identity Verification Providers:</strong> Information from KYC/AML screening services, credit bureaus, and identity verification platforms.</li>
-              <li><strong>Business Intelligence Services:</strong> Publicly available business information, corporate registry data, industry databases, and commercial data aggregators.</li>
-              <li><strong>Social Media and Professional Networks:</strong> Information from LinkedIn, social media profiles, and other publicly available professional profiles, where you have connected such accounts or where the information is publicly available.</li>
-              <li><strong>Referral Partners:</strong> Information provided by business brokers, M&amp;A advisors, financial institutions, accounting firms, and law firms who refer clients to our Platform.</li>
+              <li><strong>Identity Verification Providers:</strong> Information from identity verification platforms used to confirm your identity.</li>
+              <li><strong>Social Media and Professional Networks:</strong> Information from social media profiles and other publicly available profiles, where you have connected such accounts or where the information is publicly available.</li>
+              <li><strong>Referral Partners:</strong> Information provided by partner businesses, corporate clients, or fleet management companies who refer clients to our Platform.</li>
               <li><strong>Payment Processors:</strong> Transaction confirmation, payment status, and fraud detection information from third-party payment service providers (e.g., Stripe).</li>
-              <li><strong>Public Records and Databases:</strong> Information from government registries, court records, regulatory filings, and other publicly available sources relevant to due diligence and verification.</li>
             </ul>
 
-            {/* ── 3. How We Use Your Information ── */}
+            {/* -- 3. How We Use Your Information -- */}
             <h2 className="font-heading">3. How We Use Your Information</h2>
             <p>We process your information for the following purposes:</p>
 
             <h3 className="font-heading">3.1 Providing and Maintaining the Services</h3>
             <ul>
               <li>Creating, managing, and authenticating your account.</li>
-              <li>Facilitating the listing, discovery, evaluation, and negotiation of M&amp;A transactions.</li>
-              <li>Operating the marketplace, matching Buyers with suitable Sellers, and vice versa.</li>
-              <li>Processing and facilitating communications between Users, including through our messaging system.</li>
+              <li>Processing and managing service bookings, scheduling, and appointment reminders.</li>
+              <li>Performing car care services and maintaining service records for your vehicle.</li>
+              <li>Processing and facilitating communications between you and our service team.</li>
               <li>Providing customer support, responding to inquiries, and resolving disputes.</li>
               <li>Processing subscriptions, payments, refunds, and generating invoices and receipts.</li>
             </ul>
 
             <h3 className="font-heading">3.2 Verification, Compliance, and Risk Management</h3>
             <ul>
-              <li>Conducting identity verification, KYC, and AML checks as required by Applicable Law and our internal policies.</li>
-              <li>Verifying business listings, financial information, and other data submitted to the Platform.</li>
-              <li>Detecting, investigating, and preventing fraud, money laundering, terrorist financing, unauthorized access, and other illegal or prohibited activities.</li>
+              <li>Verifying your identity and account information as needed.</li>
+              <li>Detecting, investigating, and preventing fraud, unauthorized access, and other illegal or prohibited activities.</li>
               <li>Enforcing our Terms of Service, this Privacy Policy, and other agreements.</li>
               <li>Managing risk, conducting internal audits, and maintaining security incident response procedures.</li>
             </ul>
@@ -136,16 +129,16 @@ export default function PrivacyPage() {
             <h3 className="font-heading">3.3 Improving and Personalizing the Services</h3>
             <ul>
               <li>Analyzing usage patterns, trends, and user behavior to improve Platform functionality, user interface, and user experience.</li>
-              <li>Personalizing content, recommendations, search results, and notifications based on your preferences, activity, and profile.</li>
+              <li>Personalizing content, service recommendations, and notifications based on your preferences, vehicle data, and service history.</li>
               <li>Conducting research, surveys, and statistical analysis to develop new features, products, and services.</li>
               <li>Testing new features, conducting A/B testing, and optimizing Platform performance.</li>
             </ul>
 
             <h3 className="font-heading">3.4 Communications</h3>
             <ul>
-              <li>Sending transactional messages related to your account, listings, inquiries, and transactions (e.g., confirmation emails, status updates, alerts).</li>
+              <li>Sending transactional messages related to your account, bookings, and services (e.g., confirmation emails, appointment reminders, status updates).</li>
               <li>Sending administrative notices, including security alerts, system updates, policy changes, and service announcements.</li>
-              <li>Sending marketing and promotional communications about our Services, events, and relevant industry updates (where you have opted in or where permitted by Applicable Law).</li>
+              <li>Sending marketing and promotional communications about our Services, special offers, and relevant updates (where you have opted in or where permitted by Applicable Law).</li>
               <li>Facilitating in-platform notifications and real-time messaging.</li>
             </ul>
 
@@ -154,49 +147,46 @@ export default function PrivacyPage() {
               <li>Complying with Applicable Law, regulatory requirements, legal processes, and governmental requests.</li>
               <li>Establishing, exercising, or defending legal claims.</li>
               <li>Cooperating with law enforcement, regulatory authorities, and courts as required or permitted by law.</li>
-              <li>Maintaining records as required by tax, financial reporting, corporate governance, and other regulatory obligations.</li>
+              <li>Maintaining records as required by tax, financial reporting, and other regulatory obligations.</li>
             </ul>
 
-            {/* ── 4. Legal Basis for Processing ── */}
+            {/* -- 4. Legal Basis for Processing -- */}
             <h2 className="font-heading">4. Legal Basis for Processing</h2>
             <p>We process your Personal Data on the following legal bases, as applicable under the relevant Applicable Law:</p>
             <ul>
-              <li><strong>Contractual Necessity:</strong> Processing is necessary for the performance of a contract to which you are a party, or to take steps at your request prior to entering into a contract. This includes providing you access to and use of the Services, processing transactions, and fulfilling our obligations under our Terms of Service.</li>
-              <li><strong>Legitimate Interests:</strong> Processing is necessary for the purposes of our legitimate interests or those of a third party, provided that such interests are not overridden by your fundamental rights and freedoms. Our legitimate interests include: operating and improving the Platform; ensuring network and information security; preventing fraud and illegal activity; conducting internal administration, accounting, and auditing; conducting business analytics and market research; and marketing our Services to existing customers.</li>
+              <li><strong>Contractual Necessity:</strong> Processing is necessary for the performance of a contract to which you are a party, or to take steps at your request prior to entering into a contract. This includes providing you access to and use of the Services, processing bookings, and fulfilling our obligations under our Terms of Service.</li>
+              <li><strong>Legitimate Interests:</strong> Processing is necessary for the purposes of our legitimate interests or those of a third party, provided that such interests are not overridden by your fundamental rights and freedoms. Our legitimate interests include: operating and improving the Platform; ensuring network and information security; preventing fraud and illegal activity; conducting internal administration, accounting, and auditing; conducting business analytics; and marketing our Services to existing customers.</li>
               <li><strong>Consent:</strong> Where required by Applicable Law, we process your Personal Data based on your freely given, specific, informed, and unambiguous consent. You may withdraw your consent at any time by contacting us, though withdrawal will not affect the lawfulness of Processing based on consent before its withdrawal.</li>
-              <li><strong>Legal Obligation:</strong> Processing is necessary for compliance with a legal obligation to which we are subject, including AML/KYC requirements, tax obligations, regulatory reporting, and responding to lawful requests from public authorities.</li>
+              <li><strong>Legal Obligation:</strong> Processing is necessary for compliance with a legal obligation to which we are subject, including tax obligations, regulatory reporting, and responding to lawful requests from public authorities.</li>
               <li><strong>Vital Interests:</strong> In rare circumstances, Processing may be necessary to protect the vital interests of you or another natural person.</li>
               <li><strong>Public Interest:</strong> Processing may be necessary for the performance of a task carried out in the public interest or in the exercise of official authority vested in us.</li>
             </ul>
 
-            {/* ── 5. Information Sharing and Disclosure ── */}
+            {/* -- 5. Information Sharing and Disclosure -- */}
             <h2 className="font-heading">5. Information Sharing and Disclosure</h2>
             <p>We may share your information in the following circumstances and with the following categories of recipients. <strong>We do not sell your Personal Data to third parties.</strong></p>
 
-            <h3 className="font-heading">5.1 With Other Users</h3>
-            <p>Information you choose to include in your profile, listings, or communications on the Platform will be visible to other Users in accordance with Platform functionality and your privacy settings:</p>
+            <h3 className="font-heading">5.1 With Service Personnel</h3>
+            <p>Information necessary to perform Car Care Services will be shared with our service technicians and staff:</p>
             <ul>
-              <li><strong>Anonymized Listing Data:</strong> Certain listing details (such as industry, location, revenue range, and asking price) may be displayed to all registered Users in an anonymized format that does not directly identify the business or its owner.</li>
-              <li><strong>Verified User Access:</strong> Additional details, including business identity and financial information, may be disclosed to Users who have completed our verification process and have been granted access to detailed listing data, subject to non-disclosure agreements (&quot;NDAs&quot;) and confidentiality obligations.</li>
-              <li><strong>Transaction Counterparties:</strong> In the course of an M&amp;A transaction facilitated through the Platform, relevant information may be shared between Buyers, Sellers, and their respective advisors, subject to applicable confidentiality agreements.</li>
+              <li><strong>Service Details:</strong> Vehicle information, booking details, special instructions, and service history relevant to the work being performed.</li>
+              <li><strong>Contact Information:</strong> Your name and contact details may be shared with our service team for scheduling and communication purposes.</li>
             </ul>
-            <p><strong>Disclaimer:</strong> Nobridge does not guarantee the confidentiality of information shared between Users through the Platform. Users are responsible for executing appropriate confidentiality agreements before sharing sensitive information. Nobridge shall not be held liable for any unauthorized disclosure of information by other Users.</p>
 
             <h3 className="font-heading">5.2 Service Providers and Processors</h3>
             <p>We engage third-party service providers who process Personal Data on our behalf to perform functions and provide services to us, including:</p>
             <ul>
               <li><strong>Cloud Hosting and Infrastructure:</strong> Servers, databases, content delivery networks, and storage services.</li>
-              <li><strong>Payment Processing:</strong> Secure payment gateway providers (e.g., Stripe) for processing subscription fees and other payments.</li>
-              <li><strong>Identity Verification and KYC/AML:</strong> Providers of identity verification, background checks, sanctions screening, and anti-money laundering compliance services.</li>
+              <li><strong>Payment Processing:</strong> Secure payment gateway providers (e.g., Stripe) for processing service fees, subscription payments, and other payments.</li>
               <li><strong>Analytics and Performance Monitoring:</strong> Web analytics, error tracking, performance monitoring, and business intelligence tools.</li>
               <li><strong>Communication Services:</strong> Email delivery, SMS messaging, push notification services, and customer support platforms.</li>
-              <li><strong>Professional Services:</strong> Legal, accounting, auditing, insurance, and consulting firms providing professional advice and services to Nobridge.</li>
+              <li><strong>Professional Services:</strong> Legal, accounting, auditing, insurance, and consulting firms providing professional advice and services to Castudio.</li>
               <li><strong>Marketing and Advertising:</strong> Advertising platforms, marketing automation tools, and customer relationship management systems.</li>
             </ul>
             <p>All service providers are contractually obligated to protect your data, process it only for specified purposes, and comply with applicable data protection requirements.</p>
 
             <h3 className="font-heading">5.3 Business Transfers</h3>
-            <p>If Nobridge is involved in a merger, acquisition, reorganization, bankruptcy, receivership, dissolution, sale of all or substantially all assets, or similar corporate transaction, your information may be transferred, assigned, or disclosed to the acquiring entity or successor, subject to the same privacy protections described in this Policy. We will provide notice before your Personal Data is transferred and becomes subject to a different privacy policy.</p>
+            <p>If Castudio is involved in a merger, acquisition, reorganization, bankruptcy, receivership, dissolution, sale of all or substantially all assets, or similar corporate event, your information may be transferred, assigned, or disclosed to the acquiring entity or successor, subject to the same privacy protections described in this Policy. We will provide notice before your Personal Data is transferred and becomes subject to a different privacy policy.</p>
 
             <h3 className="font-heading">5.4 Legal Requirements and Protection of Rights</h3>
             <p>We may disclose your information if we believe in good faith that such disclosure is necessary to:</p>
@@ -204,19 +194,19 @@ export default function PrivacyPage() {
               <li>Comply with any applicable law, regulation, legal process, subpoena, court order, or governmental request.</li>
               <li>Enforce our Terms of Service, this Privacy Policy, or other agreements, including investigation of potential violations.</li>
               <li>Detect, prevent, investigate, or address fraud, security incidents, technical issues, or illegal activity.</li>
-              <li>Protect the rights, property, safety, or security of Nobridge, our Users, our employees, or the public, as required or permitted by law.</li>
+              <li>Protect the rights, property, safety, or security of Castudio, our Users, our employees, or the public, as required or permitted by law.</li>
               <li>Respond to claims that any content on the Platform violates the rights of third parties.</li>
               <li>Cooperate with law enforcement investigations, regulatory inquiries, and legal proceedings.</li>
             </ul>
 
             <h3 className="font-heading">5.5 Cross-Border Data Transfers</h3>
-            <p>Given the international nature of our business and the cross-border nature of M&amp;A transactions, your information may be transferred to, stored in, and processed in countries other than the country in which you reside. These countries may have data protection laws that differ from and may be less protective than the laws of your jurisdiction.</p>
+            <p>Your information may be transferred to, stored in, and processed in countries other than the country in which you reside. These countries may have data protection laws that differ from and may be less protective than the laws of your jurisdiction.</p>
             <p>Where we transfer Personal Data internationally, we implement commercially reasonable safeguards to protect your data. By using our Services, you acknowledge and consent to the transfer of your information to countries outside your jurisdiction for the purposes described in this Policy.</p>
 
             <h3 className="font-heading">5.6 Aggregated and De-Identified Data</h3>
             <p>We may share aggregated, anonymized, or de-identified data that cannot reasonably be used to identify you for any purpose, including market research, industry analysis, benchmarking, and business development. Such data is not considered Personal Data under most Applicable Laws.</p>
 
-            {/* ── 6. Data Security ── */}
+            {/* -- 6. Data Security -- */}
             <h2 className="font-heading">6. Data Security</h2>
             <p>We implement and maintain commercially reasonable and industry-standard technical, administrative, and physical security measures designed to protect your information from unauthorized access, use, alteration, disclosure, destruction, loss, or accidental damage. These measures include, but are not limited to:</p>
             <ul>
@@ -230,7 +220,7 @@ export default function PrivacyPage() {
             </ul>
             <p><strong>Important Notice:</strong> Despite our efforts, no method of transmission over the Internet, method of electronic storage, or security system is completely secure or impervious to all threats. While we strive to use commercially reasonable means to protect your Personal Data, <strong>we cannot and do not guarantee the absolute security of your information</strong>. Any transmission of Personal Data to us is at your own risk, and you are responsible for maintaining the confidentiality of your account credentials and for any activity that occurs under your account. You agree to notify us immediately of any unauthorized use of your account or any other breach of security.</p>
 
-            {/* ── 7. Data Retention ── */}
+            {/* -- 7. Data Retention -- */}
             <h2 className="font-heading">7. Data Retention</h2>
             <p>We retain your Personal Data for as long as necessary to fulfill the purposes for which it was collected, including to satisfy any legal, regulatory, accounting, or reporting requirements. To determine the appropriate retention period, we consider:</p>
             <ul>
@@ -243,15 +233,15 @@ export default function PrivacyPage() {
             <p>Specific retention periods include:</p>
             <ul>
               <li><strong>Account Data:</strong> Retained for the duration of your account and for a period of seven (7) years following account closure, or longer as required by Applicable Law.</li>
-              <li><strong>Transaction Records:</strong> Retained for a minimum of seven (7) years from the date of the transaction, or longer as required by tax, accounting, or regulatory requirements.</li>
-              <li><strong>KYC/AML Records:</strong> Retained for a minimum of five (5) years from the termination of the business relationship, or longer as required by AML legislation in the relevant jurisdiction.</li>
+              <li><strong>Service and Booking Records:</strong> Retained for a minimum of seven (7) years from the date of the service, or longer as required by tax, accounting, or regulatory requirements.</li>
+              <li><strong>Vehicle Service History:</strong> Retained for the duration of your account and for a reasonable period thereafter to support warranty claims and service continuity.</li>
               <li><strong>Communication Records:</strong> Retained for a minimum of three (3) years from the date of the communication, or longer as required for dispute resolution or legal compliance.</li>
               <li><strong>Marketing Consent Records:</strong> Retained for the duration of the consent and for a reasonable period thereafter to demonstrate compliance.</li>
               <li><strong>Log and Usage Data:</strong> Generally retained for up to twenty-four (24) months, unless longer retention is required for security, legal, or compliance purposes.</li>
             </ul>
             <p>When your Personal Data is no longer required, we will securely delete, destroy, or anonymize it in accordance with our data retention and destruction policies. Anonymized data that can no longer be associated with you may be retained indefinitely.</p>
 
-            {/* ── 8. Your Rights ── */}
+            {/* -- 8. Your Rights -- */}
             <h2 className="font-heading">8. Your Rights</h2>
             <p>Depending on your jurisdiction and the Applicable Law, you may have certain rights regarding your Personal Data. We are committed to facilitating the exercise of these rights in accordance with Applicable Law. Please note that these rights are not absolute and may be subject to exceptions and limitations.</p>
 
@@ -280,9 +270,9 @@ export default function PrivacyPage() {
             <p>You have the right to lodge a complaint with the relevant data protection authority in your jurisdiction if you believe that our processing of your Personal Data infringes Applicable Law. We encourage you to contact us first so that we can attempt to resolve your concern.</p>
 
             <h3 className="font-heading">8.9 Exercising Your Rights</h3>
-            <p>To exercise any of these rights, please contact us at <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a>. We will respond to your request within the timeframe required by Applicable Law (typically within thirty (30) days). We may need to verify your identity before fulfilling your request. If your request is manifestly unfounded, excessive, or repetitive, we reserve the right to charge a reasonable fee or refuse to act on the request, as permitted by Applicable Law.</p>
+            <p>To exercise any of these rights, please contact us at <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a>. We will respond to your request within the timeframe required by Applicable Law (typically within thirty (30) days). We may need to verify your identity before fulfilling your request. If your request is manifestly unfounded, excessive, or repetitive, we reserve the right to charge a reasonable fee or refuse to act on the request, as permitted by Applicable Law.</p>
 
-            {/* ── 9. Cookies and Tracking Technologies ── */}
+            {/* -- 9. Cookies and Tracking Technologies -- */}
             <h2 className="font-heading">9. Cookies and Tracking Technologies</h2>
 
             <h3 className="font-heading">9.1 What Are Cookies</h3>
@@ -307,33 +297,32 @@ export default function PrivacyPage() {
             <h3 className="font-heading">9.5 Do Not Track Signals</h3>
             <p>Some browsers transmit &quot;Do Not Track&quot; (&quot;DNT&quot;) signals to websites. Due to the lack of a common industry standard for interpreting DNT signals, we do not currently respond to or alter our practices when we detect a DNT signal from your browser. We will continue to monitor developments in DNT technology and may update this practice in the future.</p>
 
-            {/* ── 10. Children's Privacy ── */}
+            {/* -- 10. Children's Privacy -- */}
             <h2 className="font-heading">10. Children&apos;s Privacy</h2>
-            <p>Our Services are designed for business professionals and are not intended for use by individuals under the age of eighteen (18), or the age of majority in their jurisdiction, whichever is higher. We do not knowingly collect, solicit, or process Personal Data from children. If we become aware that we have collected Personal Data from a child without appropriate parental or guardian consent, we will take steps to delete that information as quickly as possible. If you believe that a child has provided us with Personal Data, please contact us immediately at <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a>.</p>
+            <p>Our Services are not intended for use by individuals under the age of eighteen (18), or the age of majority in their jurisdiction, whichever is higher. We do not knowingly collect, solicit, or process Personal Data from children. If we become aware that we have collected Personal Data from a child without appropriate parental or guardian consent, we will take steps to delete that information as quickly as possible. If you believe that a child has provided us with Personal Data, please contact us immediately at <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a>.</p>
 
-            {/* ── 11. Third-Party Links and Services ── */}
+            {/* -- 11. Third-Party Links and Services -- */}
             <h2 className="font-heading">11. Third-Party Links and Services</h2>
-            <p>Our Platform may contain links to third-party websites, applications, services, or resources that are not owned or controlled by Nobridge, including those of our service providers, partners, advertisers, and other third parties. This Privacy Policy applies only to our Services and does not extend to any third-party websites or services.</p>
-            <p><strong>We have no control over, and assume no responsibility for, the content, privacy policies, practices, or security of any third-party websites or services.</strong> The inclusion of a link or integration does not imply endorsement by Nobridge. We strongly encourage you to review the privacy policies and terms of service of every third-party website or service you visit or interact with. You access and use third-party websites and services at your own risk, and Nobridge shall not be liable for any damages, losses, or claims arising from your use of such third-party websites or services.</p>
+            <p>Our Platform may contain links to third-party websites, applications, services, or resources that are not owned or controlled by Castudio, including those of our service providers, partners, advertisers, and other third parties. This Privacy Policy applies only to our Services and does not extend to any third-party websites or services.</p>
+            <p><strong>We have no control over, and assume no responsibility for, the content, privacy policies, practices, or security of any third-party websites or services.</strong> The inclusion of a link or integration does not imply endorsement by Castudio. We strongly encourage you to review the privacy policies and terms of service of every third-party website or service you visit or interact with. You access and use third-party websites and services at your own risk, and Castudio shall not be liable for any damages, losses, or claims arising from your use of such third-party websites or services.</p>
 
-            {/* ── 12. International Data Transfers ── */}
+            {/* -- 12. International Data Transfers -- */}
             <h2 className="font-heading">12. International Data Transfers</h2>
-            <p>Nobridge operates across multiple jurisdictions. As such, your Personal Data may be transferred to, and processed in, countries other than the country in which you are located. These international transfers are necessary for the operation of our Services and for facilitating cross-border M&amp;A transactions.</p>
+            <p>Castudio may operate across multiple jurisdictions. As such, your Personal Data may be transferred to, and processed in, countries other than the country in which you are located. These international transfers are necessary for the operation of our Services.</p>
             <p>We take commercially reasonable steps to protect your Personal Data when it is transferred internationally. By using our Services, you acknowledge and consent to the international transfer and processing of your Personal Data as described in this Policy. If you have concerns about international data transfers, please contact us before using the Services.</p>
 
-            {/* ── 13. Your Privacy Rights by Jurisdiction ── */}
+            {/* -- 13. Your Privacy Rights by Jurisdiction -- */}
             <h2 className="font-heading">13. Your Privacy Rights</h2>
             <p>Depending on where you are located, you may have additional rights under the data protection laws applicable in your jurisdiction. These may include rights of access, correction, deletion, restriction of processing, data portability, and the right to object to certain processing activities.</p>
-            <p>We are committed to respecting your privacy rights as provided under the laws applicable to you. If you wish to exercise any rights available to you under your local data protection laws, please contact us at <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a>. We will respond to your request within a commercially reasonable timeframe and in accordance with applicable legal requirements.</p>
+            <p>We are committed to respecting your privacy rights as provided under the laws applicable to you. If you wish to exercise any rights available to you under your local data protection laws, please contact us at <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a>. We will respond to your request within a commercially reasonable timeframe and in accordance with applicable legal requirements.</p>
             <p>If you believe that our processing of your Personal Data infringes applicable law, you may have the right to lodge a complaint with the relevant data protection authority in your jurisdiction. We encourage you to contact us first so that we can attempt to resolve your concern directly.</p>
 
-            {/* ── 14. Automated Decision-Making and Profiling ── */}
+            {/* -- 14. Automated Decision-Making and Profiling -- */}
             <h2 className="font-heading">14. Automated Decision-Making and Profiling</h2>
             <p>We may use automated processing, including profiling, in connection with the Services for the following purposes:</p>
             <ul>
-              <li><strong>Fraud Detection and Prevention:</strong> Automated systems may analyze transaction patterns, account activity, and behavioral signals to detect and prevent fraudulent or suspicious activity.</li>
-              <li><strong>Risk Assessment:</strong> Automated tools may be used to assess the risk profile of Users and transactions for AML/KYC compliance purposes.</li>
-              <li><strong>Matching and Recommendations:</strong> Algorithmic matching may be used to recommend relevant listings, Buyers, or Sellers based on your profile, preferences, and activity on the Platform.</li>
+              <li><strong>Fraud Detection and Prevention:</strong> Automated systems may analyze account activity and behavioral signals to detect and prevent fraudulent or suspicious activity.</li>
+              <li><strong>Service Recommendations:</strong> Algorithmic matching may be used to recommend relevant services, packages, or subscription plans based on your vehicle data, preferences, and service history.</li>
               <li><strong>Content Moderation:</strong> Automated tools may be used to screen user-generated content for compliance with our Terms of Service and community guidelines.</li>
             </ul>
             <p>Where automated decision-making produces legal effects or similarly significantly affects you, you have the right (where provided by Applicable Law) to:</p>
@@ -342,38 +331,27 @@ export default function PrivacyPage() {
               <li>Express your point of view and contest the decision.</li>
               <li>Obtain human intervention in the decision-making process.</li>
             </ul>
-            <p>To exercise these rights, please contact us at <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a>.</p>
+            <p>To exercise these rights, please contact us at <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a>.</p>
 
-            {/* ── 15. Confidentiality in M&A Transactions ── */}
-            <h2 className="font-heading">15. Confidentiality in M&amp;A Transactions</h2>
-            <p>We recognize the commercially sensitive nature of M&amp;A transactions. In addition to the data protection measures described in this Policy, we implement the following safeguards for transaction-related information:</p>
-            <ul>
-              <li><strong>Non-Disclosure Agreements:</strong> Users may be required to execute NDAs before accessing detailed listing information or due diligence materials.</li>
-              <li><strong>Access Controls:</strong> Access to confidential transaction documents is restricted to verified, authorized parties and is logged and auditable.</li>
-              <li><strong>Staged Disclosure:</strong> Information about listed businesses is disclosed in stages, with increasingly detailed information available only to parties who have demonstrated serious interest and have been verified.</li>
-              <li><strong>Data Room Security:</strong> Virtual data rooms used for due diligence incorporate security features such as watermarking, download restrictions, access expiration, and detailed activity tracking.</li>
-            </ul>
-            <p><strong>Notwithstanding the foregoing, Nobridge does not guarantee the absolute confidentiality of any information shared through the Platform and shall not be liable for any breach of confidentiality by third parties, including other Users, except to the extent caused by Nobridge&apos;s gross negligence or willful misconduct.</strong></p>
-
-            {/* ── 16. Limitation of Liability ── */}
-            <h2 className="font-heading">16. Limitation of Liability</h2>
+            {/* -- 15. Limitation of Liability -- */}
+            <h2 className="font-heading">15. Limitation of Liability</h2>
             <p>To the maximum extent permitted by Applicable Law:</p>
             <ul>
-              <li>Nobridge shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, data, business opportunities, goodwill, or reputation, arising out of or relating to any breach of this Privacy Policy or any unauthorized access to, use of, or disclosure of your Personal Data, regardless of the cause of action or theory of liability.</li>
-              <li>Nobridge&apos;s total aggregate liability to you for all claims arising out of or relating to this Privacy Policy shall not exceed the greater of (a) the total amount of fees paid by you to Nobridge in the twelve (12) months immediately preceding the event giving rise to the claim, or (b) one hundred United States dollars (USD $100).</li>
-              <li>You acknowledge and agree that the limitations of liability set forth in this section are fundamental elements of the agreement between you and Nobridge, and that Nobridge would not provide the Services without such limitations.</li>
+              <li>Castudio shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits, data, business opportunities, goodwill, or reputation, arising out of or relating to any breach of this Privacy Policy or any unauthorized access to, use of, or disclosure of your Personal Data, regardless of the cause of action or theory of liability.</li>
+              <li>Castudio&apos;s total aggregate liability to you for all claims arising out of or relating to this Privacy Policy shall not exceed the greater of (a) the total amount of fees paid by you to Castudio in the twelve (12) months immediately preceding the event giving rise to the claim, or (b) one hundred United States dollars (USD $100).</li>
+              <li>You acknowledge and agree that the limitations of liability set forth in this section are fundamental elements of the agreement between you and Castudio, and that Castudio would not provide the Services without such limitations.</li>
             </ul>
 
-            {/* ── 17. Indemnification ── */}
-            <h2 className="font-heading">17. Indemnification</h2>
-            <p>You agree to indemnify, defend, and hold harmless Nobridge, its officers, directors, employees, agents, affiliates, successors, and assigns from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys&apos; fees) arising out of or relating to: (a) your breach of this Privacy Policy; (b) your use of the Services; (c) your violation of any rights of another party, including other Users; (d) your violation of any Applicable Law; or (e) any content or information you provide through the Services.</p>
+            {/* -- 16. Indemnification -- */}
+            <h2 className="font-heading">16. Indemnification</h2>
+            <p>You agree to indemnify, defend, and hold harmless Castudio, its officers, directors, employees, agents, affiliates, successors, and assigns from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys&apos; fees) arising out of or relating to: (a) your breach of this Privacy Policy; (b) your use of the Services; (c) your violation of any rights of another party, including other Users; (d) your violation of any Applicable Law; or (e) any content or information you provide through the Services.</p>
 
-            {/* ── 18. Governing Law and Dispute Resolution ── */}
-            <h2 className="font-heading">18. Governing Law and Dispute Resolution</h2>
+            {/* -- 17. Governing Law and Dispute Resolution -- */}
+            <h2 className="font-heading">17. Governing Law and Dispute Resolution</h2>
             <p>This Privacy Policy shall be governed by and construed in accordance with the laws of the Republic of Indonesia, without regard to its conflict of law provisions. Any dispute, controversy, or claim arising out of or relating to this Privacy Policy, or the breach, termination, or invalidity thereof, shall be resolved in accordance with the dispute resolution provisions set forth in our Terms of Service. You irrevocably submit to the exclusive jurisdiction of the courts of the Republic of Indonesia for the resolution of any such disputes, subject to the rights provided under Applicable Law in your jurisdiction.</p>
 
-            {/* ── 19. Changes to This Privacy Policy ── */}
-            <h2 className="font-heading">19. Changes to This Privacy Policy</h2>
+            {/* -- 18. Changes to This Privacy Policy -- */}
+            <h2 className="font-heading">18. Changes to This Privacy Policy</h2>
             <p>We reserve the right to update, modify, or replace this Privacy Policy at any time at our sole discretion. When we make material changes, we will:</p>
             <ul>
               <li>Update the &quot;Last Updated&quot; date at the top of this page.</li>
@@ -382,22 +360,22 @@ export default function PrivacyPage() {
               <li>Where required by Applicable Law, obtain your consent to the updated Policy before continuing to process your Personal Data under the new terms.</li>
             </ul>
             <p>Your continued use of the Services after the effective date of any changes constitutes your acceptance of the updated Privacy Policy. If you do not agree to the updated Policy, you must stop using the Services and, if applicable, close your account. We encourage you to review this Privacy Policy periodically to stay informed about how we protect your information.</p>
-            <p>Previous versions of this Privacy Policy are available upon request by contacting us at <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a>.</p>
+            <p>Previous versions of this Privacy Policy are available upon request by contacting us at <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a>.</p>
 
-            {/* ── 20. Severability ── */}
-            <h2 className="font-heading">20. Severability</h2>
+            {/* -- 19. Severability -- */}
+            <h2 className="font-heading">19. Severability</h2>
             <p>If any provision of this Privacy Policy is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall continue in full force and effect. The invalid, illegal, or unenforceable provision shall be modified to the minimum extent necessary to make it valid, legal, and enforceable while preserving the original intent of the parties.</p>
 
-            {/* ── 21. Entire Agreement ── */}
-            <h2 className="font-heading">21. Entire Agreement</h2>
-            <p>This Privacy Policy, together with our Terms of Service and any other agreements expressly incorporated by reference, constitutes the entire agreement between you and Nobridge with respect to the subject matter hereof and supersedes all prior or contemporaneous communications, representations, or agreements, whether oral or written, relating to the protection and processing of your Personal Data through the Services.</p>
+            {/* -- 20. Entire Agreement -- */}
+            <h2 className="font-heading">20. Entire Agreement</h2>
+            <p>This Privacy Policy, together with our Terms of Service and any other agreements expressly incorporated by reference, constitutes the entire agreement between you and Castudio with respect to the subject matter hereof and supersedes all prior or contemporaneous communications, representations, or agreements, whether oral or written, relating to the protection and processing of your Personal Data through the Services.</p>
 
-            {/* ── 22. Contact Us ── */}
-            <h2 className="font-heading">22. Contact Us</h2>
+            {/* -- 21. Contact Us -- */}
+            <h2 className="font-heading">21. Contact Us</h2>
             <p>If you have any questions, concerns, complaints, or requests regarding this Privacy Policy or our data protection practices, please contact us using the following information:</p>
             <ul>
-              <li><strong>Company:</strong> PT Vav Technologies Indonesia (operating as Nobridge)</li>
-              <li><strong>Email:</strong> <a href="mailto:Business@nobridge.co" className="text-brand-dark-blue hover:underline">Business@nobridge.co</a></li>
+              <li><strong>Company:</strong> PT Vav Technologies Indonesia (operating as Castudio)</li>
+              <li><strong>Email:</strong> <a href="mailto:hello@castudio.co" className="text-brand-orange hover:underline">hello@castudio.co</a></li>
               <li><strong>Subject Line:</strong> Privacy Policy Inquiry</li>
             </ul>
             <p>We will endeavor to respond to your inquiry within thirty (30) days or within the timeframe required by Applicable Law in your jurisdiction. For requests that are particularly complex or numerous, we may extend the response period by an additional sixty (60) days, in which case we will notify you of the extension and the reasons for the delay.</p>

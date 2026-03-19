@@ -15,115 +15,58 @@
 
 @layer base {
   :root {
-    --brand-dark-blue-hsl: 240 63% 14%;    /* #0D0D39 */
-    --brand-light-gray-hsl: 220 33% 95%;   /* #F4F6FC */
-    --brand-white-hsl: 0 0% 100%;          /* #FFFFFF */
-    --brand-sky-blue-hsl: 220 80% 65%;     /* Adjusted for a bit more pop: Was 220 50% 55% */
-    --brand-green-hsl: 145 63% 49%;     /* Emerald-like green for Hack Tool: #2ecc71 */
+    --brand-black-hsl: 0 0% 4%;             /* #0A0A0A */
+    --brand-dark-gray-hsl: 0 0% 9%;         /* #171717 */
+    --brand-white-hsl: 0 0% 100%;           /* #FFFFFF */
+    --brand-orange-hsl: 25 95% 53%;         /* #F97316 */
+    --brand-orange-dark-hsl: 21 90% 48%;    /* #EA580C */
 
+    --background: var(--brand-black-hsl);
+    --foreground: var(--brand-white-hsl);
 
-    /* Light Mode - Nobridge Palette */
-    --background: var(--brand-white-hsl);                     /* Main page background: White */
-    --foreground: var(--brand-dark-blue-hsl);                 /* Default text: Dark Blue */
+    --card: var(--brand-dark-gray-hsl);
+    --card-foreground: var(--brand-white-hsl);
 
-    --card: var(--brand-white-hsl);                           /* Card background: White */
-    --card-foreground: var(--brand-dark-blue-hsl);            /* Card text: Dark Blue */
+    --popover: 0 0% 7%;
+    --popover-foreground: var(--brand-white-hsl);
 
-    --popover: var(--brand-white-hsl);                        /* Popover background: White */
-    --popover-foreground: var(--brand-dark-blue-hsl);         /* Popover text: Dark Blue */
+    --primary: var(--brand-orange-hsl);
+    --primary-foreground: var(--brand-black-hsl);
 
-    --primary: var(--brand-dark-blue-hsl);                    /* Primary interactive: Dark Blue */
-    --primary-foreground: var(--brand-white-hsl);             /* Text on primary: White */
+    --secondary: var(--brand-dark-gray-hsl);
+    --secondary-foreground: 0 0% 85%;
 
-    --secondary: var(--brand-light-gray-hsl);                 /* Secondary elements background: Light Gray */
-    --secondary-foreground: var(--brand-dark-blue-hsl);       /* Text on secondary: Dark Blue */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
 
-    --muted: var(--brand-light-gray-hsl);                     /* Muted backgrounds: Light Gray */
-    --muted-foreground: 224 30% 50%;                          /* Muted text: A less saturated dark blue/gray */
+    --accent: var(--brand-orange-hsl);
+    --accent-foreground: var(--brand-black-hsl);
 
-    --accent: var(--brand-sky-blue-hsl);                      /* Accent: Sky Blue */
-    --accent-foreground: var(--brand-white-hsl);              /* Text on Sky Blue accent */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
 
-    --destructive: 0 72% 51%; /* Default ShadCN Red */
-    --destructive-foreground: 0 0% 98%; /* Light text for destructive */
-
-    --border: 220 20% 88%;            /* Border: Based on light gray but slightly darker/more visible */
-    --input: var(--brand-light-gray-hsl); /* Input background: Light Gray */
-    --ring: var(--brand-sky-blue-hsl);   /* Focus ring: Sky Blue (Nobridge Accent) */
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: var(--brand-orange-hsl);
 
     --radius: 0rem;
 
-    /* Sidebar specific colors - Light Mode */
-    --sidebar-background: var(--brand-white-hsl);
-    --sidebar-foreground: var(--brand-dark-blue-hsl);
-    --sidebar-primary: var(--brand-dark-blue-hsl);        /* Active item background */
-    --sidebar-primary-foreground: var(--brand-white-hsl); /* Active item text */
-    --sidebar-accent: var(--brand-light-gray-hsl);        /* Hover background */
-    --sidebar-accent-foreground: var(--brand-dark-blue-hsl);
-    --sidebar-border: 220 20% 92%;
-    --sidebar-ring: var(--brand-sky-blue-hsl);
+    /* Sidebar specific colors */
+    --sidebar-background: var(--brand-black-hsl);
+    --sidebar-foreground: var(--brand-white-hsl);
+    --sidebar-primary: var(--brand-orange-hsl);
+    --sidebar-primary-foreground: var(--brand-black-hsl);
+    --sidebar-accent: var(--brand-dark-gray-hsl);
+    --sidebar-accent-foreground: var(--brand-white-hsl);
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: var(--brand-orange-hsl);
 
-    /* Chart colors (can be adjusted) */
-    --chart-1: hsl(var(--brand-dark-blue-hsl));
-    --chart-2: hsl(var(--accent)); /* Sky Blue */
-    --chart-3: 220 30% 70%;
-    --chart-4: 210 80% 75%;
-    --chart-5: 220 20% 50%;
-  }
-
-  .dark {
-    /* Dark Mode - Nobridge Palette */
-    --background: var(--brand-dark-blue-hsl);                 /* Main page background: Dark Blue */
-    --foreground: var(--brand-light-gray-hsl);                /* Default text: Light Gray */
-
-    --card: 224 60% 18%;                                      /* Card background: Slightly lighter Dark Blue */
-    --card-foreground: var(--brand-light-gray-hsl);           /* Card text: Light Gray */
-
-    --popover: 224 70% 9%;                                   /* Popover background: Very Dark Blue */
-    --popover-foreground: var(--brand-light-gray-hsl);        /* Popover text: Light Gray */
-
-    --primary: var(--brand-sky-blue-hsl);                     /* Primary interactive: Sky Blue (more vibrant on dark) */
-    --primary-foreground: var(--brand-dark-blue-hsl);         /* Text on primary: Dark Blue (for contrast with Sky Blue) */
-
-    /* If primary on dark is dark blue, text needs to be light */
-    /* --primary: var(--brand-dark-blue-hsl);
-       --primary-foreground: var(--brand-white-hsl); */
-
-
-    --secondary: 224 45% 22%;                                 /* Secondary elements background: Lighter shade of dark blue */
-    --secondary-foreground: var(--brand-light-gray-hsl);      /* Text on secondary: Light Gray */
-
-    --muted: 224 40% 25%;                                     /* Muted backgrounds */
-    --muted-foreground: 220 30% 70%;                          /* Muted text: Lighter Gray */
-
-    --accent: var(--brand-sky-blue-hsl);                      /* Accent: Sky Blue */
-    --accent-foreground: var(--brand-white-hsl);              /* Text on Sky Blue */
-
-    --destructive: 0 63% 40%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 224 30% 28%;
-    --input: 224 45% 22%;
-    --ring: var(--brand-sky-blue-hsl);                       /* Focus Ring: Sky Blue */
-    
-    --brand-green-hsl: 145 63% 49%; /* Emerald-like green for Hack Tool (Dark mode might need brighter) */
-
-    /* Sidebar specific colors - Dark Mode */
-    --sidebar-background: 225 66% 10%; /* Slightly darker than main dark blue bg */
-    --sidebar-foreground: var(--brand-light-gray-hsl);
-    --sidebar-primary: var(--brand-sky-blue-hsl);
-    --sidebar-primary-foreground: var(--brand-dark-blue-hsl);
-    --sidebar-accent: 224 60% 20%;
-    --sidebar-accent-foreground: var(--brand-light-gray-hsl);
-    --sidebar-border: 224 40% 25%;
-    --sidebar-ring: var(--brand-sky-blue-hsl);
-
-    /* Chart colors for dark mode */
-    --chart-1: hsl(var(--brand-light-gray-hsl));
-    --chart-2: hsl(var(--accent)); /* Sky Blue */
-    --chart-3: 220 30% 50%;
-    --chart-4: 210 80% 85%;
-    --chart-5: 220 20% 30%;
+    /* Chart colors */
+    --chart-1: hsl(var(--brand-orange-hsl));
+    --chart-2: hsl(var(--brand-white-hsl));
+    --chart-3: 0 0% 40%;
+    --chart-4: 25 80% 70%;
+    --chart-5: 0 0% 25%;
   }
 }
 
@@ -133,25 +76,25 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Satoshi', sans-serif; /* Ensure Satoshi is primary */
+    font-family: 'Satoshi', sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat Arabic', 'Satoshi', sans-serif; /* Use Montserrat Arabic for headings */
+    font-family: 'Montserrat Arabic', 'Satoshi', sans-serif;
     @apply tracking-tight;
   }
 }
 
-/* Utility class for Nobridge Dark Blue background with light text */
-.bg-brand-dark-blue-section {
-  background-color: hsl(var(--brand-dark-blue-hsl));
-  color: hsl(var(--brand-white-hsl)); /* Default text on this dark bg */
-}
-.text-on-brand-dark-blue {
+/* Utility class for brand black background with light text */
+.bg-brand-black-section {
+  background-color: hsl(var(--brand-black-hsl));
   color: hsl(var(--brand-white-hsl));
 }
-.text-on-brand-dark-blue-muted {
-  color: hsl(var(--brand-light-gray-hsl));
-  opacity: 0.9;
+.text-on-brand-black {
+  color: hsl(var(--brand-white-hsl));
+}
+.text-on-brand-black-muted {
+  color: hsl(var(--brand-white-hsl));
+  opacity: 0.7;
 }
 
 /* Utility class to explicitly use Montserrat Arabic font for headings */
@@ -199,10 +142,10 @@
 
 .section-lines-dark::before,
 .section-lines-dark::after {
-  background-color: hsl(var(--brand-dark-blue-hsl) / 0.12);
+  background-color: hsl(0 0% 100% / 0.06);
 }
 
 .section-lines-light::before,
 .section-lines-light::after {
-  background-color: hsl(0 0% 100% / 0.35);
+  background-color: hsl(0 0% 100% / 0.12);
 }

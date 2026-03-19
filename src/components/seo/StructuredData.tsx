@@ -1,7 +1,7 @@
 'use client';
 
 interface StructuredDataProps {
-  type?: 'website' | 'marketplace' | 'organization';
+  type?: 'website' | 'localBusiness' | 'organization';
   title?: string;
   description?: string;
   url?: string;
@@ -9,31 +9,29 @@ interface StructuredDataProps {
 
 export default function StructuredData({
   type = 'website',
-  title = 'Nobridge - Business Marketplace Platform',
-  description = 'Connecting SME owners with investors and buyers in Asia. Find businesses for sale, investment opportunities, and connect with verified buyers and sellers.',
-  url = 'https://www.nobridge.co'
+  title = 'Castudio — Premium Car Wash & Detailing',
+  description = 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
+  url = 'https://www.castudio.co'
 }: StructuredDataProps) {
   const getStructuredData = () => {
     const baseData = {
       "@context": "https://schema.org",
-      "@type": type === 'organization' ? 'Organization' : 'WebSite',
-      "name": "Nobridge",
+      "@type": type === 'organization' ? 'Organization' : type === 'localBusiness' ? 'LocalBusiness' : 'WebSite',
+      "name": "Castudio",
       "description": description,
       "url": url,
-      "logo": "https://www.nobridge.co/assets/nobridge_app_icon.png",
-      "sameAs": [
-        // Add your social media links here when available
-      ]
+      "logo": "https://www.castudio.co/assets/nobridge_app_icon.png",
+      "sameAs": []
     };
 
-    if (type === 'marketplace') {
+    if (type === 'localBusiness') {
       return {
         ...baseData,
-        "@type": "WebSite",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://www.nobridge.co/marketplace?search={search_term_string}",
-          "query-input": "required name=search_term_string"
+        "@type": "LocalBusiness",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "ID"
         }
       };
     }
@@ -45,12 +43,12 @@ export default function StructuredData({
         "foundingDate": "2024",
         "founder": {
           "@type": "Person",
-          "name": "Nobridge Team"
+          "name": "Castudio Team"
         },
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "customer service",
-          "url": "https://www.nobridge.co/contact"
+          "url": "https://www.castudio.co/contact"
         }
       };
     }

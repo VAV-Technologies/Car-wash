@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllPublishedSlugs } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.nobridge.co'
+  const baseUrl = 'https://www.castudio.co'
 
   // Static pages
   const staticPages = [
@@ -13,13 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/how-buying-works`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/how-selling-works`,
+      url: `${baseUrl}/services`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,

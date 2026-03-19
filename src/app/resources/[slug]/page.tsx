@@ -7,10 +7,10 @@ import { FadeIn } from '@/components/ui/fade-in'
 import { getPostBySlug, getRelatedPosts, type BlogCategory } from '@/lib/blog'
 
 const categoryLabels: Record<BlogCategory, string> = {
-  news: 'News',
-  insights: 'Insights',
+  tips: 'Tips',
   guides: 'Guides',
-  company: 'Company Updates',
+  news: 'News',
+  promotions: 'Promotions',
 }
 
 function formatDate(dateStr: string) {
@@ -30,11 +30,11 @@ export async function generateMetadata({
   const post = await getPostBySlug(slug)
 
   if (!post) {
-    return { title: 'Post Not Found | Nobridge' }
+    return { title: 'Post Not Found | Castudio' }
   }
 
   return {
-    title: post.meta_title || `${post.title} | Nobridge Resources`,
+    title: post.meta_title || `${post.title} | Castudio Resources`,
     description: post.meta_description || post.excerpt,
     openGraph: {
       title: post.meta_title || post.title,
@@ -59,13 +59,13 @@ export default async function BlogPostPage({
 
   const relatedPosts = await getRelatedPosts(post.category, post.slug, 3)
 
-  const postUrl = `https://www.nobridge.co/resources/${post.slug}`
+  const postUrl = `https://www.castudio.co/resources/${post.slug}`
   const shareText = encodeURIComponent(post.title)
 
   return (
-    <div className="bg-white">
+    <div className="bg-brand-dark-gray">
       {/* Hero */}
-      <section className="w-full min-h-[60vh] bg-brand-dark-blue flex items-end py-24 text-white section-lines-light">
+      <section className="w-full min-h-[60vh] bg-brand-black flex items-end py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={100}>
             <div className="px-4">
@@ -86,7 +86,7 @@ export default async function BlogPostPage({
             <div className="flex flex-col lg:flex-row lg:items-center lg:gap-0">
               {/* Left: category, title, meta */}
               <div className="flex-1 min-w-0 px-4">
-                <span className="inline-block text-xs font-medium uppercase tracking-wider text-brand-sky-blue border border-brand-sky-blue/30 px-2 py-0.5 mb-5">
+                <span className="inline-block text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-5">
                   {categoryLabels[post.category]}
                 </span>
 
@@ -143,35 +143,35 @@ export default async function BlogPostPage({
       </section>
 
       {/* Separator */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
       {/* Article body — content left, sticky sidebar right */}
-      <section className="w-full py-10 md:py-12 bg-white section-lines-dark">
+      <section className="w-full py-10 md:py-12 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <article>
             <FadeIn direction="up" delay={200}>
               <div className="flex flex-col lg:flex-row">
                 {/* Left: article content (~80%) */}
-                <div className="flex-1 min-w-0 border border-brand-dark-blue/10 p-6 md:p-10 lg:p-14">
+                <div className="flex-1 min-w-0 border border-white/10 p-6 md:p-10 lg:p-14">
                   <div
-                    className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-brand-dark-blue prose-a:text-brand-sky-blue prose-a:no-underline hover:prose-a:underline prose-img:border prose-img:border-brand-dark-blue/10 prose-p:text-muted-foreground prose-li:text-muted-foreground"
+                    className="prose prose-lg max-w-none prose-invert prose-headings:font-heading prose-headings:text-white prose-a:text-brand-orange prose-a:no-underline hover:prose-a:underline prose-img:border prose-img:border-white/10 prose-p:text-white/70 prose-li:text-white/70"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 </div>
 
                 {/* Right: sticky sidebar (~20%) */}
-                <div className="w-full lg:w-72 xl:w-80 shrink-0 border border-brand-dark-blue/10 border-t-0 lg:border-t lg:border-l-0">
+                <div className="w-full lg:w-72 xl:w-80 shrink-0 border border-white/10 border-t-0 lg:border-t lg:border-l-0">
                   <div className="lg:sticky lg:top-28">
                     {/* Share section */}
-                    <div className="p-6 border-b border-brand-dark-blue/10">
-                      <p className="text-xs uppercase tracking-wider text-brand-dark-blue/50 font-heading mb-3">Share</p>
-                      <div className="border-t border-brand-dark-blue/10 mb-4" />
+                    <div className="p-6 border-b border-white/10">
+                      <p className="text-xs uppercase tracking-wider text-white/50 font-heading mb-3">Share</p>
+                      <div className="border-t border-white/10 mb-4" />
                       <div className="flex flex-col gap-2">
                         <a
                           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2.5 text-sm text-brand-dark-blue/70 hover:text-brand-dark-blue transition-colors py-1.5"
+                          className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Linkedin className="h-4 w-4 shrink-0" />
                           Share on LinkedIn
@@ -180,14 +180,14 @@ export default async function BlogPostPage({
                           href={`https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(postUrl)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2.5 text-sm text-brand-dark-blue/70 hover:text-brand-dark-blue transition-colors py-1.5"
+                          className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Twitter className="h-4 w-4 shrink-0" />
                           Share on X
                         </a>
                         <a
                           href={`mailto:?subject=${shareText}&body=${encodeURIComponent(postUrl)}`}
-                          className="flex items-center gap-2.5 text-sm text-brand-dark-blue/70 hover:text-brand-dark-blue transition-colors py-1.5"
+                          className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Mail className="h-4 w-4 shrink-0" />
                           Send via Email
@@ -195,21 +195,21 @@ export default async function BlogPostPage({
                       </div>
                     </div>
 
-                    {/* CTA box — dark blue */}
-                    <div className="bg-brand-dark-blue text-white p-6">
-                      <p className="text-xs uppercase tracking-wider text-brand-sky-blue font-heading mb-3">Nobridge Advisory</p>
+                    {/* CTA box — dark */}
+                    <div className="bg-brand-black text-white p-6">
+                      <p className="text-xs uppercase tracking-wider text-brand-orange font-heading mb-3">Castudio Car Care</p>
                       <div className="border-t border-white/15 mb-3" />
                       <p className="text-sm font-heading text-white mb-3 leading-snug">
-                        Expert M&amp;A advisory for business owners across Asia
+                        Expert car wash and detailing for drivers who care
                       </p>
                       <p className="text-xs text-white/60 leading-relaxed mb-5">
-                        Whether you are exploring an exit, seeking acquisition opportunities, or want to understand what your business is worth, our partners are ready to have a confidential conversation.
+                        Book your next wash or detailing service. Premium products, trained technicians, satisfaction guaranteed.
                       </p>
                       <Link
                         href="/contact"
-                        className="inline-flex items-center justify-center w-full h-10 text-sm font-medium bg-white text-brand-dark-blue hover:bg-white/90 transition-colors"
+                        className="inline-flex items-center justify-center w-full h-10 text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 transition-colors"
                       >
-                        Connect with a Partner
+                        Book a Service
                       </Link>
                     </div>
                   </div>
@@ -222,10 +222,10 @@ export default async function BlogPostPage({
               <FadeIn direction="up" delay={100}>
                 <div className="mt-16">
                   <div className="mb-8">
-                    <p className="text-sm uppercase tracking-wider text-brand-sky-blue mb-3 font-heading">
+                    <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                       Keep Reading
                     </p>
-                    <h2 className="text-2xl md:text-3xl font-heading text-brand-dark-blue tracking-tight">
+                    <h2 className="text-2xl md:text-3xl font-heading text-white tracking-tight">
                       More from {categoryLabels[post.category]}
                     </h2>
                   </div>
@@ -234,9 +234,9 @@ export default async function BlogPostPage({
                       <FadeIn key={related.id} delay={i * 80} direction="up">
                         <Link
                           href={`/resources/${related.slug}`}
-                          className={`group flex flex-col h-full border border-brand-dark-blue/10 hover:border-brand-dark-blue/25 transition-colors ${i > 0 ? 'border-t-0 sm:border-t sm:border-l-0' : ''}`}
+                          className={`group flex flex-col h-full border border-white/10 hover:border-white/25 transition-colors ${i > 0 ? 'border-t-0 sm:border-t sm:border-l-0' : ''}`}
                         >
-                          <div className="relative aspect-[16/10] overflow-hidden border-b border-brand-dark-blue/10 bg-brand-light-gray">
+                          <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-brand-dark-gray">
                             {related.cover_image_url ? (
                               <Image
                                 src={related.cover_image_url}
@@ -246,7 +246,7 @@ export default async function BlogPostPage({
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <svg className="w-8 h-8 text-brand-dark-blue/10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <svg className="w-8 h-8 text-white/10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                                   <rect x="3" y="3" width="18" height="18" rx="0" />
                                   <circle cx="8.5" cy="8.5" r="1.5" />
                                   <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
@@ -255,13 +255,13 @@ export default async function BlogPostPage({
                             )}
                           </div>
                           <div className="flex flex-col flex-1 p-5">
-                            <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-sky-blue border border-brand-sky-blue/30 px-2 py-0.5 mb-3">
+                            <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-3">
                               {categoryLabels[related.category]}
                             </span>
-                            <h3 className="text-sm font-heading text-brand-dark-blue group-hover:text-brand-dark-blue/80 transition-colors leading-snug mb-auto">
+                            <h3 className="text-sm font-heading text-white group-hover:text-white/80 transition-colors leading-snug mb-auto">
                               {related.title}
                             </h3>
-                            <p className="text-xs text-muted-foreground/70 mt-3 pt-3 border-t border-brand-dark-blue/5">
+                            <p className="text-xs text-white/50 mt-3 pt-3 border-t border-white/5">
                               {related.reading_time_minutes} min read
                             </p>
                           </div>
@@ -295,8 +295,8 @@ export default async function BlogPostPage({
             },
             publisher: {
               '@type': 'Organization',
-              name: 'Nobridge',
-              url: 'https://www.nobridge.co',
+              name: 'Castudio',
+              url: 'https://www.castudio.co',
             },
             mainEntityOfPage: {
               '@type': 'WebPage',

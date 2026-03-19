@@ -1,11 +1,11 @@
 {
-  "name": "Nobridge - Business Marketplace Platform",
-  "short_name": "Nobridge",
-  "description": "Connecting SME owners with investors and buyers in Asia",
+  "name": "Castudio — Premium Car Wash & Detailing",
+  "short_name": "Castudio",
+  "description": "Premium car wash and car detailing studio in Indonesia",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1e3a8a",
+  "background_color": "#0A0A0A",
+  "theme_color": "#F97316",
   "icons": [
     {
       "src": "/nobridge-favicon.png?v=3",

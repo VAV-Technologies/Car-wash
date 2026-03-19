@@ -21,7 +21,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!canGoPrevious}
         aria-label="Go to previous page"
-        className="bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white border-none rounded-md"
+        className="bg-brand-dark-gray text-white hover:bg-brand-orange hover:text-black border-none rounded-md"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -34,7 +34,7 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!canGoNext}
         aria-label="Go to next page"
-        className="bg-white text-brand-dark-blue hover:bg-brand-sky-blue hover:text-white border-none rounded-md"
+        className="bg-brand-dark-gray text-white hover:bg-brand-orange hover:text-black border-none rounded-md"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

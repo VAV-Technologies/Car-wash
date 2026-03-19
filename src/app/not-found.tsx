@@ -7,19 +7,19 @@ import { Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-brand-black">
+      <Card className="w-full max-w-md bg-brand-dark-gray border-white/10">
         <CardContent className="pt-10 pb-8 px-8 text-center">
           {/* 404 Icon */}
           <div className="mb-6">
-            <div className="text-8xl font-semibold text-gray-300 mb-2">404</div>
+            <div className="text-8xl font-semibold text-white/20 mb-2">404</div>
           </div>
 
           {/* Error Message */}
-          <h1 className="text-2xl font-semibold text-brand-dark-blue mb-2">
+          <h1 className="text-2xl font-semibold text-white mb-2">
             Page Not Found
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-white/60 mb-8">
             The page you&apos;re looking for doesn&apos;t exist or has been moved.
           </p>
 
@@ -43,8 +43,8 @@ export default function NotFound() {
           </div>
 
           {/* Help Text */}
-          <p className="text-sm text-gray-500 mt-8">
-            Need help? <Link href="/contact" className="text-brand-dark-blue hover:underline">Contact us</Link>
+          <p className="text-sm text-white/40 mt-8">
+            Need help? <Link href="/contact" className="text-brand-orange hover:underline">Contact us</Link>
           </p>
         </CardContent>
       </Card>

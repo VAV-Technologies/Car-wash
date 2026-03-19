@@ -7,14 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Mail,
   ArrowRight,
-  Network,
-  MapPin,
-  GitMerge,
+  Droplets,
+  Clock,
+  ShieldCheck,
+  CalendarCheck,
+  Sparkles,
+  Star,
+  Wrench,
   Shield,
-  Globe,
-  Lock,
-  Handshake,
-  Users,
   Phone
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -82,7 +82,7 @@ export default function ContactPage() {
     const body = encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
     );
-    window.location.href = `mailto:Business@nobridge.co?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:hello@castudio.co?subject=${subject}&body=${body}`;
 
     toast({
       title: "Opening email client",
@@ -97,32 +97,32 @@ export default function ContactPage() {
     }
   };
 
-  const buyerReasons = [
-    { icon: Network, text: "Proprietary deal flow from 500+ active seller relationships" },
-    { icon: MapPin, text: "Deep local market knowledge with global transaction standards" },
-    { icon: GitMerge, text: "End-to-end support from sourcing to integration planning" },
-    { icon: Shield, text: "Risk mitigation through comprehensive seller vetting" },
+  const carWashReasons = [
+    { icon: Droplets, text: "Professional hand wash — no automated brushes" },
+    { icon: Clock, text: "30-minute express service available" },
+    { icon: ShieldCheck, text: "Premium, paint-safe products only" },
+    { icon: CalendarCheck, text: "Flexible subscription plans" },
   ];
 
-  const sellerReasons = [
-    { icon: Globe, text: "Access to 2,000+ qualified international buyers" },
-    { icon: Lock, text: "Confidential marketing that protects your business operations" },
-    { icon: Handshake, text: "Expert negotiation to maximize value and terms" },
-    { icon: Users, text: "Smooth transition planning for you and your team" },
+  const detailingReasons = [
+    { icon: Sparkles, text: "Expert paint correction and ceramic coating" },
+    { icon: Star, text: "Full interior restoration available" },
+    { icon: Wrench, text: "Premium detailing products" },
+    { icon: Shield, text: "Satisfaction guaranteed" },
   ];
 
   return (
-    <div className="bg-white">
+    <div className="bg-brand-black">
       {/* Hero */}
-      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-dark-blue text-white section-lines-light">
+      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center space-y-6 px-4">
               <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-                Speak With Our Team
+                Book Your Wash
               </h1>
-              <p className="text-lg md:text-xl text-blue-100 font-light max-w-2xl mx-auto">
-                Connect with the right partner for your M&A journey. All consultations are confidential and commitment-free.
+              <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
+                Schedule a car wash, request detailing, or ask us anything. We&apos;re here to help.
               </p>
             </div>
           </FadeIn>
@@ -130,26 +130,26 @@ export default function ContactPage() {
       </section>
 
       {/* Consultation Boxes */}
-      <section className="w-full py-24 md:py-32 bg-white section-lines-dark">
+      <section className="w-full py-24 md:py-32 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row">
-            {/* Buyer Partner Box */}
+            {/* Car Wash Box */}
             <FadeIn delay={100} className="flex-1">
-              <div className="border border-brand-dark-blue/10 p-8 md:p-10 h-full flex flex-col">
-                <h2 className="text-2xl font-normal mb-4 font-heading text-brand-dark-blue">Talk to a buyer partner.</h2>
-                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                  Looking to expand through strategic acquisitions in Asia? Our buyer partners get exclusive access to off-market opportunities across Indonesia, Malaysia, and emerging Asian markets.
+              <div className="border border-white/10 p-8 md:p-10 h-full flex flex-col">
+                <h2 className="text-2xl font-normal mb-4 font-heading text-white">Book a Car Wash</h2>
+                <p className="text-white/60 text-lg mb-8 leading-relaxed">
+                  Choose from our express and full wash options designed to keep your car spotless. We also offer convenient monthly plans so your vehicle always looks its best.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-base font-semibold mb-4 text-brand-dark-blue">Why Leading Acquirers Choose Nobridge:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-white">Why Choose Castudio:</h3>
                   <ul className="space-y-3">
-                    {buyerReasons.map((reason, i) => {
+                    {carWashReasons.map((reason, i) => {
                       const Icon = reason.icon;
                       return (
                         <li key={i} className="flex items-start">
-                          <Icon className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 shrink-0" />
-                          <span className="text-muted-foreground">{reason.text}</span>
+                          <Icon className="h-5 w-5 text-brand-orange mr-3 mt-0.5 shrink-0" />
+                          <span className="text-white/60">{reason.text}</span>
                         </li>
                       );
                     })}
@@ -157,33 +157,31 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="https://cal.com/ahmad-fadil-lubis/nobridge-buyer"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-white bg-brand-dark-blue hover:bg-brand-dark-blue/90 rounded-none transition-colors"
+                  href="mailto:hello@castudio.co"
+                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Schedule Buyer Consultation <ArrowRight className="ml-2 h-5 w-5" />
+                  Book Car Wash <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
             </FadeIn>
 
-            {/* Seller Partner Box */}
+            {/* Detailing Box */}
             <FadeIn delay={200} className="flex-1">
-              <div className="border border-brand-dark-blue/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10 h-full flex flex-col">
-                <h2 className="text-2xl font-normal mb-4 font-heading text-brand-dark-blue">Talk to a seller partner.</h2>
-                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                  Ready to explore your exit options or fundraise? Our seller partners work with business owners who have built something valuable and want to ensure their legacy continues with the right acquirer.
+              <div className="border border-white/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10 h-full flex flex-col">
+                <h2 className="text-2xl font-normal mb-4 font-heading text-white">Book Detailing</h2>
+                <p className="text-white/60 text-lg mb-8 leading-relaxed">
+                  From paint correction and ceramic coating to full interior restoration, our detailing services bring your car back to showroom condition.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-base font-semibold mb-4 text-brand-dark-blue">Why Successful Founders Trust Nobridge:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-white">Why Trust Our Detailing:</h3>
                   <ul className="space-y-3">
-                    {sellerReasons.map((reason, i) => {
+                    {detailingReasons.map((reason, i) => {
                       const Icon = reason.icon;
                       return (
                         <li key={i} className="flex items-start">
-                          <Icon className="h-5 w-5 text-brand-sky-blue mr-3 mt-0.5 shrink-0" />
-                          <span className="text-muted-foreground">{reason.text}</span>
+                          <Icon className="h-5 w-5 text-brand-orange mr-3 mt-0.5 shrink-0" />
+                          <span className="text-white/60">{reason.text}</span>
                         </li>
                       );
                     })}
@@ -191,12 +189,10 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="https://cal.com/fachri-budianto-nobridge-seller"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-white bg-brand-dark-blue hover:bg-brand-dark-blue/90 rounded-none transition-colors"
+                  href="mailto:hello@castudio.co"
+                  className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Schedule Seller Consultation <ArrowRight className="ml-2 h-5 w-5" />
+                  Book Detailing <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
             </FadeIn>
@@ -205,13 +201,13 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form */}
-      <section className="w-full py-24 md:py-32 bg-brand-dark-blue text-white section-lines-light">
+      <section className="w-full py-24 md:py-32 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-12 px-4">
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">Need something else?</h2>
-              <p className="text-lg text-blue-100 max-w-2xl mx-auto">
-                Speak with a senior partner who understands your market.
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">Have a question?</h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                Send us a message and we&apos;ll get back to you within 24 hours.
               </p>
             </div>
           </FadeIn>
@@ -230,7 +226,7 @@ export default function ContactPage() {
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         placeholder="John Doe"
                         className={cn(
-                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
                           errors.name && "border-red-400"
                         )}
                         required
@@ -246,7 +242,7 @@ export default function ContactPage() {
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         placeholder="you@example.com"
                         className={cn(
-                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                          "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
                           errors.email && "border-red-400"
                         )}
                         required
@@ -261,8 +257,8 @@ export default function ContactPage() {
                       id="subject"
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
-                      placeholder="Inquiry about advisory services"
-                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none"
+                      placeholder="Inquiry about car wash services"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none"
                     />
                   </div>
 
@@ -275,7 +271,7 @@ export default function ContactPage() {
                       placeholder="Your message..."
                       rows={5}
                       className={cn(
-                        "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-sky-blue focus:ring-brand-sky-blue rounded-none",
+                        "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
                         errors.message && "border-red-400"
                       )}
                       required
@@ -285,7 +281,7 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-brand-dark-blue bg-white hover:bg-white/90 rounded-none transition-colors"
+                    className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                   >
                     Send Message
                   </button>
@@ -300,27 +296,27 @@ export default function ContactPage() {
                   </h3>
                   <div className="space-y-6">
                     <div className="flex items-start space-x-3">
-                      <Mail className="h-5 w-5 text-brand-sky-blue mt-0.5" />
+                      <Mail className="h-5 w-5 text-brand-orange mt-0.5" />
                       <div>
-                        <p className="text-sm text-blue-200 mb-1">Email Us</p>
+                        <p className="text-sm text-white/60 mb-1">Email Us</p>
                         <a
-                          href="mailto:Business@nobridge.co"
-                          className="text-white hover:text-brand-sky-blue transition-colors font-medium"
+                          href="mailto:hello@castudio.co"
+                          className="text-white hover:text-brand-orange transition-colors font-medium"
                         >
-                          Business@nobridge.co
+                          hello@castudio.co
                         </a>
                       </div>
                     </div>
 
                     <div className="flex items-start space-x-3">
-                      <Phone className="h-5 w-5 text-brand-sky-blue mt-0.5" />
+                      <Phone className="h-5 w-5 text-brand-orange mt-0.5" />
                       <div>
-                        <p className="text-sm text-blue-200 mb-1">Call Us</p>
+                        <p className="text-sm text-white/60 mb-1">Call Us</p>
                         <a
                           href="tel:+62816104334"
-                          className="text-white hover:text-brand-sky-blue transition-colors font-medium"
+                          className="text-white hover:text-brand-orange transition-colors font-medium"
                         >
-                          + 62 816 10 4334
+                          +62 816 10 4334
                         </a>
                       </div>
                     </div>
@@ -328,8 +324,8 @@ export default function ContactPage() {
                 </div>
 
                 <div className="border border-white/15 p-4 mt-8">
-                  <p className="text-sm text-blue-100 leading-relaxed">
-                    "We are committed to help you in every aspect of M&A from beginning to end."
+                  <p className="text-sm text-white/70 leading-relaxed">
+                    &ldquo;Your car deserves the best. Let us prove it.&rdquo;
                   </p>
                 </div>
               </div>

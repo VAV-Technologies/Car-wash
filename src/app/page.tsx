@@ -1,36 +1,19 @@
 'use client';
 
 import * as React from "react";
-import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Search as SearchIconLucide, ListChecks, ShieldCheck, FileText, MessageSquare, Info, Phone, Home, ExternalLink, Banknote, BookOpen, Brain, HandCoins, Globe, ArrowRight, Zap, UsersRound, Clock } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Droplets, Sparkles, CalendarCheck, ArrowRight, Clock, UsersRound, ShieldCheck, Wrench, CreditCard, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { NobridgeIcon, NobridgeIconType } from '@/components/ui/nobridge-icon';
-import { AnimatedBackground } from '@/components/ui/animated-background';
 import { FadeIn } from '@/components/ui/fade-in';
-import dynamic from 'next/dynamic';
-
-const World = dynamic(() => import('@/components/ui/globe').then((m) => m.World), {
-  ssr: false,
-});
-
 
 const PlaceholderLogo = ({ text = "Logo", className = "" }: { text?: string, className?: string }) => (
   <div
-    className={cn("bg-brand-light-gray/30 flex items-center justify-center rounded-md p-4 h-12 md:h-16 w-auto min-w-[120px] md:min-w-[150px]", className)}
+    className={cn("bg-white/5 flex items-center justify-center rounded-md p-4 h-12 md:h-16 w-auto min-w-[120px] md:min-w-[150px]", className)}
     data-ai-hint="company logo"
   >
-    <span className="text-brand-dark-blue/70 text-xs md:text-sm font-medium text-center">{text}</span>
+    <span className="text-white/50 text-xs md:text-sm font-medium text-center">{text}</span>
   </div>
 );
-
-const featuredCompanyLogos = [
-  { src: "/assets/featured-harian-jabar.png", alt: "Harian Jabar", dataAiHint: "company logo" },
-  { src: "/assets/featured-merdeka.png", alt: "Merdeka.com", dataAiHint: "company logo" },
-  { src: "/assets/featured-upberita.png", alt: "UpBerita", dataAiHint: "company logo" },
-  { src: "/assets/featured-independent-observer.png", alt: "Independent Observer", dataAiHint: "company logo" },
-];
 
 export default function HomePage() {
   return (
@@ -50,80 +33,65 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/30" />
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-screen px-4 py-24 md:py-32 lg:py-40 relative z-10">
-          <a href="https://acfi.asia/directory/nobridge" target="_blank" rel="noopener noreferrer" className="mb-4 inline-flex flex-col md:flex-row items-center gap-2 md:gap-0 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-75">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-brand-light-gray md:hidden">
-              <ShieldCheck className="h-4 w-4 opacity-90" />
-            </span>
-            <span className="px-3 md:px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm text-xs md:text-sm text-brand-light-gray hover:bg-white/10 transition-colors self-center">
-              <ShieldCheck className="hidden md:inline mr-2 h-4 w-4 opacity-90 align-text-bottom" />CERTIFIED & ACCREDITED BY ASIA CORPORATE FINANCE INSTITUTE (ACFI)
-            </span>
-          </a>
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
-            Where As<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>an bus<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>nesses<br />meet global cap<span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '0.92em' }}>i</span>tal
+            Premium Car Care,<br />Zero Compromise
           </h1>
-          <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-brand-light-gray max-w-[85%] sm:max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
-            Nobridge is the advisory firm built for Asian SMEs, connecting sellers with global acquirers, guiding buyers into new markets, and powering deals through a live deal marketplace.
+          <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
+            Castudio is the car wash and detailing studio built for drivers who care. Professional hand wash, expert detailing, and flexible subscription plans — all with premium products.
           </p>
-          <div className="mb-10 text-sm md:text-base text-brand-light-gray animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
+          <div className="mb-10 text-sm md:text-base text-white/80 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
             {/* Desktop: original single row with pipes, no borders */}
             <div className="hidden sm:flex items-center justify-center">
               <div className="flex items-center">
-                <NobridgeIcon icon="people" size="sm" className="mr-2 opacity-90" /> End To End M&A Advisory
+                <Droplets className="mr-2 h-4 w-4 opacity-90" /> Professional Detailing
               </div>
               <span className="mx-4 text-white/30">|</span>
               <div className="flex items-center">
-                <NobridgeIcon icon="process" size="sm" className="mr-2 opacity-90" /> 3X More Efficient Process
+                <Sparkles className="mr-2 h-4 w-4 opacity-90" /> Flexible Subscriptions
               </div>
               <span className="mx-4 text-white/30">|</span>
               <div className="flex items-center">
-                <NobridgeIcon icon="worldwide" size="sm" className="mr-2 opacity-90" /> Global Investor Network
+                <CalendarCheck className="mr-2 h-4 w-4 opacity-90" /> Premium Products
               </div>
             </div>
             {/* Mobile: pills, two on top row + one centered below */}
             <div className="flex sm:hidden flex-col items-center gap-2">
               <div className="flex gap-2">
                 <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                  <NobridgeIcon icon="people" size="sm" className="mr-1.5 opacity-90" /> End To End M&A
+                  <Droplets className="mr-1.5 h-4 w-4 opacity-90" /> Professional Detailing
                 </div>
                 <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                  <NobridgeIcon icon="worldwide" size="sm" className="mr-1.5 opacity-90" /> Global Network
+                  <Sparkles className="mr-1.5 h-4 w-4 opacity-90" /> Flexible Subscriptions
                 </div>
               </div>
               <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                <NobridgeIcon icon="process" size="sm" className="mr-1.5 opacity-90" /> 3X More Efficient Process
+                <CalendarCheck className="mr-1.5 h-4 w-4 opacity-90" /> Premium Products
               </div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
-            <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-white text-brand-dark-blue hover:bg-brand-light-gray h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
-              Talk to Us <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
+              Book a Wash <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-            <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
-              Get in Touch <SearchIconLucide className="ml-2 h-5 w-5" />
+            <Link href="/pricing" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
+              View Plans
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured In - Credibility Logos */}
-      <div className="border-t border-brand-dark-blue/10" />
-      <section className="py-10 md:py-14 bg-brand-white section-lines-dark">
+      {/* Trusted By - Credibility Logos */}
+      <div className="border-t border-white/10" />
+      <section className="py-10 md:py-14 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn>
-            <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider text-center mb-8 font-heading">Featured In</p>
+            <p className="text-sm font-normal uppercase text-white/60 tracking-wider text-center mb-8 font-heading">Trusted By</p>
           </FadeIn>
           <FadeIn delay={200}>
             <div className="flex flex-wrap">
-              {featuredCompanyLogos.map((logo, index) => (
-                <div key={index} className="flex items-center justify-center h-20 md:h-24 w-1/2 md:w-1/4 border border-brand-dark-blue/10 px-6">
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={180}
-                    height={70}
-                    className="object-contain max-h-full"
-                    data-ai-hint={logo.dataAiHint}
-                  />
+              {["Partner 1", "Partner 2", "Partner 3", "Partner 4"].map((partner, index) => (
+                <div key={index} className="flex items-center justify-center h-20 md:h-24 w-1/2 md:w-1/4 border border-white/10 px-6">
+                  <PlaceholderLogo text={partner} />
                 </div>
               ))}
             </div>
@@ -132,19 +100,19 @@ export default function HomePage() {
       </section>
 
       {/* Separator */}
-      <div className="border-t border-brand-dark-blue/10" />
+      <div className="border-t border-white/10" />
 
-      {/* What We Do */}
-      <section className="py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+      {/* Our Services */}
+      <section className="py-20 md:py-24 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-brand-light-gray/70 tracking-wider mb-3 font-heading">What We Do</p>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Our Services</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
-                Three ways we move deals forward
+                Everything your car needs, under one roof
               </h2>
-              <p className="text-blue-100 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Whether you&apos;re exiting a business you&apos;ve built, acquiring your next platform in Asia, or looking to discover opportunities, Nobridge covers the full M&amp;A journey.
+              <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+                From a quick exterior rinse to full paint correction and ceramic coating, Castudio delivers professional car care with premium products and trained technicians.
               </p>
             </div>
           </FadeIn>
@@ -153,27 +121,21 @@ export default function HomePage() {
             const services = [
               {
                 num: "01",
-                src: "/assets/what-we-do-sell-side.png",
-                alt: "Sell-Side Advisory",
-                title: "Sell-Side Advisory",
-                body: "You've built something valuable. We make sure the market knows it. From business positioning and valuation to buyer outreach, negotiation, and close, we run your entire exit process so you can stay focused on the business.",
-                tags: ["Exit Planning", "Valuation", "Buyer Matching", "Negotiation", "Due Diligence Support"],
+                title: "Car Wash",
+                body: "From express exterior rinses to full interior-exterior packages, our professional hand wash leaves your car spotless. Every wash uses pH-balanced shampoo and microfiber mitts to protect your paint.",
+                tags: ["Express Wash", "Full Wash", "Hand Wash", "Paint Safe", "Interior Clean"],
               },
               {
                 num: "02",
-                src: "/assets/what-we-do-marketplace.png",
-                alt: "Buy-Side Advisory",
-                title: "Buy-Side Advisory",
-                body: "Looking to acquire in Asia? We source proprietary off-market deals, run target screening, coordinate due diligence, and sit across the table with you through close. Your boots on the ground.",
-                tags: ["Deal Sourcing", "Target Screening", "Market Entry", "LOI Support", "Local Intelligence"],
+                title: "Car Detailing",
+                body: "Go beyond clean. Our detailing services restore your car to showroom condition with clay bar treatment, paint correction, polish, and ceramic coating for lasting protection.",
+                tags: ["Clay Bar", "Paint Correction", "Polish", "Ceramic Coating", "Restoration"],
               },
               {
                 num: "03",
-                src: "/assets/what-we-do-buy-side.png",
-                alt: "Deal Marketplace",
-                title: "Deal Marketplace",
-                body: "A curated, live listing of pre-screened Asian businesses available for acquisition, accessible to qualified buyers globally. Structured data. Verified financials. Real opportunities.",
-                tags: ["Live Listings", "Pre-Screened", "Buyer Access", "Teaser Packages", "NDA-Gated CIMs"],
+                title: "Subscriptions",
+                body: "Never worry about scheduling again. Our weekly and monthly plans keep your car looking its best with regular professional care at a fraction of one-off prices.",
+                tags: ["Weekly Plans", "Monthly Plans", "Priority Booking", "Member Perks", "Flexible"],
               },
             ];
             return (
@@ -184,10 +146,10 @@ export default function HomePage() {
                     {services.map((card, index) => (
                       <FadeIn key={card.num} delay={index * 100} className="flex-1">
                         <div className={cn(
-                          "border border-brand-dark-blue/10 h-56 bg-white relative overflow-hidden",
+                          "border border-white/10 h-56 bg-brand-dark-gray relative overflow-hidden flex items-center justify-center",
                           index > 0 && "border-l-0"
                         )}>
-                          <Image src={card.src} alt={card.alt} fill className="object-contain scale-[0.8]" />
+                          <span className="text-white/30 text-sm">[IMAGE: {card.title}]</span>
                         </div>
                       </FadeIn>
                     ))}
@@ -196,16 +158,16 @@ export default function HomePage() {
                     {services.map((card, index) => (
                       <FadeIn key={card.num} delay={index * 100} className="flex-1">
                         <div className={cn(
-                          "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-10 h-full flex flex-col overflow-hidden",
+                          "group relative border border-white/10 border-t-0 bg-brand-dark-gray p-10 h-full flex flex-col overflow-hidden",
                           index > 0 && "border-l-0"
                         )}>
-                          <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                          <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">{card.num}</span>
-                          <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">{card.title}</h3>
-                          <p className="text-muted-foreground leading-relaxed mb-6 text-justify flex-grow">{card.body}</p>
+                          <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-orange scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                          <span className="text-sm font-heading font-semibold text-white/30 mb-4">{card.num}</span>
+                          <h3 className="text-xl font-normal text-white font-heading mb-4 text-left">{card.title}</h3>
+                          <p className="text-white/60 leading-relaxed mb-6 text-justify flex-grow">{card.body}</p>
                           <div className="flex flex-wrap gap-2">
                             {card.tags.map((tag) => (
-                              <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">{tag}</span>
+                              <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                             ))}
                           </div>
                         </div>
@@ -219,21 +181,21 @@ export default function HomePage() {
                   {services.map((card, index) => (
                     <FadeIn key={card.num} delay={index * 100}>
                       <div className={cn(
-                        "border border-brand-dark-blue/10 h-48 bg-white relative overflow-hidden",
+                        "border border-white/10 h-48 bg-brand-dark-gray relative overflow-hidden flex items-center justify-center",
                         index > 0 && "border-t-0"
                       )}>
-                        <Image src={card.src} alt={card.alt} fill className="object-contain scale-[0.8]" />
+                        <span className="text-white/30 text-sm">[IMAGE: {card.title}]</span>
                       </div>
                       <div className={cn(
-                        "group relative border border-brand-dark-blue/10 border-t-0 bg-white p-6 sm:p-8 flex flex-col overflow-hidden"
+                        "group relative border border-white/10 border-t-0 bg-brand-dark-gray p-6 sm:p-8 flex flex-col overflow-hidden"
                       )}>
-                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-dark-blue scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                        <span className="text-sm font-heading font-semibold text-brand-dark-blue/30 mb-4">{card.num}</span>
-                        <h3 className="text-xl font-normal text-brand-dark-blue font-heading mb-4 text-left">{card.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed mb-6 text-justify">{card.body}</p>
+                        <div className="absolute top-0 left-0 right-0 h-[3px] bg-brand-orange scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                        <span className="text-sm font-heading font-semibold text-white/30 mb-4">{card.num}</span>
+                        <h3 className="text-xl font-normal text-white font-heading mb-4 text-left">{card.title}</h3>
+                        <p className="text-white/60 leading-relaxed mb-6 text-justify">{card.body}</p>
                         <div className="flex flex-wrap gap-2">
                           {card.tags.map((tag) => (
-                            <span key={tag} className="text-xs px-3 py-1 border border-brand-dark-blue/10 text-brand-dark-blue/70">{tag}</span>
+                            <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                           ))}
                         </div>
                       </div>
@@ -247,14 +209,14 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <div className="border-t border-brand-dark-blue/10" />
-      <section className="py-20 md:py-24 bg-white section-lines-dark">
+      <div className="border-t border-white/10" />
+      <section className="py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">
-                From first conversation to signed deal
+              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">How It Works</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
+                From booking to brand-new shine
               </h2>
             </div>
           </FadeIn>
@@ -263,63 +225,53 @@ export default function HomePage() {
             {[
               {
                 num: "01",
-                title: "Discovery & Scoping",
-                body: "We start with a confidential consultation to understand your goals, timeline, and deal parameters, whether you're selling or acquiring.",
-                image: "/assets/how-it-works-step-1.png",
+                title: "Book Your Slot",
+                body: "Choose your service, pick a time, and book online or via WhatsApp. Same-day slots often available.",
               },
               {
                 num: "02",
-                title: "Value Creation (Optional)",
-                body: "Before going to market, we can help optimize your business for sale through operational improvements, financial clean-up, and strategic repositioning to maximize deal value.",
-                image: "/assets/how-it-works-step-2.png",
+                title: "Drop Off or We Come to You",
+                body: "Bring your car to our studio or request our mobile service. Either way, we make it easy.",
               },
               {
                 num: "03",
-                title: "Preparation & Positioning",
-                body: "For sellers: business valuation, CIM preparation, and buyer targeting. For buyers: target criteria setting, market mapping, and initial deal origination.",
-                image: "/assets/how-it-works-step-3.png",
+                title: "Professional Service",
+                body: "Our trained technicians follow a systematic process using premium products. No shortcuts, no rushing.",
               },
               {
                 num: "04",
-                title: "Outreach & Matching",
-                body: "Our outreach engine connects sellers with our global buyer network. Buyers get curated target pipelines built around their acquisition thesis.",
-                image: "/assets/how-it-works-step-4.png",
+                title: "Quality Inspection",
+                body: "Every car goes through a multi-point quality check before handover. We don\u2019t release a car we wouldn\u2019t drive ourselves.",
               },
               {
                 num: "05",
-                title: "Negotiation & Close",
-                body: "We sit at the table through LOI, due diligence, and definitive agreements, protecting your interests and keeping deals moving forward to close.",
-                image: "/assets/how-it-works-step-5.png",
+                title: "Pickup & Shine",
+                body: "Collect your car looking brand new, or we deliver it back to you. Clean, protected, and ready to drive.",
               },
             ].map((step, index) => (
               <FadeIn key={step.num} delay={index * 100}>
                 <div className={cn(
-                  "border border-brand-dark-blue/10 flex flex-col md:flex-row",
+                  "border border-white/10 flex flex-col md:flex-row",
                   index > 0 && "border-t-0"
                 )}>
                   {/* Step number — separate column on desktop only */}
                   <div className="hidden md:flex md:w-[23%] shrink-0 p-8 md:p-10 items-center justify-center">
-                    <span className="text-6xl font-heading font-medium text-brand-dark-blue/10 leading-none">
+                    <span className="text-6xl font-heading font-medium text-white/10 leading-none">
                       {step.num}
                     </span>
                   </div>
-                  <div className="flex-1 p-6 sm:p-8 md:p-10 md:border-l border-brand-dark-blue/10 flex items-center">
+                  <div className="flex-1 p-6 sm:p-8 md:p-10 md:border-l border-white/10 flex items-center">
                     <div>
                       {/* Step number — inline on mobile only */}
-                      <span className="md:hidden text-2xl font-heading font-medium text-brand-dark-blue/10 leading-none mb-2 block">
+                      <span className="md:hidden text-2xl font-heading font-medium text-white/10 leading-none mb-2 block">
                         {step.num}
                       </span>
-                      <h3 className="text-lg font-normal text-brand-dark-blue font-heading mb-2">{step.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{step.body}</p>
+                      <h3 className="text-lg font-normal text-white font-heading mb-2">{step.title}</h3>
+                      <p className="text-white/60 leading-relaxed">{step.body}</p>
                     </div>
                   </div>
-                  <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-brand-dark-blue/10 relative overflow-hidden shrink-0 bg-brand-dark-blue">
-                    <Image
-                      src={step.image}
-                      alt={step.title}
-                      fill
-                      className="object-contain"
-                    />
+                  <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-black flex items-center justify-center">
+                    <span className="text-white/20 text-sm">[IMAGE: Step {step.num}]</span>
                   </div>
                 </div>
               </FadeIn>
@@ -328,42 +280,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Marketplace Preview */}
-      <div className="border-t border-brand-dark-blue/10" />
-      <section id="marketplace-preview" className="py-20 md:py-24 bg-brand-light-gray section-lines-dark">
+      {/* Subscription Plans */}
+      <div className="border-t border-white/10" />
+      <section id="subscription-plans" className="py-20 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-12 md:mb-16 px-4">
-              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">Deal Marketplace</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue font-heading">Browse live acquisi<span style={{ fontSize: '1.06em' }}>t</span>ion <span style={{ fontSize: '1.06em', marginRight: '0.05em' }}>t</span>arge<span style={{ fontSize: '1.06em' }}>t</span>s in Asia</h2>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Subscription Plans</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">Keep your car looking its best, every week</h2>
             </div>
           </FadeIn>
 
           <FadeIn direction="up" delay={100}>
-            <div className="flex flex-col md:flex-row border border-brand-dark-blue/10 mb-12 md:mb-16">
-              <div className="md:w-1/2 min-h-[250px] md:min-h-[350px] border-b md:border-b-0 md:border-r border-brand-dark-blue/10 relative overflow-hidden shrink-0 bg-white">
-                <Image
-                  src="/assets/marketplace-preview-v4.png"
-                  alt="Browse live acquisition targets in Asia"
-                  fill
-                  className="object-contain"
-                />
+            <div className="flex flex-col md:flex-row border border-white/10 mb-12 md:mb-16">
+              <div className="md:w-1/2 min-h-[250px] md:min-h-[350px] border-b md:border-b-0 md:border-r border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray flex items-center justify-center">
+                <span className="text-white/30 text-sm">[IMAGE: Subscription plan comparison]</span>
               </div>
-              <div className="flex-1 bg-brand-white p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <p className="text-brand-dark-blue text-base leading-relaxed text-justify mb-4 font-medium">A curated, always-current directory of pre-screened Asian businesses seeking acquisition. Each listing is verified, structured, and ready for qualified buyer engagement.</p>
-                <p className="text-muted-foreground text-base leading-relaxed text-justify mb-6">Whether you are a strategic acquirer, private equity fund, family office, or independent sponsor, our marketplace gives you direct access to deal-ready opportunities across Asia, filtered by sector, geography, deal size, and financial profile, so you spend less time searching and more time evaluating.</p>
+              <div className="flex-1 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-white text-base leading-relaxed text-justify mb-4 font-medium">Stop paying full price every time. Our subscription plans give you regular professional car care at member-only rates, with priority booking and perks that make ownership effortless.</p>
+                <p className="text-white/60 text-base leading-relaxed text-justify mb-6">Choose from weekly or monthly plans designed around how often you drive and how clean you like to keep your car. Every plan includes priority scheduling, free interior vacuum, and WhatsApp booking so you never have to wait.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                   {[
-                    "Teaser packages available without NDA",
-                    "Full CIMs released under NDA",
-                    "Sector, geography, and deal size filters",
-                    "Direct access to Nobridge deal team",
-                    "Verified financials and structured data",
-                    "New opportunities added weekly",
+                    "Wash as often as your plan allows",
+                    "Priority booking for subscribers",
+                    "Free interior vacuum with every wash",
+                    "Member-only pricing on detailing",
+                    "No contracts — cancel anytime",
+                    "WhatsApp booking for subscribers",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3">
-                      <span className="text-muted-foreground text-[5px] shrink-0">&#x25CF;</span>
-                      <p className="text-base text-muted-foreground leading-relaxed">{item}</p>
+                      <span className="text-white/60 text-[5px] shrink-0">&#x25CF;</span>
+                      <p className="text-base text-white/60 leading-relaxed">{item}</p>
                     </div>
                   ))}
                 </div>
@@ -372,42 +319,36 @@ export default function HomePage() {
           </FadeIn>
 
           <FadeIn direction="up" delay={200}>
-            <div className="text-center mb-12 md:mb-16 px-4">
-              <p className="text-sm font-normal uppercase text-muted-foreground tracking-wider mb-3 font-heading">Featured Opportunities</p>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="up" delay={250}>
-            <div className="border border-brand-dark-blue/10 bg-brand-white p-8 text-center">
+            <div className="border border-white/10 bg-brand-dark-gray p-8 text-center">
               <div className="flex flex-col items-center gap-4">
-                <p className="text-lg font-normal text-brand-dark-blue font-heading">Featured opportunities are available upon request.</p>
-                <p className="text-muted-foreground max-w-xl">Contact us to learn about current acquisition targets across Asia, including pre-screened businesses with verified financials.</p>
-                <Link href="/contact" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
-                  Contact us to learn more <ArrowRight className="ml-2 h-4 w-4" />
+                <p className="text-lg font-normal text-white font-heading">View All Plans</p>
+                <p className="text-white/60 max-w-xl">Compare our weekly and monthly subscription options, see what&apos;s included, and find the plan that fits your driving habits.</p>
+                <Link href="/pricing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                  View pricing and plans <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
             </div>
           </FadeIn>
 
           <FadeIn direction="up" delay={300}>
-            <div className="border border-brand-dark-blue/10 border-t-0 bg-brand-white py-6 text-center">
-              <Link href="/contact" className="inline-flex items-center text-sm font-medium text-brand-dark-blue hover:text-brand-sky-blue transition-colors">
-                Get in Touch <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="border border-white/10 border-t-0 bg-brand-dark-gray py-6 text-center">
+              <Link href="/contact" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                Contact Us <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* Why Nobridge */}
-      <div className="border-t border-brand-dark-blue/10" />
-      <section className="py-20 md:py-24 bg-brand-dark-blue text-white section-lines-light">
+      {/* Why Castudio */}
+      <div className="border-t border-white/10" />
+      <section className="py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-brand-light-gray/70 tracking-wider mb-3 font-heading">Why Nobridge</p>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Why Castudio</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                The M&amp;A firm built for this region
+                The car care studio built different
               </h2>
             </div>
           </FadeIn>
@@ -415,104 +356,35 @@ export default function HomePage() {
           {/* Manifesto card - image left, content right */}
           <FadeIn direction="up" delay={100}>
             <div className="border border-white/15 flex flex-col md:flex-row">
-              {/* Left - Interactive globe */}
-              <div className="md:w-1/2 bg-white border-b md:border-b-0 md:border-r border-brand-dark-blue/10 flex items-center justify-center aspect-[4/3] md:aspect-square relative overflow-hidden">
-                <World
-                  data={[
-                    /* === Asian routes (dark blue #0D0D39) === */
-                    { order: 1, startLat: 1.3521, startLng: 103.8198, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.25, color: "#0D0D39" },
-                    { order: 1, startLat: -6.2088, startLng: 106.8456, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.15, color: "#0D0D39" },
-                    { order: 2, startLat: 3.139, startLng: 101.6869, endLat: 37.5665, endLng: 126.978, arcAlt: 0.25, color: "#0D0D39" },
-                    { order: 2, startLat: 13.7563, startLng: 100.5018, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.1, color: "#0D0D39" },
-                    { order: 3, startLat: 21.0278, startLng: 105.8342, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.15, color: "#0D0D39" },
-                    { order: 3, startLat: 14.5995, startLng: 120.9842, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.2, color: "#0D0D39" },
-                    { order: 4, startLat: 22.3193, startLng: 114.1694, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.1, color: "#0D0D39" },
-                    { order: 4, startLat: 35.6762, startLng: 139.6503, endLat: 37.5665, endLng: 126.978, arcAlt: 0.08, color: "#0D0D39" },
-                    { order: 5, startLat: 11.5564, startLng: 104.9282, endLat: 13.7563, endLng: 100.5018, arcAlt: 0.06, color: "#0D0D39" },
-                    { order: 5, startLat: 1.3521, startLng: 103.8198, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.08, color: "#0D0D39" },
-                    { order: 6, startLat: 19.076, startLng: 72.8777, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.25, color: "#0D0D39" },
-                    { order: 6, startLat: 3.139, startLng: 101.6869, endLat: 14.5995, endLng: 120.9842, arcAlt: 0.15, color: "#0D0D39" },
-                    { order: 7, startLat: 22.3193, startLng: 114.1694, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.2, color: "#0D0D39" },
-                    { order: 7, startLat: 37.5665, startLng: 126.978, endLat: -6.2088, endLng: 106.8456, arcAlt: 0.3, color: "#0D0D39" },
-                    { order: 8, startLat: 25.0343, startLng: 121.5645, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.2, color: "#0D0D39" },
-                    { order: 8, startLat: 16.8661, startLng: 96.1951, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.15, color: "#0D0D39" },
-                    { order: 9, startLat: 28.6139, startLng: 77.209, endLat: 3.139, endLng: 101.6869, arcAlt: 0.2, color: "#0D0D39" },
-                    { order: 9, startLat: 31.2304, startLng: 121.4737, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.1, color: "#0D0D39" },
-                    { order: 10, startLat: 39.9042, startLng: 116.4074, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.15, color: "#0D0D39" },
-                    { order: 10, startLat: -6.2088, startLng: 106.8456, endLat: 3.139, endLng: 101.6869, arcAlt: 0.08, color: "#0D0D39" },
-
-                    /* === Global routes (dark lines, white dots) === */
-                    { order: 1, startLat: 1.3521, startLng: 103.8198, endLat: 51.5074, endLng: -0.1278, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 2, startLat: 22.3193, startLng: 114.1694, endLat: 40.7128, endLng: -74.006, arcAlt: 0.55, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 3, startLat: 35.6762, startLng: 139.6503, endLat: 37.7749, endLng: -122.4194, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 3, startLat: -6.2088, startLng: 106.8456, endLat: 25.2048, endLng: 55.2708, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 4, startLat: 3.139, startLng: 101.6869, endLat: -33.8688, endLng: 151.2093, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 5, startLat: 1.3521, startLng: 103.8198, endLat: 48.8566, endLng: 2.3522, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 5, startLat: 22.3193, startLng: 114.1694, endLat: 52.52, endLng: 13.405, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 6, startLat: 35.6762, startLng: 139.6503, endLat: 34.0522, endLng: -118.2437, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 6, startLat: 37.5665, startLng: 126.978, endLat: 51.5074, endLng: -0.1278, arcAlt: 0.5, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 7, startLat: 1.3521, startLng: 103.8198, endLat: 47.6062, endLng: -122.3321, arcAlt: 0.55, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 7, startLat: -6.2088, startLng: 106.8456, endLat: -23.5505, endLng: -46.6333, arcAlt: 0.6, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 8, startLat: 51.5074, startLng: -0.1278, endLat: 40.7128, endLng: -74.006, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 8, startLat: 48.8566, startLng: 2.3522, endLat: 25.2048, endLng: 55.2708, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 9, startLat: 40.7128, startLng: -74.006, endLat: -23.5505, endLng: -46.6333, arcAlt: 0.4, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 9, startLat: 52.52, startLng: 13.405, endLat: 55.7558, endLng: 37.6173, arcAlt: 0.15, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 10, startLat: 37.7749, startLng: -122.4194, endLat: 19.4326, endLng: -99.1332, arcAlt: 0.2, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 10, startLat: 25.2048, startLng: 55.2708, endLat: -1.2921, endLng: 36.8219, arcAlt: 0.25, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 11, startLat: 51.5074, startLng: -0.1278, endLat: 43.6532, endLng: -79.3832, arcAlt: 0.3, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 11, startLat: -33.8688, startLng: 151.2093, endLat: -36.8485, endLng: 174.7633, arcAlt: 0.1, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 12, startLat: 34.0522, startLng: -118.2437, endLat: 41.8781, endLng: -87.6298, arcAlt: 0.15, color: "#0D0D39", dotColor: "#0D0D39" },
-                    { order: 12, startLat: 55.7558, startLng: 37.6173, endLat: 59.3293, endLng: 18.0686, arcAlt: 0.12, color: "#0D0D39", dotColor: "#0D0D39" },
-                  ]}
-                  globeConfig={{
-                    pointSize: 4,
-                    globeColor: "#F4F6FC",
-                    showAtmosphere: true,
-                    atmosphereColor: "#0D0D39",
-                    atmosphereAltitude: 0.1,
-                    emissive: "#F4F6FC",
-                    emissiveIntensity: 1.0,
-                    shininess: 0.05,
-                    polygonColor: "rgba(13,13,57,0.8)",
-                    ambientLight: "#ffffff",
-                    directionalLeftLight: "#ffffff",
-                    directionalTopLight: "#ffffff",
-                    pointLight: "#ffffff",
-                    arcTime: 1000,
-                    arcLength: 0.9,
-                    rings: 1,
-                    maxRings: 3,
-                    initialPosition: { lat: 1.3521, lng: 103.8198 },
-                    autoRotate: true,
-                    autoRotateSpeed: 0.5,
-                  }}
-                />
+              {/* Left - Placeholder image */}
+              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-square relative overflow-hidden">
+                <div className="w-full h-full bg-brand-dark-gray flex items-center justify-center"><span className="text-white/30 text-sm">[IMAGE: Castudio workshop interior]</span></div>
               </div>
               {/* Right - Quote, body, stats */}
-              <div className="md:w-1/2 bg-white p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-brand-dark-blue leading-snug pb-6 sm:pb-8">
-                  &ldquo;Traditional M&amp;A firms weren&apos;t built for Asian SMEs. We were.&rdquo;
+              <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
+                  &ldquo;Most car washes cut corners. We don&apos;t.&rdquo;
                 </p>
-                <div className="border-t border-brand-dark-blue/10" />
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed text-justify py-6 sm:py-8">
-                  Most global advisory firms ignore deals under $100M. Local brokers lack the buyer networks and process to execute efficiently. Nobridge fills this gap, combining deep regional expertise with technology-enabled deal execution and a global buyer network that most mid-market firms can&apos;t access.
+                <div className="border-t border-white/10" />
+                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
+                  At Castudio, every wash follows a strict multi-step process using pH-balanced shampoos, microfiber mitts, and premium finishing products. Our technicians are trained, not just hired. We invest in the best tools and products because your car deserves more than a quick rinse with a dirty sponge.
                 </p>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed text-justify pb-6 sm:pb-8">
-                  We work exclusively with founders, family businesses, and institutional owners across Asia, guiding them through every stage of the transaction,from preparation and positioning to negotiation and close. Our process is built around discretion, speed, and outcomes that reflect the true value of what you&apos;ve built.
+                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
+                  We built Castudio because we were tired of car washes that damage paint, skip steps, and rush through every job. Whether it&apos;s a weekly wash or a full detail, we treat every car like it&apos;s our own. That&apos;s not a tagline — it&apos;s how we operate, every single day.
                 </p>
-                <div className="flex flex-col sm:flex-row border-t border-brand-dark-blue/10 pt-6 sm:pt-8">
+                <div className="flex flex-col sm:flex-row border-t border-white/10 pt-6 sm:pt-8">
                   {[
-                    { stat: "3-6 months", label: "Average time to LOI", icon: Clock },
-                    { stat: "500+", label: "Qualified buyer network", icon: UsersRound },
-                    { stat: "AI-Enabled", label: "Deal infrastructure", icon: Brain },
+                    { stat: "30 min", label: "Avg service time", icon: Clock },
+                    { stat: "500+", label: "Cars washed monthly", icon: UsersRound },
+                    { stat: "Premium", label: "Products only", icon: Sparkles },
                   ].map((item, index) => (
                     <div key={item.stat} className={cn(
-                      "flex-1 py-4 sm:py-0 sm:px-6 text-center border-brand-dark-blue/10 flex flex-col items-center",
+                      "flex-1 py-4 sm:py-0 sm:px-6 text-center border-white/10 flex flex-col items-center",
                       index > 0 && "border-t sm:border-t-0 sm:border-l"
                     )}>
-                      <item.icon className="h-5 w-5 text-brand-dark-blue/70 mb-3" strokeWidth={1.5} />
-                      <p className="text-xl font-medium text-brand-dark-blue">{item.stat}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{item.label}</p>
+                      <item.icon className="h-5 w-5 text-white/70 mb-3" strokeWidth={1.5} />
+                      <p className="text-xl font-medium text-white">{item.stat}</p>
+                      <p className="text-xs text-white/60 mt-1">{item.label}</p>
                     </div>
                   ))}
                 </div>
@@ -521,23 +393,23 @@ export default function HomePage() {
           </FadeIn>
 
           {/* 2x2 feature grid - separate from manifesto */}
-          <div className="grid grid-cols-1 md:grid-cols-2 mt-10 border border-brand-dark-blue/10">
+          <div className="grid grid-cols-1 md:grid-cols-2 mt-10 border border-white/10">
             {[
-              { title: "Regional Expertise", body: "Built by practitioners with deep roots in Indonesian and Malaysian markets. We understand local business culture, regulatory environments, and what makes a deal actually close.", icon: Globe },
-              { title: "Technology-Enabled Process", body: "Our systems streamline deal sourcing, buyer outreach, and due diligence coordination, allowing our advisory team to move faster and match more effectively than traditional firms.", icon: Zap },
-              { title: "Confidential by Design", body: "Every deal is handled with strict confidentiality protocols. NDA-gated information flow, anonymous teasers, and controlled buyer access keep your business protected throughout.", icon: ShieldCheck },
-              { title: "Aligned Incentives", body: "Success-fee based pricing means we only win when you do. Optional retainer structures for buyers ensure dedicated sourcing without misaligned incentives.", icon: HandCoins },
+              { title: "Premium Products", body: "We only use pH-balanced shampoos, professional-grade polishes, and ceramic coatings from trusted brands. No cheap shortcuts, no harsh chemicals that damage your paint over time.", icon: Sparkles },
+              { title: "Trained Technicians", body: "Every team member goes through hands-on training before touching a customer's car. We teach technique, product knowledge, and the Castudio standard of care.", icon: Wrench },
+              { title: "Flexible Plans", body: "Weekly washes, monthly details, or one-off services — we fit around your schedule. Subscribers get priority booking, member pricing, and WhatsApp scheduling.", icon: CreditCard },
+              { title: "Satisfaction Guaranteed", body: "If you're not happy with the result, we'll redo it on the spot. Every car goes through our quality inspection before handover because we don't release work we're not proud of.", icon: Star },
             ].map((card, index) => (
               <FadeIn key={card.title} delay={(index + 2) * 100}>
                 <div className={cn(
-                  "bg-white p-5 sm:p-8 md:p-10 h-full flex flex-col",
-                  (index === 1) && "md:border-l border-brand-dark-blue/10",
-                  (index === 2) && "border-t border-brand-dark-blue/10",
-                  (index === 3) && "border-t md:border-l border-brand-dark-blue/10"
+                  "bg-brand-dark-gray p-5 sm:p-8 md:p-10 h-full flex flex-col",
+                  (index === 1) && "md:border-l border-white/10",
+                  (index === 2) && "border-t border-white/10",
+                  (index === 3) && "border-t md:border-l border-white/10"
                 )}>
-                  <card.icon className="h-5 w-5 text-brand-dark-blue/70 mb-4" strokeWidth={1.5} />
-                  <h4 className="text-lg font-normal text-brand-dark-blue font-heading mb-3">{card.title}</h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed text-justify">{card.body}</p>
+                  <card.icon className="h-5 w-5 text-white/70 mb-4" strokeWidth={1.5} />
+                  <h4 className="text-lg font-normal text-white font-heading mb-3">{card.title}</h4>
+                  <p className="text-white/60 text-sm leading-relaxed text-justify">{card.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -547,26 +419,24 @@ export default function HomePage() {
 
 
       {/* Final Call to Action Section */}
-      <div className="border-t border-brand-dark-blue/10" />
-      <section className="py-12 bg-brand-white section-lines-dark">
+      <div className="border-t border-white/10" />
+      <section className="py-12 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="border border-brand-dark-blue/10">
-              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-0 md:aspect-[21/9] text-center overflow-hidden" style={{ backgroundImage: 'url(/assets/cta-cityscape-light.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+            <div className="border border-white/10">
+              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <div className="border border-brand-dark-blue/20 bg-white/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
-                    <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-brand-dark-blue mb-4 font-heading">Speak Wi<span style={{ fontSize: '1.06em' }}>t</span>h Our <span style={{ fontSize: '1.06em' }}>T</span>eam</h2>
-                    <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                      Whether you&apos;re planning an exit, seeking an acquisition, or exploring strategic options, our advisors are ready to help.
-                    </p>
-                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                      <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-dark-blue text-brand-white hover:bg-brand-dark-blue/90 h-11 py-3 px-12 text-base">
-                        Get Started
-                      </Link>
-                      <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-dark-blue text-brand-dark-blue hover:bg-brand-dark-blue/5 h-11 py-3 px-8 text-base">
-                        Contact Our Team
-                      </Link>
-                    </div>
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
+                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel.
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base">
+                      Book Now
+                    </Link>
+                    <Link href="/contact" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base">
+                      Contact Our Team
+                    </Link>
                   </div>
                 </div>
               </div>

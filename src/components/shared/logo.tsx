@@ -18,9 +18,9 @@ export function Logo({ size = 'xl', forceTheme }: LogoProps) {
 
   const fontSize = fontSizes[size] || fontSizes.xl;
 
-  // forceTheme='light' means light background → dark text
+  // forceTheme='light' means light background → orange text
   // forceTheme='dark' means dark background → white text
-  const textColor = forceTheme === 'dark' ? 'text-white' : 'text-brand-dark-blue';
+  const textColor = forceTheme === 'light' ? 'text-brand-orange' : 'text-white';
 
   return (
     <Link href="/" className="flex items-center" aria-label="Castudio Home">
