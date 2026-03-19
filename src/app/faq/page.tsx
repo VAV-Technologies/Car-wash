@@ -5,95 +5,33 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Link from "next/link";
-import { Droplets, Sparkles, DollarSign, Phone } from "lucide-react";
+import { HelpCircle, DollarSign, CalendarCheck, ShieldCheck, Droplets } from "lucide-react";
 import { FadeIn } from "@/components/ui/fade-in";
 
-const aboutFAQs = [
+const generalFAQs = [
   {
-    sectionTitle: "About Castudio",
-    icon: Droplets,
+    sectionTitle: "General Questions",
+    icon: HelpCircle,
     questions: [
       {
-        q: "What is Castudio?",
-        a: "Castudio is a premium car wash and detailing studio in Indonesia. We combine meticulous hand-wash techniques with high-end detailing services to deliver showroom-quality results every time. Our mission is to set a new standard for vehicle care in Indonesia.",
+        q: "How do I book?",
+        a: "Tap the WhatsApp button, tell us the service you want, your preferred date and time, and your location. We will confirm your booking within 30 minutes.",
       },
       {
-        q: "What services do you offer?",
-        a: "We offer a full range of car care services including express wash, full wash, interior deep clean, exterior polish, paint correction, ceramic coating, and premium detail packages. Whether you need a quick refresh or a complete restoration, we have a service tailored to your needs.",
+        q: "Do I need to provide water or electricity?",
+        a: "No. We bring our own 500-litre water tank, generator, and all equipment needed. If you have a garden hose available we appreciate it, but it is not required.",
       },
       {
-        q: "What products do you use?",
-        a: "We exclusively use premium, pH-balanced, paint-safe products from trusted international brands. Our shampoos, coatings, and polishes are carefully selected to clean effectively without stripping wax, damaging clear coat, or leaving residue. Every product we use is safe for all paint types and finishes.",
+        q: "Where do you operate?",
+        a: "We serve all of JABODETABEK — Jakarta, Bogor, Depok, Tangerang, and Bekasi. We use zone-based scheduling to keep service prompt. Check our Coverage Area page for full details.",
       },
       {
-        q: "Where are you located?",
-        a: "Our flagship studio is in Jakarta, with a second studio in Bandung. We are expanding to Surabaya soon. Each location features comfortable waiting areas, premium equipment, and trained detailing specialists.",
+        q: "Can you wash at my apartment or office parking?",
+        a: "Yes. We regularly service apartment basements, office towers, and residential driveways. Anywhere we can safely access your vehicle.",
       },
       {
-        q: "Do you offer mobile service?",
-        a: "Yes, we offer mobile car wash and detailing for select services and subscription plans. Our mobile team brings the same premium products and attention to detail directly to your home or office. Mobile service availability depends on your location and the service requested.",
-      },
-    ],
-  },
-];
-
-const washFAQs = [
-  {
-    sectionTitle: "Car Wash Services",
-    icon: Droplets,
-    questions: [
-      {
-        q: "How long does a wash take?",
-        a: "Our Express Wash takes approximately 30 minutes and covers a thorough exterior hand wash, rinse, and dry. Our Full Wash takes around 45 minutes and includes exterior wash, tire and rim cleaning, window cleaning, and a quick interior wipe-down. Exact times may vary depending on vehicle size and condition.",
-      },
-      {
-        q: "Is hand wash really better than automated?",
-        a: "Yes. Automated car washes use spinning brushes and harsh chemicals that can cause swirl marks, micro-scratches, and paint damage over time. Our professional hand wash uses soft microfiber mitts, paint-safe shampoos, and the two-bucket method to minimize contact damage and preserve your paint's finish for years.",
-      },
-      {
-        q: "Can I wait while my car is washed?",
-        a: "Absolutely. All our studios feature comfortable waiting areas with complimentary Wi-Fi, refreshments, and charging stations. You can relax, work, or watch the team in action through our viewing windows. Many of our clients enjoy the experience as part of their routine.",
-      },
-      {
-        q: "Do you wash motorcycles?",
-        a: "We are currently focused exclusively on cars to ensure the highest quality of service. We want to perfect every aspect of car care before expanding to other vehicle types. Stay tuned for future updates as we grow our service offerings.",
-      },
-      {
-        q: "What if it rains right after my wash?",
-        a: "We offer a free re-wash within 24 hours if it rains after your service. Simply bring your car back to the same studio with your receipt, and we will wash it again at no charge. This guarantee applies to all wash packages.",
-      },
-      {
-        q: "Do you clean the engine bay?",
-        a: "Engine bay cleaning is available as an add-on service for any wash package, or it is included in our Premium Detail package. Our team uses specialized degreasers and protective dressings to safely clean and protect your engine bay without risking damage to electrical components.",
-      },
-    ],
-  },
-];
-
-const detailingFAQs = [
-  {
-    sectionTitle: "Car Detailing",
-    icon: Sparkles,
-    questions: [
-      {
-        q: "What's the difference between a wash and detailing?",
-        a: "A wash cleans the surface of your vehicle, removing dirt, dust, and grime. Detailing goes much deeper — it restores, corrects, and protects your vehicle inside and out. This includes paint correction to remove scratches and swirl marks, interior deep cleaning, leather conditioning, and applying protective coatings. Think of a wash as maintenance and detailing as restoration.",
-      },
-      {
-        q: "How long does detailing take?",
-        a: "Detailing typically takes between 2 and 8 hours depending on the package and the condition of your vehicle. A basic detail may take 2-3 hours, while a full correction and ceramic coating package can take a full day. We never rush the process — quality results require proper time and attention.",
-      },
-      {
-        q: "How often should I detail my car?",
-        a: "We recommend a full detail every 3 to 6 months depending on your driving conditions, parking situation, and how well the vehicle is maintained between details. Cars parked outdoors in Indonesia's tropical climate may benefit from more frequent detailing. Regular washes between details help extend the results.",
-      },
-      {
-        q: "What is ceramic coating?",
-        a: "Ceramic coating is a liquid polymer that chemically bonds to your vehicle's paint, creating a durable, hydrophobic layer of protection. It repels water, UV rays, bird droppings, tree sap, and other contaminants. A properly applied ceramic coating lasts 2 or more years and makes your car significantly easier to clean and maintain.",
-      },
-      {
-        q: "Is ceramic coating worth it?",
-        a: "Yes, especially in Indonesia's tropical climate where intense sun, heavy rain, and humidity take a constant toll on your paint. Ceramic coating provides long-lasting protection against UV damage, oxidation, water spots, and chemical staining. It also reduces the need for frequent polishing and keeps your car looking glossy with minimal effort.",
+        q: "How long does each service take?",
+        a: "Standard takes approximately 2 hours, Professional approximately 3 hours, and Elite approximately 4 hours.",
       },
     ],
   },
@@ -101,60 +39,106 @@ const detailingFAQs = [
 
 const pricingFAQs = [
   {
-    sectionTitle: "Subscriptions & Pricing",
+    sectionTitle: "Pricing & Payment",
     icon: DollarSign,
     questions: [
       {
-        q: "How do subscription plans work?",
-        a: "Choose your preferred wash frequency — weekly, bi-weekly, or monthly — and pay a fixed monthly fee. Once subscribed, you can book your wash anytime through our website or WhatsApp. Subscriptions offer significant savings compared to individual washes and include priority booking.",
-      },
-      {
-        q: "Is there a contract?",
-        a: "No contracts and no commitments. All our subscription plans are month-to-month, and you can cancel anytime before your next billing cycle with no penalties or cancellation fees. We believe in earning your loyalty through quality, not locking you in.",
-      },
-      {
-        q: "Can I upgrade or downgrade my plan?",
-        a: "Yes, you can change your subscription plan at any time. Upgrades take effect immediately, and downgrades take effect at the start of your next billing cycle. Simply contact us via WhatsApp or email to make changes.",
-      },
-      {
-        q: "Do subscribers get priority?",
-        a: "Yes. Subscribers enjoy priority booking, shorter wait times, and exclusive perks such as complimentary interior wipe-downs and discounts on detailing services. Our subscription members are always first in line.",
+        q: "Why are you more expensive than other car washes?",
+        a: "We use premium, professional-grade products — never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, quality chemicals. You get what you pay for.",
       },
       {
         q: "What payment methods do you accept?",
-        a: "We accept bank transfer (BCA, Mandiri, BNI), all major credit and debit cards, and popular e-wallets including GoPay, OVO, Dana, and ShopeePay. For subscriptions, we set up automatic recurring payments for your convenience.",
+        a: "Bank transfer (BCA, Mandiri, BNI, BRI) and e-wallets (GoPay, OVO, DANA). For one-time bookings, you pay after the service is completed. For subscriptions, billing is monthly at the start of each cycle.",
+      },
+      {
+        q: "Is there a cancellation fee?",
+        a: "For one-time bookings, cancel at least 12 hours ahead and there is no fee. For subscriptions, we require 30 days notice after the minimum commitment period. Early termination of a 6-month plan forfeits the bonus service.",
       },
     ],
   },
 ];
 
-const bookingFAQs = [
+const subscriptionFAQs = [
   {
-    sectionTitle: "Booking & Support",
-    icon: Phone,
+    sectionTitle: "Subscriptions",
+    icon: CalendarCheck,
     questions: [
       {
-        q: "How do I book a service?",
-        a: "You can book online at castudio.co, through WhatsApp, or by calling us directly. Simply choose your service, preferred date and time, and location. You will receive a confirmation with all the details. Walk-ins are also welcome, but booking in advance guarantees your spot.",
+        q: "Can I change my subscription tier?",
+        a: "Yes. You can upgrade or downgrade at the next billing cycle. Just give us 7 days notice before your renewal date.",
       },
       {
-        q: "Can I cancel or reschedule?",
-        a: "Yes, you can cancel or reschedule free of charge up to 2 hours before your appointment. Changes made less than 2 hours before your scheduled time may be subject to a small rescheduling fee. Contact us via WhatsApp or phone to make changes.",
+        q: "Do unused washes roll over to the next month?",
+        a: "No. Use all your sessions each month — your car will thank you.",
       },
       {
-        q: "What are your operating hours?",
-        a: "We are open daily from 8am to 6pm, including weekends and most public holidays. Last wash appointments are accepted at 5pm for express wash and 4pm for full wash. Detailing appointments should be booked for morning slots to allow adequate time.",
+        q: "What is included in the 6-month bonus?",
+        a: "A qualified mechanic visits your home for a 30-point inspection covering engine, brakes, battery, tires, fluids, suspension, lights, and belts — plus a full oil change (4 litres + filter). This service is worth Rp 400,000 to Rp 500,000.",
       },
       {
-        q: "Do you offer gift cards?",
-        a: "Yes, we offer gift cards for any service or any custom amount. Gift cards are available for purchase online or at any of our studios. They make a perfect gift for car enthusiasts and can be used for any service we offer, including detailing packages and subscriptions.",
-      },
-      {
-        q: "How do I contact support?",
-        a: "You can reach our support team via WhatsApp, email at hello@castudio.co, or by phone at +62 816 10 4334 during business hours (8am-6pm daily). We aim to respond to all inquiries within a few hours during operating hours.",
+        q: "Can the Unlimited plan be used for multiple cars?",
+        a: "No. Each Unlimited subscription is locked to one vehicle, identified by the license plate you register at signup. Add a separate subscription for each additional car.",
       },
     ],
   },
+];
+
+const qualityFAQs = [
+  {
+    sectionTitle: "Quality & Guarantees",
+    icon: ShieldCheck,
+    questions: [
+      {
+        q: "What if I am not satisfied with the result?",
+        a: "We offer a satisfaction guarantee. Contact us within 24 hours and we will come back and redo the service free of charge.",
+      },
+      {
+        q: "What products do you use?",
+        a: "Professional-grade pH-neutral shampoos, glass cleaners, tar removers, clay bars, and sealant coatings. We never use dish soap, generic all-purpose cleaners, or reused rags. Every car gets fresh microfiber towels.",
+      },
+      {
+        q: "Will a hand wash scratch my paint?",
+        a: "We use the two-bucket method with grit guards, premium microfiber mitts, and proper washing technique. This is the same method professional detailers use worldwide. It is the single-bucket street washes with dirty rags that cause scratches and swirl marks.",
+      },
+    ],
+  },
+];
+
+const serviceDetailFAQs = [
+  {
+    sectionTitle: "Service Details",
+    icon: Droplets,
+    questions: [
+      {
+        q: "What is included in the Standard wash?",
+        a: "Full foam pre-wash, two-bucket hand wash, interior clean and vacuum, tire polish, body spot remover, and engine bay cleaning.",
+      },
+      {
+        q: "What is the difference between Standard and Professional?",
+        a: "Professional adds glass spot remover for water scale and tar remover for rough, contaminated paint. If your windshield is hazy or your paint feels rough to the touch, Professional is the right choice.",
+      },
+      {
+        q: "What is the Elite service?",
+        a: "Everything in Professional plus clay bar decontamination and a premium sealant coating that provides 4 to 8 weeks of hydrophobic protection. Think of it as a mini-detail.",
+      },
+      {
+        q: "Do you wash motorcycles?",
+        a: "Not currently. We are focused exclusively on cars to deliver the highest quality of service.",
+      },
+      {
+        q: "What about rainy days?",
+        a: "Cars actually get dirtier in the rain — acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
+      },
+    ],
+  },
+];
+
+const allSections = [
+  { data: generalFAQs, key: "general", bg: "bg-brand-dark-gray" },
+  { data: pricingFAQs, key: "pricing", bg: "bg-brand-black" },
+  { data: subscriptionFAQs, key: "subscriptions", bg: "bg-brand-dark-gray" },
+  { data: qualityFAQs, key: "quality", bg: "bg-brand-black" },
+  { data: serviceDetailFAQs, key: "details", bg: "bg-brand-dark-gray" },
 ];
 
 export default function FAQPage() {
@@ -169,230 +153,59 @@ export default function FAQPage() {
                 Frequently Asked Questions
               </h1>
               <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
-                Common questions about our car wash services, detailing, subscriptions, and more.
+                Everything you need to know about our mobile car wash service across JABODETABEK.
               </p>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* About FAQs */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray/50 section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex items-center gap-4 mb-12 px-4">
-              <Droplets className="h-8 w-8 text-brand-orange" />
-              <div>
-                <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
-                  About Castudio
-                </h2>
-                <p className="text-white/60 mt-1">Who we are, what we do, and where to find us.</p>
-              </div>
-            </div>
-          </FadeIn>
+      {allSections.map((section, sectionIdx) => {
+        const category = section.data[0];
+        const Icon = category.icon;
+        return (
+          <div key={section.key}>
+            <div className="border-t border-white/10" />
+            <section className={`w-full py-20 md:py-24 ${section.bg} section-lines-dark`}>
+              <div className="container mx-auto">
+                <FadeIn direction="up">
+                  <div className="flex items-center gap-4 mb-12 px-4">
+                    <Icon className="h-8 w-8 text-brand-orange" />
+                    <div>
+                      <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
+                        {category.sectionTitle}
+                      </h2>
+                    </div>
+                  </div>
+                </FadeIn>
 
-          <div className="space-y-12">
-            {aboutFAQs.map((category) => (
-              <FadeIn key={category.sectionTitle}>
-                <div className="px-4">
-                  <Accordion type="single" collapsible className="w-full space-y-3">
-                    {category.questions.map((faq, index) => (
-                      <AccordionItem
-                        value={`about-${index}`}
-                        key={index}
-                        className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
-                      >
-                        <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+                <div className="space-y-12">
+                  <FadeIn>
+                    <div className="px-4">
+                      <Accordion type="single" collapsible className="w-full space-y-3">
+                        {category.questions.map((faq, index) => (
+                          <AccordionItem
+                            value={`${section.key}-${index}`}
+                            key={index}
+                            className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
+                          >
+                            <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
+                              {faq.q}
+                            </AccordionTrigger>
+                            <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
+                              {faq.a}
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </div>
+                  </FadeIn>
                 </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-white/10" />
-
-      {/* Wash FAQs */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex items-center gap-4 mb-12 px-4">
-              <Droplets className="h-8 w-8 text-brand-orange" />
-              <div>
-                <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
-                  Car Wash Services
-                </h2>
-                <p className="text-white/60 mt-1">Everything about our wash process and options.</p>
               </div>
-            </div>
-          </FadeIn>
-
-          <div className="space-y-12">
-            {washFAQs.map((category) => (
-              <FadeIn key={category.sectionTitle}>
-                <div className="px-4">
-                  <Accordion type="single" collapsible className="w-full space-y-3">
-                    {category.questions.map((faq, index) => (
-                      <AccordionItem
-                        value={`wash-${index}`}
-                        key={index}
-                        className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
-                      >
-                        <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </FadeIn>
-            ))}
+            </section>
           </div>
-        </div>
-      </section>
-
-      <div className="border-t border-white/10" />
-
-      {/* Detailing FAQs */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray/50 section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex items-center gap-4 mb-12 px-4">
-              <Sparkles className="h-8 w-8 text-brand-orange" />
-              <div>
-                <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
-                  Car Detailing
-                </h2>
-                <p className="text-white/60 mt-1">Paint correction, ceramic coating, and full restoration.</p>
-              </div>
-            </div>
-          </FadeIn>
-
-          <div className="space-y-12">
-            {detailingFAQs.map((category) => (
-              <FadeIn key={category.sectionTitle}>
-                <div className="px-4">
-                  <Accordion type="single" collapsible className="w-full space-y-3">
-                    {category.questions.map((faq, index) => (
-                      <AccordionItem
-                        value={`detailing-${index}`}
-                        key={index}
-                        className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
-                      >
-                        <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-white/10" />
-
-      {/* Pricing FAQs */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex items-center gap-4 mb-12 px-4">
-              <DollarSign className="h-8 w-8 text-brand-orange" />
-              <div>
-                <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
-                  Subscriptions & Pricing
-                </h2>
-                <p className="text-white/60 mt-1">Plans, payments, and how to save.</p>
-              </div>
-            </div>
-          </FadeIn>
-
-          <div className="space-y-12">
-            {pricingFAQs.map((category) => (
-              <FadeIn key={category.sectionTitle}>
-                <div className="px-4">
-                  <Accordion type="single" collapsible className="w-full space-y-3">
-                    {category.questions.map((faq, index) => (
-                      <AccordionItem
-                        value={`pricing-${index}`}
-                        key={index}
-                        className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
-                      >
-                        <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-white/10" />
-
-      {/* Booking FAQs */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray/50 section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex items-center gap-4 mb-12 px-4">
-              <Phone className="h-8 w-8 text-brand-orange" />
-              <div>
-                <h2 className="text-2xl md:text-3xl font-normal text-white font-heading">
-                  Booking & Support
-                </h2>
-                <p className="text-white/60 mt-1">How to book, reschedule, and get help.</p>
-              </div>
-            </div>
-          </FadeIn>
-
-          <div className="space-y-12">
-            {bookingFAQs.map((category) => (
-              <FadeIn key={category.sectionTitle}>
-                <div className="px-4">
-                  <Accordion type="single" collapsible className="w-full space-y-3">
-                    {category.questions.map((faq, index) => (
-                      <AccordionItem
-                        value={`booking-${index}`}
-                        key={index}
-                        className="border border-white/10 px-4 data-[state=open]:bg-white/5 transition-colors"
-                      >
-                        <AccordionTrigger className="text-left hover:no-underline text-base font-medium text-white py-4">
-                          {faq.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-white/60 text-base leading-relaxed pb-4">
-                          {faq.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+        );
+      })}
 
       {/* CTA */}
       <div className="border-t border-white/10" />
@@ -402,17 +215,19 @@ export default function FAQPage() {
             <div className="relative border border-white/10 bg-brand-dark-gray py-36 md:py-48 px-8 md:px-16 text-center overflow-hidden">
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">
-                  Still Have Questions?
+                  Still have questions? We&apos;re happy to help.
                 </h2>
                 <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-10 text-center">
-                  Reach out to our team. We are happy to help with any questions about our services.
+                  Reach out to our team on WhatsApp and we will get back to you quickly.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                   <Link
-                    href="/contact"
+                    href="https://wa.me/62816104334"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                   >
-                    Contact Us
+                    Message Us on WhatsApp
                   </Link>
                 </div>
               </div>

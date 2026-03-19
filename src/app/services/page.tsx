@@ -2,178 +2,120 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
-import { Sparkles, Users, CalendarCheck, ShieldCheck, Droplets, ArrowRight, Star } from "lucide-react";
+import { Check, Sparkles, Droplets, ShieldCheck, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Our Services",
+  title: "One-Time Wash Services",
   description:
-    "Professional car wash and detailing services. From express wash to premium ceramic coating, Castudio delivers expert car care in Indonesia.",
+    "Premium mobile car wash delivered to your doorstep across JABODETABEK. Three service tiers from Rp 339,000. Professional products, two-bucket method, trained technicians.",
 };
 
-const services = [
+/* ------------------------------------------------------------------ */
+/*  Data                                                               */
+/* ------------------------------------------------------------------ */
+
+const WA_BASE = "https://wa.me/62816104334";
+
+const tiers = [
   {
-    num: "01",
-    title: "Express Wash",
-    price: "Rp 50.000",
-    duration: "30 min",
+    name: "Standard",
+    tagline: "The Thorough Clean",
+    price: "Rp 339,000",
+    duration: "~2 hours",
+    bg: "bg-brand-dark-gray",
     description:
-      "Quick exterior and interior clean for everyday maintenance. Perfect for busy schedules when your car needs a fast refresh.",
-    tags: ["Exterior Rinse", "Interior Vacuum", "Window Clean", "Tire Dress"],
-  },
-  {
-    num: "02",
-    title: "Full Wash",
-    price: "Rp 85.000",
-    duration: "45 min",
-    description:
-      "Comprehensive wash with tire dressing, glass cleaning, and a thorough interior wipe-down. The complete standard care package.",
-    tags: [
-      "Full Exterior",
-      "Interior Detail",
-      "Glass Polish",
-      "Tire & Rim",
-      "Air Freshener",
+      "Everything your car needs to look and feel fresh. Our Standard wash goes far beyond the typical street wash \u2014 we bring professional-grade foam wash, interior deep clean, engine bay attention, and spot treatment to your doorstep. This is our entry level, but there\u2019s nothing basic about it.",
+    includes: [
+      "Full foam pre-wash to loosen dirt and grime",
+      "Two-bucket hand wash with premium pH-neutral shampoo",
+      "Complete interior cleaning and vacuum",
+      "Tire polish and rim cleaning",
+      "Body spot remover (water spots, stains, encrusted marks)",
+      "Engine bay cleaning",
     ],
+    cta: "Book Standard Wash",
+    href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).`,
   },
   {
-    num: "03",
-    title: "Interior Deep Clean",
-    price: "Rp 250.000",
-    duration: "2-3 hrs",
+    name: "Professional",
+    tagline: "The Deep Restoration",
+    price: "Rp 569,000",
+    duration: "~3 hours",
+    bg: "bg-brand-black",
     description:
-      "Fabric and leather shampoo, dashboard detailing, and odor removal. Restores your cabin to showroom condition.",
-    tags: [
-      "Fabric Shampoo",
-      "Leather Care",
-      "Dashboard Detail",
-      "Odor Removal",
-      "Deep Vacuum",
+      "Everything in Standard, plus specialized treatments for the two biggest enemies of cars in Jakarta: hard water scale on your windows and road tar on your paint. If your windshield looks hazy or your paint feels rough, this is your service.",
+    includes: [
+      "Everything in Standard",
+      "Glass and window spot remover (water scale, mineral deposits)",
+      "Tar remover treatment (asphalt, road tar, adhesive residue)",
     ],
+    cta: "Book Professional Wash",
+    href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).`,
   },
   {
-    num: "04",
-    title: "Exterior Polish",
-    price: "Rp 350.000",
-    duration: "3-4 hrs",
+    name: "Elite",
+    tagline: "The Full Transformation",
+    price: "Rp 919,000",
+    duration: "~4 hours",
+    bg: "bg-brand-dark-gray",
     description:
-      "Clay bar treatment, single-stage machine polish, and hand wax application. Removes swirl marks and restores paint depth.",
-    tags: [
-      "Clay Bar",
-      "Single-Stage Polish",
-      "Hand Wax",
-      "Paint Prep",
-      "Swirl Removal",
+      "Our most comprehensive single-visit service. Everything in Professional, plus clay bar decontamination that makes your paint glass-smooth and a premium sealant coating that restores deep gloss and protects for 4\u20138 weeks. This is a mini-detail \u2014 your car will look like it just rolled off the showroom floor.",
+    includes: [
+      "Everything in Professional",
+      "Full clay bar decontamination",
+      "Premium sealant protection coating (4\u20138 week hydrophobic shield)",
     ],
+    cta: "Book Elite Wash",
+    href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).`,
   },
-  {
-    num: "05",
-    title: "Ceramic Coating",
-    price: "Rp 1.500.000",
-    duration: "6-8 hrs",
-    description:
-      "Multi-stage paint correction followed by professional ceramic protection. Hydrophobic finish with up to two years of UV shield.",
-    tags: [
-      "Paint Correction",
-      "Ceramic Coat",
-      "UV Protection",
-      "Hydrophobic",
-      "2-Year Shield",
-    ],
-  },
-  {
-    num: "06",
-    title: "Premium Detail",
-    price: "Rp 2.500.000",
-    duration: "Full day",
-    description:
-      "Full interior and exterior restoration. Engine bay cleaning, paint correction, ceramic finish, and complete interior renovation.",
-    tags: [
-      "Full Restoration",
-      "Engine Bay",
-      "Interior Reno",
-      "Paint Correction",
-      "Ceramic Finish",
-    ],
-  },
+] as const;
+
+const comparisonFeatures = [
+  { label: "Foam Pre-Wash", standard: true, professional: true, elite: true },
+  { label: "Hand Wash (Two-Bucket)", standard: true, professional: true, elite: true },
+  { label: "Interior Clean & Vacuum", standard: true, professional: true, elite: true },
+  { label: "Tire Polish & Rim Clean", standard: true, professional: true, elite: true },
+  { label: "Body Spot Remover", standard: true, professional: true, elite: true },
+  { label: "Engine Bay Clean", standard: true, professional: true, elite: true },
+  { label: "Glass Spot Remover", standard: false, professional: true, elite: true },
+  { label: "Tar Remover", standard: false, professional: true, elite: true },
+  { label: "Clay Bar Decontamination", standard: false, professional: false, elite: true },
+  { label: "Sealant Coating", standard: false, professional: false, elite: true },
 ];
 
-const steps = [
+const differentiators = [
   {
-    num: "01",
-    title: "Book your slot",
-    body: "Pick a date, choose your service, and reserve your spot online or via WhatsApp. We confirm within minutes.",
-  },
-  {
-    num: "02",
-    title: "We get to work",
-    body: "Drop off your car or let us come to you. Our trained technicians follow a detailed, step-by-step process for every service.",
-  },
-  {
-    num: "03",
-    title: "Quality inspection",
-    body: "Every vehicle goes through a final multi-point inspection before handover. We check every surface, every panel, every detail.",
-  },
-  {
-    num: "04",
-    title: "Drive away happy",
-    body: "Pick up your car in pristine condition. Not satisfied? We will redo it on the spot, no questions asked.",
-  },
-];
-
-const whyUs = [
-  {
-    title: "Premium Products",
-    body: "We use only professional-grade chemicals and coatings sourced from trusted international brands. No shortcuts, no cheap substitutes.",
     icon: Sparkles,
+    title: "Premium Products Only",
+    body: "Professional-grade chemicals and coatings from trusted brands \u2014 not diluted bulk chemicals from the nearest supplier.",
   },
   {
-    title: "Expert Technicians",
-    body: "Every team member is trained and certified in detailing techniques. Consistent quality on every car, every time.",
-    icon: Users,
+    icon: Droplets,
+    title: "Two-Bucket Method",
+    body: "Separate wash and rinse buckets with grit guards on every job. This prevents swirl marks and paint damage that single-bucket washes cause.",
   },
   {
-    title: "Flexible Plans",
-    body: "From one-off washes to monthly subscriptions, we offer plans that fit your schedule and budget. No lock-in contracts.",
-    icon: CalendarCheck,
-  },
-  {
-    title: "Guaranteed Results",
-    body: "If you are not completely satisfied with the result, we will redo the service at no extra charge. Your car, our reputation.",
     icon: ShieldCheck,
+    title: "Trained Technicians",
+    body: "Every technician is trained on proper wash technique, paint decontamination, and sealant application before they touch your car.",
+  },
+  {
+    icon: MapPin,
+    title: "Total Convenience",
+    body: "Home, office, apartment \u2014 we come to you across JABODETABEK. All equipment, water, and power included. You don\u2019t lift a finger.",
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "I have tried every car wash in Jakarta. Castudio is the only one where I never have to double-check their work. Spotless every single time.",
-    name: "Andi Prasetyo",
-    car: "BMW 3 Series",
-  },
-  {
-    quote:
-      "The ceramic coating on my Fortuner still beads water like day one, six months later. Worth every rupiah.",
-    name: "Rina Susanti",
-    car: "Toyota Fortuner",
-  },
-  {
-    quote:
-      "Booked the interior deep clean after a road trip with kids. The car came back smelling and looking brand new. Incredible attention to detail.",
-    name: "Dimas Kurniawan",
-    car: "Honda CR-V",
-  },
-  {
-    quote:
-      "I run a small fleet of rental cars. Castudio handles all of them on a monthly plan. Reliable, fast, and the cars always look showroom-ready.",
-    name: "Sari Wijaya",
-    car: "Fleet Owner",
-  },
-];
+/* ------------------------------------------------------------------ */
+/*  Page                                                               */
+/* ------------------------------------------------------------------ */
 
 export default function ServicesPage() {
   return (
     <div className="bg-brand-black">
-      {/* -- 1. Hero -- */}
+      {/* ---------------------------------------------------------- */}
+      {/*  1. Hero                                                    */}
+      {/* ---------------------------------------------------------- */}
       <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn
@@ -182,16 +124,16 @@ export default function ServicesPage() {
             className="text-center space-y-6 px-4 max-w-4xl mx-auto"
           >
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
-              Our Services
+              One-Time Wash Services
             </p>
             <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-              Professional car care, every detail covered
+              No commitment. No subscription. Just book, and we&rsquo;ll make
+              your car shine.
             </h1>
             <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
-              From a quick express wash to a full-day premium detail, Castudio
-              offers a complete range of professional car care services. Every
-              service uses premium products, trained technicians, and a process
-              built around getting the details right.
+              Choose the level of care your car needs. Every tier uses premium
+              products, proper technique, and dedicated microfiber &mdash;
+              delivered to your doorstep.
             </p>
           </FadeIn>
         </div>
@@ -200,199 +142,202 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 2. Overview Stats -- */}
-      <section className="w-full py-16 md:py-20 bg-brand-dark-gray text-white section-lines-light">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="flex flex-col md:flex-row border border-white/10">
-              {[
-                { value: "6+", label: "Services" },
-                { value: "Premium", label: "Products" },
-                { value: "500+", label: "Cars / Month" },
-              ].map((stat, index) => (
-                <div
-                  key={stat.label}
-                  className={cn(
-                    "flex-1 py-10 text-center",
-                    index > 0 && "border-t md:border-t-0 md:border-l border-white/10"
-                  )}
-                >
-                  <p className="text-3xl md:text-4xl font-heading text-brand-orange mb-1">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-white/50">{stat.label}</p>
-                </div>
-              ))}
+      {/* ---------------------------------------------------------- */}
+      {/*  2. Service Tier Sections                                   */}
+      {/* ---------------------------------------------------------- */}
+      {tiers.map((tier, tierIndex) => (
+        <div key={tier.name}>
+          <section
+            className={cn(
+              "w-full py-20 md:py-24 text-white section-lines-light",
+              tier.bg
+            )}
+          >
+            <div className="container mx-auto">
+              <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 px-4">
+                {/* Left column — info */}
+                <FadeIn direction="up" delay={100} className="lg:w-1/2">
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-sm uppercase tracking-wider text-brand-orange font-heading mb-3">
+                        {tier.tagline}
+                      </p>
+                      <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-1">
+                        {tier.name}
+                      </h2>
+                      <div className="flex items-baseline gap-4 mt-3">
+                        <span className="text-2xl md:text-3xl font-heading text-brand-orange">
+                          {tier.price}
+                        </span>
+                        <span className="text-sm text-white/50">
+                          {tier.duration}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-white/70 leading-relaxed text-base md:text-lg">
+                      {tier.description}
+                    </p>
+
+                    <Link
+                      href={tier.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-10 text-base transition-colors"
+                    >
+                      {tier.cta}
+                    </Link>
+                  </div>
+                </FadeIn>
+
+                {/* Right column — includes list */}
+                <FadeIn direction="up" delay={250} className="lg:w-1/2">
+                  <div className="border border-white/10 p-8 md:p-10 h-full">
+                    <p className="text-xs uppercase tracking-wider text-white/50 mb-6 font-heading">
+                      What&rsquo;s Included
+                    </p>
+                    <ul className="space-y-4">
+                      {tier.includes.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-3 text-white/80"
+                        >
+                          <Check
+                            className="h-5 w-5 text-brand-orange shrink-0 mt-0.5"
+                            strokeWidth={2}
+                          />
+                          <span className="leading-relaxed">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </FadeIn>
+              </div>
             </div>
-          </FadeIn>
+          </section>
+
+          {/* Separator between tiers */}
+          {tierIndex < tiers.length - 1 && (
+            <div className="border-t border-white/10" />
+          )}
         </div>
-      </section>
+      ))}
 
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 3. Four-Step Process -- */}
+      {/* ---------------------------------------------------------- */}
+      {/*  3. Comparison Table                                        */}
+      {/* ---------------------------------------------------------- */}
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4">
           <FadeIn direction="up">
-            <div className="mb-12 px-4">
+            <div className="mb-12">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                How It Works
+                Compare Tiers
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Four steps to a spotless car
+                Side-by-side comparison
               </h2>
             </div>
           </FadeIn>
 
-          <div className="flex flex-col">
-            {steps.map((step, index) => (
-              <FadeIn key={step.num} delay={index * 100}>
-                <div
-                  className={cn(
-                    "border border-white/10 p-8 md:p-10 flex items-start gap-8",
-                    index > 0 && "border-t-0"
-                  )}
-                >
-                  <span className="text-5xl md:text-6xl font-heading font-medium text-white/10 leading-none shrink-0">
-                    {step.num}
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-normal font-heading mb-2">
-                      {step.title}
-                    </h3>
-                    <p className="text-white/60 leading-relaxed">{step.body}</p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+          <FadeIn direction="up" delay={150}>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px] border-collapse">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-4 pr-4 text-sm text-white/50 font-normal">
+                      Feature
+                    </th>
+                    <th className="text-center py-4 px-4 font-heading text-sm">
+                      Standard
+                      <span className="block text-xs text-white/40 font-normal mt-0.5">
+                        Rp 339,000
+                      </span>
+                    </th>
+                    <th className="text-center py-4 px-4 font-heading text-sm">
+                      Professional
+                      <span className="block text-xs text-white/40 font-normal mt-0.5">
+                        Rp 569,000
+                      </span>
+                    </th>
+                    <th className="text-center py-4 px-4 font-heading text-sm">
+                      Elite
+                      <span className="block text-xs text-white/40 font-normal mt-0.5">
+                        Rp 919,000
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonFeatures.map((feature, index) => (
+                    <tr
+                      key={feature.label}
+                      className={cn(
+                        "border-b border-white/5",
+                        index % 2 === 0 ? "bg-white/[0.02]" : ""
+                      )}
+                    >
+                      <td className="py-3.5 pr-4 text-sm text-white/70">
+                        {feature.label}
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {feature.standard ? (
+                          <Check className="h-4 w-4 text-brand-orange mx-auto" strokeWidth={2.5} />
+                        ) : (
+                          <span className="text-white/20">&mdash;</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {feature.professional ? (
+                          <Check className="h-4 w-4 text-brand-orange mx-auto" strokeWidth={2.5} />
+                        ) : (
+                          <span className="text-white/20">&mdash;</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-center">
+                        {feature.elite ? (
+                          <Check className="h-4 w-4 text-brand-orange mx-auto" strokeWidth={2.5} />
+                        ) : (
+                          <span className="text-white/20">&mdash;</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p className="text-white/50 text-sm mt-8 text-center">
+              Not sure which to pick? Message us and we&rsquo;ll recommend the
+              right service for your car.
+            </p>
+          </FadeIn>
         </div>
       </section>
 
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 4. Services Grid -- */}
+      {/* ---------------------------------------------------------- */}
+      {/*  4. Why We're Different                                     */}
+      {/* ---------------------------------------------------------- */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4">
           <FadeIn direction="up">
-            <div className="mb-12 px-4">
+            <div className="text-center mb-16 md:mb-20">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Services & Pricing
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
-                Choose the service that fits your car
-              </h2>
-              <p className="text-white/60 text-lg max-w-3xl leading-relaxed">
-                Every package is designed around a specific need, from quick
-                maintenance to full restoration. All prices include premium
-                products and a quality guarantee.
-              </p>
-            </div>
-          </FadeIn>
-
-          {/* Row 1: cards 01-03 */}
-          <div className="flex flex-col md:flex-row">
-            {services.slice(0, 3).map((card, index) => (
-              <FadeIn key={card.num} delay={index * 100} className="flex-1">
-                <div
-                  className={cn(
-                    "border border-white/10 p-8 h-full flex flex-col",
-                    index > 0 && "border-t-0 md:border-t md:border-l-0"
-                  )}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-heading text-brand-orange">
-                      {card.num}
-                    </span>
-                    <span className="text-xs text-white/40">{card.duration}</span>
-                  </div>
-                  <h4 className="text-lg font-medium mb-1">{card.title}</h4>
-                  <p className="text-brand-orange font-heading text-xl mb-3">
-                    {card.price}
-                  </p>
-                  <p className="text-white/60 leading-relaxed mb-6 flex-grow">
-                    {card.description}
-                  </p>
-                  <div className="border-t border-white/10 pt-4 flex flex-wrap gap-2">
-                    {card.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-3 py-1 border border-white/15 text-white/70"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-
-          {/* Row 2: cards 04-06 */}
-          <div className="flex flex-col md:flex-row">
-            {services.slice(3, 6).map((card, index) => (
-              <FadeIn
-                key={card.num}
-                delay={(index + 3) * 100}
-                className="flex-1"
-              >
-                <div
-                  className={cn(
-                    "border border-white/10 border-t-0 p-8 h-full flex flex-col",
-                    index > 0 && "md:border-l-0"
-                  )}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-heading text-brand-orange">
-                      {card.num}
-                    </span>
-                    <span className="text-xs text-white/40">{card.duration}</span>
-                  </div>
-                  <h4 className="text-lg font-medium mb-1">{card.title}</h4>
-                  <p className="text-brand-orange font-heading text-xl mb-3">
-                    {card.price}
-                  </p>
-                  <p className="text-white/60 leading-relaxed mb-6 flex-grow">
-                    {card.description}
-                  </p>
-                  <div className="border-t border-white/10 pt-4 flex flex-wrap gap-2">
-                    {card.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-3 py-1 border border-white/15 text-white/70"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* -- 5. Why Choose Castudio -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Why Castudio
+                Why We&rsquo;re Different
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                The car care studio built for people who care
+                Not your average car wash
               </h2>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10">
-            {whyUs.map((card, index) => (
+            {differentiators.map((card, index) => (
               <FadeIn key={card.title} delay={(index + 1) * 100}>
                 <div
                   className={cn(
@@ -422,85 +367,34 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 6. Testimonials -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                What Our Customers Say
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Trusted by car owners across Indonesia
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-            {testimonials.map((t, index) => (
-              <FadeIn key={t.name} delay={(index + 1) * 100}>
-                <div
-                  className={cn(
-                    "border border-white/10 p-8 md:p-10 h-full flex flex-col",
-                    index === 1 && "border-t-0 md:border-t md:border-l-0",
-                    index === 2 && "border-t-0 md:border-t-0",
-                    index === 3 &&
-                      "border-t-0 md:border-t-0 md:border-l-0"
-                  )}
-                >
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-4 w-4 text-brand-orange fill-brand-orange"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-white/80 leading-relaxed mb-6 flex-grow">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-sm font-medium">{t.name}</p>
-                    <p className="text-xs text-white/40">{t.car}</p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* -- 7. CTA -- */}
+      {/* ---------------------------------------------------------- */}
+      {/*  5. CTA                                                     */}
+      {/* ---------------------------------------------------------- */}
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4">
           <FadeIn direction="up">
             <div className="border border-white/10 px-6 sm:px-10 md:px-16 py-16 md:py-20 text-center">
-              <Droplets
-                className="h-8 w-8 text-brand-orange mx-auto mb-6"
-                strokeWidth={1.5}
-              />
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
-                Ready for a premium wash?
+                Ready to book?
               </h2>
               <p className="text-white/60 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-                Book your first service today or explore our subscription plans
-                for regular car care at a better price.
+                Pick your service tier and send us a message. We&rsquo;ll
+                confirm your booking and bring everything to your doorstep.
               </p>
               <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                 <Link
-                  href="/contact"
+                  href={`${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                 >
-                  Book Now <ArrowRight className="ml-2 h-5 w-5" />
+                  Book via WhatsApp
                 </Link>
                 <Link
                   href="/pricing"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
                 >
-                  View Pricing
+                  See Subscription Plans
                 </Link>
               </div>
             </div>

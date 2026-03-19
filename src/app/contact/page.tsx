@@ -10,12 +10,13 @@ import {
   Droplets,
   Clock,
   ShieldCheck,
+  MapPin,
   CalendarCheck,
   Sparkles,
   Star,
-  Wrench,
-  Shield,
-  Phone
+  Gift,
+  Phone,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -39,7 +40,7 @@ export default function ContactPage() {
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -73,12 +74,14 @@ export default function ContactPage() {
       toast({
         variant: "destructive",
         title: "Validation Error",
-        description: "Please fix the errors below and try again."
+        description: "Please fix the errors below and try again.",
       });
       return;
     }
 
-    const subject = encodeURIComponent(formData.subject || `Contact from ${formData.name}`);
+    const subject = encodeURIComponent(
+      formData.subject || `Contact from ${formData.name}`
+    );
     const body = encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
     );
@@ -86,29 +89,30 @@ export default function ContactPage() {
 
     toast({
       title: "Opening email client",
-      description: "Your default email client should open with the message pre-filled."
+      description:
+        "Your default email client should open with the message pre-filled.",
     });
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
-  const carWashReasons = [
-    { icon: Droplets, text: "Professional hand wash — no automated brushes" },
-    { icon: Clock, text: "30-minute express service available" },
-    { icon: ShieldCheck, text: "Premium, paint-safe products only" },
-    { icon: CalendarCheck, text: "Flexible subscription plans" },
+  const oneTimeReasons = [
+    { icon: Droplets, text: "Premium at-home service \u2014 we come to you" },
+    { icon: Clock, text: "Standard ~2hrs, Professional ~3hrs, Elite ~4hrs" },
+    { icon: ShieldCheck, text: "Satisfaction guarantee on every wash" },
+    { icon: MapPin, text: "Serving all JABODETABEK zones" },
   ];
 
-  const detailingReasons = [
-    { icon: Sparkles, text: "Expert paint correction and ceramic coating" },
-    { icon: Star, text: "Full interior restoration available" },
-    { icon: Wrench, text: "Premium detailing products" },
-    { icon: Shield, text: "Satisfaction guaranteed" },
+  const subscriptionReasons = [
+    { icon: CalendarCheck, text: "Essentials: 2 washes/month from Rp 609K" },
+    { icon: Sparkles, text: "Plus: 4 washes/month from Rp 1,349K" },
+    { icon: Star, text: "Unlimited: wash anytime from Rp 3,199K" },
+    { icon: Gift, text: "6-month bonus: free inspection + oil change" },
   ];
 
   return (
@@ -122,29 +126,36 @@ export default function ContactPage() {
                 Book Your Wash
               </h1>
               <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
-                Schedule a car wash, request detailing, or ask us anything. We&apos;re here to help.
+                Tap WhatsApp, tell us what you need, and we&apos;ll be at your
+                doorstep. It&apos;s that simple.
               </p>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* Consultation Boxes */}
+      {/* Booking Boxes */}
       <section className="w-full py-24 md:py-32 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row">
-            {/* Car Wash Box */}
+            {/* One-Time Wash Box */}
             <FadeIn delay={100} className="flex-1">
               <div className="border border-white/10 p-8 md:p-10 h-full flex flex-col">
-                <h2 className="text-2xl font-normal mb-4 font-heading text-white">Book a Car Wash</h2>
+                <h2 className="text-2xl font-normal mb-4 font-heading text-white">
+                  Book a One-Time Wash
+                </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                  Choose from our express and full wash options designed to keep your car spotless. We also offer convenient monthly plans so your vehicle always looks its best.
+                  Choose Standard (Rp 339K), Professional (Rp 569K), or Elite
+                  (Rp 919K). Tell us your preferred date, time, and location.
+                  We&apos;ll confirm within 30 minutes.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-base font-semibold mb-4 text-white">Why Choose Castudio:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-white">
+                    Why Choose Castudio:
+                  </h3>
                   <ul className="space-y-3">
-                    {carWashReasons.map((reason, i) => {
+                    {oneTimeReasons.map((reason, i) => {
                       const Icon = reason.icon;
                       return (
                         <li key={i} className="flex items-start">
@@ -157,26 +168,34 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="mailto:hello@castudio.co"
+                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.%20Lokasi%20saya%20di%20[area]."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Book Car Wash <ArrowRight className="ml-2 h-5 w-5" />
+                  Book via WhatsApp <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
             </FadeIn>
 
-            {/* Detailing Box */}
+            {/* Subscription Box */}
             <FadeIn delay={200} className="flex-1">
               <div className="border border-white/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10 h-full flex flex-col">
-                <h2 className="text-2xl font-normal mb-4 font-heading text-white">Book Detailing</h2>
+                <h2 className="text-2xl font-normal mb-4 font-heading text-white">
+                  Start a Subscription
+                </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                  From paint correction and ceramic coating to full interior restoration, our detailing services bring your car back to showroom condition.
+                  Plans from Rp 609,000/month. We&apos;ll keep your car pristine
+                  on a schedule that works for you. Commit for 6 months and get a
+                  free car inspection + oil change.
                 </p>
 
                 <div className="mb-8 flex-grow">
-                  <h3 className="text-base font-semibold mb-4 text-white">Why Trust Our Detailing:</h3>
+                  <h3 className="text-base font-semibold mb-4 text-white">
+                    Subscription Plans:
+                  </h3>
                   <ul className="space-y-3">
-                    {detailingReasons.map((reason, i) => {
+                    {subscriptionReasons.map((reason, i) => {
                       const Icon = reason.icon;
                       return (
                         <li key={i} className="flex items-start">
@@ -189,10 +208,13 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="mailto:hello@castudio.co"
+                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20cuci%20mobil."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Book Detailing <ArrowRight className="ml-2 h-5 w-5" />
+                  Subscribe via WhatsApp{" "}
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
             </FadeIn>
@@ -205,9 +227,11 @@ export default function ContactPage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-12 px-4">
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">Have a question?</h2>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
+                Prefer email?
+              </h2>
               <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Send us a message and we&apos;ll get back to you within 24 hours.
+                Send us a message and we&apos;ll get back to you.
               </p>
             </div>
           </FadeIn>
@@ -219,11 +243,15 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-white">Full Name</Label>
+                      <Label htmlFor="name" className="text-white">
+                        Full Name
+                      </Label>
                       <Input
                         id="name"
                         value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("name", e.target.value)
+                        }
                         placeholder="John Doe"
                         className={cn(
                           "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
@@ -231,15 +259,23 @@ export default function ContactPage() {
                         )}
                         required
                       />
-                      {errors.name && <p className="text-sm text-red-300 mt-1">{errors.name}</p>}
+                      {errors.name && (
+                        <p className="text-sm text-red-300 mt-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-white">Email Address</Label>
+                      <Label htmlFor="email" className="text-white">
+                        Email Address
+                      </Label>
                       <Input
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
                         placeholder="you@example.com"
                         className={cn(
                           "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
@@ -247,27 +283,39 @@ export default function ContactPage() {
                         )}
                         required
                       />
-                      {errors.email && <p className="text-sm text-red-300 mt-1">{errors.email}</p>}
+                      {errors.email && (
+                        <p className="text-sm text-red-300 mt-1">
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-white">Subject (Optional)</Label>
+                    <Label htmlFor="subject" className="text-white">
+                      Subject (Optional)
+                    </Label>
                     <Input
                       id="subject"
                       value={formData.subject}
-                      onChange={(e) => handleInputChange('subject', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("subject", e.target.value)
+                      }
                       placeholder="Inquiry about car wash services"
                       className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-white">Message</Label>
+                    <Label htmlFor="message" className="text-white">
+                      Message
+                    </Label>
                     <Textarea
                       id="message"
                       value={formData.message}
-                      onChange={(e) => handleInputChange('message', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("message", e.target.value)
+                      }
                       placeholder="Your message..."
                       rows={5}
                       className={cn(
@@ -276,7 +324,11 @@ export default function ContactPage() {
                       )}
                       required
                     />
-                    {errors.message && <p className="text-sm text-red-300 mt-1">{errors.message}</p>}
+                    {errors.message && (
+                      <p className="text-sm text-red-300 mt-1">
+                        {errors.message}
+                      </p>
+                    )}
                   </div>
 
                   <button
@@ -296,9 +348,24 @@ export default function ContactPage() {
                   </h3>
                   <div className="space-y-6">
                     <div className="flex items-start space-x-3">
+                      <MessageCircle className="h-5 w-5 text-brand-orange mt-0.5" />
+                      <div>
+                        <p className="text-sm text-white/60 mb-1">WhatsApp</p>
+                        <a
+                          href="https://wa.me/62816104334"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white hover:text-brand-orange transition-colors font-medium"
+                        >
+                          +62 816 10 4334
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-3">
                       <Mail className="h-5 w-5 text-brand-orange mt-0.5" />
                       <div>
-                        <p className="text-sm text-white/60 mb-1">Email Us</p>
+                        <p className="text-sm text-white/60 mb-1">Email</p>
                         <a
                           href="mailto:hello@castudio.co"
                           className="text-white hover:text-brand-orange transition-colors font-medium"
@@ -309,15 +376,12 @@ export default function ContactPage() {
                     </div>
 
                     <div className="flex items-start space-x-3">
-                      <Phone className="h-5 w-5 text-brand-orange mt-0.5" />
+                      <Clock className="h-5 w-5 text-brand-orange mt-0.5" />
                       <div>
-                        <p className="text-sm text-white/60 mb-1">Call Us</p>
-                        <a
-                          href="tel:+62816104334"
-                          className="text-white hover:text-brand-orange transition-colors font-medium"
-                        >
-                          +62 816 10 4334
-                        </a>
+                        <p className="text-sm text-white/60 mb-1">Hours</p>
+                        <p className="text-white font-medium">
+                          Mon&ndash;Sat, 8 AM&ndash;6 PM
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -325,7 +389,7 @@ export default function ContactPage() {
 
                 <div className="border border-white/15 p-4 mt-8">
                   <p className="text-sm text-white/70 leading-relaxed">
-                    &ldquo;Your car deserves the best. Let us prove it.&rdquo;
+                    &ldquo;Your car deserves better than a street wash.&rdquo;
                   </p>
                 </div>
               </div>

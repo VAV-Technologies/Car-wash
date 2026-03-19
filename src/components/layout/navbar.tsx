@@ -6,7 +6,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, DollarSign, HelpCircle } from 'lucide-react';
+import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, DollarSign, HelpCircle, MapPin, CalendarCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
@@ -30,7 +30,8 @@ const navLinkGroups: NavLinkGroup[] = [
     triggerIcon: Droplets,
     items: [
       { href: "/services", label: "Our Services", icon: Droplets },
-      { href: "/pricing", label: "Pricing & Plans", icon: DollarSign },
+      { href: "/pricing", label: "Subscriptions", icon: CalendarCheck },
+      { href: "/coverage", label: "Coverage Area", icon: MapPin },
     ],
   },
   {
@@ -50,7 +51,7 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
   // Pages with dark hero backgrounds where navbar should start transparent with white text
-  const darkHeroPages = ['/', '/about', '/contact', '/faq', '/services', '/terms', '/privacy', '/resources'];
+  const darkHeroPages = ['/', '/about', '/contact', '/coverage', '/faq', '/services', '/terms', '/privacy', '/resources'];
   const hasDarkHero = darkHeroPages.includes(pathname) || pathname.startsWith('/resources/');
 
   const [scrolled, setScrolled] = useState(!hasDarkHero);

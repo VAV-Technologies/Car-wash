@@ -3,59 +3,49 @@ import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 
-const values = [
+const differentiators = [
   {
     num: "01",
-    title: "Quality over speed",
-    body: "We never rush a job. Every car gets the time and attention it deserves.",
+    title: "Premium Products Only",
+    body: "We use professional-grade shampoos, sealants, and coatings \u2014 not diluted bulk chemicals. Your car gets what it deserves.",
   },
   {
     num: "02",
-    title: "Premium products, always",
-    body: "We use only pH-balanced, paint-safe products. No cheap chemicals.",
+    title: "The Two-Bucket Method",
+    body: "Separate wash and rinse buckets with grit guards. This prevents swirl marks and scratches that 90% of car washes cause.",
   },
   {
     num: "03",
-    title: "Trained, not guessing",
-    body: "Every technician completes our training program before touching a car.",
+    title: "Trained Technicians",
+    body: "Our team is trained on proper wash technique, paint decontamination, and sealant application. They\u2019re not just washing \u2014 they\u2019re caring for your paint.",
   },
   {
     num: "04",
-    title: "Transparent pricing",
-    body: "What you see is what you pay. No hidden fees, no surprise upsells.",
-  },
-  {
-    num: "05",
-    title: "Convenience built in",
-    body: "Online booking, WhatsApp support, mobile service — we fit your schedule.",
-  },
-  {
-    num: "06",
-    title: "Satisfaction guaranteed",
-    body: "Not happy with the result? We'll redo it for free. No questions asked.",
+    title: "Total Convenience",
+    body: "We come to you. Home, office, apartment parking \u2014 wherever your car is. All equipment, water, and power come with us.",
   },
 ];
 
 const team = [
   {
-    name: "Founders",
+    name: "The Founder",
     role: "Vision & Operations",
-    bio: "Driven by a passion for car care and a frustration with the status quo, our founders built Castudio from the ground up. They oversee every aspect of operations, from product sourcing to technician training, ensuring every car gets the treatment it deserves.",
-    tags: ["Strategy", "Operations", "Product Quality", "Growth", "Customer Experience"],
+    bio: "Started Castudio because Jakarta\u2019s 4.35 million car owners deserve premium care without the hassle. Oversees service quality, product selection, and business growth.",
+    tags: ["Strategy", "Operations", "Product Quality", "Growth"],
     image: "",
   },
   {
     name: "Wash Technicians",
-    role: "Expert Car Wash",
-    bio: "Our wash technicians are trained professionals who treat every vehicle with care. Each one completes a structured training program covering hand wash techniques, product knowledge, and quality standards before they ever touch a customer's car.",
-    tags: ["Hand Wash", "Interior Clean", "Quality Check", "Product Knowledge", "Care"],
+    role: "Professional Car Care",
+    bio: "Trained on the two-bucket method, paint-safe products, and proper technique. Uniformed, punctual, and held to quality standards that most shops never reach.",
+    tags: ["Two-Bucket Method", "Paint Care", "Interior Clean", "Quality Check"],
     image: "",
   },
   {
-    name: "Detail Specialists",
-    role: "Advanced Detailing",
-    bio: "Our detail specialists handle paint correction, ceramic coating, and interior restoration. With advanced training and experience across a wide range of vehicles, they deliver results that protect and transform your car's finish.",
-    tags: ["Paint Correction", "Ceramic Coating", "Interior Restoration", "Polish", "Protection"],
+    name: "Mobile Operations",
+    role: "Logistics & Scheduling",
+    bio: "Manages the zone-based scheduling system across JABODETABEK. Ensures every appointment runs on time with full equipment \u2014 500L water tank, generator, and all supplies onboard.",
+    tags: ["Scheduling", "Logistics", "Fleet", "Zone Management"],
     image: "",
   },
 ];
@@ -63,56 +53,48 @@ const team = [
 const steps = [
   {
     num: "01",
-    title: "We use the right products",
-    body: "Premium, pH-balanced shampoos, ceramic-grade sealants, microfiber everything. The products we use are chosen because they deliver results and protect your paint — not because they're cheap.",
+    title: "We bring everything to you",
+    body: "500L water tank, generator, pressure washer, vacuum, all chemicals and microfiber. No water or power needed from you.",
   },
   {
     num: "02",
-    title: "We train every technician",
-    body: "Formal training program before anyone touches a car. Regular skill assessments ensure standards don't slip over time.",
+    title: "We use the right products",
+    body: "Professional-grade pH-neutral shampoos, dedicated glass cleaners, tar removers, clay bars, and sealant coatings. Never dish soap or diluted bulk chemicals.",
   },
   {
     num: "03",
-    title: "We follow a system",
-    body: "Every wash and detail follows a documented, multi-step process. Consistency isn't luck — it's built into how we work.",
+    title: "We follow proper technique",
+    body: "Two-bucket method with grit guards, fresh microfiber for each section, systematic process from foam pre-wash to final wipe.",
   },
   {
     num: "04",
-    title: "We inspect before handover",
-    body: "Multi-point quality check on every car. We don't release it until it's right. If something's off, we fix it before you see it.",
+    title: "We don\u2019t rush",
+    body: "Standard takes 2 hours, Professional 3, Elite 4. Quality takes time. We\u2019d rather do fewer cars right than more cars wrong.",
   },
 ];
 
-const regions = [
-  { region: "Jakarta", sub: "Our flagship studio with full detailing capabilities", type: "Flagship" },
-  { region: "Bandung", sub: "Full-service studio serving West Java", type: "Studio" },
-  { region: "Surabaya", sub: "Expanding to East Java — coming soon", type: "Coming Soon" },
+const pricingBullets = [
+  "No budget tier \u2014 Standard is our minimum",
+  "Premium products cost more but protect your paint",
+  "Trained technicians cost more but deliver better results",
+  "Two-bucket method takes longer but prevents damage",
+  "At-home convenience saves you hours",
+  "Quality you can see and feel every single time",
 ];
 
-const serviceTypes = [
-  "Express Wash",
-  "Full Wash",
-  "Interior Deep Clean",
-  "Exterior Polish",
-  "Ceramic Coating",
-  "Premium Detail",
-  "Mobile Service",
-  "Subscription Plans",
-];
-
-const edgeBullets = [
-  "Safer for your paint long-term",
-  "Better shine and protection",
-  "Consistent results every visit",
-  "Products that actually protect",
-  "Technicians who know what they're doing",
-  "No shortcuts, ever",
+const zones = [
+  { day: "Monday", zone: "South", areas: "Jaksel, Depok, Cinere, Pondok Indah" },
+  { day: "Tuesday", zone: "West", areas: "Jakbar, Tangerang, BSD, Alam Sutera" },
+  { day: "Wednesday", zone: "Central/North", areas: "Jakpus, Jakut, Kelapa Gading" },
+  { day: "Thursday", zone: "East", areas: "Bekasi, Jaktim, Cibubur" },
+  { day: "Friday", zone: "Flex", areas: "All areas, priority for Elite + subscribers" },
+  { day: "Saturday", zone: "Premium", areas: "Half-day Elite and overflow" },
 ];
 
 export default function AboutPage() {
   return (
     <div className="bg-brand-black">
-      {/* ── 1. Hero ── */}
+      {/* -- 1. Hero -- */}
       <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
@@ -120,19 +102,19 @@ export default function AboutPage() {
               About Castudio
             </p>
             <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight text-white">
-              Built for Drivers Who Care
+              We Started Because Jakarta Deserves Better Car Care
             </h1>
             <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
-              Castudio was founded because Indonesian drivers deserve better than a rushed, automated car wash. We built a studio where quality products, trained technicians, and real attention to detail come standard — not as an upsell.
+              We&apos;re car people. We know the frustration of sitting in Jakarta traffic for 45 minutes just to get a mediocre wash at a dirty roadside shop.
             </p>
           </FadeIn>
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 2. Our Story ── */}
+      {/* -- 2. Our Story -- */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
@@ -141,53 +123,43 @@ export default function AboutPage() {
                 Our Story
               </p>
               <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
-                Started from a simple frustration
+                We know there&apos;s a better way
               </h2>
-            </div>
-          </FadeIn>
-
-          {/* Full-width image placeholder */}
-          <FadeIn delay={50}>
-            <div className="border border-white/10 overflow-hidden">
-              <div className="w-full h-[28rem] md:h-[36rem] bg-brand-dark-gray relative overflow-hidden flex items-center justify-center">
-                <p className="text-white/20 text-sm uppercase tracking-wider font-heading">Image Placeholder</p>
-              </div>
             </div>
           </FadeIn>
 
           <div className="flex flex-col lg:flex-row">
             {/* Left column: paragraphs */}
             <FadeIn delay={100} className="flex-1">
-              <div className="border border-white/10 border-t-0 p-8 md:p-10 h-full space-y-6">
+              <div className="border border-white/10 p-8 md:p-10 h-full space-y-6">
                 <p className="text-white/60 leading-relaxed">
-                  Like most car owners in Indonesia, we spent years cycling through car washes that left swirl marks, used harsh chemicals, and rushed through every job. The &ldquo;premium&rdquo; options weren&apos;t much better — just the same shortcuts at a higher price.
+                  We&apos;re car people. We know the frustration of sitting in Jakarta traffic for 45 minutes just to get a mediocre wash at a dirty roadside shop. We know the anxiety of handing your car to someone who uses the same rag on every vehicle. We know there&apos;s a better way.
                 </p>
                 <p className="text-white/60 leading-relaxed">
-                  So we built Castudio. A studio designed around one idea: every car that comes in should leave genuinely clean, properly protected, and handled by someone who knows what they&apos;re doing. We sourced premium, paint-safe products. We built a real training program for our technicians. We created a process that doesn&apos;t skip steps.
+                  We bring professional-grade car care to your doorstep. No cutting corners. No generic products. No rushed jobs. Every wash uses premium products, the proper two-bucket method, and dedicated microfiber for each section of your car. Our technicians are trained, uniformed, and held to a quality standard that most shops never reach.
                 </p>
                 <p className="text-white/60 leading-relaxed">
-                  Today, we serve hundreds of cars every month across our studios. But the standard hasn&apos;t changed — every car still gets the same attention to detail we demanded for our own.
+                  We&apos;re not the cheapest. We don&apos;t want to be. We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for a street-level wash. If that sounds like you, welcome home.
                 </p>
               </div>
             </FadeIn>
 
             {/* Right column: pull quote + metrics */}
             <FadeIn delay={200} className="flex-1">
-              <div className="border border-white/10 border-t-0 lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
+              <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
                 {/* Pull quote */}
                 <div className="border-l-2 border-brand-orange pl-6 mb-8">
                   <p className="text-xl md:text-2xl font-heading text-white leading-snug mb-3">
-                    &ldquo;Every car that leaves our studio should look better than when it arrived. No exceptions.&rdquo;
+                    &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle.&rdquo;
                   </p>
-                  <p className="text-sm text-white/60">Castudio Founding Team</p>
                 </div>
 
                 {/* 2x2 metrics grid */}
                 <div className="grid grid-cols-2">
                   {[
-                    { value: "500+", label: "Cars per month" },
-                    { value: "30 min", label: "Avg wash time" },
-                    { value: "Jakarta", label: "Home base" },
+                    { value: "339K", label: "Starting price" },
+                    { value: "JABODETABEK", label: "Service area" },
+                    { value: "15%", label: "Above market leader" },
                     { value: "Premium", label: "Products only" },
                   ].map((metric, index) => (
                     <div
@@ -210,16 +182,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 3. What We Stand For ── */}
+      {/* -- 3. Why We're Different -- */}
       <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                What We Stand For
+                Why We&apos;re Different
               </p>
               <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight mb-4">
                 The standards we hold ourselves to
@@ -227,9 +199,9 @@ export default function AboutPage() {
             </div>
           </FadeIn>
 
-          {/* Row 1: cards 01-03 */}
+          {/* Row 1: cards 01-02 */}
           <div className="flex flex-col md:flex-row">
-            {values.slice(0, 3).map((card, index) => (
+            {differentiators.slice(0, 2).map((card, index) => (
               <FadeIn key={card.num} delay={index * 100} className="flex-1">
                 <div className={cn(
                   "border border-white/10 bg-brand-dark-gray p-8 h-full flex flex-col",
@@ -243,10 +215,10 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Row 2: cards 04-06 */}
+          {/* Row 2: cards 03-04 */}
           <div className="flex flex-col md:flex-row">
-            {values.slice(3, 6).map((card, index) => (
-              <FadeIn key={card.num} delay={(index + 3) * 100} className="flex-1">
+            {differentiators.slice(2, 4).map((card, index) => (
+              <FadeIn key={card.num} delay={(index + 2) * 100} className="flex-1">
                 <div className={cn(
                   "border border-white/10 bg-brand-dark-gray border-t-0 p-8 h-full flex flex-col",
                   index > 0 && "md:border-l-0"
@@ -261,10 +233,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 4. The Team ── */}
+      {/* -- 4. The Team -- */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
@@ -276,7 +248,7 @@ export default function AboutPage() {
                 People who care about your car
               </h2>
               <p className="text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
-                From our founders to our wash technicians, everyone at Castudio shares the same obsession with quality.
+                From our founder to our mobile operations crew, everyone at Castudio shares the same obsession with quality.
               </p>
             </div>
           </FadeIn>
@@ -311,10 +283,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 5. Our Approach ── */}
+      {/* -- 5. Our Approach -- */}
       <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
@@ -349,20 +321,17 @@ export default function AboutPage() {
               ))}
             </div>
 
-            {/* Right: Sticky Our Edge card */}
+            {/* Right: Sticky Pricing Philosophy card */}
             <FadeIn delay={200} className="lg:w-[400px] xl:w-[440px]">
               <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 bg-brand-dark-gray text-white p-8 md:p-10 sticky top-24 h-fit">
                 <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                  Our Edge
+                  Our Pricing Philosophy
                 </p>
                 <h3 className="text-xl font-heading mb-4 text-white">
-                  Why premium matters
+                  We price 15% above the market leader because we deliver 15% more care.
                 </h3>
-                <p className="text-white/70 leading-relaxed mb-6 text-sm">
-                  Cheap products and untrained staff might get the dirt off, but they also leave swirl marks, strip wax, and degrade your paint over time. Premium products and proper technique don&apos;t just clean — they protect. That&apos;s the difference between a car wash and a studio.
-                </p>
                 <ul className="space-y-3">
-                  {edgeBullets.map((bullet) => (
+                  {pricingBullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3 text-sm text-white/70">
                       <span className="text-brand-orange mt-1 text-xs">&#x25C6;</span>
                       {bullet}
@@ -375,49 +344,47 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 6. Where We Operate ── */}
+      {/* -- 6. Where We Operate -- */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Where We Operate
+                Coverage Area
               </p>
               <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
-                Growing across Indonesia
+                Serving all of JABODETABEK
               </h2>
             </div>
           </FadeIn>
 
           <div className="flex flex-col lg:flex-row">
-            {/* Left: Region table */}
+            {/* Left: Zone schedule table */}
             <FadeIn delay={100} className="flex-1">
               <div className="border border-white/10 h-full">
-                {regions.map((r, index) => (
+                {zones.map((z, index) => (
                   <div
-                    key={r.region}
+                    key={z.day}
                     className={cn(
                       "flex items-center gap-4 px-6 py-5",
                       index > 0 && "border-t border-white/10"
                     )}
                   >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-white">{r.region}</p>
-                      <p className="text-xs text-white/60 mt-1">{r.sub}</p>
+                    <div className="w-28 shrink-0">
+                      <p className="font-medium text-white">{z.day}</p>
                     </div>
                     <span className={cn(
                       "text-xs px-3 py-1 border shrink-0",
-                      r.type === "Flagship"
+                      z.zone === "Flex" || z.zone === "Premium"
                         ? "border-brand-orange/30 text-brand-orange bg-brand-orange/5"
-                        : r.type === "Studio"
-                          ? "border-white/20 text-white/70 bg-white/5"
-                          : "border-white/10 text-white/60"
+                        : "border-white/20 text-white/70 bg-white/5"
                     )}>
-                      {r.type}
+                      {z.zone}
                     </span>
+                    <p className="text-sm text-white/60">{z.areas}</p>
                   </div>
                 ))}
               </div>
@@ -427,40 +394,26 @@ export default function AboutPage() {
             <FadeIn delay={200} className="flex-1">
               <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full space-y-6">
                 <p className="text-white/60 leading-relaxed">
-                  Jakarta is home — our flagship studio with full wash and detailing capabilities. It&apos;s where we developed the processes and standards that define every Castudio experience.
+                  We serve specific zones on specific days to minimize travel time and ensure prompt service. Subscription clients are assigned to their zone day for recurring appointments.
                 </p>
-                <p className="text-white/60 leading-relaxed">
-                  We&apos;re expanding to serve more Indonesian cities, starting with Bandung and Surabaya. Every new location follows the same playbook: premium products, trained technicians, and a process that doesn&apos;t cut corners.
-                </p>
-                <p className="text-white/60 leading-relaxed">
-                  Whether you visit us at a studio or book our mobile service, the quality is the same. That&apos;s the point.
-                </p>
+                <div className="pt-4">
+                  <Link
+                    href="/coverage"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
+                  >
+                    Check your area
+                  </Link>
+                </div>
               </div>
             </FadeIn>
           </div>
-
-          {/* Service types tag cloud */}
-          <FadeIn delay={300}>
-            <div className="border border-white/10 border-t-0 p-6">
-              <p className="text-xs uppercase tracking-wider text-white/60 mb-4 font-heading">
-                Services We Offer
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {serviceTypes.map((type) => (
-                  <span key={type} className="text-xs px-3 py-1 border border-white/10 text-white/70">
-                    {type}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
-      {/* ── Separator ── */}
+      {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 7. CTA ── */}
+      {/* -- 7. CTA -- */}
       <section className="w-full py-12 md:py-12 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
@@ -469,23 +422,22 @@ export default function AboutPage() {
                 <div className="flex flex-col items-center justify-center h-full">
                   <div className="border border-white/10 bg-brand-dark-gray/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
                     <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">
-                      Ready to experience the difference?
+                      Ready for a wash that&apos;s actually premium?
                     </h2>
-                    <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
-                      Book your first wash and see why hundreds of drivers trust Castudio with their cars every month. No contracts, no commitments — just a better car wash.
-                    </p>
-                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
                       <Link
-                        href="/contact"
+                        href="https://wa.me/6281234567890"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                       >
-                        Book a Wash
+                        Book via WhatsApp
                       </Link>
                       <Link
-                        href="/pricing"
+                        href="/services"
                         className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
                       >
-                        View Plans
+                        See Our Services
                       </Link>
                     </div>
                   </div>

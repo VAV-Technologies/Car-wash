@@ -16,12 +16,12 @@ export function Footer() {
             <Logo size="2xl" forceTheme="dark" />
             <div className="border-t border-white/15 mt-4 mb-4" />
             <p className="text-sm">
-              Premium car wash and detailing studio in Indonesia. Professional care for drivers who demand the best.
+              Premium at-home car wash and detailing across JABODETABEK.
             </p>
           </div>
 
-          {/* Nav columns in a 4-col grid */}
-          <div className="flex-1 grid grid-cols-2 lg:grid-cols-4">
+          {/* Nav columns in a 3-col grid */}
+          <div className="flex-1 grid grid-cols-2 lg:grid-cols-3">
             <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Services
@@ -30,11 +30,11 @@ export function Footer() {
                 <Link href="/services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Wash
                 </Link>
-                <Link href="/services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Detailing
-                </Link>
                 <Link href="/pricing" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Subscriptions
+                </Link>
+                <Link href="/coverage" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Coverage Area
                 </Link>
               </div>
             </div>
@@ -48,7 +48,7 @@ export function Footer() {
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> About Us
                 </Link>
                 <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Contact Us
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Contact
                 </Link>
                 <Link href="/faq" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> FAQ
@@ -59,7 +59,7 @@ export function Footer() {
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
+            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3 col-span-2 lg:col-span-1">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Legal
               </p>
@@ -69,20 +69,6 @@ export function Footer() {
                 </Link>
                 <Link href="/privacy" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Privacy Policy
-                </Link>
-              </div>
-            </div>
-
-            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
-              <p className="text-base font-medium tracking-wide text-brand-white">
-                Support
-              </p>
-              <div className="flex flex-col space-y-2">
-                <Link href="/help" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Help Center
-                </Link>
-                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Book a Wash
                 </Link>
               </div>
             </div>
