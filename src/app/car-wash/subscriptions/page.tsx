@@ -29,7 +29,7 @@ const plans = [
       "15% off vs. one-time pricing",
     ],
     detailingBonus: null,
-    bestFor: "Car owners who want a professional deep clean every couple of months",
+    bestFor: "Car owners who want regular monthly maintenance",
     cta: "Subscribe to Essentials",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.549.000%2F4%20bulan).`,
     icon: Droplets,
@@ -270,12 +270,11 @@ export default function SubscriptionsPage() {
                     </div>
                   )}
 
-                  <p className="text-xs text-brand-white/50 italic mb-6">
-                    Best for: {plan.bestFor}
-                  </p>
-
                   {/* CTA */}
                   <div className="mt-auto">
+                    <p className="text-xs text-brand-white/50 italic mb-4">
+                      Best for: {plan.bestFor}
+                    </p>
                     <Button
                       size="lg"
                       className={cn(
@@ -315,86 +314,7 @@ export default function SubscriptionsPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 3. Free Full Detail for Plus & Unlimited ─────────────── */}
-      <section className="w-full py-16 md:py-24 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <div className="border border-brand-orange/30 bg-brand-dark-gray p-8 md:p-12">
-            <div className="text-center mb-10">
-              <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange mb-3">
-                SUBSCRIBER BONUS
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold text-brand-white font-heading mb-4">
-                Free Full Detail for Elite Subscribers
-              </h2>
-              <p className="text-brand-white/80 max-w-3xl mx-auto">
-                Subscribe to Elite and receive a complimentary Full
-                Detail &mdash; our most comprehensive detailing service worth
-                Rp 2,799,000. Interior, exterior, windows, tires &amp; rims,
-                all in one 8-hour session.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-              <div>
-                <h3 className="text-lg font-semibold text-brand-orange mb-4 font-heading">
-                  What&rsquo;s Included in a Full Detail
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Interior Detailing \u2014 deep clean, upholstery, dashboard",
-                    "Exterior Detailing \u2014 paint correction, polish, sealant",
-                    "Window Detailing \u2014 inside and out, streak-free",
-                    "Tire & Rims Detailing \u2014 deep clean and dressing",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="h-5 w-5 text-brand-orange mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-brand-white/90">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-brand-orange mb-4 font-heading">
-                  Worth Rp 2,799,000
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Elite: 1 Free Full Detail per year",
-                    "Essentials: Not included (upgrade to unlock)",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="h-5 w-5 text-brand-orange mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-brand-white/90">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <Button
-                size="lg"
-                className="bg-brand-orange text-black hover:bg-brand-orange/90 font-semibold"
-                asChild
-              >
-                <a
-                  href={`${WA_BASE}?text=Halo%2C%20saya%20tertarik%20berlangganan%20untuk%20mendapat%20Free%20Full%20Detail.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Subscribe Now <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* ── 4. Comparison Table ────────────────────────────────── */}
+      {/* ── 3. Comparison Table ────────────────────────────────── */}
       <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading px-4">
