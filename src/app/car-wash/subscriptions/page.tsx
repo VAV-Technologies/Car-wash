@@ -16,20 +16,20 @@ const WA_BASE = "https://wa.me/62816104334";
 const plans = [
   {
     name: "Essentials",
-    price: "Rp 969.000",
-    priceShort: "Rp 969K",
+    price: "Rp 1.149.000",
+    priceShort: "Rp 1.149K",
     perMonth: "/4 months per car",
-    oneTimeValue: "Rp 1,138,000",
-    savings: "Rp 169,000",
+    oneTimeValue: "Rp 1,356,000",
+    savings: "Rp 207,000",
     features: [
-      "2 Professional washes over 4 months",
+      "4 Standard washes over 4 months",
       "You pick the days, we show up",
       "15% off vs. one-time pricing",
     ],
     detailingBonus: null,
     bestFor: "Car owners who want a professional deep clean every couple of months",
     cta: "Subscribe to Essentials",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%20969.000%2F4%20bulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.149.000%2F4%20bulan).`,
     icon: Droplets,
     popular: false,
   },
@@ -79,16 +79,16 @@ const comparisonData = [
   {
     category: "QUARTERLY PRICE",
     features: [
-      { name: "Price (per 4 months)", essentials: "Rp 969K", plus: "Rp 1.549K", elite: "Rp 2.119K" },
-      { name: "One-time value", essentials: "Rp 1,138K", plus: "Rp 1,816K", elite: "Rp 2,494K" },
-      { name: "You save", essentials: "Rp 169K", plus: "Rp 267K", elite: "Rp 375K" },
+      { name: "Price (per 4 months)", essentials: "Rp 1.149K", plus: "Rp 1.549K", elite: "Rp 2.119K" },
+      { name: "One-time value", essentials: "Rp 1,356K", plus: "Rp 1,816K", elite: "Rp 2,494K" },
+      { name: "You save", essentials: "Rp 207K", plus: "Rp 267K", elite: "Rp 375K" },
     ],
   },
   {
     category: "WASHES INCLUDED (PER QUARTER)",
     features: [
-      { name: "Standard washes", essentials: "\u2014", plus: "2/quarter", elite: "4/quarter" },
-      { name: "Professional washes", essentials: "2/quarter", plus: "2/quarter", elite: "2/quarter" },
+      { name: "Standard washes", essentials: "4 over 4 months", plus: "2 over 4 months", elite: "4 over 4 months" },
+      { name: "Professional washes", essentials: "\u2014", plus: "2 over 4 months", elite: "2 over 4 months" },
     ],
   },
   {
