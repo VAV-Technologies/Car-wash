@@ -22,7 +22,6 @@ const comparisonFeatures = [
   { label: "Interior Clean & Vacuum", icon: Wind, standard: true, professional: true, elite: true },
   { label: "Tire Polish & Rim Clean", icon: CircleDot, standard: true, professional: true, elite: true },
   { label: "Body Spot Remover", icon: Eraser, standard: true, professional: true, elite: true },
-  { label: "Engine Bay Clean", icon: Wrench, standard: true, professional: true, elite: true },
   { label: "Glass Spot Remover", icon: GlassWater, standard: false, professional: true, elite: true },
   { label: "Tar Remover", icon: Flame, standard: false, professional: true, elite: true },
   { label: "Clay Bar Decontamination", icon: Gem, standard: false, professional: false, elite: true },
