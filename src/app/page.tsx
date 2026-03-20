@@ -128,6 +128,48 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Why Castudio */}
+      <div className="border-t border-white/10" />
+      <section className="py-20 md:py-24 bg-brand-black section-lines-light">
+        <div className="container mx-auto">
+          <FadeIn direction="up" delay={100}>
+            <div className="border border-white/15 flex flex-col md:flex-row">
+              {/* Left - Image */}
+              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-square relative overflow-hidden">
+                <span className="text-white/30 text-sm">[IMAGE: Castudio technician at work]</span>
+              </div>
+              {/* Right - Quote, body, 4 pillars */}
+              <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
+                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for anything less than the best.&rdquo;
+                </p>
+                <div className="border-t border-white/10" />
+                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
+                  We use the proper techniques, the right products, and trained technicians who care about your car as much as you do. Every wash follows a systematic process designed to clean thoroughly without causing damage.
+                </p>
+                <div className="grid grid-cols-2 border-t border-white/10 pt-6 sm:pt-8">
+                  {[
+                    { label: "Premium Products", icon: Sparkles },
+                    { label: "Correct Equipment", icon: Droplets },
+                    { label: "Trained Technicians", icon: Paintbrush },
+                    { label: "Total Convenience", icon: Car },
+                  ].map((item, index) => (
+                    <div key={item.label} className={cn(
+                      "flex items-center gap-3 py-3 px-2",
+                      index >= 2 && "border-t border-white/10",
+                      index % 2 !== 0 && "border-l border-white/10 pl-4"
+                    )}>
+                      <item.icon className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
+                      <span className="text-sm text-white/70">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* Services Preview */}
       <div className="border-t border-white/10" />
       <section className="py-20 md:py-24 bg-brand-black text-white section-lines-light">
@@ -366,85 +408,6 @@ export default function HomePage() {
               </div>
             </div>
           </FadeIn>
-        </div>
-      </section>
-
-      {/* Why Castudio */}
-      <div className="border-t border-white/10" />
-      <section className="py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Why Castudio</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                Premium car care, delivered to your door
-              </h2>
-            </div>
-          </FadeIn>
-
-          {/* Manifesto card */}
-          <FadeIn direction="up" delay={100}>
-            <div className="border border-white/15 flex flex-col md:flex-row">
-              {/* Left - Placeholder */}
-              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-square relative overflow-hidden">
-                <div className="w-full h-full bg-brand-dark-gray flex items-center justify-center">
-                  <span className="text-white/30 text-sm">[IMAGE: Castudio technician at work]</span>
-                </div>
-              </div>
-              {/* Right - Quote, body, stats */}
-              <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
-                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for anything less than the best.&rdquo;
-                </p>
-                <div className="border-t border-white/10" />
-                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
-                  Most street washes use dirty rags, harsh chemicals, and zero technique. The result? Swirl marks, scratches, and paint that ages faster than it should. Castudio exists because we believe there&apos;s a better way.
-                </p>
-                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
-                  We use premium car shampoo, the two-bucket method with grit guards, and fresh microfiber towels on every car. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office — everything included.
-                </p>
-                <div className="flex flex-col sm:flex-row border-t border-white/10 pt-6 sm:pt-8">
-                  {[
-                    { stat: "2 hrs", label: "Avg Standard wash", icon: Clock },
-                    { stat: "100%", label: "Satisfaction rate", icon: Droplets },
-                    { stat: "Premium", label: "Products only", icon: Sparkles },
-                  ].map((item, index) => (
-                    <div key={item.stat} className={cn(
-                      "flex-1 py-4 sm:py-0 sm:px-6 text-center border-white/10 flex flex-col items-center",
-                      index > 0 && "border-t sm:border-t-0 sm:border-l"
-                    )}>
-                      <item.icon className="h-5 w-5 text-white/70 mb-3" strokeWidth={1.5} />
-                      <p className="text-xl font-medium text-white">{item.stat}</p>
-                      <p className="text-xs text-white/60 mt-1">{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* 2x2 feature grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 mt-10 border border-white/10">
-            {[
-              { title: "Premium Products Only", body: "Premium car shampoos, professional sealants, and ceramic coatings from trusted brands. Never diluted bulk chemicals or harsh detergents.", icon: Sparkles },
-              { title: "Two-Bucket Method", body: "Separate wash and rinse buckets with grit guards on every job. This proven technique prevents the swirl marks and scratches that street washes leave behind.", icon: Droplets },
-              { title: "Trained Technicians", body: "Uniformed, trained on proper wash technique, paint decontamination, and sealant application. Every technician follows the Castudio standard before they touch your car.", icon: Paintbrush },
-              { title: "Total Convenience", body: "Home, office, apartment basement — we come to you with all the equipment and products needed. You don\u2019t lift a finger.", icon: Car },
-            ].map((card, index) => (
-              <FadeIn key={card.title} delay={(index + 2) * 100}>
-                <div className={cn(
-                  "bg-brand-dark-gray p-5 sm:p-8 md:p-10 h-full flex flex-col",
-                  (index === 1) && "md:border-l border-white/10",
-                  (index === 2) && "border-t border-white/10",
-                  (index === 3) && "border-t md:border-l border-white/10"
-                )}>
-                  <card.icon className="h-5 w-5 text-white/70 mb-4" strokeWidth={1.5} />
-                  <h4 className="text-lg font-normal text-white font-heading mb-3">{card.title}</h4>
-                  <p className="text-white/60 text-sm leading-relaxed text-justify">{card.body}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
         </div>
       </section>
 
