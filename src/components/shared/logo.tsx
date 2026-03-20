@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -8,25 +9,31 @@ interface LogoProps {
 }
 
 export function Logo({ size = 'xl', forceTheme }: LogoProps) {
-  const fontSizes = {
-    sm: 'text-lg',
-    md: 'text-xl',
-    lg: 'text-2xl',
-    xl: 'text-3xl',
-    '2xl': 'text-4xl',
+  const heights: Record<string, number> = {
+    sm: 24,
+    md: 28,
+    lg: 32,
+    xl: 40,
+    '2xl': 48,
   };
 
-  const fontSize = fontSizes[size] || fontSizes.xl;
+  const h = heights[size] || heights.xl;
 
-  // forceTheme='light' means light background → orange text
-  // forceTheme='dark' means dark background → white text
-  const textColor = forceTheme === 'light' ? 'text-brand-orange' : 'text-white';
+  // forceTheme='dark' means dark background → use dark logo (white text)
+  // forceTheme='light' means light background → use light logo (black text)
+  const src = forceTheme === 'light' ? '/logo-light.png' : '/logo-dark.png';
 
   return (
     <Link href="/" className="flex items-center" aria-label="Castudio Home">
-      <span className={`${fontSize} ${textColor} font-heading font-bold tracking-tight`}>
-        Castudio
-      </span>
+      <Image
+        src={src}
+        alt="Castudio"
+        height={h}
+        width={h * 4}
+        className="object-contain"
+        style={{ height: h, width: 'auto' }}
+        priority
+      />
     </Link>
   );
 }
