@@ -478,10 +478,10 @@ export default function SubscriptionsPage() {
         <div className="container mx-auto">
           <div className="border border-white/10 px-6 sm:px-10 md:px-16 py-16 md:py-20">
             <h2 className="text-3xl md:text-4xl font-semibold text-brand-white mb-6 font-heading">
-              Ready to keep your car pristine?
+              Book Your First Wash
             </h2>
             <p className="text-brand-white/70 mb-8 max-w-xl mx-auto">
-              Choose a plan and get started today. We&rsquo;ll handle the rest.
+              Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <Button
@@ -494,14 +494,14 @@ export default function SubscriptionsPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Start Your Subscription <ArrowRight className="ml-2 h-5 w-5" />
+                  WhatsApp Us
                 </a>
               </Button>
               <Link
                 href="/car-wash/one-time"
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
               >
-                Not ready? Try one-time first
+                See Our Plans
               </Link>
             </div>
           </div>

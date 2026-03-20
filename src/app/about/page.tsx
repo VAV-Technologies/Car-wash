@@ -6,30 +6,30 @@ const differentiators = [
   {
     num: "01",
     title: "Premium Products Only",
-    body: "We use premium car shampoos, sealants, and coatings.not diluted bulk chemicals. Your car gets what it deserves.",
+    body: "We use premium car shampoos, sealants, and coatings, never diluted bulk chemicals. Your car gets what it deserves.",
   },
   {
     num: "02",
-    title: "The Two-Bucket Method",
-    body: "Separate wash and rinse buckets with grit guards. This prevents swirl marks and scratches that 90% of car washes cause.",
+    title: "Correct Equipment",
+    body: "We use the right tools and techniques for every job. Proper wash mitts, grit guards, and dedicated microfiber for each section of your car.",
   },
   {
     num: "03",
     title: "Trained Technicians",
-    body: "Our team is trained on proper wash technique, paint decontamination, and sealant application. They\u2019re not just washing.they\u2019re caring for your paint.",
+    body: "Our team is trained on proper wash technique, paint decontamination, and sealant application. They care about your paint as much as you do.",
   },
   {
     num: "04",
     title: "Total Convenience",
-    body: "We come to you. Home, office, apartment parking.wherever your car is. All equipment and products come with us.",
+    body: "We come to your home, office, or apartment. Just provide access to a water source and power outlet, and we handle everything else.",
   },
 ];
 
 const steps = [
   {
     num: "01",
-    title: "We bring everything to you",
-    body: "Top-notch equipment, premium car shampoos, dedicated cleaners, and fresh microfiber for every job. Everything we need, we bring.",
+    title: "We bring the right equipment",
+    body: "Top-notch tools, premium car shampoos, dedicated cleaners, and fresh microfiber for every job. We come fully prepared.",
   },
   {
     num: "02",
@@ -38,22 +38,22 @@ const steps = [
   },
   {
     num: "03",
-    title: "We follow proper technique",
-    body: "Two-bucket method with grit guards, fresh microfiber for each section, systematic process from foam pre-wash to final wipe.",
+    title: "We follow the correct techniques",
+    body: "Proper wash methods, grit guards, fresh microfiber for each section, and a systematic process from foam pre-wash to final wipe.",
   },
   {
     num: "04",
-    title: "We don\u2019t rush",
-    body: "Standard takes 2 hours, Professional 3, Elite 4. Quality takes time. We\u2019d rather do fewer cars right than more cars wrong.",
+    title: "We take our time",
+    body: "Standard takes 2 hours, Professional 3, Elite 4. Quality takes time. We would rather do fewer cars right than more cars wrong.",
   },
 ];
 
 const qualityBullets = [
   "Premium products that protect your paint, not strip it",
   "Trained technicians held to the highest standards",
-  "Two-bucket method that prevents swirl marks and scratches",
+  "Correct techniques that prevent swirl marks and scratches",
   "At-home convenience that saves you hours",
-  "We keep working until you\u2019re completely satisfied",
+  "We keep working until you are completely satisfied",
   "Quality you can see and feel every single time",
 ];
 
@@ -299,32 +299,31 @@ export default function AboutPage() {
       <div className="border-t border-white/10" />
 
       {/* -- 6. CTA -- */}
-      <section className="w-full py-12 md:py-12 bg-brand-black section-lines-light">
+      <section className="w-full py-12 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border border-white/10">
-              <div className="px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center">
-                <div className="flex flex-col items-center justify-center h-full">
-                  <div className="border border-white/10 bg-brand-dark-gray/50 backdrop-blur-sm px-6 sm:px-10 md:px-16 py-8 sm:py-10 md:py-14">
-                    <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">
-                      Ready for a wash that&apos;s actually premium?
-                    </h2>
-                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
-                      <Link
-                        href="https://wa.me/62816104334"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
-                      >
-                        Book via WhatsApp
-                      </Link>
-                      <Link
-                        href="/car-wash/one-time"
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
-                      >
-                        See Our Services
-                      </Link>
-                    </div>
+              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
+                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <Link
+                      href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
+                    >
+                      WhatsApp Us
+                    </Link>
+                    <Link
+                      href="/car-wash/subscriptions"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
+                    >
+                      See Our Plans
+                    </Link>
                   </div>
                 </div>
               </div>

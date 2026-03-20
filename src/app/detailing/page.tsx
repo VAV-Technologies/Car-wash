@@ -305,23 +305,31 @@ export default function DetailingPage() {
       <section className="w-full py-12 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="border border-white/10 px-6 sm:px-10 md:px-16 py-16 md:py-20 text-center">
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
-                Ready to detail your car?
-              </h2>
-              <p className="text-white/60 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-                Send us a message on WhatsApp with the service you need.
-                We&rsquo;ll confirm your booking and bring everything to your
-                doorstep.
-              </p>
-              <Link
-                href={`${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20auto%20detailing.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
-              >
-                Book via WhatsApp
-              </Link>
+            <div className="border border-white/10">
+              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
+                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <Link
+                      href={`${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
+                    >
+                      WhatsApp Us
+                    </Link>
+                    <Link
+                      href="/car-wash/subscriptions"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
+                    >
+                      See Our Plans
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </FadeIn>
         </div>
