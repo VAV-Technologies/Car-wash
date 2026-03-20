@@ -1,44 +1,24 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { Metadata } from 'next'
-import { FadeIn } from '@/components/ui/fade-in'
-import { getPublishedPosts, type BlogCategory, type BlogPostListItem } from '@/lib/blog'
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Car Care Tips & News | Castudio',
-  description:
-    'Expert car care tips, detailing guides, and Castudio news for drivers in Indonesia who want to keep their vehicles in top condition.',
-  openGraph: {
-    title: 'Car Care Tips & News | Castudio',
-    description:
-      'Expert car care tips, detailing guides, and Castudio news for drivers in Indonesia who want to keep their vehicles in top condition.',
-  },
-}
-
-const categories: { value: BlogCategory | 'all'; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'tips', label: 'Tips' },
-  { value: 'guides', label: 'Guides' },
-  { value: 'news', label: 'News' },
-  { value: 'promotions', label: 'Promotions' },
-]
-
-const categoryLabels: Record<BlogCategory, string> = {
-  tips: 'Tips',
-  guides: 'Guides',
-  news: 'News',
-  promotions: 'Promotions',
-}
+import { useState, useEffect, Suspense } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { FadeIn } from '@/components/ui/fade-in';
+import { useSearchParams } from 'next/navigation';
+import { getPublishedPosts, type BlogCategory, type BlogPostListItem } from '@/lib/blog';
+import { useTranslation } from '@/i18n';
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  })
+  });
 }
 
-function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
+function BlogCard({ post, index, t }: { post: BlogPostListItem; index: number; t: (key: string) => string }) {
+  const categoryKey = `tips.categories.${post.category}` as const;
+
   return (
     <FadeIn delay={index * 80} direction="up">
       <Link
@@ -68,7 +48,7 @@ function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
         {/* Content */}
         <div className="flex flex-col flex-1 p-5">
           <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-3">
-            {categoryLabels[post.category]}
+            {t(categoryKey)}
           </span>
           <h3 className="text-lg font-heading text-white group-hover:text-white/80 transition-colors leading-snug mb-2">
             {post.title}
@@ -79,35 +59,49 @@ function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
           <p className="text-xs text-white/50 mt-4 pt-3 border-t border-white/5">
             {post.author_name}
             {post.published_at && <> &middot; {formatDate(post.published_at)}</>}
-            {' '}&middot; {post.reading_time_minutes} min read
+            {' '}&middot; {post.reading_time_minutes} {t('tips.minRead')}
           </p>
         </div>
       </Link>
     </FadeIn>
-  )
+  );
 }
 
-export default async function TipsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string; page?: string }>
-}) {
-  const resolvedParams = await searchParams
-  const categoryParam = resolvedParams.category as BlogCategory | undefined
-  const currentPage = parseInt(resolvedParams.page || '1', 10)
+function TipsPageInner() {
+  const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category') as BlogCategory | null;
+  const pageParam = searchParams.get('page');
+  const currentPage = parseInt(pageParam || '1', 10);
 
   const validCategory =
     categoryParam && ['tips', 'guides', 'news', 'promotions'].includes(categoryParam)
       ? (categoryParam as BlogCategory)
-      : undefined
+      : undefined;
 
-  const { posts, total } = await getPublishedPosts({
-    page: currentPage,
-    limit: 12,
-    category: validCategory,
-  })
+  const [posts, setPosts] = useState<BlogPostListItem[]>([]);
+  const [total, setTotal] = useState(0);
 
-  const totalPages = Math.ceil(total / 12)
+  useEffect(() => {
+    getPublishedPosts({
+      page: currentPage,
+      limit: 12,
+      category: validCategory,
+    }).then(({ posts, total }) => {
+      setPosts(posts);
+      setTotal(total);
+    });
+  }, [currentPage, validCategory]);
+
+  const totalPages = Math.ceil(total / 12);
+
+  const categories: { value: BlogCategory | 'all'; labelKey: string }[] = [
+    { value: 'all', labelKey: 'tips.categories.all' },
+    { value: 'tips', labelKey: 'tips.categories.tips' },
+    { value: 'guides', labelKey: 'tips.categories.guides' },
+    { value: 'news', labelKey: 'tips.categories.news' },
+    { value: 'promotions', labelKey: 'tips.categories.promotions' },
+  ];
 
   return (
     <div className="bg-brand-dark-gray">
@@ -116,13 +110,13 @@ export default async function TipsPage({
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
-              Car Care Tips
+              {t('tips.hero.eyebrow')}
             </p>
             <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-              Car Care Tips, News &amp; Guides
+              {t('tips.hero.title')}
             </h1>
             <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
-              Expert car care advice, product guides, and Castudio updates for drivers who care.
+              {t('tips.hero.subtitle')}
             </p>
           </FadeIn>
         </div>
@@ -141,9 +135,9 @@ export default async function TipsPage({
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => {
                   const isActive =
-                    cat.value === 'all' ? !validCategory : cat.value === validCategory
+                    cat.value === 'all' ? !validCategory : cat.value === validCategory;
                   const href =
-                    cat.value === 'all' ? '/tips' : `/tips?category=${cat.value}`
+                    cat.value === 'all' ? '/tips' : `/tips?category=${cat.value}`;
 
                   return (
                     <Link
@@ -155,9 +149,9 @@ export default async function TipsPage({
                           : 'px-4 py-2 text-sm font-medium border border-white/10 text-white/70 hover:border-white/20 hover:text-white transition-colors'
                       }
                     >
-                      {cat.label}
+                      {t(cat.labelKey)}
                     </Link>
-                  )
+                  );
                 })}
               </div>
 
@@ -172,7 +166,7 @@ export default async function TipsPage({
                       }).toString()}`}
                       className="px-3 py-2 text-sm font-medium border border-white/10 text-white hover:border-white/20 transition-colors"
                     >
-                      Previous
+                      {t('tips.previous')}
                     </Link>
                   )}
                   <span className="px-3 py-2 text-sm text-white/50">
@@ -186,7 +180,7 @@ export default async function TipsPage({
                       }).toString()}`}
                       className="px-3 py-2 text-sm font-medium border border-white/10 text-white hover:border-white/20 transition-colors"
                     >
-                      Next
+                      {t('tips.next')}
                     </Link>
                   )}
                 </div>
@@ -198,14 +192,14 @@ export default async function TipsPage({
           {posts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post, i) => (
-                <BlogCard key={post.id} post={post} index={i} />
+                <BlogCard key={post.id} post={post} index={i} t={t} />
               ))}
             </div>
           ) : (
             <FadeIn>
               <div className="border border-white/10 p-12 text-center">
                 <p className="text-white/50">
-                  No articles found{validCategory ? ` in ${categoryLabels[validCategory]}` : ''}. Check back soon.
+                  {t('tips.noArticles')}{validCategory ? ` ${t('tips.noArticlesIn')} ${t(`tips.categories.${validCategory}`)}` : ''}{t('tips.checkBackSoon')}
                 </p>
               </div>
             </FadeIn>
@@ -214,27 +208,15 @@ export default async function TipsPage({
         </div>
       </section>
 
-      {/* JSON-LD CollectionPage schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'CollectionPage',
-            name: 'Castudio Car Care Tips',
-            description:
-              'Expert car care tips, detailing guides, and Castudio news for drivers in Indonesia who want to keep their vehicles in top condition.',
-            url: 'https://www.castudio.co/tips',
-            publisher: {
-              '@type': 'Organization',
-              name: 'Castudio',
-              url: 'https://www.castudio.co',
-            },
-          }),
-        }}
-      />
-
       <div className="border-t border-white/10" />
     </div>
-  )
+  );
+}
+
+export default function TipsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-brand-dark-gray" />}>
+      <TipsPageInner />
+    </Suspense>
+  );
 }

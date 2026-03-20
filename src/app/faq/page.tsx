@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Accordion,
   AccordionContent,
@@ -7,167 +9,98 @@ import {
 import Link from "next/link";
 import { HelpCircle, DollarSign, CalendarCheck, ShieldCheck, Droplets, Paintbrush } from "lucide-react";
 import { FadeIn } from "@/components/ui/fade-in";
-
-const generalFAQs = [
-  {
-    sectionTitle: "General Questions",
-    icon: HelpCircle,
-    questions: [
-      {
-        q: "How do I book?",
-        a: "Tap the WhatsApp button, tell us the service you want, your preferred date and time, and your location. We will confirm your booking within 30 minutes.",
-      },
-      {
-        q: "Do I need to provide anything?",
-        a: "We just need access to a water source and a power outlet. We bring all the equipment, products, and microfiber towels needed for the job.",
-      },
-      {
-        q: "Where do you operate?",
-        a: "We serve Jakarta and surrounding areas. We use zone-based scheduling to keep service prompt and on time.",
-      },
-      {
-        q: "Where can you wash my car?",
-        a: "We work at houses, townhouses, and locations with access to a water source and power outlet. Covered parking is ideal but not required.",
-      },
-      {
-        q: "How long does each service take?",
-        a: "Standard takes approximately 2 hours, Professional approximately 3 hours, and Elite approximately 4 hours.",
-      },
-    ],
-  },
-];
-
-const pricingFAQs = [
-  {
-    sectionTitle: "Pricing & Payment",
-    icon: DollarSign,
-    questions: [
-      {
-        q: "What makes Castudio different?",
-        a: "We use premium products, the correct equipment, and trained technicians who follow proper techniques on every car. We take our time and keep working until you are satisfied with the result.",
-      },
-      {
-        q: "What payment methods do you accept?",
-        a: "Bank transfer (BCA, Mandiri, BNI, BRI) and e-wallets (GoPay, OVO, DANA). For one-time bookings, you pay after the service is completed. For subscriptions, billing is every 4 months at the start of each cycle.",
-      },
-      {
-        q: "Is there a cancellation fee?",
-        a: "For one-time bookings, cancel at least 12 hours ahead and there is no fee. For subscriptions, we require 30 days notice to cancel.",
-      },
-    ],
-  },
-];
-
-const subscriptionFAQs = [
-  {
-    sectionTitle: "Subscriptions",
-    icon: CalendarCheck,
-    questions: [
-      {
-        q: "Can I change my subscription tier?",
-        a: "Yes. You can upgrade or downgrade at the next billing cycle. Just give us 7 days notice before your renewal date.",
-      },
-      {
-        q: "Do unused washes roll over?",
-        a: "No. We encourage you to use all your included washes each billing period to keep your car in top condition.",
-      },
-      {
-        q: "What is the Free Full Detail bonus?",
-        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing, approximately 8 hours of comprehensive work. Essentials and Plus subscribers do not receive the detailing bonus but can upgrade anytime.",
-      },
-      {
-        q: "Can I use my subscription for multiple cars?",
-        a: "Yes. You can use your subscription washes across different vehicles. Just let us know when you book each session.",
-      },
-    ],
-  },
-];
-
-const qualityFAQs = [
-  {
-    sectionTitle: "Quality & Guarantees",
-    icon: ShieldCheck,
-    questions: [
-      {
-        q: "What if I am not satisfied with the result?",
-        a: "We offer a satisfaction guarantee. Contact us within 24 hours and we will come back and redo the service free of charge.",
-      },
-      {
-        q: "What products do you use?",
-        a: "Premium car shampoos, glass cleaners, tar removers, clay bars, and sealant coatings. We never use dish soap, generic all-purpose cleaners, or reused rags. Every car gets fresh microfiber towels.",
-      },
-      {
-        q: "Will a hand wash scratch my paint?",
-        a: "Not when done correctly. We use proper wash techniques with grit guards, premium microfiber mitts, and the correct equipment. This is the same method professional detailers use worldwide. It is the improper techniques and dirty rags that cause scratches and swirl marks.",
-      },
-    ],
-  },
-];
-
-const serviceDetailFAQs = [
-  {
-    sectionTitle: "Service Details",
-    icon: Droplets,
-    questions: [
-      {
-        q: "What is included in the Standard wash?",
-        a: "Full foam pre-wash, hand wash with proper technique, interior clean and vacuum, tire polish, and body spot remover.",
-      },
-      {
-        q: "What is the difference between Standard and Professional?",
-        a: "Professional adds glass spot remover for water scale and tar remover for rough, contaminated paint. If your windshield is hazy or your paint feels rough to the touch, Professional is the right choice.",
-      },
-      {
-        q: "What is the Elite service?",
-        a: "Everything in Professional plus clay bar decontamination and a premium sealant coating that provides 4 to 8 weeks of hydrophobic protection. Think of it as a mini-detail.",
-      },
-      {
-        q: "Do you wash motorcycles?",
-        a: "Not currently. We are focused exclusively on cars to deliver the highest quality of service.",
-      },
-      {
-        q: "What about rainy days?",
-        a: "Cars actually get dirtier in the rain. Acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
-      },
-    ],
-  },
-];
-
-const detailingFAQs = [
-  {
-    sectionTitle: "Detailing",
-    icon: Paintbrush,
-    questions: [
-      {
-        q: "What is included in a Full Detail?",
-        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000, saving you Rp 257,000 compared to booking each service individually.",
-      },
-      {
-        q: "Can I book individual detailing services?",
-        a: "Yes. You can book Interior Detailing (Rp 1,039,000), Exterior Detailing (Rp 1,039,000), Window Detailing (Rp 689,000), or Tire & Rims Detailing (Rp 289,000) individually.",
-      },
-      {
-        q: "How often should I detail my car?",
-        a: "We recommend a full detail every 3 to 6 months for most drivers. If you park outdoors, drive frequently in dusty or polluted areas, or simply want your car in showroom condition, every 2 to 3 months is ideal.",
-      },
-      {
-        q: "Do subscribers get free detailing?",
-        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Essentials and Plus subscribers do not receive the detailing bonus but can upgrade to Elite anytime.",
-      },
-    ],
-  },
-];
-
-const allSections = [
-  { data: generalFAQs, key: "general", bg: "bg-brand-dark-gray" },
-  { data: pricingFAQs, key: "pricing", bg: "bg-brand-black" },
-  { data: subscriptionFAQs, key: "subscriptions", bg: "bg-brand-dark-gray" },
-  { data: detailingFAQs, key: "detailing", bg: "bg-brand-black" },
-  { data: qualityFAQs, key: "quality", bg: "bg-brand-dark-gray" },
-  { data: serviceDetailFAQs, key: "details", bg: "bg-brand-black" },
-];
+import { useTranslation } from '@/i18n';
 
 export default function FAQPage() {
+  const { t } = useTranslation();
+
+  const generalFAQs = [
+    {
+      sectionTitle: t('faq.general.title'),
+      icon: HelpCircle,
+      questions: [
+        { q: t('faq.general.q1'), a: t('faq.general.a1') },
+        { q: t('faq.general.q2'), a: t('faq.general.a2') },
+        { q: t('faq.general.q3'), a: t('faq.general.a3') },
+        { q: t('faq.general.q4'), a: t('faq.general.a4') },
+        { q: t('faq.general.q5'), a: t('faq.general.a5') },
+      ],
+    },
+  ];
+
+  const pricingFAQs = [
+    {
+      sectionTitle: t('faq.pricing.title'),
+      icon: DollarSign,
+      questions: [
+        { q: t('faq.pricing.q1'), a: t('faq.pricing.a1') },
+        { q: t('faq.pricing.q2'), a: t('faq.pricing.a2') },
+        { q: t('faq.pricing.q3'), a: t('faq.pricing.a3') },
+      ],
+    },
+  ];
+
+  const subscriptionFAQs = [
+    {
+      sectionTitle: t('faq.subscriptions.title'),
+      icon: CalendarCheck,
+      questions: [
+        { q: t('faq.subscriptions.q1'), a: t('faq.subscriptions.a1') },
+        { q: t('faq.subscriptions.q2'), a: t('faq.subscriptions.a2') },
+        { q: t('faq.subscriptions.q3'), a: t('faq.subscriptions.a3') },
+        { q: t('faq.subscriptions.q4'), a: t('faq.subscriptions.a4') },
+      ],
+    },
+  ];
+
+  const qualityFAQs = [
+    {
+      sectionTitle: t('faq.quality.title'),
+      icon: ShieldCheck,
+      questions: [
+        { q: t('faq.quality.q1'), a: t('faq.quality.a1') },
+        { q: t('faq.quality.q2'), a: t('faq.quality.a2') },
+        { q: t('faq.quality.q3'), a: t('faq.quality.a3') },
+      ],
+    },
+  ];
+
+  const serviceDetailFAQs = [
+    {
+      sectionTitle: t('faq.serviceDetails.title'),
+      icon: Droplets,
+      questions: [
+        { q: t('faq.serviceDetails.q1'), a: t('faq.serviceDetails.a1') },
+        { q: t('faq.serviceDetails.q2'), a: t('faq.serviceDetails.a2') },
+        { q: t('faq.serviceDetails.q3'), a: t('faq.serviceDetails.a3') },
+        { q: t('faq.serviceDetails.q4'), a: t('faq.serviceDetails.a4') },
+        { q: t('faq.serviceDetails.q5'), a: t('faq.serviceDetails.a5') },
+      ],
+    },
+  ];
+
+  const detailingFAQs = [
+    {
+      sectionTitle: t('faq.detailing.title'),
+      icon: Paintbrush,
+      questions: [
+        { q: t('faq.detailing.q1'), a: t('faq.detailing.a1') },
+        { q: t('faq.detailing.q2'), a: t('faq.detailing.a2') },
+        { q: t('faq.detailing.q3'), a: t('faq.detailing.a3') },
+        { q: t('faq.detailing.q4'), a: t('faq.detailing.a4') },
+      ],
+    },
+  ];
+
+  const allSections = [
+    { data: generalFAQs, key: "general", bg: "bg-brand-dark-gray" },
+    { data: pricingFAQs, key: "pricing", bg: "bg-brand-black" },
+    { data: subscriptionFAQs, key: "subscriptions", bg: "bg-brand-dark-gray" },
+    { data: detailingFAQs, key: "detailing", bg: "bg-brand-black" },
+    { data: qualityFAQs, key: "quality", bg: "bg-brand-dark-gray" },
+    { data: serviceDetailFAQs, key: "details", bg: "bg-brand-black" },
+  ];
+
   return (
     <div className="bg-brand-black">
       {/* Hero */}
@@ -176,10 +109,10 @@ export default function FAQPage() {
           <FadeIn direction="up" delay={200}>
             <div className="text-center space-y-6 px-4">
               <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-                Frequently Asked Questions
+                {t('faq.hero.title')}
               </h1>
               <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
-                Everything you need to know about our mobile car wash service across Jakarta and surrounding areas.
+                {t('faq.hero.subtitle')}
               </p>
             </div>
           </FadeIn>
@@ -241,9 +174,9 @@ export default function FAQPage() {
             <div className="border border-white/10">
               <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">{t('common.cta.bookYourFirstWash')}</h2>
                   <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                    {t('common.cta.bookYourFirstWashDesc')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Link
@@ -252,13 +185,13 @@ export default function FAQPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                     >
-                      WhatsApp Us
+                      {t('common.cta.whatsappUs')}
                     </Link>
                     <Link
                       href="/car-wash/subscriptions"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
                     >
-                      See Our Plans
+                      {t('common.cta.seeOurPlans')}
                     </Link>
                   </div>
                 </div>

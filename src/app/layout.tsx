@@ -76,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         {/* Favicons and icons */}
         <link rel="icon" href="/nobridge-favicon.ico?v=3" sizes="any" />

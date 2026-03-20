@@ -1,66 +1,62 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { notFound } from 'next/navigation'
-import { Metadata } from 'next'
-import { Linkedin, Twitter, Mail, ArrowLeft } from 'lucide-react'
-import { FadeIn } from '@/components/ui/fade-in'
-import { getPostBySlug, getRelatedPosts, type BlogCategory } from '@/lib/blog'
+'use client';
 
-const categoryLabels: Record<BlogCategory, string> = {
-  tips: 'Tips',
-  guides: 'Guides',
-  news: 'News',
-  promotions: 'Promotions',
-}
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import { Linkedin, Twitter, Mail, ArrowLeft } from 'lucide-react';
+import { FadeIn } from '@/components/ui/fade-in';
+import { getPostBySlug, getRelatedPosts, type BlogPost, type BlogPostListItem, type BlogCategory } from '@/lib/blog';
+import { useTranslation } from '@/i18n';
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  })
+  });
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}): Promise<Metadata> {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
+export default function BlogPostPage() {
+  const { t } = useTranslation();
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPostListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!slug) return;
+    setLoading(true);
+    getPostBySlug(slug).then((p) => {
+      setPost(p);
+      if (p) {
+        getRelatedPosts(p.category, p.slug, 3).then(setRelatedPosts);
+      }
+      setLoading(false);
+    });
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-brand-dark-gray flex items-center justify-center">
+        <div className="text-white/50">Loading...</div>
+      </div>
+    );
+  }
 
   if (!post) {
-    return { title: 'Post Not Found | Castudio' }
+    return (
+      <div className="min-h-screen bg-brand-dark-gray flex items-center justify-center">
+        <div className="text-white/50">{t('notFound.title')}</div>
+      </div>
+    );
   }
 
-  return {
-    title: post.meta_title || `${post.title} | Castudio`,
-    description: post.meta_description || post.excerpt,
-    openGraph: {
-      title: post.meta_title || post.title,
-      description: post.meta_description || post.excerpt,
-      type: 'article',
-      publishedTime: post.published_at ?? undefined,
-      authors: [post.author_name],
-      ...(post.cover_image_url ? { images: [post.cover_image_url] } : {}),
-    },
-  }
-}
-
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
-  const { slug } = await params
-  const post = await getPostBySlug(slug)
-
-  if (!post) notFound()
-
-  const relatedPosts = await getRelatedPosts(post.category, post.slug, 3)
-
-  const postUrl = `https://www.castudio.co/tips/${post.slug}`
-  const shareText = encodeURIComponent(post.title)
+  const postUrl = `https://www.castudio.co/tips/${post.slug}`;
+  const shareText = encodeURIComponent(post.title);
+  const categoryKey = `tips.categories.${post.category}` as const;
 
   return (
     <div className="bg-brand-dark-gray">
@@ -75,7 +71,7 @@ export default async function BlogPostPage({
                 className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors mb-6"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                Back to Tips
+                {t('tips.backToTips')}
               </Link>
             </div>
 
@@ -87,7 +83,7 @@ export default async function BlogPostPage({
               {/* Left: category, title, meta */}
               <div className="flex-1 min-w-0 px-4">
                 <span className="inline-block text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-5">
-                  {categoryLabels[post.category]}
+                  {t(categoryKey)}
                 </span>
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading text-white tracking-tight mb-5 line-clamp-2">
@@ -109,7 +105,7 @@ export default async function BlogPostPage({
                     </>
                   )}
                   <span>&middot;</span>
-                  <span>{post.reading_time_minutes} min read</span>
+                  <span>{post.reading_time_minutes} {t('tips.minRead')}</span>
                 </div>
               </div>
 
@@ -164,7 +160,7 @@ export default async function BlogPostPage({
                   <div className="lg:sticky lg:top-28">
                     {/* Share section */}
                     <div className="p-6 border-b border-white/10">
-                      <p className="text-xs uppercase tracking-wider text-white/50 font-heading mb-3">Share</p>
+                      <p className="text-xs uppercase tracking-wider text-white/50 font-heading mb-3">{t('tips.share')}</p>
                       <div className="border-t border-white/10 mb-4" />
                       <div className="flex flex-col gap-2">
                         <a
@@ -174,7 +170,7 @@ export default async function BlogPostPage({
                           className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Linkedin className="h-4 w-4 shrink-0" />
-                          Share on LinkedIn
+                          {t('tips.shareOnLinkedIn')}
                         </a>
                         <a
                           href={`https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(postUrl)}`}
@@ -183,33 +179,33 @@ export default async function BlogPostPage({
                           className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Twitter className="h-4 w-4 shrink-0" />
-                          Share on X
+                          {t('tips.shareOnX')}
                         </a>
                         <a
                           href={`mailto:?subject=${shareText}&body=${encodeURIComponent(postUrl)}`}
                           className="flex items-center gap-2.5 text-sm text-white/70 hover:text-white transition-colors py-1.5"
                         >
                           <Mail className="h-4 w-4 shrink-0" />
-                          Send via Email
+                          {t('tips.sendViaEmail')}
                         </a>
                       </div>
                     </div>
 
                     {/* CTA box */}
                     <div className="bg-brand-black text-white p-6">
-                      <p className="text-xs uppercase tracking-wider text-brand-orange font-heading mb-3">Castudio Car Care</p>
+                      <p className="text-xs uppercase tracking-wider text-brand-orange font-heading mb-3">{t('tips.sidebar.eyebrow')}</p>
                       <div className="border-t border-white/15 mb-3" />
                       <p className="text-sm font-heading text-white mb-3 leading-snug">
-                        Expert car wash and detailing for drivers who care
+                        {t('tips.sidebar.title')}
                       </p>
                       <p className="text-xs text-white/60 leading-relaxed mb-5">
-                        Book your next wash or detailing service. Premium products, trained technicians, satisfaction guaranteed.
+                        {t('tips.sidebar.body')}
                       </p>
                       <Link
                         href="/contact"
                         className="inline-flex items-center justify-center w-full h-10 text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 transition-colors"
                       >
-                        Book a Service
+                        {t('common.cta.bookAService')}
                       </Link>
                     </div>
                   </div>
@@ -223,51 +219,54 @@ export default async function BlogPostPage({
                 <div className="mt-16">
                   <div className="mb-8">
                     <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                      Keep Reading
+                      {t('tips.keepReading')}
                     </p>
                     <h2 className="text-2xl md:text-3xl font-heading text-white tracking-tight">
-                      More from {categoryLabels[post.category]}
+                      {t('tips.moreFrom')} {t(categoryKey)}
                     </h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0">
-                    {relatedPosts.map((related, i) => (
-                      <FadeIn key={related.id} delay={i * 80} direction="up">
-                        <Link
-                          href={`/tips/${related.slug}`}
-                          className={`group flex flex-col h-full border border-white/10 hover:border-white/25 transition-colors ${i > 0 ? 'border-t-0 sm:border-t sm:border-l-0' : ''}`}
-                        >
-                          <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-brand-dark-gray">
-                            {related.cover_image_url ? (
-                              <Image
-                                src={related.cover_image_url}
-                                alt={related.title}
-                                fill
-                                className="object-cover group-hover:scale-[1.02] transition-transform duration-500"
-                              />
-                            ) : (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <svg className="w-8 h-8 text-white/10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                  <rect x="3" y="3" width="18" height="18" rx="0" />
-                                  <circle cx="8.5" cy="8.5" r="1.5" />
-                                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col flex-1 p-5">
-                            <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-3">
-                              {categoryLabels[related.category]}
-                            </span>
-                            <h3 className="text-sm font-heading text-white group-hover:text-white/80 transition-colors leading-snug mb-auto">
-                              {related.title}
-                            </h3>
-                            <p className="text-xs text-white/50 mt-3 pt-3 border-t border-white/5">
-                              {related.reading_time_minutes} min read
-                            </p>
-                          </div>
-                        </Link>
-                      </FadeIn>
-                    ))}
+                    {relatedPosts.map((related, i) => {
+                      const relCatKey = `tips.categories.${related.category}` as const;
+                      return (
+                        <FadeIn key={related.id} delay={i * 80} direction="up">
+                          <Link
+                            href={`/tips/${related.slug}`}
+                            className={`group flex flex-col h-full border border-white/10 hover:border-white/25 transition-colors ${i > 0 ? 'border-t-0 sm:border-t sm:border-l-0' : ''}`}
+                          >
+                            <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-brand-dark-gray">
+                              {related.cover_image_url ? (
+                                <Image
+                                  src={related.cover_image_url}
+                                  alt={related.title}
+                                  fill
+                                  className="object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                                />
+                              ) : (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <svg className="w-8 h-8 text-white/10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="0" />
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex flex-col flex-1 p-5">
+                              <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-3">
+                                {t(relCatKey)}
+                              </span>
+                              <h3 className="text-sm font-heading text-white group-hover:text-white/80 transition-colors leading-snug mb-auto">
+                                {related.title}
+                              </h3>
+                              <p className="text-xs text-white/50 mt-3 pt-3 border-t border-white/5">
+                                {related.reading_time_minutes} {t('tips.minRead')}
+                              </p>
+                            </div>
+                          </Link>
+                        </FadeIn>
+                      );
+                    })}
                   </div>
                 </div>
               </FadeIn>
@@ -276,38 +275,7 @@ export default async function BlogPostPage({
         </div>
       </section>
 
-      {/* JSON-LD Article schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: post.title,
-            description: post.meta_description || post.excerpt,
-            image: post.cover_image_url || undefined,
-            datePublished: post.published_at,
-            dateModified: post.updated_at,
-            author: {
-              '@type': 'Person',
-              name: post.author_name,
-              ...(post.author_role ? { jobTitle: post.author_role } : {}),
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: 'Castudio',
-              url: 'https://www.castudio.co',
-            },
-            mainEntityOfPage: {
-              '@type': 'WebPage',
-              '@id': postUrl,
-            },
-            keywords: post.tags.join(', '),
-          }),
-        }}
-      />
-
       <div className="border-t border-white/10" />
     </div>
-  )
+  );
 }

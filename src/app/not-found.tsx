@@ -4,8 +4,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Home, ArrowLeft } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 export default function NotFound() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-brand-black">
       <Card className="w-full max-w-md bg-brand-dark-gray border-white/10">
@@ -17,10 +20,10 @@ export default function NotFound() {
 
           {/* Error Message */}
           <h1 className="text-2xl font-semibold text-white mb-2">
-            Page Not Found
+            {t('notFound.title')}
           </h1>
           <p className="text-white/60 mb-8">
-            The page you&apos;re looking for doesn&apos;t exist or has been moved.
+            {t('notFound.description')}
           </p>
 
           {/* Action Buttons */}
@@ -28,7 +31,7 @@ export default function NotFound() {
             <Button asChild className="w-full">
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
-                Go to Homepage
+                {t('notFound.goHome')}
               </Link>
             </Button>
 
@@ -38,13 +41,13 @@ export default function NotFound() {
               className="w-full"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Go Back
+              {t('notFound.goBack')}
             </Button>
           </div>
 
           {/* Help Text */}
           <p className="text-sm text-white/40 mt-8">
-            Need help? <Link href="/contact" className="text-brand-orange hover:underline">Contact us</Link>
+            {t('notFound.needHelp')} <Link href="/contact" className="text-brand-orange hover:underline">{t('notFound.contactUs')}</Link>
           </p>
         </CardContent>
       </Card>

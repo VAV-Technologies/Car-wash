@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+import { useTranslation } from '@/i18n';
 
 interface NavLinkItem {
   href: string;
@@ -36,35 +37,39 @@ function isGroup(entry: NavEntry): entry is NavLinkGroup {
   return 'items' in entry;
 }
 
-const navEntries: NavEntry[] = [
-  {
-    label: "Car Wash",
-    triggerIcon: Droplets,
-    items: [
-      { href: "/car-wash/one-time", label: "One-Time Washes", icon: Droplets },
-      { href: "/car-wash/subscriptions", label: "Subscriptions", icon: CalendarCheck },
-    ],
-  },
-  {
-    label: "Auto Detailing",
-    triggerIcon: Paintbrush,
-    href: "/detailing",
-  },
-  {
-    label: "Company",
-    triggerIcon: Building2,
-    items: [
-      { href: "/about", label: "About Us", icon: Info },
-      { href: "/faq", label: "FAQ", icon: HelpCircle },
-      { href: "/tips", label: "Car Care Tips", icon: BookOpen },
-    ],
-  },
-];
-
-const navLinkGroups = navEntries.filter(isGroup);
+function getNavEntries(t: (key: string) => string): NavEntry[] {
+  return [
+    {
+      label: t("common.nav.carWash"),
+      triggerIcon: Droplets,
+      items: [
+        { href: "/car-wash/one-time", label: t("common.nav.oneTimeWashes"), icon: Droplets },
+        { href: "/car-wash/subscriptions", label: t("common.nav.subscriptions"), icon: CalendarCheck },
+      ],
+    },
+    {
+      label: t("common.nav.autoDetailing"),
+      triggerIcon: Paintbrush,
+      href: "/detailing",
+    },
+    {
+      label: t("common.nav.company"),
+      triggerIcon: Building2,
+      items: [
+        { href: "/about", label: t("common.nav.aboutUs"), icon: Info },
+        { href: "/faq", label: t("common.nav.faq"), icon: HelpCircle },
+        { href: "/tips", label: t("common.nav.carCareTips"), icon: BookOpen },
+      ],
+    },
+  ];
+}
 
 export function Navbar() {
   const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const navEntries = getNavEntries(t);
+  const navLinkGroups = navEntries.filter(isGroup);
 
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -176,7 +181,7 @@ export function Navbar() {
 
         {/* Right - Contact button */}
         <div className="hidden md:flex items-center space-x-2.5">
-          <Link href="/contact" className="inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors bg-brand-orange text-black hover:bg-brand-orange-dark">Contact Us</Link>
+          <Link href="/contact" className="inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors bg-brand-orange text-black hover:bg-brand-orange-dark">{t('common.nav.contactUs')}</Link>
         </div>
 
         {/* Mobile Menu */}
@@ -243,7 +248,7 @@ export function Navbar() {
                 {/* Contact — primary CTA */}
                 <SheetClose asChild>
                   <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-orange text-black hover:bg-brand-orange-dark w-full">
-                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-4 w-4" /> Contact Us</Link>
+                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-4 w-4" /> {t('common.nav.contactUs')}</Link>
                   </Button>
                 </SheetClose>
               </nav>

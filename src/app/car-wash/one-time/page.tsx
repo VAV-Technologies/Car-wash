@@ -1,84 +1,78 @@
-import { Metadata } from "next";
+'use client';
+
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight, Waves, Wind, CircleDot, Eraser, Wrench, GlassWater, Flame, Gem } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Cuci Mobil Panggilan Premium | Castudio",
-  description:
-    "Premium mobile car wash delivered to your doorstep across Jakarta and surrounding areas. Three service tiers from Rp 339,000. Professional products, two-bucket method, trained technicians.",
-};
-
-/* ------------------------------------------------------------------ */
-/*  Data                                                               */
-/* ------------------------------------------------------------------ */
-
-const WA_BASE = "https://wa.me/62816104334";
-
-const comparisonFeatures = [
-  { label: "Foam Pre-Wash", icon: Waves, standard: true, professional: true, elite: true },
-  { label: "Two-Bucket Hand Wash", icon: Droplets, standard: true, professional: true, elite: true },
-  { label: "Interior Clean & Vacuum", icon: Wind, standard: true, professional: true, elite: true },
-  { label: "Tire Polish & Rim Clean", icon: CircleDot, standard: true, professional: true, elite: true },
-  { label: "Body Spot Remover", icon: Eraser, standard: true, professional: true, elite: true },
-  { label: "Glass Spot Remover", icon: GlassWater, standard: false, professional: true, elite: true },
-  { label: "Tar Remover", icon: Flame, standard: false, professional: true, elite: true },
-  { label: "Clay Bar Decontamination", icon: Gem, standard: false, professional: false, elite: true },
-  { label: "Sealant Coating", icon: ShieldCheck, standard: false, professional: false, elite: true },
-];
-
-const processSteps = [
-  {
-    num: "01",
-    title: "Foam Pre-Wash",
-    body: "We start with a thick foam layer that loosens dirt, grime, and contaminants without touching the paint. This minimizes the risk of scratching from the very first step.",
-  },
-  {
-    num: "02",
-    title: "Two-Bucket Hand Wash",
-    body: "Separate wash and rinse buckets with grit guards. Fresh microfiber mitt for each panel. Premium car shampoo that cleans without stripping wax or sealant. This is the technique that prevents swirl marks.",
-  },
-  {
-    num: "03",
-    title: "Interior Deep Clean",
-    body: "Full vacuum of seats, carpets, and boot. Dashboard, console, and trim wipe-down. Door panels and jambs cleaned. Air vents blown out with compressed air.",
-  },
-  {
-    num: "04",
-    title: "Wheels, Tires & Engine Bay",
-    body: "Dedicated wheel cleaner for brake dust and grime. Tire sidewalls scrubbed and dressed. Engine bay degreased and detailed, areas most washes skip entirely.",
-  },
-];
-
-const differentiators = [
-  {
-    icon: Sparkles,
-    title: "Premium Products Only",
-    body: "Professional-grade chemicals and coatings from trusted brands, not diluted bulk chemicals from the nearest supplier.",
-  },
-  {
-    icon: Droplets,
-    title: "Two-Bucket Method",
-    body: "Separate wash and rinse buckets with grit guards on every job. This prevents swirl marks and paint damage that single-bucket washes cause.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Trained Technicians",
-    body: "Every technician is trained on proper wash technique, paint decontamination, and sealant application before they touch your car.",
-  },
-  {
-    icon: MapPin,
-    title: "Total Convenience",
-    body: "Home, office, apartment. We come to you across Jakarta and surrounding areas. All equipment and products included. You don\u2019t lift a finger.",
-  },
-];
+import { useTranslation } from '@/i18n';
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
+const WA_BASE = "https://wa.me/62816104334";
+
 export default function OneTimeWashPage() {
+  const { t } = useTranslation();
+
+  const comparisonFeatures = [
+    { label: t('oneTime.pricing.foamPreWash'), icon: Waves, standard: true, professional: true, elite: true },
+    { label: t('oneTime.pricing.twoBucketHandWash'), icon: Droplets, standard: true, professional: true, elite: true },
+    { label: t('oneTime.pricing.interiorCleanVacuum'), icon: Wind, standard: true, professional: true, elite: true },
+    { label: t('oneTime.pricing.tirePolishRimClean'), icon: CircleDot, standard: true, professional: true, elite: true },
+    { label: t('oneTime.pricing.bodySpotRemover'), icon: Eraser, standard: true, professional: true, elite: true },
+    { label: t('oneTime.pricing.glassSpotRemover'), icon: GlassWater, standard: false, professional: true, elite: true },
+    { label: t('oneTime.pricing.tarRemover'), icon: Flame, standard: false, professional: true, elite: true },
+    { label: t('oneTime.pricing.clayBarDecontamination'), icon: Gem, standard: false, professional: false, elite: true },
+    { label: t('oneTime.pricing.sealantCoating'), icon: ShieldCheck, standard: false, professional: false, elite: true },
+  ];
+
+  const processSteps = [
+    {
+      num: "01",
+      title: t('oneTime.process.step1.title'),
+      body: t('oneTime.process.step1.body'),
+    },
+    {
+      num: "02",
+      title: t('oneTime.process.step2.title'),
+      body: t('oneTime.process.step2.body'),
+    },
+    {
+      num: "03",
+      title: t('oneTime.process.step3.title'),
+      body: t('oneTime.process.step3.body'),
+    },
+    {
+      num: "04",
+      title: t('oneTime.process.step4.title'),
+      body: t('oneTime.process.step4.body'),
+    },
+  ];
+
+  const differentiators = [
+    {
+      icon: Sparkles,
+      title: t('oneTime.differentiators.1.title'),
+      body: t('oneTime.differentiators.1.body'),
+    },
+    {
+      icon: Droplets,
+      title: t('oneTime.differentiators.2.title'),
+      body: t('oneTime.differentiators.2.body'),
+    },
+    {
+      icon: ShieldCheck,
+      title: t('oneTime.differentiators.3.title'),
+      body: t('oneTime.differentiators.3.body'),
+    },
+    {
+      icon: MapPin,
+      title: t('oneTime.differentiators.4.title'),
+      body: t('oneTime.differentiators.4.body'),
+    },
+  ];
+
   return (
     <div className="bg-brand-black">
       {/* ── 1. Hero ──────────────────────────────────────────────── */}
@@ -90,21 +84,18 @@ export default function OneTimeWashPage() {
             className="text-center space-y-6 px-4 max-w-4xl mx-auto"
           >
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
-              One-Time Wash Services
+              {t('oneTime.hero.eyebrow')}
             </p>
             <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-              No commitment. No subscription. Just book, and we&rsquo;ll make
-              your car shine.
+              {t('oneTime.hero.title')}
             </h1>
             <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
-              Choose the level of care your car needs. Every tier uses premium
-              products, proper technique, and dedicated microfiber,
-              delivered to your doorstep.
+              {t('oneTime.hero.subtitle')}
             </p>
             <p className="text-sm text-white/50">
-              Want to save more?{" "}
+              {t('oneTime.hero.saveMore')}{" "}
               <Link href="/car-wash/subscriptions" className="text-brand-orange underline underline-offset-4 hover:text-brand-orange/80 transition-colors">
-                Subscribe and save 15% &rarr;
+                {t('oneTime.hero.subscribeAndSave')} &rarr;
               </Link>
             </p>
           </FadeIn>
@@ -120,10 +111,10 @@ export default function OneTimeWashPage() {
           <FadeIn direction="up">
             <div className="px-4 mb-12">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                How We Clean
+                {t('oneTime.process.eyebrow')}
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Every detail, every time
+                {t('oneTime.process.title')}
               </h2>
             </div>
           </FadeIn>
@@ -168,17 +159,17 @@ export default function OneTimeWashPage() {
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Why We&rsquo;re Different
+                {t('oneTime.differentiators.eyebrow')}
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Not your average car wash
+                {t('oneTime.differentiators.title')}
               </h2>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10">
             {differentiators.map((card, index) => (
-              <FadeIn key={card.title} delay={(index + 1) * 100}>
+              <FadeIn key={index} delay={(index + 1) * 100}>
                 <div
                   className={cn(
                     "p-8 md:p-10 h-full flex flex-col",
@@ -213,10 +204,10 @@ export default function OneTimeWashPage() {
           <FadeIn direction="up">
             <div className="text-center mb-12 px-4">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Pricing
+                {t('oneTime.pricing.eyebrow')}
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Three tiers. One standard: excellence.
+                {t('oneTime.pricing.title')}
               </h2>
             </div>
           </FadeIn>
@@ -225,7 +216,7 @@ export default function OneTimeWashPage() {
             {/* Image placeholders — above table, no borders on left cell */}
             <div className="flex">
               <div className="w-[28%] sm:w-[24%] shrink-0" />
-              {["Standard", "Professional", "Elite"].map((name, i) => (
+              {[t('oneTime.pricing.standard'), t('oneTime.pricing.professional'), t('oneTime.pricing.elite')].map((name, i) => (
                 <div key={name} className={cn(
                   "flex-1 h-40 sm:h-48 bg-brand-black flex items-center justify-center",
                   i > 0 && "border-l border-white/10"
@@ -240,9 +231,9 @@ export default function OneTimeWashPage() {
               {/* Table header — tier names + prices */}
               <div className="flex">
                 <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-end">
-                  <span className="text-xs uppercase tracking-wider text-white/40 font-heading">Feature</span>
+                  <span className="text-xs uppercase tracking-wider text-white/40 font-heading">{t('oneTime.pricing.feature')}</span>
                 </div>
-                {["Standard", "Professional", "Elite"].map((name) => (
+                {[t('oneTime.pricing.standard'), t('oneTime.pricing.professional'), t('oneTime.pricing.elite')].map((name) => (
                   <div key={name} className="flex-1 p-4 sm:p-6 text-center border-l border-white/10">
                     <p className="text-base sm:text-lg font-heading text-white">{name}</p>
                   </div>
@@ -280,9 +271,9 @@ export default function OneTimeWashPage() {
               <div className="w-[28%] sm:w-[24%] shrink-0" />
               <div className="flex flex-1 border-x border-b border-white/10">
                 {[
-                  { label: "Book Standard", tagline: "The Thorough Clean", price: "Rp 339,000", duration: "~2 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
-                  { label: "Book Professional", tagline: "The Deep Restoration", price: "Rp 569,000", duration: "~3 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
-                  { label: "Book Elite", tagline: "The Full Transformation", price: "Rp 919,000", duration: "~4 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
+                  { label: t('oneTime.pricing.bookStandard'), tagline: t('oneTime.pricing.thoroughClean'), price: t('oneTime.pricing.standardPrice'), duration: t('oneTime.pricing.standardDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
+                  { label: t('oneTime.pricing.bookProfessional'), tagline: t('oneTime.pricing.deepRestoration'), price: t('oneTime.pricing.professionalPrice'), duration: t('oneTime.pricing.professionalDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
+                  { label: t('oneTime.pricing.bookElite'), tagline: t('oneTime.pricing.fullTransformation'), price: t('oneTime.pricing.elitePrice'), duration: t('oneTime.pricing.eliteDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
                 ].map((cta, i) => (
                   <div key={cta.label} className={cn(
                     "flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center gap-2",
@@ -309,13 +300,13 @@ export default function OneTimeWashPage() {
               <div className="w-[28%] sm:w-[24%] shrink-0" />
               <div className="flex-1 border-x border-b border-white/10 bg-brand-orange/5 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
                 <p className="text-sm text-white/70">
-                  <span className="text-brand-orange font-medium">Save 15%</span> with a quarterly subscription. Elite subscribers also get a <span className="text-brand-orange font-medium">FREE Full Detail</span> every year.
+                  <span className="text-brand-orange font-medium">{t('oneTime.pricing.save15')}</span> {t('oneTime.pricing.save15Desc')} <span className="text-brand-orange font-medium">{t('oneTime.pricing.freeFullDetail')}</span> {t('oneTime.pricing.everyYear')}
                 </p>
                 <Link
                   href="/car-wash/subscriptions"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-9 sm:h-10 px-5 transition-colors shrink-0"
                 >
-                  See Plans <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  {t('common.cta.seePlans')} <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
@@ -335,9 +326,9 @@ export default function OneTimeWashPage() {
             <div className="border border-white/10">
               <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">{t('common.cta.bookYourFirstWash')}</h2>
                   <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                    {t('common.cta.bookYourFirstWashDesc')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Link
@@ -346,13 +337,13 @@ export default function OneTimeWashPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
                     >
-                      WhatsApp Us
+                      {t('common.cta.whatsappUs')}
                     </Link>
                     <Link
                       href="/car-wash/subscriptions"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
                     >
-                      See Our Plans
+                      {t('common.cta.seeOurPlans')}
                     </Link>
                   </div>
                 </div>

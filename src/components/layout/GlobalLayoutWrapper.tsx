@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Navbar } from './navbar';
 import { Footer } from './footer';
 import { WhatsAppButton } from '@/components/shared/whatsapp-button';
+import { LanguageProvider } from '@/i18n';
 import type { ReactNode } from 'react';
 
 interface GlobalLayoutWrapperProps {
@@ -16,7 +17,7 @@ export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperPro
   const isHomePage = pathname === '/';
 
   return (
-    <>
+    <LanguageProvider>
       <Navbar />
       <main className="flex-grow">
         {!isHomePage && (
@@ -32,6 +33,6 @@ export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperPro
       </main>
       <Footer />
       <WhatsAppButton />
-    </>
+    </LanguageProvider>
   );
 }

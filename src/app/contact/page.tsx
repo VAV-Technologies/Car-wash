@@ -21,6 +21,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n";
 
 interface FormData {
   name: string;
@@ -36,6 +37,8 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -48,21 +51,21 @@ export default function ContactPage() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t('contact.form.nameRequired');
     } else if (formData.name.length > 100) {
-      newErrors.name = "Name must be under 100 characters";
+      newErrors.name = t('contact.form.nameTooLong');
     }
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('contact.form.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t('contact.form.emailInvalid');
     } else if (formData.email.length > 100) {
-      newErrors.email = "Email must be under 100 characters";
+      newErrors.email = t('contact.form.emailTooLong');
     }
     if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
+      newErrors.message = t('contact.form.messageRequired');
     } else if (formData.message.length > 2000) {
-      newErrors.message = "Message must be under 2000 characters";
+      newErrors.message = t('contact.form.messageTooLong');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,8 +76,8 @@ export default function ContactPage() {
     if (!validateForm()) {
       toast({
         variant: "destructive",
-        title: "Validation Error",
-        description: "Please fix the errors below and try again.",
+        title: t('contact.form.validationError'),
+        description: t('contact.form.validationErrorDesc'),
       });
       return;
     }
@@ -88,9 +91,8 @@ export default function ContactPage() {
     window.location.href = `mailto:hello@castudio.co?subject=${subject}&body=${body}`;
 
     toast({
-      title: "Opening email client",
-      description:
-        "Your default email client should open with the message pre-filled.",
+      title: t('contact.form.openingEmail'),
+      description: t('contact.form.openingEmailDesc'),
     });
   };
 
@@ -102,17 +104,17 @@ export default function ContactPage() {
   };
 
   const oneTimeReasons = [
-    { icon: Droplets, text: "Premium at-home service. We come to you" },
-    { icon: Clock, text: "Standard ~2hrs, Professional ~3hrs, Elite ~4hrs" },
-    { icon: ShieldCheck, text: "Satisfaction guarantee on every wash" },
-    { icon: MapPin, text: "Serving Jakarta and surrounding areas" },
+    { icon: Droplets, text: t('contact.oneTime.reason1') },
+    { icon: Clock, text: t('contact.oneTime.reason2') },
+    { icon: ShieldCheck, text: t('contact.oneTime.reason3') },
+    { icon: MapPin, text: t('contact.oneTime.reason4') },
   ];
 
   const subscriptionReasons = [
-    { icon: CalendarCheck, text: "Essentials: 2 washes/month from Rp 609K" },
-    { icon: Sparkles, text: "Plus: 4 washes/month from Rp 1,349K" },
-    { icon: Star, text: "Elite: 4 Standard + 2 Professional/quarter from Rp 3,199K" },
-    { icon: Gift, text: "Elite bonus: Free Full Detail every year (Rp 2.8M)" },
+    { icon: CalendarCheck, text: t('contact.subscription.plan1') },
+    { icon: Sparkles, text: t('contact.subscription.plan2') },
+    { icon: Star, text: t('contact.subscription.plan3') },
+    { icon: Gift, text: t('contact.subscription.plan4') },
   ];
 
   return (
@@ -123,11 +125,10 @@ export default function ContactPage() {
           <FadeIn direction="up">
             <div className="text-center space-y-6 px-4">
               <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
-                Book Your Wash
+                {t('contact.hero.title')}
               </h1>
               <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
-                Tap WhatsApp, tell us what you need, and we&apos;ll be at your
-                doorstep. It&apos;s that simple.
+                {t('contact.hero.subtitle')}
               </p>
             </div>
           </FadeIn>
@@ -142,17 +143,15 @@ export default function ContactPage() {
             <FadeIn delay={100} className="flex-1">
               <div className="border border-white/10 p-8 md:p-10 h-full flex flex-col">
                 <h2 className="text-2xl font-normal mb-4 font-heading text-white">
-                  Book a One-Time Wash
+                  {t('contact.oneTime.title')}
                 </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                  Choose Standard (Rp 339K), Professional (Rp 569K), or Elite
-                  (Rp 919K). Tell us your preferred date, time, and location.
-                  We&apos;ll confirm within 30 minutes.
+                  {t('contact.oneTime.body')}
                 </p>
 
                 <div className="mb-8 flex-grow">
                   <h3 className="text-base font-semibold mb-4 text-white">
-                    Why Choose Castudio:
+                    {t('contact.oneTime.whyTitle')}
                   </h3>
                   <ul className="space-y-3">
                     {oneTimeReasons.map((reason, i) => {
@@ -173,7 +172,7 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Book via WhatsApp <ArrowRight className="ml-2 h-5 w-5" />
+                  {t('common.cta.bookViaWhatsApp')} <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
             </FadeIn>
@@ -182,17 +181,15 @@ export default function ContactPage() {
             <FadeIn delay={200} className="flex-1">
               <div className="border border-white/10 border-t-0 md:border-t md:border-l-0 p-8 md:p-10 h-full flex flex-col">
                 <h2 className="text-2xl font-normal mb-4 font-heading text-white">
-                  Start a Subscription
+                  {t('contact.subscription.title')}
                 </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                  Plans from Rp 609,000/quarter. We&apos;ll keep your car pristine
-                  on a schedule that works for you. Plus and Elite subscribers
-                  get 15% off. Elite subscribers also get a free Full Detail every year.
+                  {t('contact.subscription.body')}
                 </p>
 
                 <div className="mb-8 flex-grow">
                   <h3 className="text-base font-semibold mb-4 text-white">
-                    Subscription Plans:
+                    {t('contact.subscription.plansTitle')}
                   </h3>
                   <ul className="space-y-3">
                     {subscriptionReasons.map((reason, i) => {
@@ -213,7 +210,7 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  Subscribe via WhatsApp{" "}
+                  {t('common.cta.subscribeViaWhatsApp')}{" "}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>
@@ -228,10 +225,10 @@ export default function ContactPage() {
           <FadeIn direction="up">
             <div className="text-center mb-12 px-4">
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
-                Prefer email?
+                {t('contact.form.title')}
               </h2>
               <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Send us a message and we&apos;ll get back to you.
+                {t('contact.form.subtitle')}
               </p>
             </div>
           </FadeIn>
@@ -244,7 +241,7 @@ export default function ContactPage() {
                   <div className="grid md:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-white">
-                        Full Name
+                        {t('contact.form.fullName')}
                       </Label>
                       <Input
                         id="name"
@@ -267,7 +264,7 @@ export default function ContactPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-white">
-                        Email Address
+                        {t('contact.form.emailAddress')}
                       </Label>
                       <Input
                         id="email"
@@ -293,7 +290,7 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="subject" className="text-white">
-                      Subject (Optional)
+                      {t('contact.form.subject')}
                     </Label>
                     <Input
                       id="subject"
@@ -301,14 +298,14 @@ export default function ContactPage() {
                       onChange={(e) =>
                         handleInputChange("subject", e.target.value)
                       }
-                      placeholder="Inquiry about car wash services"
+                      placeholder={t('contact.form.subjectPlaceholder')}
                       className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="message" className="text-white">
-                      Message
+                      {t('contact.form.message')}
                     </Label>
                     <Textarea
                       id="message"
@@ -316,7 +313,7 @@ export default function ContactPage() {
                       onChange={(e) =>
                         handleInputChange("message", e.target.value)
                       }
-                      placeholder="Your message..."
+                      placeholder={t('contact.form.messagePlaceholder')}
                       rows={5}
                       className={cn(
                         "bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-brand-orange focus:ring-brand-orange rounded-none",
@@ -335,7 +332,7 @@ export default function ContactPage() {
                     type="submit"
                     className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                   >
-                    Send Message
+                    {t('contact.form.send')}
                   </button>
                 </form>
               </div>
@@ -344,7 +341,7 @@ export default function ContactPage() {
               <div className="flex-1 border border-white/15 border-t-0 md:border-t md:border-l-0 p-5 sm:p-8 md:p-12 flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-white font-heading mb-6">
-                    Contact Information
+                    {t('contact.info.title')}
                   </h3>
                   <div className="space-y-6">
                     <div className="flex items-start space-x-3">
@@ -378,9 +375,9 @@ export default function ContactPage() {
                     <div className="flex items-start space-x-3">
                       <Clock className="h-5 w-5 text-brand-orange mt-0.5" />
                       <div>
-                        <p className="text-sm text-white/60 mb-1">Hours</p>
+                        <p className="text-sm text-white/60 mb-1">{t('common.contact.hoursLabel')}</p>
                         <p className="text-white font-medium">
-                          Mon toSat, 8 AM to6 PM
+                          {t('common.contact.hours')}
                         </p>
                       </div>
                     </div>
@@ -389,7 +386,7 @@ export default function ContactPage() {
 
                 <div className="border border-white/15 p-4 mt-8">
                   <p className="text-sm text-white/70 leading-relaxed">
-                    &ldquo;Your car deserves better than a street wash.&rdquo;
+                    {t('contact.info.quote')}
                   </p>
                 </div>
               </div>

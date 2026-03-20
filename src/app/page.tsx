@@ -5,10 +5,13 @@ import Link from 'next/link';
 import { Droplets, Sparkles, ArrowRight, Clock, ShieldCheck, MapPin, CheckCircle2, CalendarDays, MessageCircle, Paintbrush, Car, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FadeIn } from '@/components/ui/fade-in';
+import { useTranslation } from '@/i18n';
 
 const WA_LINK = "https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.";
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Hero Section */}
@@ -27,32 +30,32 @@ export default function HomePage() {
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-screen px-4 py-24 md:py-32 lg:py-40 relative z-10">
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
-            Your Car Deserves Better<br />Than a Street Wash
+            {t('home.hero.title.line1')}<br />{t('home.hero.title.line2')}
           </h1>
           <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-8 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
-            Premium at-home car wash and detailing across Jakarta and surrounding areas. We keep working until you&apos;re satisfied.
+            {t('home.hero.subtitle')}
           </p>
           <div className="mb-10 text-sm md:text-base text-white/80 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
             <div className="flex items-center justify-center gap-6 sm:gap-8">
               <div className="flex items-center">
-                <Sparkles className="mr-2 h-4 w-4 opacity-90" /> Premium Products
+                <Sparkles className="mr-2 h-4 w-4 opacity-90" /> {t('home.hero.badge.premiumProducts')}
               </div>
               <span className="text-white/30">|</span>
               <div className="flex items-center">
-                <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> Trained Technicians
+                <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> {t('home.hero.badge.trainedTechnicians')}
               </div>
               <span className="text-white/30">|</span>
               <div className="flex items-center">
-                <CheckCircle2 className="mr-2 h-4 w-4 opacity-90" /> Proper Best Practices
+                <CheckCircle2 className="mr-2 h-4 w-4 opacity-90" /> {t('home.hero.badge.properBestPractices')}
               </div>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
-              Book Your First Wash <ArrowRight className="ml-2 h-5 w-5" />
+              {t('home.hero.cta.bookFirstWash')} <ArrowRight className="ml-2 h-5 w-5" />
             </a>
             <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
-              See Our Plans
+              {t('home.hero.cta.seeOurPlans')}
             </Link>
           </div>
         </div>
@@ -67,12 +70,12 @@ export default function HomePage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">Protect Your Investment</p>
+              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">{t('home.problems.eyebrow')}</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
-                You worked hard for your car. Here&apos;s what happens when the wrong person washes it.
+                {t('home.problems.title')}
               </h2>
               <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Cheap washes cut corners. The damage adds up fast, and it&apos;s expensive to fix.
+                {t('home.problems.subtitle')}
               </p>
             </div>
           </FadeIn>
@@ -80,31 +83,31 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-white/10">
             {[
               {
-                title: "Swirl Marks & Scratches",
-                body: "Dirty rags and single-bucket washes grind dirt into your paint. Those circular scratches you see in sunlight? That\u2019s permanent damage from improper technique.",
+                title: t('home.problems.swirlMarks.title'),
+                body: t('home.problems.swirlMarks.body'),
               },
               {
-                title: "Faded & Oxidised Paint",
-                body: "Harsh chemicals and cheap detergents strip your car\u2019s protective clear coat. Over time, your paint fades, oxidises, and loses its depth and gloss.",
+                title: t('home.problems.fadedPaint.title'),
+                body: t('home.problems.fadedPaint.body'),
               },
               {
-                title: "Water Spot Etching",
-                body: "Hard water left to dry on your paint bonds with the surface and etches into the clear coat. Once it\u2019s baked in by the sun, it\u2019s nearly impossible to remove without polishing.",
+                title: t('home.problems.waterSpots.title'),
+                body: t('home.problems.waterSpots.body'),
               },
               {
-                title: "Cracked Interior Surfaces",
-                body: "Generic cleaners dry out leather, vinyl, and rubber. Dashboard cracks, seats fade, and trim pieces deteriorate years before they should.",
+                title: t('home.problems.crackedInterior.title'),
+                body: t('home.problems.crackedInterior.body'),
               },
               {
-                title: "Brake Dust Corrosion",
-                body: "Neglected wheels accumulate brake dust that bonds with the rim surface. Left untreated, it causes permanent pitting and corrosion that no amount of cleaning can fix.",
+                title: t('home.problems.brakeDust.title'),
+                body: t('home.problems.brakeDust.body'),
               },
               {
-                title: "Reduced Resale Value",
-                body: "Swirl marks, faded paint, cracked interiors, and corroded rims all add up. A poorly maintained car can lose millions in resale value compared to one that\u2019s been properly cared for.",
+                title: t('home.problems.resaleValue.title'),
+                body: t('home.problems.resaleValue.body'),
               },
             ].map((problem, index) => (
-              <FadeIn key={problem.title} delay={(index % 3) * 100}>
+              <FadeIn key={index} delay={(index % 3) * 100}>
                 <div className={cn(
                   "flex flex-col h-full",
                   index > 0 && "border-t sm:border-t-0 sm:border-l border-white/10",
@@ -134,9 +137,9 @@ export default function HomePage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Castudio</p>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">{t('home.whyCastudio.eyebrow')}</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                We do things the right way, every single time.
+                {t('home.whyCastudio.title')}
               </h2>
             </div>
           </FadeIn>
@@ -150,20 +153,20 @@ export default function HomePage() {
               {/* Right - Quote, body, 4 pillars */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
-                  &ldquo;We&apos;re for the car owner who values their time and their vehicle, and refuses to settle for anything less than the best.&rdquo;
+                  &ldquo;{t('home.whyCastudio.quote')}&rdquo;
                 </p>
                 <div className="border-t border-white/10" />
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
-                  We use the proper techniques, the right products, and trained technicians who care about your car as much as you do. Every wash follows a systematic process designed to clean thoroughly without causing damage.
+                  {t('home.whyCastudio.body')}
                 </p>
                 <div className="grid grid-cols-2 border border-white/10 mt-6 sm:mt-8">
                   {[
-                    { label: "Premium Products", desc: "Top-quality shampoos, sealants, and coatings only.", icon: Sparkles },
-                    { label: "Correct Equipment", desc: "Two-bucket method, grit guards, fresh microfiber every time.", icon: Droplets },
-                    { label: "Trained Technicians", desc: "Uniformed and certified on proper wash technique.", icon: Paintbrush },
-                    { label: "Total Convenience", desc: "We come to you. Home, office, or apartment.", icon: Car },
+                    { label: t('home.whyCastudio.premiumProducts'), desc: t('home.whyCastudio.premiumProductsDesc'), icon: Sparkles },
+                    { label: t('home.whyCastudio.correctEquipment'), desc: t('home.whyCastudio.correctEquipmentDesc'), icon: Droplets },
+                    { label: t('home.whyCastudio.trainedTechnicians'), desc: t('home.whyCastudio.trainedTechniciansDesc'), icon: Paintbrush },
+                    { label: t('home.whyCastudio.totalConvenience'), desc: t('home.whyCastudio.totalConvenienceDesc'), icon: Car },
                   ].map((item, index) => (
-                    <div key={item.label} className={cn(
+                    <div key={index} className={cn(
                       "p-4 sm:p-5 flex flex-col gap-2",
                       index >= 2 && "border-t border-white/10",
                       index % 2 !== 0 && "border-l border-white/10"
@@ -188,12 +191,12 @@ export default function HomePage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Car Washing Services</p>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">{t('home.services.eyebrow')}</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
-                Car Wash
+                {t('home.services.title')}
               </h2>
               <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Every wash uses premium car shampoo, the two-bucket method, fresh microfiber towels, and top-quality products. Choose the depth of care your car needs.
+                {t('home.services.subtitle')}
               </p>
             </div>
           </FadeIn>
@@ -202,30 +205,30 @@ export default function HomePage() {
             const services = [
               {
                 num: "01",
-                title: "Standard Wash",
-                subtitle: "The Thorough Clean",
-                price: "Rp 339,000",
-                duration: "~2 hours",
-                body: "Foam wash, interior clean, spot treatment, engine bay. The complete foundation wash with premium products and proper technique.",
-                tags: ["Foam Wash", "Interior Clean", "Spot Treatment", "Engine Bay", "Tire Polish"],
+                title: t('home.services.standard.title'),
+                subtitle: t('home.services.standard.subtitle'),
+                price: t('home.services.standard.price'),
+                duration: t('home.services.standard.duration'),
+                body: t('home.services.standard.body'),
+                tags: [t('home.services.standard.tag1'), t('home.services.standard.tag2'), t('home.services.standard.tag3'), t('home.services.standard.tag4'), t('home.services.standard.tag5')],
               },
               {
                 num: "02",
-                title: "Professional Wash",
-                subtitle: "The Deep Restoration",
-                price: "Rp 569,000",
-                duration: "~3 hours",
-                body: "Everything in Standard plus glass spot remover and tar remover. For cars that need deeper cleaning and restoration.",
-                tags: ["Glass Descaling", "Tar Removal", "Full Standard", "Deep Clean"],
+                title: t('home.services.professional.title'),
+                subtitle: t('home.services.professional.subtitle'),
+                price: t('home.services.professional.price'),
+                duration: t('home.services.professional.duration'),
+                body: t('home.services.professional.body'),
+                tags: [t('home.services.professional.tag1'), t('home.services.professional.tag2'), t('home.services.professional.tag3'), t('home.services.professional.tag4')],
               },
               {
                 num: "03",
-                title: "Elite Wash",
-                subtitle: "The Full Transformation",
-                price: "Rp 919,000",
-                duration: "~4 hours",
-                body: "Everything in Professional plus clay bar decontamination and premium sealant coating. The ultimate treatment for cars that deserve the best.",
-                tags: ["Clay Bar", "Sealant Coating", "Paint Restoration", "Hydrophobic Shield"],
+                title: t('home.services.elite.title'),
+                subtitle: t('home.services.elite.subtitle'),
+                price: t('home.services.elite.price'),
+                duration: t('home.services.elite.duration'),
+                body: t('home.services.elite.body'),
+                tags: [t('home.services.elite.tag1'), t('home.services.elite.tag2'), t('home.services.elite.tag3'), t('home.services.elite.tag4')],
               },
             ];
             return (
@@ -260,12 +263,12 @@ export default function HomePage() {
                           <p className="text-sm text-brand-orange font-medium mb-2">{card.subtitle}</p>
                           <p className="text-white/60 leading-relaxed mb-6 text-justify flex-grow">{card.body}</p>
                           <div className="flex flex-wrap gap-2 mb-6">
-                            {card.tags.map((tag) => (
-                              <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
+                            {card.tags.map((tag, tagIndex) => (
+                              <span key={tagIndex} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                             ))}
                           </div>
                           <Link href="/car-wash/one-time" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                            Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                            {t('common.cta.learnMore')} <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </div>
                       </FadeIn>
@@ -295,12 +298,12 @@ export default function HomePage() {
                         <p className="text-sm text-brand-orange font-medium mb-2">{card.subtitle}</p>
                         <p className="text-white/60 leading-relaxed mb-6 text-justify">{card.body}</p>
                         <div className="flex flex-wrap gap-2 mb-6">
-                          {card.tags.map((tag) => (
-                            <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
+                          {card.tags.map((tag, tagIndex) => (
+                            <span key={tagIndex} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                           ))}
                         </div>
                         <Link href="/car-wash/one-time" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                          Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                          {t('common.cta.learnMore')} <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </div>
                     </FadeIn>
@@ -314,22 +317,22 @@ export default function HomePage() {
           <div className="mt-12 md:mt-16">
             <FadeIn direction="up">
               <div className="text-center mb-10 md:mb-12 px-4">
-                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Auto Detailing</p>
+                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">{t('home.detailing.eyebrow')}</p>
                 <h3 className="text-2xl md:text-3xl font-normal tracking-tight text-white font-heading">
-                  Auto Detailing Services
+                  {t('home.detailing.title')}
                 </h3>
               </div>
             </FadeIn>
 
             <div className="flex flex-col">
               {[
-                { title: "Interior Detailing", body: "Complete cabin restoration. Deep vacuum, upholstery extraction, leather conditioning, dashboard UV treatment, air vent detail, and odour neutralisation. Your interior will look and smell like new." },
-                { title: "Exterior Detailing", body: "Full paint correction and protection. Clay bar decontamination, machine polish to remove swirl marks, premium sealant coating for deep gloss and hydrophobic finish. Trim and rubber restoration included." },
-                { title: "Window Detailing", body: "Crystal-clear glass inside and out. Water scale and mineral deposit removal, film and haze cleaning, finished with a hydrophobic coating that repels rain for weeks." },
-                { title: "Tire & Rims Detailing", body: "Deep wheel restoration. Brake dust and iron fallout removal, tar and adhesive cleaning, rim polish, and tire sidewall dressing that protects and restores the deep black finish." },
-                { title: "Full Detail Package", body: "All four detailing services in one comprehensive 8-hour session. Interior, exterior, windows, and tires & rims. The complete restoration for cars that deserve the best." },
+                { title: t('home.detailing.interior.title'), body: t('home.detailing.interior.body') },
+                { title: t('home.detailing.exterior.title'), body: t('home.detailing.exterior.body') },
+                { title: t('home.detailing.window.title'), body: t('home.detailing.window.body') },
+                { title: t('home.detailing.tireRims.title'), body: t('home.detailing.tireRims.body') },
+                { title: t('home.detailing.fullDetail.title'), body: t('home.detailing.fullDetail.body') },
               ].map((item, index) => (
-                <FadeIn key={item.title} delay={index * 80}>
+                <FadeIn key={index} delay={index * 80}>
                   <div className={cn(
                     "border border-white/10 flex flex-col md:flex-row",
                     index > 0 && "border-t-0"
@@ -357,7 +360,7 @@ export default function HomePage() {
             <FadeIn direction="up" delay={400}>
               <div className="border border-white/10 border-t-0 bg-brand-dark-gray p-8 text-center">
                 <Link href="/detailing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                  See All Detailing Services <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('common.cta.seeAllDetailingServices')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
             </FadeIn>
@@ -372,22 +375,22 @@ export default function HomePage() {
           <FadeIn direction="up" delay={100}>
             <div className="flex flex-col md:flex-row border border-white/10">
               <div className="flex-1 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Subscriptions</p>
+                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">{t('home.subscriptions.eyebrow')}</p>
                 <h2 className="text-2xl md:text-3xl font-normal tracking-tight text-white font-heading mb-6">
-                  Never think about car washing again.
+                  {t('home.subscriptions.title')}
                 </h2>
                 <p className="text-white/60 text-base leading-relaxed mb-6">
-                  Subscribe and we&apos;ll keep your car in showroom condition on a schedule that works for you. Regular washes prevent the buildup of dirt, grime, and contaminants that damage your paint over time. This saves you from expensive repairs down the road.
+                  {t('home.subscriptions.body')}
                 </p>
                 <div className="space-y-3 mb-8">
                   {[
-                    "Consistent care keeps your paint protected year-round",
-                    "Save vs. one-time pricing with every wash",
-                    "Flexible scheduling. You pick the days",
-                    "No long-term contracts, cancel anytime",
-                    "Your car always looks its best",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3">
+                    t('home.subscriptions.bullet1'),
+                    t('home.subscriptions.bullet2'),
+                    t('home.subscriptions.bullet3'),
+                    t('home.subscriptions.bullet4'),
+                    t('home.subscriptions.bullet5'),
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center gap-3">
                       <CheckCircle2 className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
                       <p className="text-sm text-white/70 leading-relaxed">{item}</p>
                     </div>
@@ -395,7 +398,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base transition-colors">
-                    See Subscription Plans <ArrowRight className="ml-2 h-5 w-5" />
+                    {t('home.subscriptions.cta')} <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </div>
               </div>
@@ -413,23 +416,23 @@ export default function HomePage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">Reviews</p>
+              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">{t('home.reviews.eyebrow')}</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                What our customers say
+                {t('home.reviews.title')}
               </h2>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3">
             {[
-              { name: "Andi S.", stars: 5, quote: "Best car wash I\u2019ve ever had. My car looks brand new every time." },
-              { name: "Rina M.", stars: 5, quote: "The convenience of having them come to my apartment is unbeatable. Professional team." },
-              { name: "Budi P.", stars: 5, quote: "Finally a car wash that actually cares about paint protection. Worth every rupiah." },
-              { name: "Diana K.", stars: 5, quote: "Subscribed to Plus and never looked back. The quarterly plan keeps my car looking showroom fresh." },
-              { name: "Tommy L.", stars: 5, quote: "Their two-bucket method makes a real difference. No more swirl marks on my black car." },
-              { name: "Sarah W.", stars: 5, quote: "On time, professional, and the result speaks for itself. Highly recommended." },
+              { name: t('home.reviews.1.name'), stars: 5, quote: t('home.reviews.1.quote') },
+              { name: t('home.reviews.2.name'), stars: 5, quote: t('home.reviews.2.quote') },
+              { name: t('home.reviews.3.name'), stars: 5, quote: t('home.reviews.3.quote') },
+              { name: t('home.reviews.4.name'), stars: 5, quote: t('home.reviews.4.quote') },
+              { name: t('home.reviews.5.name'), stars: 5, quote: t('home.reviews.5.quote') },
+              { name: t('home.reviews.6.name'), stars: 5, quote: t('home.reviews.6.quote') },
             ].map((review, index) => (
-              <FadeIn key={review.name} delay={index * 100}>
+              <FadeIn key={index} delay={index * 100}>
                 <div className={cn(
                   "border border-white/10 flex flex-col h-full",
                   index > 0 && "border-t-0 md:border-t",
@@ -463,16 +466,16 @@ export default function HomePage() {
             <div className="border border-white/10">
               <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
-                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">{t('common.cta.bookYourFirstWash')}</h2>
                   <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                    {t('common.cta.bookYourFirstWashDesc')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base">
-                      <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp Us
+                      <MessageCircle className="mr-2 h-5 w-5" /> {t('common.cta.whatsappUs')}
                     </a>
                     <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base">
-                      See Our Plans
+                      {t('common.cta.seeOurPlans')}
                     </Link>
                   </div>
                 </div>
