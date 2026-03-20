@@ -334,6 +334,8 @@ export default function DetailingPage() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="border-t border-white/10" />
     </div>
   );
 }

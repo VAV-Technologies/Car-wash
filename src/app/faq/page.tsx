@@ -267,6 +267,8 @@ export default function FAQPage() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="border-t border-white/10" />
     </div>
   );
 }

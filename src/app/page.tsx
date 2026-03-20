@@ -481,6 +481,8 @@ export default function HomePage() {
           </FadeIn>
         </div>
       </section>
+
+      <div className="border-t border-white/10" />
     </>
   );
 }

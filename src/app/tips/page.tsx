@@ -233,6 +233,8 @@ export default async function TipsPage({
           }),
         }}
       />
+
+      <div className="border-t border-white/10" />
     </div>
   )
 }
