@@ -125,10 +125,21 @@ export default function DetailingPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 2. Full Detail Package (compact, above table) ────────── */}
+      {/* ── 2. Services ─────────────────────────────────────────── */}
       <section className="w-full py-12 bg-brand-dark-gray text-white section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
+            <div className="px-4 mb-8">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                Services
+              </p>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
+                Choose the service your car needs
+              </h2>
+            </div>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={100}>
             <div className="border-2 border-brand-orange relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
                 <span className="px-6 py-1.5 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
@@ -197,20 +208,9 @@ export default function DetailingPage() {
         </div>
       </section>
 
-      {/* ── 3. Services Table ──────────────────────────────────────── */}
+      {/* ── 3. Individual Services Table ─────────────────────────── */}
       <section className="w-full py-12 bg-brand-dark-gray text-white section-lines-dark">
         <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="px-4 mb-8">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Services
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Choose the service your car needs
-              </h2>
-            </div>
-          </FadeIn>
-
           <FadeIn direction="up" delay={100}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-white/10">
               {services.map((service, i) => (
