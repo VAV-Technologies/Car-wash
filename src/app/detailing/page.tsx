@@ -129,7 +129,7 @@ export default function DetailingPage() {
       <section className="w-full py-12 bg-brand-dark-gray text-white section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="px-4 mb-8">
+            <div className="px-4 mb-12">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Services
               </p>
@@ -197,12 +197,12 @@ export default function DetailingPage() {
         </div>
       </section>
 
-      {/* -- OR Separator -- */}
-      <section className="w-full py-6 bg-brand-dark-gray section-lines-dark">
+      {/* -- Or Choose Individual Services -- */}
+      <section className="w-full py-3 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <div className="flex items-center gap-6">
             <div className="flex-1 border-t border-white/10" />
-            <span className="text-white/40 text-sm font-heading uppercase tracking-widest">or</span>
+            <span className="text-white/40 text-sm font-heading uppercase tracking-widest">or choose individual services</span>
             <div className="flex-1 border-t border-white/10" />
           </div>
         </div>
