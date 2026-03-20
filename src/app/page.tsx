@@ -374,7 +374,7 @@ export default function HomePage() {
               {/* Right - Quote, body, stats */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
-                  &ldquo;We&apos;re not the cheapest. We don&apos;t want to be. We&apos;re for the car owner who values their time and their vehicle.&rdquo;
+                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for anything less than the best.&rdquo;
                 </p>
                 <div className="border-t border-white/10" />
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">

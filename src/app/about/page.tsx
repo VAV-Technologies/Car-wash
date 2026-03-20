@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
@@ -26,30 +25,6 @@ const differentiators = [
   },
 ];
 
-const team = [
-  {
-    name: "The Founder",
-    role: "Vision & Operations",
-    bio: "Started Castudio because Jakarta\u2019s 4.35 million car owners deserve premium care without the hassle. Oversees service quality, product selection, and business growth.",
-    tags: ["Strategy", "Operations", "Product Quality", "Growth"],
-    image: "",
-  },
-  {
-    name: "Wash Technicians",
-    role: "Professional Car Care",
-    bio: "Trained on the two-bucket method, paint-safe products, and proper technique. Uniformed, punctual, and held to quality standards that most shops never reach.",
-    tags: ["Two-Bucket Method", "Paint Care", "Interior Clean", "Quality Check"],
-    image: "",
-  },
-  {
-    name: "Mobile Operations",
-    role: "Logistics & Scheduling",
-    bio: "Manages the zone-based scheduling system across JABODETABEK. Ensures every appointment runs on time with full equipment \u2014 500L water tank, generator, and all supplies onboard.",
-    tags: ["Scheduling", "Logistics", "Fleet", "Zone Management"],
-    image: "",
-  },
-];
-
 const steps = [
   {
     num: "01",
@@ -73,12 +48,12 @@ const steps = [
   },
 ];
 
-const pricingBullets = [
-  "No budget tier \u2014 Standard is our minimum",
-  "Premium products cost more but protect your paint",
-  "Trained technicians cost more but deliver better results",
-  "Two-bucket method takes longer but prevents damage",
-  "At-home convenience saves you hours",
+const qualityBullets = [
+  "Premium products that protect your paint, not strip it",
+  "Trained technicians held to the highest standards",
+  "Two-bucket method that prevents swirl marks and scratches",
+  "At-home convenience that saves you hours",
+  "We keep working until you\u2019re completely satisfied",
   "Quality you can see and feel every single time",
 ];
 
@@ -86,7 +61,7 @@ export default function AboutPage() {
   return (
     <div className="bg-brand-black">
       {/* -- 1. Hero -- */}
-      <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
+      <section className="w-full min-h-[75vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
@@ -105,8 +80,49 @@ export default function AboutPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 2. Our Story -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
+      {/* -- 2. About Us (replaces Team section) -- */}
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center space-y-4 mb-16 px-4">
+              <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
+                About Us
+              </p>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight text-white">
+                Premium car care, delivered to your door
+              </h2>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={100}>
+            <div className="border border-white/15 flex flex-col md:flex-row">
+              {/* Left - Image placeholder */}
+              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-auto relative overflow-hidden">
+                <span className="text-white/30 text-sm">[IMAGE: The Castudio Team]</span>
+              </div>
+              {/* Right - Content */}
+              <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
+                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle.&rdquo;
+                </p>
+                <div className="border-t border-white/10" />
+                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
+                  Most street washes use dirty rags, harsh chemicals, and zero technique. The result? Swirl marks, scratches, and paint that ages faster than it should. Castudio exists because we believe there&apos;s a better way.
+                </p>
+                <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
+                  We use pH-neutral shampoo, the two-bucket method with grit guards, fresh microfiber towels on every car, and professional-grade chemicals that protect rather than strip your paint. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office &mdash; with all water, power, and products included.
+                </p>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* -- 3. Our Story -- */}
+      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
@@ -120,7 +136,6 @@ export default function AboutPage() {
           </FadeIn>
 
           <div className="flex flex-col lg:flex-row">
-            {/* Left column: paragraphs */}
             <FadeIn delay={100} className="flex-1">
               <div className="border border-white/10 p-8 md:p-10 h-full space-y-6">
                 <p className="text-white/60 leading-relaxed">
@@ -130,27 +145,24 @@ export default function AboutPage() {
                   We bring professional-grade car care to your doorstep. No cutting corners. No generic products. No rushed jobs. Every wash uses premium products, the proper two-bucket method, and dedicated microfiber for each section of your car. Our technicians are trained, uniformed, and held to a quality standard that most shops never reach.
                 </p>
                 <p className="text-white/60 leading-relaxed">
-                  We&apos;re not the cheapest. We don&apos;t want to be. We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for a street-level wash. If that sounds like you, welcome home.
+                  We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for a street-level wash. If that sounds like you, welcome home.
                 </p>
               </div>
             </FadeIn>
 
-            {/* Right column: pull quote + metrics */}
             <FadeIn delay={200} className="flex-1">
               <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
-                {/* Pull quote */}
                 <div className="border-l-2 border-brand-orange pl-6 mb-8">
                   <p className="text-xl md:text-2xl font-heading text-white leading-snug mb-3">
                     &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle.&rdquo;
                   </p>
                 </div>
 
-                {/* 2x2 metrics grid */}
                 <div className="grid grid-cols-2">
                   {[
-                    { value: "339K", label: "Starting price" },
-                    { value: "JABODETABEK", label: "Service area" },
-                    { value: "15%", label: "Above market leader" },
+                    { value: "Jakarta", label: "And surrounding areas" },
+                    { value: "2hrs+", label: "Per wash, never rushed" },
+                    { value: "Trained", label: "Certified technicians" },
                     { value: "Premium", label: "Products only" },
                   ].map((metric, index) => (
                     <div
@@ -176,8 +188,8 @@ export default function AboutPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 3. Why We're Different -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
+      {/* -- 4. Why We're Different -- */}
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
@@ -190,7 +202,6 @@ export default function AboutPage() {
             </div>
           </FadeIn>
 
-          {/* Row 1: cards 01-02 */}
           <div className="flex flex-col md:flex-row">
             {differentiators.slice(0, 2).map((card, index) => (
               <FadeIn key={card.num} delay={index * 100} className="flex-1">
@@ -206,7 +217,6 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Row 2: cards 03-04 */}
           <div className="flex flex-col md:flex-row">
             {differentiators.slice(2, 4).map((card, index) => (
               <FadeIn key={card.num} delay={(index + 2) * 100} className="flex-1">
@@ -227,58 +237,8 @@ export default function AboutPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 4. The Team -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center space-y-4 mb-16 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
-                The Team
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight text-white">
-                People who care about your car
-              </h2>
-              <p className="text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
-                From our founder to our mobile operations crew, everyone at Castudio shares the same obsession with quality.
-              </p>
-            </div>
-          </FadeIn>
-
-          <div className="flex flex-col md:flex-row">
-            {team.map((member, index) => (
-              <FadeIn key={member.name} delay={index * 100} className="flex-1">
-                <div className={cn(
-                  "border border-white/15 h-full flex flex-col",
-                  index > 0 && "border-t-0 md:border-t md:border-l-0"
-                )}>
-                  <div className="aspect-[3/2.5] relative overflow-hidden bg-brand-dark-gray flex items-center justify-center">
-                    <p className="text-white/20 text-sm uppercase tracking-wider font-heading">{member.name}</p>
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h4 className="text-lg font-heading text-white">{member.name}</h4>
-                    <p className="text-sm text-brand-orange mb-3">{member.role}</p>
-                    <p className="text-white/70 text-sm leading-relaxed mb-4 flex-grow">{member.bio}</p>
-                    <div className="border-t border-white/15 pt-4 flex flex-wrap gap-2">
-                      {member.tags.map((tag) => (
-                        <span key={tag} className="text-xs px-3 py-1 border border-white/15 text-white/70">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
       {/* -- 5. Our Approach -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-dark">
+      <section className="w-full py-20 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="mb-12 px-4">
@@ -312,17 +272,17 @@ export default function AboutPage() {
               ))}
             </div>
 
-            {/* Right: Sticky Pricing Philosophy card */}
+            {/* Right: Our Quality Promise */}
             <FadeIn delay={200} className="lg:w-[400px] xl:w-[440px]">
               <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 bg-brand-dark-gray text-white p-8 md:p-10 sticky top-24 h-fit">
                 <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                  Our Pricing Philosophy
+                  Our Promise
                 </p>
                 <h3 className="text-xl font-heading mb-4 text-white">
-                  We price 15% above the market leader because we deliver 15% more care.
+                  We deliver the best car care in Jakarta &mdash; no compromises.
                 </h3>
                 <ul className="space-y-3">
-                  {pricingBullets.map((bullet) => (
+                  {qualityBullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3 text-sm text-white/70">
                       <span className="text-brand-orange mt-1 text-xs">&#x25C6;</span>
                       {bullet}
@@ -339,7 +299,7 @@ export default function AboutPage() {
       <div className="border-t border-white/10" />
 
       {/* -- 6. CTA -- */}
-      <section className="w-full py-12 md:py-12 bg-brand-black section-lines-dark">
+      <section className="w-full py-12 md:py-12 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border border-white/10">
@@ -351,7 +311,7 @@ export default function AboutPage() {
                     </h2>
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
                       <Link
-                        href="https://wa.me/6281234567890"
+                        href="https://wa.me/62816104334"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
