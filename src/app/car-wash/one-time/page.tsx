@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
-import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight } from "lucide-react";
+import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight, Waves, Wind, CircleDot, Eraser, Wrench, GlassWater, Flame, Gem } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Cuci Mobil Panggilan Premium | Castudio",
@@ -17,16 +17,16 @@ export const metadata: Metadata = {
 const WA_BASE = "https://wa.me/62816104334";
 
 const comparisonFeatures = [
-  { label: "Foam Pre-Wash", standard: true, professional: true, elite: true },
-  { label: "Two-Bucket Hand Wash", standard: true, professional: true, elite: true },
-  { label: "Interior Clean & Vacuum", standard: true, professional: true, elite: true },
-  { label: "Tire Polish & Rim Clean", standard: true, professional: true, elite: true },
-  { label: "Body Spot Remover", standard: true, professional: true, elite: true },
-  { label: "Engine Bay Clean", standard: true, professional: true, elite: true },
-  { label: "Glass Spot Remover", standard: false, professional: true, elite: true },
-  { label: "Tar Remover", standard: false, professional: true, elite: true },
-  { label: "Clay Bar Decontamination", standard: false, professional: false, elite: true },
-  { label: "Sealant Coating", standard: false, professional: false, elite: true },
+  { label: "Foam Pre-Wash", icon: Waves, standard: true, professional: true, elite: true },
+  { label: "Two-Bucket Hand Wash", icon: Droplets, standard: true, professional: true, elite: true },
+  { label: "Interior Clean & Vacuum", icon: Wind, standard: true, professional: true, elite: true },
+  { label: "Tire Polish & Rim Clean", icon: CircleDot, standard: true, professional: true, elite: true },
+  { label: "Body Spot Remover", icon: Eraser, standard: true, professional: true, elite: true },
+  { label: "Engine Bay Clean", icon: Wrench, standard: true, professional: true, elite: true },
+  { label: "Glass Spot Remover", icon: GlassWater, standard: false, professional: true, elite: true },
+  { label: "Tar Remover", icon: Flame, standard: false, professional: true, elite: true },
+  { label: "Clay Bar Decontamination", icon: Gem, standard: false, professional: false, elite: true },
+  { label: "Sealant Coating", icon: ShieldCheck, standard: false, professional: false, elite: true },
 ];
 
 const processSteps = [
@@ -212,7 +212,7 @@ export default function OneTimeWashPage() {
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="px-4 mb-12">
+            <div className="text-center mb-12 px-4">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Pricing
               </p>
@@ -226,7 +226,7 @@ export default function OneTimeWashPage() {
             <div className="border border-white/10">
               {/* Table header — tier names + prices */}
               <div className="flex">
-                <div className="w-[40%] sm:w-[35%] shrink-0 p-4 sm:p-6 flex items-end border-b border-white/10">
+                <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-end border-b border-white/10">
                   <span className="text-xs uppercase tracking-wider text-white/40 font-heading">Feature</span>
                 </div>
                 {[
@@ -243,31 +243,44 @@ export default function OneTimeWashPage() {
                 ))}
               </div>
 
-              {/* Table rows — features */}
-              {comparisonFeatures.map((feature, index) => (
-                <div key={feature.label} className={cn(
-                  "flex",
-                  index > 0 && "border-t border-white/10",
-                  index % 2 === 0 ? "bg-white/[0.02]" : ""
-                )}>
-                  <div className="w-[40%] sm:w-[35%] shrink-0 p-4 sm:p-5 flex items-center">
-                    <span className="text-sm text-white/70">{feature.label}</span>
+              {/* Image placeholder row */}
+              <div className="flex border-t border-white/10">
+                <div className="w-[28%] sm:w-[24%] shrink-0" />
+                {["Standard", "Professional", "Elite"].map((name) => (
+                  <div key={name} className="flex-1 h-40 sm:h-48 border-l border-white/10 bg-brand-black flex items-center justify-center">
+                    <span className="text-white/20 text-sm">[IMAGE: {name}]</span>
                   </div>
-                  {[feature.standard, feature.professional, feature.elite].map((val, i) => (
-                    <div key={i} className="flex-1 p-4 sm:p-5 flex items-center justify-center border-l border-white/10">
-                      {val ? (
-                        <Check className="h-4 w-4 text-brand-orange" strokeWidth={2.5} />
-                      ) : (
-                        <span className="text-white/20">&mdash;</span>
-                      )}
+                ))}
+              </div>
+
+              {/* Table rows — features with icons */}
+              {comparisonFeatures.map((feature, index) => {
+                const FeatureIcon = feature.icon;
+                return (
+                  <div key={feature.label} className={cn(
+                    "flex border-t border-white/10",
+                    index % 2 === 0 ? "bg-white/[0.02]" : ""
+                  )}>
+                    <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-5 flex items-center gap-3">
+                      <FeatureIcon className="h-4 w-4 text-white/40 shrink-0 hidden sm:block" strokeWidth={1.5} />
+                      <span className="text-sm text-white/70">{feature.label}</span>
                     </div>
-                  ))}
-                </div>
-              ))}
+                    {[feature.standard, feature.professional, feature.elite].map((val, i) => (
+                      <div key={i} className="flex-1 p-4 sm:p-5 flex items-center justify-center border-l border-white/10">
+                        {val ? (
+                          <Check className="h-4 w-4 text-brand-orange" strokeWidth={2.5} />
+                        ) : (
+                          <span className="text-white/20">&mdash;</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
 
               {/* Book buttons row */}
               <div className="flex border-t border-white/10">
-                <div className="w-[40%] sm:w-[35%] shrink-0 p-4 sm:p-6 flex items-center">
+                <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-center">
                   <span className="text-xs uppercase tracking-wider text-white/40 font-heading hidden sm:block">Book Now</span>
                 </div>
                 {[
@@ -280,7 +293,7 @@ export default function OneTimeWashPage() {
                       href={cta.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 px-3 sm:px-6 transition-colors"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
                     >
                       {cta.label}
                     </Link>
