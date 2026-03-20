@@ -147,20 +147,23 @@ export default function HomePage() {
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
                   We use the proper techniques, the right products, and trained technicians who care about your car as much as you do. Every wash follows a systematic process designed to clean thoroughly without causing damage.
                 </p>
-                <div className="grid grid-cols-2 border-t border-white/10 pt-6 sm:pt-8">
+                <div className="grid grid-cols-2 border border-white/10 mt-6 sm:mt-8">
                   {[
-                    { label: "Premium Products", icon: Sparkles },
-                    { label: "Correct Equipment", icon: Droplets },
-                    { label: "Trained Technicians", icon: Paintbrush },
-                    { label: "Total Convenience", icon: Car },
+                    { label: "Premium Products", desc: "Top-quality shampoos, sealants, and coatings only.", icon: Sparkles },
+                    { label: "Correct Equipment", desc: "Two-bucket method, grit guards, fresh microfiber every time.", icon: Droplets },
+                    { label: "Trained Technicians", desc: "Uniformed and certified on proper wash technique.", icon: Paintbrush },
+                    { label: "Total Convenience", desc: "We come to you — home, office, or apartment.", icon: Car },
                   ].map((item, index) => (
                     <div key={item.label} className={cn(
-                      "flex items-center gap-3 py-3 px-2",
+                      "p-4 sm:p-5 flex flex-col gap-2",
                       index >= 2 && "border-t border-white/10",
-                      index % 2 !== 0 && "border-l border-white/10 pl-4"
+                      index % 2 !== 0 && "border-l border-white/10"
                     )}>
-                      <item.icon className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
-                      <span className="text-sm text-white/70">{item.label}</span>
+                      <div className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
+                        <span className="text-sm font-medium text-white">{item.label}</span>
+                      </div>
+                      <p className="text-xs text-white/50 leading-relaxed">{item.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -357,54 +360,38 @@ export default function HomePage() {
       <div className="border-t border-white/10" />
       <section className="py-20 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-12 md:mb-16 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Subscriptions</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">Never Think About Car Washing Again</h2>
-            </div>
-          </FadeIn>
-
           <FadeIn direction="up" delay={100}>
-            <div className="flex flex-col md:flex-row border border-white/10 mb-12 md:mb-16">
+            <div className="flex flex-col md:flex-row border border-white/10">
               <div className="flex-1 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <p className="text-white text-base leading-relaxed text-justify mb-4 font-medium">
-                  Subscribe and we&apos;ll keep your car pristine on a schedule that works for you. Plans start at Rp 609,000/quarter.
+                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Subscriptions</p>
+                <h2 className="text-2xl md:text-3xl font-normal tracking-tight text-white font-heading mb-6">
+                  Never think about car washing again.
+                </h2>
+                <p className="text-white/60 text-base leading-relaxed mb-6">
+                  Subscribe and we&apos;ll keep your car in showroom condition on a schedule that works for you. Regular washes prevent the buildup of dirt, grime, and contaminants that damage your paint over time &mdash; saving you from expensive repairs down the road.
                 </p>
-                <div className="border border-brand-orange/30 bg-brand-orange/5 p-4 mb-6">
-                  <p className="text-brand-orange text-sm font-medium">
-                    Elite subscribers get a free Full Detail worth Rp 2.8M/year
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                <div className="space-y-3 mb-8">
                   {[
-                    "Essentials: 2 Professional/quarter from Rp 609K",
-                    "Plus: 2 Standard + 2 Professional/quarter from Rp 1,349K",
-                    "Elite: 4 Standard + 2 Professional/quarter from Rp 3,199K",
-                    "Elite bonus: Free Full Detail every year (Rp 2.8M)",
-                    "No contracts on monthly plans",
-                    "WhatsApp booking for subscribers",
+                    "Consistent care keeps your paint protected year-round",
+                    "Save vs. one-time pricing with every wash",
+                    "Flexible scheduling — you pick the days",
+                    "No long-term contracts, cancel anytime",
+                    "Your car always looks its best",
                   ].map((item) => (
                     <div key={item} className="flex items-center gap-3">
-                      <span className="text-white/60 text-[5px] shrink-0">&#x25CF;</span>
-                      <p className="text-base text-white/60 leading-relaxed">{item}</p>
+                      <CheckCircle2 className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
+                      <p className="text-sm text-white/70 leading-relaxed">{item}</p>
                     </div>
                   ))}
+                </div>
+                <div>
+                  <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base transition-colors">
+                    See Subscription Plans <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
                 </div>
               </div>
               <div className="md:w-[45%] min-h-[250px] md:min-h-[350px] border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray flex items-center justify-center">
                 <span className="text-white/30 text-sm">[IMAGE: Subscription plans]</span>
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="up" delay={200}>
-            <div className="border border-white/10 bg-brand-dark-gray p-8 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-lg font-normal text-white font-heading">See Subscription Plans</p>
-                <p className="text-white/60 max-w-xl">Compare Essentials, Plus, and Elite plans. Find the right fit for your schedule and budget.</p>
-                <Link href="/car-wash/subscriptions" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                  View pricing and plans <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
               </div>
             </div>
           </FadeIn>
