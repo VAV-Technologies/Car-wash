@@ -16,54 +16,60 @@ const WA_BASE = "https://wa.me/62816104334";
 const plans = [
   {
     name: "Essentials",
-    price: "Rp 609.000",
-    priceShort: "Rp 609K",
-    perMonth: "/quarter per car",
+    price: "Rp 969.000",
+    priceShort: "Rp 969K",
+    perMonth: "/4 months per car",
+    oneTimeValue: "Rp 1,138,000",
+    savings: "Rp 169,000",
     features: [
-      "2 Professional washes per quarter",
+      "2 Professional washes over 4 months",
       "You pick the days, we show up",
-      "Billed every 4 months",
+      "15% off vs. one-time pricing",
     ],
     detailingBonus: null,
     bestFor: "Car owners who want a professional deep clean every couple of months",
     cta: "Subscribe to Essentials",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%20609.000%2Fkuartal).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%20969.000%2F4%20bulan).`,
     icon: Droplets,
     popular: false,
   },
   {
     name: "Plus",
-    price: "Rp 1.349.000",
-    priceShort: "Rp 1.349K",
-    perMonth: "/quarter per car",
+    price: "Rp 1.549.000",
+    priceShort: "Rp 1.549K",
+    perMonth: "/4 months per car",
+    oneTimeValue: "Rp 1,816,000",
+    savings: "Rp 267,000",
     features: [
-      "2 Standard + 2 Professional washes per quarter",
+      "2 Standard + 2 Professional washes over 4 months",
       "Regular maintenance + deep restoration",
-      "Billed every 4 months",
+      "15% off vs. one-time pricing",
       "Glass descaling + tar removal included",
     ],
     detailingBonus: "1 Free Full Detail per year",
-    bestFor: "Jakarta drivers who want regular care plus deep restoration every quarter",
+    bestFor: "Jakarta drivers who want regular care plus deep restoration",
     cta: "Subscribe to Plus",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.349.000%2Fkuartal).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.549.000%2F4%20bulan).`,
     icon: Sparkles,
     popular: true,
   },
   {
     name: "Elite",
-    price: "Rp 3.199.000",
-    priceShort: "Rp 3.199K",
-    perMonth: "/quarter per car",
+    price: "Rp 2.119.000",
+    priceShort: "Rp 2.119K",
+    perMonth: "/4 months per car",
+    oneTimeValue: "Rp 2,494,000",
+    savings: "Rp 375,000",
     features: [
-      "4 Standard + 2 Professional washes per quarter",
+      "4 Standard + 2 Professional washes over 4 months",
       "Frequent maintenance + deep restoration",
-      "Billed every 4 months",
+      "15% off vs. one-time pricing",
       "Priority scheduling",
     ],
     detailingBonus: "1 Free Full Detail every 6 months (2x/year)",
     bestFor: "Executives and car enthusiasts who want their car pristine at all times",
     cta: "Subscribe to Elite",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%203.199.000%2Fkuartal).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%202.119.000%2F4%20bulan).`,
     icon: Star,
     popular: false,
   },
@@ -73,7 +79,9 @@ const comparisonData = [
   {
     category: "QUARTERLY PRICE",
     features: [
-      { name: "Price (per quarter)", essentials: "Rp 609K", plus: "Rp 1.349K", elite: "Rp 3.199K" },
+      { name: "Price (per 4 months)", essentials: "Rp 969K", plus: "Rp 1.549K", elite: "Rp 2.119K" },
+      { name: "One-time value", essentials: "Rp 1,138K", plus: "Rp 1,816K", elite: "Rp 2,494K" },
+      { name: "You save", essentials: "Rp 169K", plus: "Rp 267K", elite: "Rp 375K" },
     ],
   },
   {
@@ -219,12 +227,18 @@ export default function SubscriptionsPage() {
                     <h3 className="text-2xl font-semibold text-brand-white mb-2 font-heading">
                       {plan.name}
                     </h3>
+                    <p className="text-sm text-brand-white/40 line-through mt-1">
+                      {plan.oneTimeValue}
+                    </p>
                     <p className="text-4xl font-extrabold text-brand-white">
                       {plan.price}
                     </p>
                     <p className="text-sm text-brand-white/70 mt-1">
                       {plan.perMonth}
                     </p>
+                    <span className="inline-block mt-3 px-3 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-semibold uppercase tracking-wider">
+                      SAVE {plan.savings}
+                    </span>
                   </div>
 
                   {/* Features */}
