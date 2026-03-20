@@ -135,10 +135,16 @@ export default function DetailingPage() {
             )}
           >
             <div className="container mx-auto">
-              <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 px-4">
-                {/* Left column — info */}
-                <FadeIn direction="up" delay={100} className="lg:w-1/2">
-                  <div className="space-y-6">
+              <div className="flex flex-col lg:flex-row border border-white/10">
+                {/* Image placeholder */}
+                <div className="lg:w-[40%] shrink-0 min-h-[250px] lg:min-h-[400px] bg-brand-dark-gray relative overflow-hidden flex items-center justify-center border-b lg:border-b-0 lg:border-r border-white/10">
+                  <span className="text-white/20 text-sm">[IMAGE: {service.name}]</span>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 flex flex-col">
+                  {/* Info */}
+                  <div className="p-6 sm:p-8 md:p-10 space-y-6">
                     <div>
                       <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-1">
                         {service.name}
@@ -166,11 +172,9 @@ export default function DetailingPage() {
                       {service.cta}
                     </Link>
                   </div>
-                </FadeIn>
 
-                {/* Right column — includes list */}
-                <FadeIn direction="up" delay={250} className="lg:w-1/2">
-                  <div className="border border-white/10 p-8 md:p-10 h-full">
+                  {/* Includes list */}
+                  <div className="border-t border-white/10 p-6 sm:p-8 md:p-10">
                     <p className="text-xs uppercase tracking-wider text-white/50 mb-6 font-heading">
                       What&rsquo;s Included
                     </p>
@@ -189,7 +193,7 @@ export default function DetailingPage() {
                       ))}
                     </ul>
                   </div>
-                </FadeIn>
+                </div>
               </div>
             </div>
           </section>
@@ -206,7 +210,7 @@ export default function DetailingPage() {
 
       {/* ── 3. Full Detail Package (Featured) ────────────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border-2 border-brand-orange p-8 md:p-12 relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
@@ -272,9 +276,9 @@ export default function DetailingPage() {
 
       {/* ── 4. Subscription Cross-Sell ────────────────────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="text-center">
+            <div className="border border-white/10 p-8 md:p-12 text-center">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Subscriber Bonus
               </p>
@@ -301,8 +305,8 @@ export default function DetailingPage() {
       <div className="border-t border-white/10" />
 
       {/* ── 5. CTA ───────────────────────────────────────────────── */}
-      <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto px-4">
+      <section className="w-full py-12 bg-brand-black text-white section-lines-light">
+        <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border border-white/10 px-6 sm:px-10 md:px-16 py-16 md:py-20 text-center">
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-4">
