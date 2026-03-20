@@ -223,10 +223,24 @@ export default function OneTimeWashPage() {
           </FadeIn>
 
           <FadeIn direction="up" delay={100}>
+            {/* Image placeholders — above table, no borders on left cell */}
+            <div className="flex">
+              <div className="w-[28%] sm:w-[24%] shrink-0" />
+              {["Standard", "Professional", "Elite"].map((name, i) => (
+                <div key={name} className={cn(
+                  "flex-1 h-40 sm:h-48 bg-brand-black flex items-center justify-center",
+                  i > 0 && "border-l border-white/10"
+                )}>
+                  <span className="text-white/20 text-sm">[IMAGE: {name}]</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Bordered table: header + feature rows */}
             <div className="border border-white/10">
               {/* Table header — tier names + prices */}
               <div className="flex">
-                <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-end border-b border-white/10">
+                <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-end">
                   <span className="text-xs uppercase tracking-wider text-white/40 font-heading">Feature</span>
                 </div>
                 {[
@@ -234,21 +248,11 @@ export default function OneTimeWashPage() {
                   { name: "Professional", tagline: "The Deep Restoration", price: "Rp 569,000", duration: "~3 hrs" },
                   { name: "Elite", tagline: "The Full Transformation", price: "Rp 919,000", duration: "~4 hrs" },
                 ].map((tier) => (
-                  <div key={tier.name} className="flex-1 p-4 sm:p-6 text-center border-b border-l border-white/10">
+                  <div key={tier.name} className="flex-1 p-4 sm:p-6 text-center border-l border-white/10">
                     <p className="text-base sm:text-lg font-heading text-white mb-0.5">{tier.name}</p>
                     <p className="text-xs text-brand-orange mb-1 hidden sm:block">{tier.tagline}</p>
                     <p className="text-lg sm:text-xl font-heading text-brand-orange">{tier.price}</p>
                     <p className="text-xs text-white/40 mt-0.5">{tier.duration}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Image placeholder row */}
-              <div className="flex border-t border-white/10">
-                <div className="w-[28%] sm:w-[24%] shrink-0" />
-                {["Standard", "Professional", "Elite"].map((name) => (
-                  <div key={name} className="flex-1 h-40 sm:h-48 border-l border-white/10 bg-brand-black flex items-center justify-center">
-                    <span className="text-white/20 text-sm">[IMAGE: {name}]</span>
                   </div>
                 ))}
               </div>
@@ -277,34 +281,32 @@ export default function OneTimeWashPage() {
                   </div>
                 );
               })}
+            </div>
 
-              {/* Book buttons row */}
-              <div className="flex border-t border-white/10">
-                <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-center">
-                  <span className="text-xs uppercase tracking-wider text-white/40 font-heading hidden sm:block">Book Now</span>
+            {/* Book buttons — no table edges */}
+            <div className="flex mt-6">
+              <div className="w-[28%] sm:w-[24%] shrink-0" />
+              {[
+                { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
+                { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
+                { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
+              ].map((cta) => (
+                <div key={cta.label} className="flex-1 flex items-center justify-center py-4">
+                  <Link
+                    href={cta.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
+                  >
+                    {cta.label}
+                  </Link>
                 </div>
-                {[
-                  { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
-                  { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
-                  { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
-                ].map((cta) => (
-                  <div key={cta.label} className="flex-1 p-4 sm:p-6 flex items-center justify-center border-l border-white/10">
-                    <Link
-                      href={cta.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
-                    >
-                      {cta.label}
-                    </Link>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </FadeIn>
 
           <FadeIn direction="up" delay={200}>
-            <div className="border border-white/10 border-t-0 p-6 sm:p-8 text-center">
+            <div className="border border-white/10 mt-8 p-6 sm:p-8 text-center">
               <p className="text-white/50 text-sm">
                 Not sure which to pick? Message us and we&rsquo;ll recommend the right service for your car.
               </p>
