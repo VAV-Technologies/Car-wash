@@ -309,7 +309,7 @@ export default function OneTimeWashPage() {
               <div className="w-[28%] sm:w-[24%] shrink-0" />
               <div className="flex-1 border-x border-b border-white/10 bg-brand-orange/5 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
                 <p className="text-sm text-white/70">
-                  <span className="text-brand-orange font-medium">Save up to 63%</span> with a subscription &mdash; plus get a <span className="text-brand-orange font-medium">FREE Full Detail</span> worth Rp 2.8M.
+                  <span className="text-brand-orange font-medium">Save more</span> with a quarterly subscription &mdash; plus get a <span className="text-brand-orange font-medium">FREE Full Detail</span> worth Rp 2.8M.
                 </p>
                 <Link
                   href="/car-wash/subscriptions"

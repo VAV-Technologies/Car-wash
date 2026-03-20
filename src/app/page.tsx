@@ -354,19 +354,19 @@ export default function HomePage() {
             <div className="flex flex-col md:flex-row border border-white/10 mb-12 md:mb-16">
               <div className="flex-1 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="text-white text-base leading-relaxed text-justify mb-4 font-medium">
-                  Subscribe and we&apos;ll keep your car pristine on a schedule that works for you. Plans start at Rp 609,000/month.
+                  Subscribe and we&apos;ll keep your car pristine on a schedule that works for you. Plans start at Rp 609,000/quarter.
                 </p>
                 <div className="border border-brand-orange/30 bg-brand-orange/5 p-4 mb-6">
                   <p className="text-brand-orange text-sm font-medium">
-                    Plus and Unlimited subscribers get a free Full Detail worth Rp 2.8M
+                    Plus and Elite subscribers get a free Full Detail worth Rp 2.8M
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                   {[
-                    "Essentials: 2 washes/month from Rp 609K",
-                    "Plus: 4 washes/month from Rp 1,349K",
-                    "Unlimited: Wash anytime from Rp 3,199K",
-                    "Plus/Unlimited bonus: Free Full Detail (Rp 2.8M)",
+                    "Essentials: 2 Professional/quarter from Rp 609K",
+                    "Plus: 2 Standard + 2 Professional/quarter from Rp 1,349K",
+                    "Elite: 4 Standard + 2 Professional/quarter from Rp 3,199K",
+                    "Plus/Elite bonus: Free Full Detail (Rp 2.8M)",
                     "No contracts on monthly plans",
                     "WhatsApp booking for subscribers",
                   ].map((item) => (
@@ -387,7 +387,7 @@ export default function HomePage() {
             <div className="border border-white/10 bg-brand-dark-gray p-8 text-center">
               <div className="flex flex-col items-center gap-4">
                 <p className="text-lg font-normal text-white font-heading">See Subscription Plans</p>
-                <p className="text-white/60 max-w-xl">Compare Essentials, Plus, and Unlimited plans. Find the right fit for your schedule and budget.</p>
+                <p className="text-white/60 max-w-xl">Compare Essentials, Plus, and Elite plans. Find the right fit for your schedule and budget.</p>
                 <Link href="/car-wash/subscriptions" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
                   View pricing and plans <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

@@ -73,11 +73,11 @@ const subscriptionFAQs = [
       },
       {
         q: "What is the Free Full Detail bonus for subscribers?",
-        a: "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Unlimited subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing — approximately 8 hours of comprehensive work. Essentials subscribers do not receive the detailing bonus.",
+        a: "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Elite subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing — approximately 8 hours of comprehensive work. Essentials subscribers do not receive the detailing bonus.",
       },
       {
-        q: "Can the Unlimited plan be used for multiple cars?",
-        a: "No. Each Unlimited subscription is locked to one vehicle, identified by the license plate you register at signup. Add a separate subscription for each additional car.",
+        q: "Can the Elite plan be used for multiple cars?",
+        a: "No. Each Elite subscription is locked to one vehicle, identified by the license plate you register at signup. Add a separate subscription for each additional car.",
       },
     ],
   },
@@ -152,7 +152,7 @@ const detailingFAQs = [
       },
       {
         q: "Do subscribers get free detailing?",
-        a: "Yes. Plus subscribers receive 1 Free Full Detail per year. Unlimited subscribers receive 1 Free Full Detail every 6 months (2x per year). Essentials subscribers do not receive the detailing bonus but can upgrade anytime.",
+        a: "Yes. Plus subscribers receive 1 Free Full Detail per year. Elite subscribers receive 1 Free Full Detail every 6 months (2x per year). Essentials subscribers do not receive the detailing bonus but can upgrade anytime.",
       },
     ],
   },

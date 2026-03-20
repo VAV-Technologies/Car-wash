@@ -18,17 +18,16 @@ const plans = [
     name: "Essentials",
     price: "Rp 609.000",
     priceShort: "Rp 609K",
-    perMonth: "/month per car",
+    perMonth: "/quarter per car",
     features: [
-      "2 Standard washes per month",
+      "2 Professional washes per quarter",
       "You pick the days, we show up",
-      "Effective price: Rp 304.500/wash",
-      "Save 10% vs. one-time",
+      "Billed every 4 months",
     ],
     detailingBonus: null,
-    bestFor: "Car owners who want thorough bi-weekly maintenance",
+    bestFor: "Car owners who want a professional deep clean every couple of months",
     cta: "Subscribe to Essentials",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%20609.000%2Fbulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%20609.000%2Fkuartal).`,
     icon: Droplets,
     popular: false,
   },
@@ -36,35 +35,35 @@ const plans = [
     name: "Plus",
     price: "Rp 1.349.000",
     priceShort: "Rp 1.349K",
-    perMonth: "/month per car",
+    perMonth: "/quarter per car",
     features: [
-      "3 Standard + 1 Professional wash/month",
-      "Weekly maintenance + monthly deep clean",
-      "Save 15% vs. one-time pricing",
+      "2 Standard + 2 Professional washes per quarter",
+      "Regular maintenance + deep restoration",
+      "Billed every 4 months",
       "Glass descaling + tar removal included",
     ],
     detailingBonus: "1 Free Full Detail per year",
-    bestFor: "Jakarta drivers who want weekly care plus monthly deep restoration",
+    bestFor: "Jakarta drivers who want regular care plus deep restoration every quarter",
     cta: "Subscribe to Plus",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.349.000%2Fbulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.349.000%2Fkuartal).`,
     icon: Sparkles,
     popular: true,
   },
   {
-    name: "Unlimited",
+    name: "Elite",
     price: "Rp 3.199.000",
     priceShort: "Rp 3.199K",
-    perMonth: "/month \u00b7 1 car only",
+    perMonth: "/quarter per car",
     features: [
-      "Unlimited Standard washes (call anytime)",
-      "2 Professional washes per week",
+      "4 Standard + 2 Professional washes per quarter",
+      "Frequent maintenance + deep restoration",
+      "Billed every 4 months",
       "Priority scheduling",
-      "1 registered vehicle only",
     ],
     detailingBonus: "1 Free Full Detail every 6 months (2x/year)",
     bestFor: "Executives and car enthusiasts who want their car pristine at all times",
-    cta: "Subscribe to Unlimited",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Unlimited%20(Rp%203.199.000%2Fbulan).`,
+    cta: "Subscribe to Elite",
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%203.199.000%2Fkuartal).`,
     icon: Star,
     popular: false,
   },
@@ -72,44 +71,37 @@ const plans = [
 
 const comparisonData = [
   {
-    category: "MONTHLY PRICE",
+    category: "QUARTERLY PRICE",
     features: [
-      { name: "Price", essentials: "Rp 609K", plus: "Rp 1.349K", unlimited: "Rp 3.199K" },
+      { name: "Price (per quarter)", essentials: "Rp 609K", plus: "Rp 1.349K", elite: "Rp 3.199K" },
     ],
   },
   {
-    category: "WASHES INCLUDED",
+    category: "WASHES INCLUDED (PER QUARTER)",
     features: [
-      { name: "Standard washes", essentials: "2/month", plus: "3/month", unlimited: "Unlimited" },
-      { name: "Professional washes", essentials: "\u2014", plus: "1/month", unlimited: "2/week (~8/month)" },
-    ],
-  },
-  {
-    category: "SAVINGS",
-    features: [
-      { name: "Savings vs. one-time", essentials: "10%", plus: "15%", unlimited: "Up to 63%" },
+      { name: "Standard washes", essentials: "\u2014", plus: "2/quarter", elite: "4/quarter" },
+      { name: "Professional washes", essentials: "2/quarter", plus: "2/quarter", elite: "2/quarter" },
     ],
   },
   {
     category: "FREE FULL DETAIL",
     features: [
-      { name: "Full Detail included", essentials: "\u2014", plus: "1x/year", unlimited: "2x/year (every 6 months)" },
-      { name: "Full Detail value", essentials: "\u2014", plus: "Rp 2,799,000", unlimited: "Rp 5,598,000" },
+      { name: "Full Detail included", essentials: "\u2014", plus: "1x/year", elite: "2x/year (every 6 months)" },
+      { name: "Full Detail value", essentials: "\u2014", plus: "Rp 2,799,000", elite: "Rp 5,598,000" },
     ],
   },
   {
     category: "FEATURES",
     features: [
-      { name: "Priority scheduling", essentials: false, plus: true, unlimited: true },
-      { name: "WhatsApp priority", essentials: false, plus: false, unlimited: true },
+      { name: "Priority scheduling", essentials: false, plus: true, elite: true },
+      { name: "WhatsApp priority", essentials: false, plus: false, elite: true },
     ],
   },
   {
     category: "TERMS",
     features: [
-      { name: "Per car", essentials: "Yes", plus: "Yes", unlimited: "1 car only (license plate)" },
-      { name: "Minimum commitment", essentials: "None", plus: "None", unlimited: "None" },
-      { name: "Unused washes roll over", essentials: false, plus: false, unlimited: "N/A" },
+      { name: "Billing cycle", essentials: "Every 4 months", plus: "Every 4 months", elite: "Every 4 months" },
+      { name: "Minimum commitment", essentials: "None", plus: "None", elite: "None" },
     ],
   },
 ];
@@ -151,12 +143,12 @@ const faqs = [
   {
     question: "What's included in the Free Full Detail bonus?",
     answer:
-      "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Unlimited subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing \u2014 approximately 8 hours of work.",
+      "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Elite subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing \u2014 approximately 8 hours of work.",
   },
   {
-    question: "Can I use Unlimited for multiple cars?",
+    question: "Can I use Elite for multiple cars?",
     answer:
-      "No. The Unlimited plan is registered to a single license plate. If you need coverage for additional vehicles, you can subscribe to a separate plan for each car.",
+      "No. The Elite plan is registered to a single license plate. If you need coverage for additional vehicles, you can subscribe to a separate plan for each car.",
   },
   {
     question: "Is there a contract?",
@@ -188,7 +180,7 @@ export default function SubscriptionsPage() {
           </h1>
           <p className="mt-4 text-lg md:text-xl text-brand-white/80 max-w-3xl mx-auto">
             We&rsquo;ll keep your car pristine on a schedule that works for you.
-            Save up to 63% vs. one-time pricing &mdash; and Plus &amp; Unlimited
+            Save more vs. one-time pricing &mdash; and Plus &amp; Elite
             subscribers get a free Full Detail worth Rp 2.8M.
           </p>
         </div>
@@ -312,10 +304,10 @@ export default function SubscriptionsPage() {
                 SUBSCRIBER BONUS
               </p>
               <h2 className="text-3xl md:text-4xl font-semibold text-brand-white font-heading mb-4">
-                Free Full Detail for Plus &amp; Unlimited Subscribers
+                Free Full Detail for Plus &amp; Elite Subscribers
               </h2>
               <p className="text-brand-white/80 max-w-3xl mx-auto">
-                Subscribe to Plus or Unlimited and receive a complimentary Full
+                Subscribe to Plus or Elite and receive a complimentary Full
                 Detail &mdash; our most comprehensive detailing service worth
                 Rp 2,799,000. Interior, exterior, windows, tires &amp; rims,
                 all in one 8-hour session.
@@ -349,7 +341,7 @@ export default function SubscriptionsPage() {
                 <ul className="space-y-3">
                   {[
                     "Plus: 1 Free Full Detail per year",
-                    "Unlimited: 1 Free Full Detail every 6 months (2x/year)",
+                    "Elite: 1 Free Full Detail every 6 months (2x/year)",
                     "Essentials: Not included (upgrade to unlock)",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start">
@@ -437,7 +429,7 @@ export default function SubscriptionsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-white/90 sticky left-0 bg-inherit z-0">
                           {feature.name}
                         </td>
-                        {(["essentials", "plus", "unlimited"] as const).map(
+                        {(["essentials", "plus", "elite"] as const).map(
                           (planKey) => {
                             const value =
                               feature[planKey as keyof typeof feature];

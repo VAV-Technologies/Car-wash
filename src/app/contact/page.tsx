@@ -111,8 +111,8 @@ export default function ContactPage() {
   const subscriptionReasons = [
     { icon: CalendarCheck, text: "Essentials: 2 washes/month from Rp 609K" },
     { icon: Sparkles, text: "Plus: 4 washes/month from Rp 1,349K" },
-    { icon: Star, text: "Unlimited: wash anytime from Rp 3,199K" },
-    { icon: Gift, text: "Plus/Unlimited bonus: Free Full Detail (Rp 2.8M)" },
+    { icon: Star, text: "Elite: 4 Standard + 2 Professional/quarter from Rp 3,199K" },
+    { icon: Gift, text: "Plus/Elite bonus: Free Full Detail (Rp 2.8M)" },
   ];
 
   return (
@@ -185,8 +185,8 @@ export default function ContactPage() {
                   Start a Subscription
                 </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
-                  Plans from Rp 609,000/month. We&apos;ll keep your car pristine
-                  on a schedule that works for you. Plus and Unlimited subscribers
+                  Plans from Rp 609,000/quarter. We&apos;ll keep your car pristine
+                  on a schedule that works for you. Plus and Elite subscribers
                   get a free Full Detail worth Rp 2.8M.
                 </p>
 
