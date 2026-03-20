@@ -325,13 +325,7 @@ export default function OneTimeWashPage() {
             </div>
           </FadeIn>
 
-          <FadeIn direction="up" delay={200}>
-            <div className="border border-white/10 border-t-0 p-6 sm:p-8 text-center">
-              <p className="text-white/50 text-sm">
-                Not sure which to pick? Message us and we&rsquo;ll recommend the right service for your car.
-              </p>
-            </div>
-          </FadeIn>
+
         </div>
       </section>
 
