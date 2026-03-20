@@ -257,20 +257,23 @@ export default function HomePage() {
               ].map((item, index) => (
                 <FadeIn key={item.title} delay={index * 80}>
                   <div className={cn(
-                    "border border-white/10 flex flex-col sm:flex-row",
+                    "border border-white/10 flex flex-col md:flex-row",
                     index > 0 && "border-t-0"
                   )}>
-                    {/* Image placeholder */}
-                    <div className="sm:w-[200px] md:w-[240px] shrink-0 h-40 sm:h-auto bg-brand-dark-gray flex items-center justify-center border-b sm:border-b-0 sm:border-r border-white/10">
-                      <span className="text-white/20 text-xs">[IMAGE]</span>
+                    {/* Title — left column */}
+                    <div className="hidden md:flex md:w-[23%] shrink-0 p-8 md:p-10 items-center justify-center">
+                      <h4 className="text-lg font-normal text-white font-heading text-center">{item.title}</h4>
                     </div>
-                    {/* Title */}
-                    <div className="sm:w-1/4 shrink-0 p-6 sm:p-8 flex items-center border-b sm:border-b-0 sm:border-r border-white/10">
-                      <h4 className="text-lg font-normal text-white font-heading">{item.title}</h4>
+                    {/* Content — middle column */}
+                    <div className="flex-1 p-6 sm:p-8 md:p-10 md:border-l border-white/10 flex items-center">
+                      <div>
+                        <h4 className="md:hidden text-lg font-normal text-white font-heading mb-2">{item.title}</h4>
+                        <p className="text-white/60 leading-relaxed">{item.body}</p>
+                      </div>
                     </div>
-                    {/* Description */}
-                    <div className="flex-1 p-6 sm:p-8 flex items-center">
-                      <p className="text-white/60 leading-relaxed">{item.body}</p>
+                    {/* Image — right column */}
+                    <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray flex items-center justify-center">
+                      <span className="text-white/20 text-sm">[IMAGE: {item.title}]</span>
                     </div>
                   </div>
                 </FadeIn>
