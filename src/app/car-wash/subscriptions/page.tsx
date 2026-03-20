@@ -93,13 +93,13 @@ const comparisonData = [
     category: "WASHES INCLUDED (PER QUARTER)",
     features: [
       { name: "Standard washes", essentials: "4 over 4 months", plus: "2 over 4 months", elite: "3 over 4 months" },
-      { name: "Professional washes", essentials: "\u2014", plus: "2 over 4 months", elite: "3 over 4 months" },
+      { name: "Professional washes", essentials: false, plus: "2 over 4 months", elite: "3 over 4 months" },
     ],
   },
   {
     category: "FREE FULL DETAIL",
     features: [
-      { name: "Free Full Detail", essentials: "\u2014", plus: "\u2014", elite: "1x/year (Rp 2,799,000 value)" },
+      { name: "Free Full Detail", essentials: false, plus: false, elite: "1x/year (Rp 2,799,000 value)" },
     ],
   },
   {
@@ -148,7 +148,7 @@ const faqs = [
   {
     question: "What's included in the Free Full Detail bonus?",
     answer:
-      "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing \u2014 approximately 8 hours of work. Essentials and Plus subscribers do not receive the detailing bonus.",
+      "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. Approximately 8 hours of work. Essentials and Plus subscribers do not receive the detailing bonus.",
   },
   {
     question: "Can I use Elite for multiple cars?",
@@ -185,7 +185,7 @@ export default function SubscriptionsPage() {
           </h1>
           <p className="mt-4 text-lg md:text-xl text-brand-white/80 max-w-3xl mx-auto">
             We&rsquo;ll keep your car pristine on a schedule that works for you.
-            Save 15% vs. one-time pricing &mdash; Elite subscribers
+            Save 15% vs. one-time pricing. Elite subscribers
             also get a free Full Detail worth Rp 2.8M every year.
           </p>
         </div>
@@ -390,7 +390,7 @@ export default function SubscriptionsPage() {
                                     <X className="h-5 w-5 text-red-500/70 mx-auto" />
                                   )
                                 ) : (
-                                  value || "\u2014"
+                                  value || "N/A"
                                 )}
                               </td>
                             );

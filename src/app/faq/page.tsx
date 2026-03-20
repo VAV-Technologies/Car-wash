@@ -44,7 +44,7 @@ const pricingFAQs = [
     questions: [
       {
         q: "Why are you more expensive than other car washes?",
-        a: "We use premium car shampoos and top-quality products — never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, and attention to every detail.",
+        a: "We use premium car shampoos and top-quality products.never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, and attention to every detail.",
       },
       {
         q: "What payment methods do you accept?",
@@ -69,11 +69,11 @@ const subscriptionFAQs = [
       },
       {
         q: "Do unused washes roll over to the next month?",
-        a: "No. Use all your sessions each month — your car will thank you.",
+        a: "No. Use all your sessions each month.your car will thank you.",
       },
       {
         q: "What is the Free Full Detail bonus for subscribers?",
-        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing — approximately 8 hours of comprehensive work. Essentials and Plus subscribers do not receive the detailing bonus but can upgrade anytime.",
+        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing.approximately 8 hours of comprehensive work. Essentials and Plus subscribers do not receive the detailing bonus but can upgrade anytime.",
       },
       {
         q: "Can the Elite plan be used for multiple cars?",
@@ -127,7 +127,7 @@ const serviceDetailFAQs = [
       },
       {
         q: "What about rainy days?",
-        a: "Cars actually get dirtier in the rain — acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
+        a: "Cars actually get dirtier in the rain.acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
       },
     ],
   },
@@ -140,7 +140,7 @@ const detailingFAQs = [
     questions: [
       {
         q: "What is included in a Full Detail?",
-        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000 — saving you Rp 257,000 compared to booking each service individually.",
+        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000.saving you Rp 257,000 compared to booking each service individually.",
       },
       {
         q: "Can I book individual detailing services?",

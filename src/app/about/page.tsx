@@ -6,7 +6,7 @@ const differentiators = [
   {
     num: "01",
     title: "Premium Products Only",
-    body: "We use premium car shampoos, sealants, and coatings \u2014 not diluted bulk chemicals. Your car gets what it deserves.",
+    body: "We use premium car shampoos, sealants, and coatings.not diluted bulk chemicals. Your car gets what it deserves.",
   },
   {
     num: "02",
@@ -16,12 +16,12 @@ const differentiators = [
   {
     num: "03",
     title: "Trained Technicians",
-    body: "Our team is trained on proper wash technique, paint decontamination, and sealant application. They\u2019re not just washing \u2014 they\u2019re caring for your paint.",
+    body: "Our team is trained on proper wash technique, paint decontamination, and sealant application. They\u2019re not just washing.they\u2019re caring for your paint.",
   },
   {
     num: "04",
     title: "Total Convenience",
-    body: "We come to you. Home, office, apartment parking \u2014 wherever your car is. All equipment and products come with us.",
+    body: "We come to you. Home, office, apartment parking.wherever your car is. All equipment and products come with us.",
   },
 ];
 
@@ -103,14 +103,14 @@ export default function AboutPage() {
               {/* Right - Content */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
-                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle.&rdquo;
+                  &ldquo;We&apos;re for the car owner who values their time and their vehicle,and refuses to settle.&rdquo;
                 </p>
                 <div className="border-t border-white/10" />
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
                   Most street washes use dirty rags, harsh chemicals, and zero technique. The result? Swirl marks, scratches, and paint that ages faster than it should. Castudio exists because we believe there&apos;s a better way.
                 </p>
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
-                  We use premium car shampoo, the two-bucket method with grit guards, and fresh microfiber towels on every car. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office &mdash; everything included.
+                  We use premium car shampoo, the two-bucket method with grit guards, and fresh microfiber towels on every car. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office,everything included.
                 </p>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function AboutPage() {
                   We bring premium car care to your doorstep. No cutting corners. No generic products. No rushed jobs. Every wash uses premium products, the proper two-bucket method, and dedicated microfiber for each section of your car. Our technicians are trained, uniformed, and held to a quality standard that most shops never reach.
                 </p>
                 <p className="text-white/60 leading-relaxed">
-                  We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for a street-level wash. If that sounds like you, welcome home.
+                  We&apos;re for the car owner who values their time and their vehicle,and refuses to settle for a street-level wash. If that sounds like you, welcome home.
                 </p>
               </div>
             </FadeIn>
@@ -154,7 +154,7 @@ export default function AboutPage() {
               <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full flex flex-col justify-between">
                 <div className="border-l-2 border-brand-orange pl-6 mb-8">
                   <p className="text-xl md:text-2xl font-heading text-white leading-snug mb-3">
-                    &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle.&rdquo;
+                    &ldquo;We&apos;re for the car owner who values their time and their vehicle,and refuses to settle.&rdquo;
                   </p>
                 </div>
 
@@ -279,7 +279,7 @@ export default function AboutPage() {
                   Our Promise
                 </p>
                 <h3 className="text-xl font-heading mb-4 text-white">
-                  We deliver the best car care in Jakarta &mdash; no compromises.
+                  We deliver the best car care in Jakarta,no compromises.
                 </h3>
                 <ul className="space-y-3">
                   {qualityBullets.map((bullet) => (

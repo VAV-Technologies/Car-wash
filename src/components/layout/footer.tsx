@@ -68,7 +68,7 @@ export function Footer() {
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> hello@castudio.co
                 </a>
                 <span className="flex items-center gap-2 text-white/60">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Mon&ndash;Sat, 8 AM&ndash;6 PM
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Mon toSat, 8 AM to6 PM
                 </span>
               </div>
             </div>

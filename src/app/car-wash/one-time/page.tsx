@@ -47,7 +47,7 @@ const processSteps = [
   {
     num: "04",
     title: "Wheels, Tires & Engine Bay",
-    body: "Dedicated wheel cleaner for brake dust and grime. Tire sidewalls scrubbed and dressed. Engine bay degreased and detailed — areas most washes skip entirely.",
+    body: "Dedicated wheel cleaner for brake dust and grime. Tire sidewalls scrubbed and dressed. Engine bay degreased and detailed, areas most washes skip entirely.",
   },
 ];
 
@@ -55,7 +55,7 @@ const differentiators = [
   {
     icon: Sparkles,
     title: "Premium Products Only",
-    body: "Professional-grade chemicals and coatings from trusted brands — not diluted bulk chemicals from the nearest supplier.",
+    body: "Professional-grade chemicals and coatings from trusted brands, not diluted bulk chemicals from the nearest supplier.",
   },
   {
     icon: Droplets,
@@ -70,7 +70,7 @@ const differentiators = [
   {
     icon: MapPin,
     title: "Total Convenience",
-    body: "Home, office, apartment — we come to you across Jakarta and surrounding areas. All equipment and products included. You don\u2019t lift a finger.",
+    body: "Home, office, apartment. We come to you across Jakarta and surrounding areas. All equipment and products included. You don\u2019t lift a finger.",
   },
 ];
 
@@ -98,7 +98,7 @@ export default function OneTimeWashPage() {
             </h1>
             <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl mx-auto leading-relaxed">
               Choose the level of care your car needs. Every tier uses premium
-              products, proper technique, and dedicated microfiber &mdash;
+              products, proper technique, and dedicated microfiber,
               delivered to your doorstep.
             </p>
             <p className="text-sm text-white/50">
@@ -266,7 +266,7 @@ export default function OneTimeWashPage() {
                         {val ? (
                           <Check className="h-4 w-4 text-brand-orange" strokeWidth={2.5} />
                         ) : (
-                          <span className="text-white/20">&mdash;</span>
+                          <span className="text-white/20">&#x2715;</span>
                         )}
                       </div>
                     ))}

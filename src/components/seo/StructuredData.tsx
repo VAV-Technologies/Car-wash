@@ -9,7 +9,7 @@ interface StructuredDataProps {
 
 export default function StructuredData({
   type = 'website',
-  title = 'Castudio — Premium Car Wash & Detailing',
+  title = 'Castudio | Premium Car Wash & Detailing',
   description = 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
   url = 'https://www.castudio.co'
 }: StructuredDataProps) {

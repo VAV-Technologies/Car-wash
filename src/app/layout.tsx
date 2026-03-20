@@ -6,7 +6,7 @@ import StructuredData from '@/components/seo/StructuredData';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Castudio — Premium Car Wash & Detailing',
+    default: 'Castudio | Premium Car Wash & Detailing',
     template: '%s | Castudio'
   },
   description: 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://www.castudio.co',
-    title: 'Castudio — Premium Car Wash & Detailing',
+    title: 'Castudio | Premium Car Wash & Detailing',
     description: 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
     siteName: 'Castudio',
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Castudio — Premium Car Wash & Detailing',
+    title: 'Castudio | Premium Car Wash & Detailing',
     description: 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
     images: ['/assets/nobridge_app_icon.png'],
   },

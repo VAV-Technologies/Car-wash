@@ -72,7 +72,7 @@ export default function HomePage() {
                 You worked hard for your car. Here&apos;s what happens when the wrong person washes it.
               </h2>
               <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Cheap washes cut corners. The damage adds up fast &mdash; and it&apos;s expensive to fix.
+                Cheap washes cut corners. The damage adds up fast, and it&apos;s expensive to fix.
               </p>
             </div>
           </FadeIn>
@@ -132,6 +132,15 @@ export default function HomePage() {
       <div className="border-t border-white/10" />
       <section className="py-20 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Castudio</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
+                We do things the right way, every single time.
+              </h2>
+            </div>
+          </FadeIn>
+
           <FadeIn direction="up" delay={100}>
             <div className="border border-white/15 flex flex-col md:flex-row">
               {/* Left - Image */}
@@ -141,7 +150,7 @@ export default function HomePage() {
               {/* Right - Quote, body, 4 pillars */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                 <p className="text-xl sm:text-2xl md:text-3xl font-heading font-normal text-white leading-snug pb-6 sm:pb-8">
-                  &ldquo;We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for anything less than the best.&rdquo;
+                  &ldquo;We&apos;re for the car owner who values their time and their vehicle, and refuses to settle for anything less than the best.&rdquo;
                 </p>
                 <div className="border-t border-white/10" />
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify py-6 sm:py-8">
@@ -152,7 +161,7 @@ export default function HomePage() {
                     { label: "Premium Products", desc: "Top-quality shampoos, sealants, and coatings only.", icon: Sparkles },
                     { label: "Correct Equipment", desc: "Two-bucket method, grit guards, fresh microfiber every time.", icon: Droplets },
                     { label: "Trained Technicians", desc: "Uniformed and certified on proper wash technique.", icon: Paintbrush },
-                    { label: "Total Convenience", desc: "We come to you — home, office, or apartment.", icon: Car },
+                    { label: "Total Convenience", desc: "We come to you. Home, office, or apartment.", icon: Car },
                   ].map((item, index) => (
                     <div key={item.label} className={cn(
                       "p-4 sm:p-5 flex flex-col gap-2",
@@ -314,11 +323,11 @@ export default function HomePage() {
 
             <div className="flex flex-col">
               {[
-                { title: "Interior Detailing", body: "Complete cabin restoration — deep vacuum, upholstery extraction, leather conditioning, dashboard UV treatment, air vent detail, and odour neutralisation. Your interior will look and smell like new." },
-                { title: "Exterior Detailing", body: "Full paint correction and protection — clay bar decontamination, machine polish to remove swirl marks, premium sealant coating for deep gloss and hydrophobic finish. Trim and rubber restoration included." },
-                { title: "Window Detailing", body: "Crystal-clear glass inside and out — water scale and mineral deposit removal, film and haze cleaning, finished with a hydrophobic coating that repels rain for weeks." },
-                { title: "Tire & Rims Detailing", body: "Deep wheel restoration — brake dust and iron fallout removal, tar and adhesive cleaning, rim polish, and tire sidewall dressing that protects and restores the deep black finish." },
-                { title: "Full Detail Package", body: "All four detailing services in one comprehensive 8-hour session. Interior, exterior, windows, and tires & rims — the complete restoration for cars that deserve the best." },
+                { title: "Interior Detailing", body: "Complete cabin restoration. Deep vacuum, upholstery extraction, leather conditioning, dashboard UV treatment, air vent detail, and odour neutralisation. Your interior will look and smell like new." },
+                { title: "Exterior Detailing", body: "Full paint correction and protection. Clay bar decontamination, machine polish to remove swirl marks, premium sealant coating for deep gloss and hydrophobic finish. Trim and rubber restoration included." },
+                { title: "Window Detailing", body: "Crystal-clear glass inside and out. Water scale and mineral deposit removal, film and haze cleaning, finished with a hydrophobic coating that repels rain for weeks." },
+                { title: "Tire & Rims Detailing", body: "Deep wheel restoration. Brake dust and iron fallout removal, tar and adhesive cleaning, rim polish, and tire sidewall dressing that protects and restores the deep black finish." },
+                { title: "Full Detail Package", body: "All four detailing services in one comprehensive 8-hour session. Interior, exterior, windows, and tires & rims. The complete restoration for cars that deserve the best." },
               ].map((item, index) => (
                 <FadeIn key={item.title} delay={index * 80}>
                   <div className={cn(
@@ -368,13 +377,13 @@ export default function HomePage() {
                   Never think about car washing again.
                 </h2>
                 <p className="text-white/60 text-base leading-relaxed mb-6">
-                  Subscribe and we&apos;ll keep your car in showroom condition on a schedule that works for you. Regular washes prevent the buildup of dirt, grime, and contaminants that damage your paint over time &mdash; saving you from expensive repairs down the road.
+                  Subscribe and we&apos;ll keep your car in showroom condition on a schedule that works for you. Regular washes prevent the buildup of dirt, grime, and contaminants that damage your paint over time. This saves you from expensive repairs down the road.
                 </p>
                 <div className="space-y-3 mb-8">
                   {[
                     "Consistent care keeps your paint protected year-round",
                     "Save vs. one-time pricing with every wash",
-                    "Flexible scheduling — you pick the days",
+                    "Flexible scheduling. You pick the days",
                     "No long-term contracts, cancel anytime",
                     "Your car always looks its best",
                   ].map((item) => (
@@ -456,7 +465,7 @@ export default function HomePage() {
                 <div className="relative z-10 flex flex-col items-center justify-center h-full">
                   <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
                   <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel — at your doorstep.
+                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base">

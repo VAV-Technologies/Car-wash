@@ -102,7 +102,7 @@ export default function ContactPage() {
   };
 
   const oneTimeReasons = [
-    { icon: Droplets, text: "Premium at-home service \u2014 we come to you" },
+    { icon: Droplets, text: "Premium at-home service. We come to you" },
     { icon: Clock, text: "Standard ~2hrs, Professional ~3hrs, Elite ~4hrs" },
     { icon: ShieldCheck, text: "Satisfaction guarantee on every wash" },
     { icon: MapPin, text: "Serving Jakarta and surrounding areas" },
@@ -380,7 +380,7 @@ export default function ContactPage() {
                       <div>
                         <p className="text-sm text-white/60 mb-1">Hours</p>
                         <p className="text-white font-medium">
-                          Mon&ndash;Sat, 8 AM&ndash;6 PM
+                          Mon toSat, 8 AM to6 PM
                         </p>
                       </div>
                     </div>

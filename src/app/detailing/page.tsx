@@ -23,7 +23,7 @@ const services = [
     duration: "~3 hours",
     bg: "bg-brand-black",
     description:
-      "A deep restoration of your car\u2019s cabin. We clean every surface from headliner to floor mats \u2014 upholstery extraction, dashboard conditioning, leather treatment, vent cleaning, and odour removal. Your interior will look and smell like the day you bought it.",
+      "A deep restoration of your car\u2019s cabin. We clean every surface from headliner to floor mats. Upholstery extraction, dashboard conditioning, leather treatment, vent cleaning, and odour removal. Your interior will look and smell like the day you bought it.",
     includes: [
       "Deep vacuum of all surfaces including boot",
       "Upholstery and fabric extraction cleaning",
@@ -88,10 +88,10 @@ const services = [
 ];
 
 const fullDetailIncludes = [
-  "Interior Detailing \u2014 complete cabin deep clean and conditioning",
-  "Exterior Detailing \u2014 paint correction, polish, and sealant",
-  "Window Detailing \u2014 inside and out with hydrophobic coating",
-  "Tire & Rims Detailing \u2014 deep clean, polish, and dressing",
+  "Interior Detailing: complete cabin deep clean and conditioning",
+  "Exterior Detailing: paint correction, polish, and sealant",
+  "Window Detailing: inside and out with hydrophobic coating",
+  "Tire & Rims Detailing: deep clean, polish, and dressing",
 ];
 
 /* ------------------------------------------------------------------ */
