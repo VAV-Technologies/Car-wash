@@ -309,8 +309,24 @@ export default function OneTimeWashPage() {
             </div>
           </FadeIn>
 
+          {/* Subscription upsell row — separated from table */}
+          <FadeIn direction="up" delay={150}>
+            <div className="border border-white/10 mt-8 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <p className="text-white font-heading text-base font-medium">Want to save more? Subscribe and get a free Full Detail too.</p>
+                <p className="text-white/50 text-sm mt-1">Plus and Unlimited subscribers save up to 63%.</p>
+              </div>
+              <Link
+                href="/car-wash/subscriptions"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-10 px-6 transition-colors shrink-0"
+              >
+                See Subscription Plans <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </FadeIn>
+
           <FadeIn direction="up" delay={200}>
-            <div className="border border-white/10 mt-8 p-6 sm:p-8 text-center">
+            <div className="border border-white/10 border-t-0 p-6 sm:p-8 text-center">
               <p className="text-white/50 text-sm">
                 Not sure which to pick? Message us and we&rsquo;ll recommend the right service for your car.
               </p>
@@ -355,30 +371,6 @@ export default function OneTimeWashPage() {
         </div>
       </section>
 
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* ── 6. Subscription Upsell ───────────────────────────────── */}
-      <section className="w-full py-12 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="border border-white/10 p-6 md:p-8 text-center">
-              <h3 className="text-xl font-heading text-white mb-2">
-                Wash regularly? Subscribe and save.
-              </h3>
-              <p className="text-white/60 text-sm max-w-2xl mx-auto mb-6">
-                A Standard wash costs Rp 339,000. With an Essentials subscription (2 washes/month at Rp 609,000), your effective price drops to Rp 304,500/wash &mdash; that&rsquo;s a 10% saving. Plus and Unlimited subscribers save even more, and get a free Full Detail worth Rp 2,799,000.
-              </p>
-              <Link
-                href="/car-wash/subscriptions"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-10 text-base transition-colors"
-              >
-                View Subscription Plans <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
     </div>
   );
 }
