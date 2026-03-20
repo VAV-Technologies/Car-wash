@@ -109,13 +109,6 @@ const comparisonData = [
       { name: "WhatsApp priority", essentials: false, plus: false, elite: true },
     ],
   },
-  {
-    category: "TERMS",
-    features: [
-      { name: "Billing cycle", essentials: "Every 4 months", plus: "Every 4 months", elite: "Every 4 months" },
-      { name: "Minimum commitment", essentials: "None", plus: "None", elite: "None" },
-    ],
-  },
 ];
 
 const howItWorks = [
@@ -450,7 +443,7 @@ export default function SubscriptionsPage() {
                     {group.features.map((feature) => (
                       <tr
                         key={feature.name}
-                        className="even:bg-brand-black/30 hover:bg-brand-orange/5"
+                        className="hover:bg-brand-orange/5"
                       >
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-white/90 sticky left-0 bg-inherit z-0">
                           {feature.name}
