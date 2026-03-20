@@ -302,20 +302,21 @@ export default function OneTimeWashPage() {
                   </div>
                 ))}
               </div>
-              {/* Subscription upsell — new row below book buttons */}
-              <div className="flex">
-                <div className="w-[28%] sm:w-[24%] shrink-0" />
-                <div className="flex-1 border-x border-b border-white/10 bg-brand-orange/5 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
-                  <p className="text-sm text-white/70">
-                    <span className="text-brand-orange font-medium">Save up to 63%</span> with a subscription &mdash; plus get a <span className="text-brand-orange font-medium">FREE Full Detail</span> worth Rp 2.8M.
-                  </p>
-                  <Link
-                    href="/car-wash/subscriptions"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-9 sm:h-10 px-5 transition-colors shrink-0"
-                  >
-                    See Plans <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                  </Link>
-                </div>
+            </div>
+
+            {/* Subscription upsell — separate row below book buttons */}
+            <div className="flex">
+              <div className="w-[28%] sm:w-[24%] shrink-0" />
+              <div className="flex-1 border-x border-b border-white/10 bg-brand-orange/5 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
+                <p className="text-sm text-white/70">
+                  <span className="text-brand-orange font-medium">Save up to 63%</span> with a subscription &mdash; plus get a <span className="text-brand-orange font-medium">FREE Full Detail</span> worth Rp 2.8M.
+                </p>
+                <Link
+                  href="/car-wash/subscriptions"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-9 sm:h-10 px-5 transition-colors shrink-0"
+                >
+                  See Plans <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Link>
               </div>
             </div>
           </FadeIn>
