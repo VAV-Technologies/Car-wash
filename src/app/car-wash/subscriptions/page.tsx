@@ -206,6 +206,17 @@ export default function SubscriptionsPage() {
       {/* ── 2. Subscription Plan Cards ──────────────────────────── */}
       <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
+          {/* MOST POPULAR badge — outside table, above Plus column */}
+          <div className="hidden md:flex">
+            <div className="flex-1" />
+            <div className="flex-1 flex justify-center">
+              <span className="inline-block px-6 py-1.5 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
+                MOST POPULAR
+              </span>
+            </div>
+            <div className="flex-1" />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 border border-white/10">
             {plans.map((plan, planIndex) => {
               const IconComponent = plan.icon;
@@ -225,8 +236,9 @@ export default function SubscriptionsPage() {
                     <div className="mb-4 flex justify-center">
                       <IconComponent className="h-10 w-10 text-brand-orange" />
                     </div>
+                    {/* Mobile-only MOST POPULAR badge */}
                     {plan.popular && (
-                      <span className="inline-block px-4 py-1 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider mb-4">
+                      <span className="inline-block px-4 py-1 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider mb-4 md:hidden">
                         MOST POPULAR
                       </span>
                     )}
@@ -234,9 +246,9 @@ export default function SubscriptionsPage() {
                       {plan.name}
                     </h3>
                     <p className="text-4xl font-extrabold text-brand-white">
-                      {plan.monthlyPrice}<span className="text-lg font-medium text-brand-white/60">{plan.perMonth}</span>
+                      {plan.monthlyPrice}<span className="text-lg font-medium text-brand-white/60">/MO</span>
                     </p>
-                    <p className="text-xs text-brand-white/50 mt-1">
+                    <p className="text-xs text-brand-white/50 mt-3">
                       {plan.termNote}
                     </p>
                     <span className="inline-block mt-3 px-3 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-semibold uppercase tracking-wider">
