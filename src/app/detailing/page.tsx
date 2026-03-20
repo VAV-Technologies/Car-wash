@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, ShieldCheck, Sparkles, Paintbrush, Eye } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Auto Detailing Mobil di Rumah | Castudio",
@@ -138,7 +138,7 @@ export default function DetailingPage() {
 
               <div className="flex flex-col md:flex-row">
                 {/* Left: title + price + description */}
-                <div className="flex-1 p-6 md:p-8 flex flex-col justify-center pt-8">
+                <div className="md:w-1/3 p-6 md:p-8 flex flex-col justify-center pt-8">
                   <h2 className="text-2xl md:text-3xl font-normal font-heading tracking-tight mb-2">
                     Full Detail Package
                   </h2>
@@ -152,7 +152,7 @@ export default function DetailingPage() {
                 </div>
 
                 {/* Middle: includes list */}
-                <div className="flex-1 p-6 md:p-8 border-t md:border-t-0 md:border-l border-white/10 flex flex-col justify-center">
+                <div className="md:w-1/3 p-6 md:p-8 border-t md:border-t-0 md:border-l border-white/10 flex flex-col justify-center">
                   <p className="text-xs uppercase tracking-wider text-white/50 mb-4 font-heading">Everything Included</p>
                   <ul className="space-y-2">
                     {fullDetailIncludes.map((item) => (
@@ -165,7 +165,7 @@ export default function DetailingPage() {
                 </div>
 
                 {/* Right: image placeholder */}
-                <div className="md:w-[25%] shrink-0 min-h-[200px] border-t md:border-t-0 md:border-l border-white/10 bg-brand-black flex items-center justify-center">
+                <div className="md:w-1/3 min-h-[200px] border-t md:border-t-0 md:border-l border-white/10 bg-brand-black flex items-center justify-center">
                   <span className="text-white/20 text-sm">[IMAGE: Full Detail]</span>
                 </div>
               </div>
@@ -187,7 +187,6 @@ export default function DetailingPage() {
       </section>
 
       {/* -- OR Separator -- */}
-      <div className="border-t border-white/10" />
       <section className="w-full py-6 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <div className="flex items-center gap-6">
@@ -197,7 +196,6 @@ export default function DetailingPage() {
           </div>
         </div>
       </section>
-      <div className="border-t border-white/10" />
 
       {/* ── 3. Services Table ──────────────────────────────────────── */}
       <section className="w-full py-12 bg-brand-dark-gray text-white section-lines-dark">
@@ -279,10 +277,10 @@ export default function DetailingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10">
             {[
-              { title: "Paint-Safe Process", body: "Every step is designed to protect your paint, not damage it. We decontaminate before polishing, and seal after correcting. No shortcuts, no skipped steps." },
-              { title: "Premium Products Only", body: "We use trusted detailing brands for every product. From clay bars to sealant coatings, everything is selected for performance and paint safety." },
-              { title: "Trained Detailing Specialists", body: "Our detailers are trained specifically in paint correction, interior restoration, and coating application. They know how to handle every surface and material in your car." },
-              { title: "Visible, Lasting Results", body: "You will see and feel the difference immediately. Deep gloss, hydrophobic finish, restored interiors. Results that last weeks, not days." },
+              { title: "Paint-Safe Process", body: "Every step is designed to protect your paint, not damage it. We decontaminate before polishing, and seal after correcting. No shortcuts, no skipped steps.", icon: ShieldCheck },
+              { title: "Premium Products Only", body: "We use trusted detailing brands for every product. From clay bars to sealant coatings, everything is selected for performance and paint safety.", icon: Sparkles },
+              { title: "Trained Detailing Specialists", body: "Our detailers are trained specifically in paint correction, interior restoration, and coating application. They know how to handle every surface and material in your car.", icon: Paintbrush },
+              { title: "Visible, Lasting Results", body: "You will see and feel the difference immediately. Deep gloss, hydrophobic finish, restored interiors. Results that last weeks, not days.", icon: Eye },
             ].map((item, index) => (
               <FadeIn key={item.title} delay={(index + 1) * 100}>
                 <div className={cn(
@@ -291,6 +289,7 @@ export default function DetailingPage() {
                   index === 2 && "border-t border-white/10",
                   index === 3 && "border-t md:border-l border-white/10"
                 )}>
+                  <item.icon className="h-5 w-5 text-brand-orange mb-4" strokeWidth={1.5} />
                   <h4 className="text-lg font-normal font-heading text-white mb-3">{item.title}</h4>
                   <p className="text-white/60 text-sm leading-relaxed">{item.body}</p>
                 </div>
