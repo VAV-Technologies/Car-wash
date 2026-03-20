@@ -112,7 +112,7 @@ export default async function TipsPage({
   return (
     <div className="bg-brand-dark-gray">
       {/* Hero */}
-      <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
+      <section className="w-full min-h-[75vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">

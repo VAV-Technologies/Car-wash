@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <div className="bg-brand-dark-gray">
       {/* Hero */}
-      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
+      <section className="w-full min-h-[75vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
         <div className="container mx-auto py-24 md:py-32">
           <FadeIn direction="up">
             <div className="text-center space-y-4 px-4">

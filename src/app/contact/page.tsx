@@ -118,7 +118,7 @@ export default function ContactPage() {
   return (
     <div className="bg-brand-black">
       {/* Hero */}
-      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
+      <section className="w-full min-h-[75vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center space-y-6 px-4">

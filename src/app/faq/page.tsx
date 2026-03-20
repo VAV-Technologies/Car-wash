@@ -26,8 +26,8 @@ const generalFAQs = [
         a: "We serve Jakarta and surrounding areas. We use zone-based scheduling to keep service prompt and on time.",
       },
       {
-        q: "Can you wash at my apartment or office parking?",
-        a: "Yes. We regularly service apartment basements, office towers, and residential driveways. Anywhere we can safely access your vehicle.",
+        q: "Where can you wash my car?",
+        a: "We work at houses, townhouses, and locations with access to a water source and power outlet. Covered parking is ideal but not required.",
       },
       {
         q: "How long does each service take?",
@@ -43,16 +43,16 @@ const pricingFAQs = [
     icon: DollarSign,
     questions: [
       {
-        q: "Why are you more expensive than other car washes?",
-        a: "We use premium car shampoos and top-quality products.never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, and attention to every detail.",
+        q: "What makes Castudio different?",
+        a: "We use premium products, the correct equipment, and trained technicians who follow proper techniques on every car. We take our time and keep working until you are satisfied with the result.",
       },
       {
         q: "What payment methods do you accept?",
-        a: "Bank transfer (BCA, Mandiri, BNI, BRI) and e-wallets (GoPay, OVO, DANA). For one-time bookings, you pay after the service is completed. For subscriptions, billing is monthly at the start of each cycle.",
+        a: "Bank transfer (BCA, Mandiri, BNI, BRI) and e-wallets (GoPay, OVO, DANA). For one-time bookings, you pay after the service is completed. For subscriptions, billing is every 4 months at the start of each cycle.",
       },
       {
         q: "Is there a cancellation fee?",
-        a: "For one-time bookings, cancel at least 12 hours ahead and there is no fee. For subscriptions, we require 30 days notice after the minimum commitment period. Early termination of a 6-month plan forfeits the bonus service.",
+        a: "For one-time bookings, cancel at least 12 hours ahead and there is no fee. For subscriptions, we require 30 days notice to cancel.",
       },
     ],
   },
@@ -68,16 +68,16 @@ const subscriptionFAQs = [
         a: "Yes. You can upgrade or downgrade at the next billing cycle. Just give us 7 days notice before your renewal date.",
       },
       {
-        q: "Do unused washes roll over to the next month?",
-        a: "No. Use all your sessions each month.your car will thank you.",
+        q: "Do unused washes roll over?",
+        a: "No. We encourage you to use all your included washes each billing period to keep your car in top condition.",
       },
       {
-        q: "What is the Free Full Detail bonus for subscribers?",
-        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing.approximately 8 hours of comprehensive work. Essentials and Plus subscribers do not receive the detailing bonus but can upgrade anytime.",
+        q: "What is the Free Full Detail bonus?",
+        a: "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing, approximately 8 hours of comprehensive work. Essentials and Plus subscribers do not receive the detailing bonus but can upgrade anytime.",
       },
       {
-        q: "Can the Elite plan be used for multiple cars?",
-        a: "No. Each Elite subscription is locked to one vehicle, identified by the license plate you register at signup. Add a separate subscription for each additional car.",
+        q: "Can I use my subscription for multiple cars?",
+        a: "Yes. You can use your subscription washes across different vehicles. Just let us know when you book each session.",
       },
     ],
   },
@@ -98,7 +98,7 @@ const qualityFAQs = [
       },
       {
         q: "Will a hand wash scratch my paint?",
-        a: "We use the two-bucket method with grit guards, premium microfiber mitts, and proper washing technique. This is the same method professional detailers use worldwide. It is the single-bucket street washes with dirty rags that cause scratches and swirl marks.",
+        a: "Not when done correctly. We use proper wash techniques with grit guards, premium microfiber mitts, and the correct equipment. This is the same method professional detailers use worldwide. It is the improper techniques and dirty rags that cause scratches and swirl marks.",
       },
     ],
   },
@@ -111,7 +111,7 @@ const serviceDetailFAQs = [
     questions: [
       {
         q: "What is included in the Standard wash?",
-        a: "Full foam pre-wash, two-bucket hand wash, interior clean and vacuum, tire polish, body spot remover, and engine bay cleaning.",
+        a: "Full foam pre-wash, hand wash with proper technique, interior clean and vacuum, tire polish, and body spot remover.",
       },
       {
         q: "What is the difference between Standard and Professional?",
@@ -127,7 +127,7 @@ const serviceDetailFAQs = [
       },
       {
         q: "What about rainy days?",
-        a: "Cars actually get dirtier in the rain.acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
+        a: "Cars actually get dirtier in the rain. Acidic rainwater, road spray, and mud make it the best time to wash. We work in covered parking when possible.",
       },
     ],
   },
@@ -140,7 +140,7 @@ const detailingFAQs = [
     questions: [
       {
         q: "What is included in a Full Detail?",
-        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000.saving you Rp 257,000 compared to booking each service individually.",
+        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000, saving you Rp 257,000 compared to booking each service individually.",
       },
       {
         q: "Can I book individual detailing services?",
@@ -171,7 +171,7 @@ export default function FAQPage() {
   return (
     <div className="bg-brand-black">
       {/* Hero */}
-      <section className="w-full min-h-[50vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
+      <section className="w-full min-h-[75vh] flex items-center justify-center bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200}>
             <div className="text-center space-y-6 px-4">
@@ -186,7 +186,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {allSections.map((section, sectionIdx) => {
+      {allSections.map((section) => {
         const category = section.data[0];
         const Icon = category.icon;
         return (
@@ -235,26 +235,32 @@ export default function FAQPage() {
 
       {/* CTA */}
       <div className="border-t border-white/10" />
-      <section className="w-full py-12 md:py-12 bg-brand-black section-lines-dark">
+      <section className="w-full py-12 bg-brand-black section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="relative border border-white/10 bg-brand-dark-gray py-36 md:py-48 px-8 md:px-16 text-center overflow-hidden">
-              <div className="relative z-10">
-                <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">
-                  Still have questions? We&apos;re happy to help.
-                </h2>
-                <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-10 text-center">
-                  Reach out to our team on WhatsApp and we will get back to you quickly.
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                  <Link
-                    href="https://wa.me/62816104334"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
-                  >
-                    Message Us on WhatsApp
-                  </Link>
+            <div className="border border-white/10">
+              <div className="relative px-4 sm:px-8 md:px-16 py-16 md:py-20 text-center overflow-hidden bg-brand-dark-gray">
+                <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                  <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white mb-4 font-heading">Book Your First Wash</h2>
+                  <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-8 md:mb-10">
+                    Experience the Castudio difference. Premium products, trained technicians, and a result you can see and feel, at your doorstep.
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <Link
+                      href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"
+                    >
+                      WhatsApp Us
+                    </Link>
+                    <Link
+                      href="/car-wash/subscriptions"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
+                    >
+                      See Our Plans
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

@@ -65,7 +65,7 @@ export default async function BlogPostPage({
   return (
     <div className="bg-brand-dark-gray">
       {/* Hero */}
-      <section className="w-full min-h-[60vh] bg-brand-black flex items-end py-24 text-white section-lines-light">
+      <section className="w-full min-h-[75vh] bg-brand-black flex items-end py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn direction="up" delay={100}>
             <div className="px-4">

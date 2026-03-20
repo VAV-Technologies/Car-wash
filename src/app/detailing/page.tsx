@@ -102,7 +102,7 @@ export default function DetailingPage() {
   return (
     <div className="bg-brand-black">
       {/* ── 1. Hero ──────────────────────────────────────────────── */}
-      <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
+      <section className="w-full min-h-[75vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn
             direction="up"
