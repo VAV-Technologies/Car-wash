@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Mail, Phone } from 'lucide-react';
 
 const WA_NUMBER = '62816104334';
 
@@ -21,17 +21,39 @@ function getWhatsAppMessage(pathname: string): string {
 export function WhatsAppButton() {
   const pathname = usePathname();
   const message = encodeURIComponent(getWhatsAppMessage(pathname));
-  const href = `https://wa.me/${WA_NUMBER}?text=${message}`;
+  const waHref = `https://wa.me/${WA_NUMBER}?text=${message}`;
 
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Chat on WhatsApp"
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 md:w-12 md:h-12 rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#20BD5A] transition-colors"
-    >
-      <MessageCircle className="h-6 w-6 md:h-5 md:w-5" fill="currentColor" strokeWidth={0} />
-    </a>
+    <div className="fixed bottom-6 right-0 left-0 z-50 pointer-events-none">
+      <div className="container mx-auto flex justify-end">
+        <div className="pointer-events-auto flex border border-white/10 bg-brand-black/90 backdrop-blur-xl supports-[backdrop-filter]:bg-brand-black/80 shadow-lg">
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+            <span className="text-sm font-medium">WhatsApp</span>
+          </a>
+          <div className="w-px bg-white/10" />
+          <a
+            href="mailto:hello@castudio.co"
+            className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <Mail className="h-4 w-4" strokeWidth={1.5} />
+            <span className="text-sm font-medium">Email</span>
+          </a>
+          <div className="w-px bg-white/10" />
+          <a
+            href="tel:+62816104334"
+            className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <Phone className="h-4 w-4" strokeWidth={1.5} />
+            <span className="text-sm font-medium">Phone</span>
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
