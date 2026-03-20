@@ -7,7 +7,7 @@ import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight, Waves, Wind
 export const metadata: Metadata = {
   title: "Cuci Mobil Panggilan Premium | Castudio",
   description:
-    "Premium mobile car wash delivered to your doorstep across JABODETABEK. Three service tiers from Rp 339,000. Professional products, two-bucket method, trained technicians.",
+    "Premium mobile car wash delivered to your doorstep across Jakarta and surrounding areas. Three service tiers from Rp 339,000. Professional products, two-bucket method, trained technicians.",
 };
 
 /* ------------------------------------------------------------------ */
@@ -37,7 +37,7 @@ const processSteps = [
   {
     num: "02",
     title: "Two-Bucket Hand Wash",
-    body: "Separate wash and rinse buckets with grit guards. Fresh microfiber mitt for each panel. pH-neutral shampoo that cleans without stripping wax or sealant. This is the technique that prevents swirl marks.",
+    body: "Separate wash and rinse buckets with grit guards. Fresh microfiber mitt for each panel. Premium car shampoo that cleans without stripping wax or sealant. This is the technique that prevents swirl marks.",
   },
   {
     num: "03",
@@ -70,7 +70,7 @@ const differentiators = [
   {
     icon: MapPin,
     title: "Total Convenience",
-    body: "Home, office, apartment — we come to you across JABODETABEK. All equipment, water, and power included. You don\u2019t lift a finger.",
+    body: "Home, office, apartment — we come to you across Jakarta and surrounding areas. All equipment and products included. You don\u2019t lift a finger.",
   },
 ];
 

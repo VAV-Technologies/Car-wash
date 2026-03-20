@@ -16,7 +16,7 @@ export function Footer() {
             <Logo size="2xl" forceTheme="dark" />
             <div className="border-t border-white/15 mt-4 mb-4" />
             <p className="text-sm">
-              Premium at-home car wash and detailing across JABODETABEK.
+              Premium at-home car wash and detailing across Jakarta and surrounding areas.
             </p>
           </div>
 

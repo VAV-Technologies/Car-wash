@@ -18,12 +18,12 @@ const generalFAQs = [
         a: "Tap the WhatsApp button, tell us the service you want, your preferred date and time, and your location. We will confirm your booking within 30 minutes.",
       },
       {
-        q: "Do I need to provide water or electricity?",
-        a: "No. We bring our own 500-litre water tank, generator, and all equipment needed. If you have a garden hose available we appreciate it, but it is not required.",
+        q: "Do I need to provide anything?",
+        a: "We just need access to a water source and a power outlet. We bring all the equipment, products, and microfiber towels needed for the job.",
       },
       {
         q: "Where do you operate?",
-        a: "We serve all of JABODETABEK — Jakarta, Bogor, Depok, Tangerang, and Bekasi. We use zone-based scheduling to keep service prompt. Check our Coverage Area page for full details.",
+        a: "We serve Jakarta and surrounding areas. We use zone-based scheduling to keep service prompt and on time.",
       },
       {
         q: "Can you wash at my apartment or office parking?",
@@ -44,7 +44,7 @@ const pricingFAQs = [
     questions: [
       {
         q: "Why are you more expensive than other car washes?",
-        a: "We use premium, professional-grade products — never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, quality chemicals. You get what you pay for.",
+        a: "We use premium car shampoos and top-quality products — never diluted. Our technicians follow the two-bucket method and spend 2 to 4 hours on every car. Trained staff, proper equipment, and attention to every detail.",
       },
       {
         q: "What payment methods do you accept?",
@@ -94,7 +94,7 @@ const qualityFAQs = [
       },
       {
         q: "What products do you use?",
-        a: "Professional-grade pH-neutral shampoos, glass cleaners, tar removers, clay bars, and sealant coatings. We never use dish soap, generic all-purpose cleaners, or reused rags. Every car gets fresh microfiber towels.",
+        a: "Premium car shampoos, glass cleaners, tar removers, clay bars, and sealant coatings. We never use dish soap, generic all-purpose cleaners, or reused rags. Every car gets fresh microfiber towels.",
       },
       {
         q: "Will a hand wash scratch my paint?",
@@ -179,7 +179,7 @@ export default function FAQPage() {
                 Frequently Asked Questions
               </h1>
               <p className="text-lg md:text-xl text-white/70 font-light max-w-2xl mx-auto">
-                Everything you need to know about our mobile car wash service across JABODETABEK.
+                Everything you need to know about our mobile car wash service across Jakarta and surrounding areas.
               </p>
             </div>
           </FadeIn>

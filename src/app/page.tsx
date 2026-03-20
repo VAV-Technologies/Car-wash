@@ -74,7 +74,7 @@ export default function HomePage() {
               {
                 num: "03",
                 title: "Relax",
-                body: "Our technician arrives fully equipped — water tank, generator, premium products, fresh microfiber towels. Your car comes back spotless. Zero effort from you.",
+                body: "Our technician arrives fully equipped with premium products and fresh microfiber towels. Your car comes back spotless. Zero effort from you.",
               },
             ].map((step, index) => (
               <FadeIn key={step.num} delay={index * 100}>
@@ -119,7 +119,7 @@ export default function HomePage() {
                 Car Wash
               </h2>
               <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Every wash uses pH-neutral shampoo, the two-bucket method, fresh microfiber towels, and professional-grade chemicals. Choose the depth of care your car needs.
+                Every wash uses premium car shampoo, the two-bucket method, fresh microfiber towels, and top-quality products. Choose the depth of care your car needs.
               </p>
             </div>
           </FadeIn>
@@ -381,12 +381,12 @@ export default function HomePage() {
                   Most street washes use dirty rags, harsh chemicals, and zero technique. The result? Swirl marks, scratches, and paint that ages faster than it should. Castudio exists because we believe there&apos;s a better way.
                 </p>
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
-                  We use pH-neutral shampoo, the two-bucket method with grit guards, fresh microfiber towels on every car, and professional-grade chemicals that protect rather than strip your paint. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office — with all water, power, and products included.
+                  We use premium car shampoo, the two-bucket method with grit guards, and fresh microfiber towels on every car. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office — everything included.
                 </p>
                 <div className="flex flex-col sm:flex-row border-t border-white/10 pt-6 sm:pt-8">
                   {[
                     { stat: "2 hrs", label: "Avg Standard wash", icon: Clock },
-                    { stat: "500L", label: "Water tank onboard", icon: Droplets },
+                    { stat: "100%", label: "Satisfaction rate", icon: Droplets },
                     { stat: "Premium", label: "Products only", icon: Sparkles },
                   ].map((item, index) => (
                     <div key={item.stat} className={cn(
@@ -406,10 +406,10 @@ export default function HomePage() {
           {/* 2x2 feature grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 mt-10 border border-white/10">
             {[
-              { title: "Premium Products Only", body: "pH-neutral shampoo, professional sealants, ceramic coatings from trusted brands. Never diluted bulk chemicals or harsh detergents that strip your paint.", icon: Sparkles },
+              { title: "Premium Products Only", body: "Premium car shampoos, professional sealants, and ceramic coatings from trusted brands. Never diluted bulk chemicals or harsh detergents.", icon: Sparkles },
               { title: "Two-Bucket Method", body: "Separate wash and rinse buckets with grit guards on every job. This proven technique prevents the swirl marks and scratches that street washes leave behind.", icon: Droplets },
               { title: "Trained Technicians", body: "Uniformed, trained on proper wash technique, paint decontamination, and sealant application. Every technician follows the Castudio standard before they touch your car.", icon: Paintbrush },
-              { title: "Total Convenience", body: "Home, office, apartment basement — we come to you with all equipment, water tank, generator, and products. You don\u2019t lift a finger.", icon: Car },
+              { title: "Total Convenience", body: "Home, office, apartment basement — we come to you with all the equipment and products needed. You don\u2019t lift a finger.", icon: Car },
             ].map((card, index) => (
               <FadeIn key={card.title} delay={(index + 2) * 100}>
                 <div className={cn(

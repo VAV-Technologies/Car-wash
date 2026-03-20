@@ -7,7 +7,7 @@ import { Check, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Auto Detailing Mobil di Rumah | Castudio",
   description:
-    "Professional auto detailing delivered to your doorstep across JABODETABEK. Interior, exterior, window, and tire & rims detailing. Full Detail package from Rp 2,799,000.",
+    "Professional auto detailing delivered to your doorstep across Jakarta and surrounding areas. Interior, exterior, window, and tire & rims detailing. Full Detail package from Rp 2,799,000.",
 };
 
 /* ------------------------------------------------------------------ */

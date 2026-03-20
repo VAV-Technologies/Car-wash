@@ -6,7 +6,7 @@ const differentiators = [
   {
     num: "01",
     title: "Premium Products Only",
-    body: "We use professional-grade shampoos, sealants, and coatings \u2014 not diluted bulk chemicals. Your car gets what it deserves.",
+    body: "We use premium car shampoos, sealants, and coatings \u2014 not diluted bulk chemicals. Your car gets what it deserves.",
   },
   {
     num: "02",
@@ -21,7 +21,7 @@ const differentiators = [
   {
     num: "04",
     title: "Total Convenience",
-    body: "We come to you. Home, office, apartment parking \u2014 wherever your car is. All equipment, water, and power come with us.",
+    body: "We come to you. Home, office, apartment parking \u2014 wherever your car is. All equipment and products come with us.",
   },
 ];
 
@@ -29,12 +29,12 @@ const steps = [
   {
     num: "01",
     title: "We bring everything to you",
-    body: "500L water tank, generator, pressure washer, vacuum, all chemicals and microfiber. No water or power needed from you.",
+    body: "Top-notch equipment, premium car shampoos, dedicated cleaners, and fresh microfiber for every job. Everything we need, we bring.",
   },
   {
     num: "02",
     title: "We use the right products",
-    body: "Professional-grade pH-neutral shampoos, dedicated glass cleaners, tar removers, clay bars, and sealant coatings. Never dish soap or diluted bulk chemicals.",
+    body: "Premium car shampoos, dedicated glass cleaners, tar removers, clay bars, and sealant coatings. Never dish soap or diluted bulk chemicals.",
   },
   {
     num: "03",
@@ -110,7 +110,7 @@ export default function AboutPage() {
                   Most street washes use dirty rags, harsh chemicals, and zero technique. The result? Swirl marks, scratches, and paint that ages faster than it should. Castudio exists because we believe there&apos;s a better way.
                 </p>
                 <p className="text-sm sm:text-base text-white/60 leading-relaxed text-justify pb-6 sm:pb-8">
-                  We use pH-neutral shampoo, the two-bucket method with grit guards, fresh microfiber towels on every car, and professional-grade chemicals that protect rather than strip your paint. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office &mdash; with all water, power, and products included.
+                  We use premium car shampoo, the two-bucket method with grit guards, and fresh microfiber towels on every car. Our technicians are trained, uniformed, and equipped to deliver a premium wash at your home or office &mdash; everything included.
                 </p>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function AboutPage() {
                   We&apos;re car people. We know the frustration of sitting in Jakarta traffic for 45 minutes just to get a mediocre wash at a dirty roadside shop. We know the anxiety of handing your car to someone who uses the same rag on every vehicle. We know there&apos;s a better way.
                 </p>
                 <p className="text-white/60 leading-relaxed">
-                  We bring professional-grade car care to your doorstep. No cutting corners. No generic products. No rushed jobs. Every wash uses premium products, the proper two-bucket method, and dedicated microfiber for each section of your car. Our technicians are trained, uniformed, and held to a quality standard that most shops never reach.
+                  We bring premium car care to your doorstep. No cutting corners. No generic products. No rushed jobs. Every wash uses premium products, the proper two-bucket method, and dedicated microfiber for each section of your car. Our technicians are trained, uniformed, and held to a quality standard that most shops never reach.
                 </p>
                 <p className="text-white/60 leading-relaxed">
                   We&apos;re for the car owner who values their time and their vehicle &mdash; and refuses to settle for a street-level wash. If that sounds like you, welcome home.

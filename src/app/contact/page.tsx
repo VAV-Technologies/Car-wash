@@ -105,7 +105,7 @@ export default function ContactPage() {
     { icon: Droplets, text: "Premium at-home service \u2014 we come to you" },
     { icon: Clock, text: "Standard ~2hrs, Professional ~3hrs, Elite ~4hrs" },
     { icon: ShieldCheck, text: "Satisfaction guarantee on every wash" },
-    { icon: MapPin, text: "Serving all JABODETABEK zones" },
+    { icon: MapPin, text: "Serving Jakarta and surrounding areas" },
   ];
 
   const subscriptionReasons = [
