@@ -242,16 +242,9 @@ export default function OneTimeWashPage() {
                 <div className="w-[28%] sm:w-[24%] shrink-0 p-4 sm:p-6 flex items-end">
                   <span className="text-xs uppercase tracking-wider text-white/40 font-heading">Feature</span>
                 </div>
-                {[
-                  { name: "Standard", tagline: "The Thorough Clean", price: "Rp 339,000", duration: "~2 hrs" },
-                  { name: "Professional", tagline: "The Deep Restoration", price: "Rp 569,000", duration: "~3 hrs" },
-                  { name: "Elite", tagline: "The Full Transformation", price: "Rp 919,000", duration: "~4 hrs" },
-                ].map((tier) => (
-                  <div key={tier.name} className="flex-1 p-4 sm:p-6 text-center border-l border-white/10">
-                    <p className="text-base sm:text-lg font-heading text-white mb-0.5">{tier.name}</p>
-                    <p className="text-xs text-brand-orange mb-1 hidden sm:block">{tier.tagline}</p>
-                    <p className="text-lg sm:text-xl font-heading text-brand-orange">{tier.price}</p>
-                    <p className="text-xs text-white/40 mt-0.5">{tier.duration}</p>
+                {["Standard", "Professional", "Elite"].map((name) => (
+                  <div key={name} className="flex-1 p-4 sm:p-6 text-center border-l border-white/10">
+                    <p className="text-base sm:text-lg font-heading text-white">{name}</p>
                   </div>
                 ))}
               </div>
@@ -287,19 +280,22 @@ export default function OneTimeWashPage() {
               <div className="w-[28%] sm:w-[24%] shrink-0" />
               <div className="flex flex-1 border-x border-b border-white/10">
                 {[
-                  { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
-                  { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
-                  { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
+                  { label: "Book Standard", tagline: "The Thorough Clean", price: "Rp 339,000", duration: "~2 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
+                  { label: "Book Professional", tagline: "The Deep Restoration", price: "Rp 569,000", duration: "~3 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
+                  { label: "Book Elite", tagline: "The Full Transformation", price: "Rp 919,000", duration: "~4 hrs", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
                 ].map((cta, i) => (
                   <div key={cta.label} className={cn(
-                    "flex-1 p-4 sm:p-6 flex items-center justify-center",
+                    "flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center gap-2",
                     i > 0 && "border-l border-white/10"
                   )}>
+                    <p className="text-xs text-brand-orange hidden sm:block">{cta.tagline}</p>
+                    <p className="text-lg font-heading text-brand-orange">{cta.price}</p>
+                    <p className="text-xs text-white/40">{cta.duration}</p>
                     <Link
                       href={cta.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors mt-2"
                     >
                       {cta.label}
                     </Link>
