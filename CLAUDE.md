@@ -18,7 +18,7 @@ src/
 │   ├── ui/           # Base UI components (Radix-based)
 │   ├── layout/       # Navbar, Footer, GlobalLayoutWrapper
 │   ├── seo/          # StructuredData
-│   └── shared/       # Shared components (Logo, etc.)
+│   └── shared/       # Shared components (Logo, WhatsAppButton, etc.)
 ├── lib/
 │   ├── utils.ts      # cn() helper
 │   └── blog.ts       # Static blog data (samplePosts array)
@@ -29,7 +29,7 @@ src/
 ```
 
 ## Pages
-`/` `/about` `/pricing` `/services` `/terms` `/privacy` `/contact` `/faq` `/help` `/resources` `/resources/[slug]`
+`/` `/about` `/car-wash/one-time` `/car-wash/subscriptions` `/detailing` `/terms` `/privacy` `/contact` `/faq` `/coverage` `/tips` `/tips/[slug]`
 
 ## Development
 ```bash

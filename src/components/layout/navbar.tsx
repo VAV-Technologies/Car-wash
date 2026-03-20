@@ -6,7 +6,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, DollarSign, HelpCircle, MapPin, CalendarCheck } from 'lucide-react';
+import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, HelpCircle, MapPin, CalendarCheck, Paintbrush } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
@@ -24,15 +24,31 @@ interface NavLinkGroup {
   items: NavLinkItem[];
 }
 
-const navLinkGroups: NavLinkGroup[] = [
+interface NavDirectLink {
+  label: string;
+  triggerIcon: React.ElementType;
+  href: string;
+}
+
+type NavEntry = NavLinkGroup | NavDirectLink;
+
+function isGroup(entry: NavEntry): entry is NavLinkGroup {
+  return 'items' in entry;
+}
+
+const navEntries: NavEntry[] = [
   {
-    label: "Services",
+    label: "Car Wash",
     triggerIcon: Droplets,
     items: [
-      { href: "/services", label: "Our Services", icon: Droplets },
-      { href: "/pricing", label: "Subscriptions", icon: CalendarCheck },
-      { href: "/coverage", label: "Coverage Area", icon: MapPin },
+      { href: "/car-wash/one-time", label: "One-Time Washes", icon: Droplets },
+      { href: "/car-wash/subscriptions", label: "Subscriptions", icon: CalendarCheck },
     ],
+  },
+  {
+    label: "Auto Detailing",
+    triggerIcon: Paintbrush,
+    href: "/detailing",
   },
   {
     label: "Company",
@@ -40,10 +56,13 @@ const navLinkGroups: NavLinkGroup[] = [
     items: [
       { href: "/about", label: "About Us", icon: Info },
       { href: "/faq", label: "FAQ", icon: HelpCircle },
-      { href: "/resources", label: "Car Care Tips", icon: BookOpen },
+      { href: "/tips", label: "Car Care Tips", icon: BookOpen },
+      { href: "/coverage", label: "Coverage Area", icon: MapPin },
     ],
   },
 ];
+
+const navLinkGroups = navEntries.filter(isGroup);
 
 export function Navbar() {
   const pathname = usePathname();
@@ -51,8 +70,8 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
   // Pages with dark hero backgrounds where navbar should start transparent with white text
-  const darkHeroPages = ['/', '/about', '/contact', '/coverage', '/faq', '/services', '/terms', '/privacy', '/resources'];
-  const hasDarkHero = darkHeroPages.includes(pathname) || pathname.startsWith('/resources/');
+  const darkHeroPages = ['/', '/about', '/contact', '/coverage', '/faq', '/car-wash/one-time', '/car-wash/subscriptions', '/detailing', '/terms', '/privacy', '/tips'];
+  const hasDarkHero = darkHeroPages.includes(pathname) || pathname.startsWith('/tips/');
 
   const [scrolled, setScrolled] = useState(!hasDarkHero);
 
@@ -118,23 +137,40 @@ export function Navbar() {
 
         {/* Center - Nav items */}
         <nav className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
-          {navLinkGroups.map((group) => {
-            const TriggerIcon = group.triggerIcon;
-            const isActive = activeMenu === group.label;
+          {navEntries.map((entry) => {
+            const TriggerIcon = entry.triggerIcon;
+            if (isGroup(entry)) {
+              const isActive = activeMenu === entry.label;
+              return (
+                <button
+                  key={entry.label}
+                  ref={(el) => { triggerRefs.current[entry.label] = el; }}
+                  className={cn(
+                    "h-10 w-[200px] text-sm font-medium flex items-center justify-center transition-colors rounded-none text-white",
+                    isActive ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
+                  )}
+                  onMouseEnter={() => openMenu(entry.label)}
+                >
+                  <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
+                  {entry.label}
+                  <ChevronDown className={cn("ml-1 h-4 w-4 opacity-70 transition-transform duration-200", isActive && "rotate-180")} />
+                </button>
+              );
+            }
+            // Direct link
             return (
-              <button
-                key={group.label}
-                ref={(el) => { triggerRefs.current[group.label] = el; }}
+              <Link
+                key={entry.label}
+                href={entry.href}
                 className={cn(
                   "h-10 w-[200px] text-sm font-medium flex items-center justify-center transition-colors rounded-none text-white",
-                  isActive ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
+                  pathname === entry.href ? "bg-white/15" : "hover:bg-white/10 hover:text-white/90"
                 )}
-                onMouseEnter={() => openMenu(group.label)}
+                onMouseEnter={() => setActiveMenu(null)}
               >
                 <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
-                {group.label}
-                <ChevronDown className={cn("ml-1 h-4 w-4 opacity-70 transition-transform duration-200", isActive && "rotate-180")} />
-              </button>
+                {entry.label}
+              </Link>
             );
           })}
         </nav>
@@ -158,35 +194,51 @@ export function Navbar() {
                 <Logo size="lg" forceTheme="dark" />
               </div>
               <nav className="flex flex-col gap-3 p-4">
-                {navLinkGroups.map((group) => {
-                  const TriggerIcon = group.triggerIcon;
-                  return (
-                    <div key={group.label} className="border border-white/10">
-                      <h4 className="text-sm font-medium uppercase tracking-wider px-4 py-3 text-white/50 flex items-center border-b border-white/10 bg-brand-dark-gray/50">
-                        <TriggerIcon className="mr-2 h-4 w-4 opacity-60" />
-                        {group.label}
-                      </h4>
-                      <div className="flex flex-col">
-                        {group.items.map((item, itemIndex) => {
-                          const IconComponent = item.icon;
-                          return (
-                            <SheetClose asChild key={item.label}>
-                              <Button variant="ghost" asChild className={cn(
-                                "justify-start text-base font-normal rounded-none px-4 py-3 text-white/80 hover:text-white hover:bg-white/10",
-                                itemIndex > 0 && "border-t border-white/10",
-                                pathname === item.href && "bg-white/10 font-medium text-white"
-                              )}>
-                                <Link href={item.href} className="flex items-center">
-                                  <IconComponent className="mr-2 h-4 w-4 opacity-80" />
-                                  {item.label}
-                                </Link>
-                              </Button>
-                            </SheetClose>
-                          );
-                        })}
+                {navEntries.map((entry) => {
+                  const TriggerIcon = entry.triggerIcon;
+                  if (isGroup(entry)) {
+                    return (
+                      <div key={entry.label} className="border border-white/10">
+                        <h4 className="text-sm font-medium uppercase tracking-wider px-4 py-3 text-white/50 flex items-center border-b border-white/10 bg-brand-dark-gray/50">
+                          <TriggerIcon className="mr-2 h-4 w-4 opacity-60" />
+                          {entry.label}
+                        </h4>
+                        <div className="flex flex-col">
+                          {entry.items.map((item, itemIndex) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <SheetClose asChild key={item.label}>
+                                <Button variant="ghost" asChild className={cn(
+                                  "justify-start text-base font-normal rounded-none px-4 py-3 text-white/80 hover:text-white hover:bg-white/10",
+                                  itemIndex > 0 && "border-t border-white/10",
+                                  pathname === item.href && "bg-white/10 font-medium text-white"
+                                )}>
+                                  <Link href={item.href} className="flex items-center">
+                                    <IconComponent className="mr-2 h-4 w-4 opacity-80" />
+                                    {item.label}
+                                  </Link>
+                                </Button>
+                              </SheetClose>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  )
+                    );
+                  }
+                  // Direct link in mobile
+                  return (
+                    <SheetClose asChild key={entry.label}>
+                      <Button variant="ghost" asChild className={cn(
+                        "justify-start text-base font-normal rounded-none px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 border border-white/10",
+                        pathname === entry.href && "bg-white/10 font-medium text-white"
+                      )}>
+                        <Link href={entry.href} className="flex items-center">
+                          <TriggerIcon className="mr-2 h-4 w-4 opacity-80" />
+                          {entry.label}
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  );
                 })}
 
                 {/* Contact — primary CTA */}

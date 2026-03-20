@@ -42,10 +42,10 @@ function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
   return (
     <FadeIn delay={index * 80} direction="up">
       <Link
-        href={`/resources/${post.slug}`}
+        href={`/tips/${post.slug}`}
         className="group flex flex-col h-full border border-white/10 hover:border-white/25 transition-colors"
       >
-        {/* Image — always rendered, placeholder if no cover */}
+        {/* Image */}
         <div className="relative aspect-square overflow-hidden border-b border-white/10 bg-brand-dark-gray">
           {post.cover_image_url ? (
             <Image
@@ -65,7 +65,7 @@ function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
           )}
         </div>
 
-        {/* Content — flex-1 to fill remaining height */}
+        {/* Content */}
         <div className="flex flex-col flex-1 p-5">
           <span className="inline-block self-start text-xs font-medium uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 mb-3">
             {categoryLabels[post.category]}
@@ -87,7 +87,7 @@ function BlogCard({ post, index }: { post: BlogPostListItem; index: number }) {
   )
 }
 
-export default async function ResourcesPage({
+export default async function TipsPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string; page?: string }>
@@ -116,7 +116,7 @@ export default async function ResourcesPage({
         <div className="container mx-auto">
           <FadeIn direction="up" delay={200} className="text-center space-y-6 px-4 max-w-4xl mx-auto">
             <p className="text-sm uppercase tracking-wider text-brand-orange font-heading">
-              Resources
+              Car Care Tips
             </p>
             <h1 className="text-4xl md:text-6xl font-normal font-heading tracking-tight">
               Car Care Tips, News &amp; Guides
@@ -143,7 +143,7 @@ export default async function ResourcesPage({
                   const isActive =
                     cat.value === 'all' ? !validCategory : cat.value === validCategory
                   const href =
-                    cat.value === 'all' ? '/resources' : `/resources?category=${cat.value}`
+                    cat.value === 'all' ? '/tips' : `/tips?category=${cat.value}`
 
                   return (
                     <Link
@@ -166,7 +166,7 @@ export default async function ResourcesPage({
                 <div className="flex items-center gap-2">
                   {currentPage > 1 && (
                     <Link
-                      href={`/resources?${new URLSearchParams({
+                      href={`/tips?${new URLSearchParams({
                         ...(validCategory ? { category: validCategory } : {}),
                         page: String(currentPage - 1),
                       }).toString()}`}
@@ -180,7 +180,7 @@ export default async function ResourcesPage({
                   </span>
                   {currentPage < totalPages && (
                     <Link
-                      href={`/resources?${new URLSearchParams({
+                      href={`/tips?${new URLSearchParams({
                         ...(validCategory ? { category: validCategory } : {}),
                         page: String(currentPage + 1),
                       }).toString()}`}
@@ -221,10 +221,10 @@ export default async function ResourcesPage({
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'CollectionPage',
-            name: 'Castudio Resources',
+            name: 'Castudio Car Care Tips',
             description:
               'Expert car care tips, detailing guides, and Castudio news for drivers in Indonesia who want to keep their vehicles in top condition.',
-            url: 'https://www.castudio.co/resources',
+            url: 'https://www.castudio.co/tips',
             publisher: {
               '@type': 'Organization',
               name: 'Castudio',

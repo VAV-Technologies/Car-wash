@@ -434,7 +434,7 @@ export default function AboutPage() {
                         Book via WhatsApp
                       </Link>
                       <Link
-                        href="/services"
+                        href="/car-wash/one-time"
                         className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
                       >
                         See Our Services

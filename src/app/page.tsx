@@ -66,7 +66,7 @@ export default function HomePage() {
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
               Book Your First Wash <ArrowRight className="ml-2 h-5 w-5" />
             </a>
-            <Link href="/pricing" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
+            <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-white text-brand-white hover:bg-brand-white/10 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
               See Our Plans
             </Link>
           </div>
@@ -115,7 +115,7 @@ export default function HomePage() {
               {
                 num: "01",
                 title: "Choose",
-                body: "Pick your wash tier — Standard, Professional, or Elite — or subscribe to a monthly plan for regular care at better rates.",
+                body: "Pick your wash tier, detailing service, or subscription.",
               },
               {
                 num: "02",
@@ -242,7 +242,7 @@ export default function HomePage() {
                               <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                             ))}
                           </div>
-                          <Link href="/services" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                          <Link href="/car-wash/one-time" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
                             Learn More <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </div>
@@ -278,7 +278,7 @@ export default function HomePage() {
                             <span key={tag} className="text-xs px-3 py-1 border border-white/10 text-white/70">{tag}</span>
                           ))}
                         </div>
-                        <Link href="/services" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                        <Link href="/car-wash/one-time" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
                           Learn More <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </div>
@@ -288,6 +288,38 @@ export default function HomePage() {
               </>
             );
           })()}
+        </div>
+      </section>
+
+      {/* Detailing Preview */}
+      <div className="border-t border-white/10" />
+      <section className="py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-12 md:mb-16 px-4">
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Auto Detailing</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
+                Deep restoration, delivered to your door
+              </h2>
+            </div>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={100}>
+            <div className="max-w-3xl mx-auto border-2 border-brand-orange p-8 md:p-10 text-center relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+                <span className="px-4 py-1 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
+                  FEATURED
+                </span>
+              </div>
+              <h3 className="text-2xl font-heading text-white mb-2 pt-2">Full Detail Package</h3>
+              <p className="text-2xl font-heading text-brand-orange mb-3">Rp 2,799,000</p>
+              <p className="text-white/60 text-sm mb-4">Interior + Exterior + Windows + Tire &amp; Rims &mdash; ~8 hours</p>
+              <p className="text-white/50 text-sm mb-6">Individual services from Rp 289,000</p>
+              <Link href="/detailing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                See All Detailing Services <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
@@ -310,7 +342,7 @@ export default function HomePage() {
                 </p>
                 <div className="border border-brand-orange/30 bg-brand-orange/5 p-4 mb-6">
                   <p className="text-brand-orange text-sm font-medium">
-                    Commit for 6 months and get a free 30-point car inspection + oil change worth Rp 400&ndash;500K
+                    Plus and Unlimited subscribers get a free Full Detail worth Rp 2.8M
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -318,7 +350,7 @@ export default function HomePage() {
                     "Essentials: 2 washes/month from Rp 609K",
                     "Plus: 4 washes/month from Rp 1,349K",
                     "Unlimited: Wash anytime from Rp 3,199K",
-                    "6-month bonus: Free inspection + oil change",
+                    "Plus/Unlimited bonus: Free Full Detail (Rp 2.8M)",
                     "No contracts on monthly plans",
                     "WhatsApp booking for subscribers",
                   ].map((item) => (
@@ -340,7 +372,7 @@ export default function HomePage() {
               <div className="flex flex-col items-center gap-4">
                 <p className="text-lg font-normal text-white font-heading">See Subscription Plans</p>
                 <p className="text-white/60 max-w-xl">Compare Essentials, Plus, and Unlimited plans. Find the right fit for your schedule and budget.</p>
-                <Link href="/pricing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                <Link href="/car-wash/subscriptions" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
                   View pricing and plans <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
@@ -498,7 +530,7 @@ export default function HomePage() {
                     <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base">
                       <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp Us
                     </a>
-                    <Link href="/pricing" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base">
+                    <Link href="/car-wash/subscriptions" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base">
                       See Our Plans
                     </Link>
                   </div>

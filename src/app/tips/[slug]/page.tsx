@@ -34,7 +34,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: post.meta_title || `${post.title} | Castudio Resources`,
+    title: post.meta_title || `${post.title} | Castudio`,
     description: post.meta_description || post.excerpt,
     openGraph: {
       title: post.meta_title || post.title,
@@ -59,7 +59,7 @@ export default async function BlogPostPage({
 
   const relatedPosts = await getRelatedPosts(post.category, post.slug, 3)
 
-  const postUrl = `https://www.castudio.co/resources/${post.slug}`
+  const postUrl = `https://www.castudio.co/tips/${post.slug}`
   const shareText = encodeURIComponent(post.title)
 
   return (
@@ -69,20 +69,20 @@ export default async function BlogPostPage({
         <div className="container mx-auto">
           <FadeIn direction="up" delay={100}>
             <div className="px-4">
-              {/* Back link — above the divider */}
+              {/* Back link */}
               <Link
-                href="/resources"
+                href="/tips"
                 className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white transition-colors mb-6"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                Back to Resources
+                Back to Tips
               </Link>
             </div>
 
-            {/* Separator line spanning full container width */}
+            {/* Separator line */}
             <div className="border-t border-white/15 mb-8" />
 
-            {/* Title row: text left, image right — image aligns with sidebar below */}
+            {/* Title row */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:gap-0">
               {/* Left: category, title, meta */}
               <div className="flex-1 min-w-0 px-4">
@@ -113,7 +113,7 @@ export default async function BlogPostPage({
                 </div>
               </div>
 
-              {/* Right: cover image 1:1 — flush with container edge to align with sidebar */}
+              {/* Right: cover image */}
               <div className="shrink-0 mt-6 lg:mt-0 px-4 lg:px-0 w-full lg:w-72 xl:w-80">
                 <div className="w-full aspect-square border border-white/15 overflow-hidden">
                   {post.cover_image_url ? (
@@ -145,13 +145,13 @@ export default async function BlogPostPage({
       {/* Separator */}
       <div className="border-t border-white/10" />
 
-      {/* Article body — content left, sticky sidebar right */}
+      {/* Article body */}
       <section className="w-full py-10 md:py-12 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <article>
             <FadeIn direction="up" delay={200}>
               <div className="flex flex-col lg:flex-row">
-                {/* Left: article content (~80%) */}
+                {/* Left: article content */}
                 <div className="flex-1 min-w-0 border border-white/10 p-6 md:p-10 lg:p-14">
                   <div
                     className="prose prose-lg max-w-none prose-invert prose-headings:font-heading prose-headings:text-white prose-a:text-brand-orange prose-a:no-underline hover:prose-a:underline prose-img:border prose-img:border-white/10 prose-p:text-white/70 prose-li:text-white/70"
@@ -159,7 +159,7 @@ export default async function BlogPostPage({
                   />
                 </div>
 
-                {/* Right: sticky sidebar (~20%) */}
+                {/* Right: sticky sidebar */}
                 <div className="w-full lg:w-72 xl:w-80 shrink-0 border border-white/10 border-t-0 lg:border-t lg:border-l-0">
                   <div className="lg:sticky lg:top-28">
                     {/* Share section */}
@@ -195,7 +195,7 @@ export default async function BlogPostPage({
                       </div>
                     </div>
 
-                    {/* CTA box — dark */}
+                    {/* CTA box */}
                     <div className="bg-brand-black text-white p-6">
                       <p className="text-xs uppercase tracking-wider text-brand-orange font-heading mb-3">Castudio Car Care</p>
                       <div className="border-t border-white/15 mb-3" />
@@ -233,7 +233,7 @@ export default async function BlogPostPage({
                     {relatedPosts.map((related, i) => (
                       <FadeIn key={related.id} delay={i * 80} direction="up">
                         <Link
-                          href={`/resources/${related.slug}`}
+                          href={`/tips/${related.slug}`}
                           className={`group flex flex-col h-full border border-white/10 hover:border-white/25 transition-colors ${i > 0 ? 'border-t-0 sm:border-t sm:border-l-0' : ''}`}
                         >
                           <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-brand-dark-gray">

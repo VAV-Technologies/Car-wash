@@ -2,10 +2,10 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
-import { Check, Sparkles, Droplets, ShieldCheck, MapPin } from "lucide-react";
+import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "One-Time Wash Services",
+  title: "Cuci Mobil Panggilan Premium | Castudio",
   description:
     "Premium mobile car wash delivered to your doorstep across JABODETABEK. Three service tiers from Rp 339,000. Professional products, two-bucket method, trained technicians.",
 };
@@ -110,12 +110,32 @@ const differentiators = [
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
-export default function ServicesPage() {
+export default function OneTimeWashPage() {
   return (
     <div className="bg-brand-black">
-      {/* ---------------------------------------------------------- */}
-      {/*  1. Hero                                                    */}
-      {/* ---------------------------------------------------------- */}
+      {/* ── Subscription Upsell Banner (Above) ───────────────────── */}
+      <section className="w-full bg-brand-dark-gray py-6 border-b border-white/10">
+        <div className="container mx-auto px-4">
+          <div className="border border-brand-orange/30 bg-brand-orange/5 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="text-white font-heading text-base font-medium">
+                Want to save more? Subscribe and get a free Full Detail too.
+              </p>
+              <p className="text-white/60 text-sm mt-1">
+                Plus and Unlimited subscribers save up to 63% and get a free Full Detail worth Rp 2,799,000.
+              </p>
+            </div>
+            <Link
+              href="/car-wash/subscriptions"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-10 px-6 transition-colors shrink-0"
+            >
+              See Subscription Plans <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 1. Hero ──────────────────────────────────────────────── */}
       <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn
@@ -142,9 +162,7 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ---------------------------------------------------------- */}
-      {/*  2. Service Tier Sections                                   */}
-      {/* ---------------------------------------------------------- */}
+      {/* ── 2. Service Tier Sections ─────────────────────────────── */}
       {tiers.map((tier, tierIndex) => (
         <div key={tier.name}>
           <section
@@ -226,9 +244,7 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ---------------------------------------------------------- */}
-      {/*  3. Comparison Table                                        */}
-      {/* ---------------------------------------------------------- */}
+      {/* ── 3. Comparison Table ──────────────────────────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
@@ -320,9 +336,7 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ---------------------------------------------------------- */}
-      {/*  4. Why We're Different                                     */}
-      {/* ---------------------------------------------------------- */}
+      {/* ── 4. Why We're Different ───────────────────────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
@@ -367,9 +381,7 @@ export default function ServicesPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ---------------------------------------------------------- */}
-      {/*  5. CTA                                                     */}
-      {/* ---------------------------------------------------------- */}
+      {/* ── 5. CTA ───────────────────────────────────────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
@@ -391,12 +403,35 @@ export default function ServicesPage() {
                   Book via WhatsApp
                 </Link>
                 <Link
-                  href="/pricing"
+                  href="/car-wash/subscriptions"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
                 >
                   See Subscription Plans
                 </Link>
               </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── Subscription Upsell Banner (Below) ───────────────────── */}
+      <div className="border-t border-white/10" />
+      <section className="w-full bg-brand-dark-gray py-10">
+        <div className="container mx-auto px-4">
+          <FadeIn direction="up">
+            <div className="border border-brand-orange/30 bg-brand-orange/5 p-6 md:p-8 text-center">
+              <h3 className="text-xl font-heading text-white mb-2">
+                Wash regularly? Subscribe and save.
+              </h3>
+              <p className="text-white/60 text-sm max-w-2xl mx-auto mb-6">
+                A Standard wash costs Rp 339,000. With an Essentials subscription (2 washes/month at Rp 609,000), your effective price drops to Rp 304,500/wash &mdash; that&rsquo;s a 10% saving. Plus and Unlimited subscribers save even more, and get a free Full Detail worth Rp 2,799,000.
+              </p>
+              <Link
+                href="/car-wash/subscriptions"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-10 text-base transition-colors"
+              >
+                View Subscription Plans <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
           </FadeIn>
         </div>

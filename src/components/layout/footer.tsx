@@ -20,21 +20,21 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Nav columns in a 3-col grid */}
-          <div className="flex-1 grid grid-cols-2 lg:grid-cols-3">
+          {/* Nav columns in a 4-col grid */}
+          <div className="flex-1 grid grid-cols-2 lg:grid-cols-4">
             <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Services
               </p>
               <div className="flex flex-col space-y-2">
-                <Link href="/services" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Wash
+                <Link href="/car-wash/one-time" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> One-Time Washes
                 </Link>
-                <Link href="/pricing" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                <Link href="/car-wash/subscriptions" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Subscriptions
                 </Link>
-                <Link href="/coverage" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Coverage Area
+                <Link href="/detailing" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Auto Detailing
                 </Link>
               </div>
             </div>
@@ -47,19 +47,36 @@ export function Footer() {
                 <Link href="/about" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> About Us
                 </Link>
-                <Link href="/contact" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Contact
-                </Link>
                 <Link href="/faq" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> FAQ
                 </Link>
-                <Link href="/resources" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                <Link href="/tips" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Care Tips
+                </Link>
+                <Link href="/coverage" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Coverage Area
                 </Link>
               </div>
             </div>
 
-            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3 col-span-2 lg:col-span-1">
+            <div className="border border-white/15 border-t-0 lg:border-t lg:border-l-0 p-4 sm:p-6 lg:p-8 text-sm space-y-3">
+              <p className="text-base font-medium tracking-wide text-brand-white">
+                Connect
+              </p>
+              <div className="flex flex-col space-y-2">
+                <a href="https://wa.me/62816104334" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> WhatsApp
+                </a>
+                <a href="mailto:hello@castudio.co" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> hello@castudio.co
+                </a>
+                <span className="flex items-center gap-2 text-white/60">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Mon&ndash;Sat, 8 AM&ndash;6 PM
+                </span>
+              </div>
+            </div>
+
+            <div className="border border-white/15 border-t-0 border-l-0 lg:border-t p-4 sm:p-6 lg:p-8 text-sm space-y-3">
               <p className="text-base font-medium tracking-wide text-brand-white">
                 Legal
               </p>

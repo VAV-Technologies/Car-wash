@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Link from "next/link";
-import { HelpCircle, DollarSign, CalendarCheck, ShieldCheck, Droplets } from "lucide-react";
+import { HelpCircle, DollarSign, CalendarCheck, ShieldCheck, Droplets, Paintbrush } from "lucide-react";
 import { FadeIn } from "@/components/ui/fade-in";
 
 const generalFAQs = [
@@ -72,8 +72,8 @@ const subscriptionFAQs = [
         a: "No. Use all your sessions each month — your car will thank you.",
       },
       {
-        q: "What is included in the 6-month bonus?",
-        a: "A qualified mechanic visits your home for a 30-point inspection covering engine, brakes, battery, tires, fluids, suspension, lights, and belts — plus a full oil change (4 litres + filter). This service is worth Rp 400,000 to Rp 500,000.",
+        q: "What is the Free Full Detail bonus for subscribers?",
+        a: "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Unlimited subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing — approximately 8 hours of comprehensive work. Essentials subscribers do not receive the detailing bonus.",
       },
       {
         q: "Can the Unlimited plan be used for multiple cars?",
@@ -133,12 +133,38 @@ const serviceDetailFAQs = [
   },
 ];
 
+const detailingFAQs = [
+  {
+    sectionTitle: "Detailing",
+    icon: Paintbrush,
+    questions: [
+      {
+        q: "What is included in a Full Detail?",
+        a: "A Full Detail includes all four detailing services: Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing. It takes approximately 8 hours and costs Rp 2,799,000 — saving you Rp 257,000 compared to booking each service individually.",
+      },
+      {
+        q: "Can I book individual detailing services?",
+        a: "Yes. You can book Interior Detailing (Rp 1,039,000), Exterior Detailing (Rp 1,039,000), Window Detailing (Rp 689,000), or Tire & Rims Detailing (Rp 289,000) individually.",
+      },
+      {
+        q: "How often should I detail my car?",
+        a: "We recommend a full detail every 3 to 6 months for most drivers. If you park outdoors, drive frequently in dusty or polluted areas, or simply want your car in showroom condition, every 2 to 3 months is ideal.",
+      },
+      {
+        q: "Do subscribers get free detailing?",
+        a: "Yes. Plus subscribers receive 1 Free Full Detail per year. Unlimited subscribers receive 1 Free Full Detail every 6 months (2x per year). Essentials subscribers do not receive the detailing bonus but can upgrade anytime.",
+      },
+    ],
+  },
+];
+
 const allSections = [
   { data: generalFAQs, key: "general", bg: "bg-brand-dark-gray" },
   { data: pricingFAQs, key: "pricing", bg: "bg-brand-black" },
   { data: subscriptionFAQs, key: "subscriptions", bg: "bg-brand-dark-gray" },
-  { data: qualityFAQs, key: "quality", bg: "bg-brand-black" },
-  { data: serviceDetailFAQs, key: "details", bg: "bg-brand-dark-gray" },
+  { data: detailingFAQs, key: "detailing", bg: "bg-brand-black" },
+  { data: qualityFAQs, key: "quality", bg: "bg-brand-dark-gray" },
+  { data: serviceDetailFAQs, key: "details", bg: "bg-brand-black" },
 ];
 
 export default function FAQPage() {

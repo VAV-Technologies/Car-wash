@@ -13,7 +13,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/services`,
+      url: `${baseUrl}/car-wash/one-time`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/car-wash/subscriptions`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/detailing`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -31,12 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/pricing`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    },
-    {
       url: `${baseUrl}/coverage`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
@@ -44,12 +50,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${baseUrl}/faq`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/help`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.6,
@@ -67,7 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/resources`,
+      url: `${baseUrl}/tips`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.8,
@@ -77,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch blog post pages (static data)
   const blogSlugs = await getAllPublishedSlugs()
   const blogPages = blogSlugs.map((post) => ({
-    url: `${baseUrl}/resources/${post.slug}`,
+    url: `${baseUrl}/tips/${post.slug}`,
     lastModified: new Date(post.updated_at),
     changeFrequency: 'weekly' as const,
     priority: 0.7,

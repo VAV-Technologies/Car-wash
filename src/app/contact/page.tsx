@@ -112,7 +112,7 @@ export default function ContactPage() {
     { icon: CalendarCheck, text: "Essentials: 2 washes/month from Rp 609K" },
     { icon: Sparkles, text: "Plus: 4 washes/month from Rp 1,349K" },
     { icon: Star, text: "Unlimited: wash anytime from Rp 3,199K" },
-    { icon: Gift, text: "6-month bonus: free inspection + oil change" },
+    { icon: Gift, text: "Plus/Unlimited bonus: Free Full Detail (Rp 2.8M)" },
   ];
 
   return (
@@ -186,8 +186,8 @@ export default function ContactPage() {
                 </h2>
                 <p className="text-white/60 text-lg mb-8 leading-relaxed">
                   Plans from Rp 609,000/month. We&apos;ll keep your car pristine
-                  on a schedule that works for you. Commit for 6 months and get a
-                  free car inspection + oil change.
+                  on a schedule that works for you. Plus and Unlimited subscribers
+                  get a free Full Detail worth Rp 2.8M.
                 </p>
 
                 <div className="mb-8 flex-grow">
