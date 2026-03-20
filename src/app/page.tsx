@@ -300,19 +300,29 @@ export default function HomePage() {
 
             <div className="flex flex-col">
               {[
-                { title: "Interior Detailing", body: "Deep cabin restoration — upholstery, dashboard, leather, odour removal." },
-                { title: "Exterior Detailing", body: "Paint correction, polish, and sealant for deep gloss and protection." },
-                { title: "Window Detailing", body: "Water scale removal and hydrophobic coating, inside and out." },
-                { title: "Tire & Rims Detailing", body: "Brake dust removal, rim polish, and tire dressing." },
-                { title: "Full Detail Package", body: "All four services in one comprehensive 8-hour session." },
+                { title: "Interior Detailing", body: "Complete cabin restoration — deep vacuum, upholstery extraction, leather conditioning, dashboard UV treatment, air vent detail, and odour neutralisation. Your interior will look and smell like new." },
+                { title: "Exterior Detailing", body: "Full paint correction and protection — clay bar decontamination, machine polish to remove swirl marks, premium sealant coating for deep gloss and hydrophobic finish. Trim and rubber restoration included." },
+                { title: "Window Detailing", body: "Crystal-clear glass inside and out — water scale and mineral deposit removal, film and haze cleaning, finished with a hydrophobic coating that repels rain for weeks." },
+                { title: "Tire & Rims Detailing", body: "Deep wheel restoration — brake dust and iron fallout removal, tar and adhesive cleaning, rim polish, and tire sidewall dressing that protects and restores the deep black finish." },
+                { title: "Full Detail Package", body: "All four detailing services in one comprehensive 8-hour session. Interior, exterior, windows, and tires & rims — the complete restoration for cars that deserve the best." },
               ].map((item, index) => (
                 <FadeIn key={item.title} delay={index * 80}>
                   <div className={cn(
-                    "border border-white/10 flex flex-col sm:flex-row p-6 sm:p-8",
+                    "border border-white/10 flex flex-col sm:flex-row",
                     index > 0 && "border-t-0"
                   )}>
-                    <h4 className="text-lg font-normal text-white font-heading mb-2 sm:mb-0 sm:w-1/3 shrink-0">{item.title}</h4>
-                    <p className="text-white/60 leading-relaxed flex-1">{item.body}</p>
+                    {/* Image placeholder */}
+                    <div className="sm:w-[200px] md:w-[240px] shrink-0 h-40 sm:h-auto bg-brand-dark-gray flex items-center justify-center border-b sm:border-b-0 sm:border-r border-white/10">
+                      <span className="text-white/20 text-xs">[IMAGE]</span>
+                    </div>
+                    {/* Title */}
+                    <div className="sm:w-1/4 shrink-0 p-6 sm:p-8 flex items-center border-b sm:border-b-0 sm:border-r border-white/10">
+                      <h4 className="text-lg font-normal text-white font-heading">{item.title}</h4>
+                    </div>
+                    {/* Description */}
+                    <div className="flex-1 p-6 sm:p-8 flex items-center">
+                      <p className="text-white/60 leading-relaxed">{item.body}</p>
+                    </div>
                   </div>
                 </FadeIn>
               ))}
