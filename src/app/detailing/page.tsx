@@ -125,87 +125,84 @@ export default function DetailingPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 2. Individual Services ───────────────────────────────── */}
-      {services.map((service, serviceIndex) => (
-        <div key={service.name}>
-          <section
-            className={cn(
-              "w-full py-20 md:py-24 text-white section-lines-light",
-              service.bg
-            )}
-          >
-            <div className="container mx-auto">
-              <div className="flex flex-col lg:flex-row border border-white/10">
-                {/* Image placeholder */}
-                <div className="lg:w-[40%] shrink-0 min-h-[250px] lg:min-h-[400px] bg-brand-dark-gray relative overflow-hidden flex items-center justify-center border-b lg:border-b-0 lg:border-r border-white/10">
-                  <span className="text-white/20 text-sm">[IMAGE: {service.name}]</span>
-                </div>
+      {/* ── 2. Individual Services — Table Layout ──────────────── */}
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="px-4 mb-12">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                Individual Services
+              </p>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
+                Choose the service your car needs
+              </h2>
+            </div>
+          </FadeIn>
 
-                {/* Content */}
-                <div className="flex-1 flex flex-col">
-                  {/* Info */}
-                  <div className="p-6 sm:p-8 md:p-10 space-y-6">
-                    <div>
-                      <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight mb-1">
-                        {service.name}
-                      </h2>
-                      <div className="flex items-baseline gap-4 mt-3">
-                        <span className="text-2xl md:text-3xl font-heading text-brand-orange">
-                          {service.price}
-                        </span>
-                        <span className="text-sm text-white/50">
-                          {service.duration}
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-white/70 leading-relaxed text-base md:text-lg">
-                      {service.description}
-                    </p>
-
-                    <Link
-                      href={service.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-10 text-base transition-colors"
-                    >
-                      {service.cta}
-                    </Link>
+          <FadeIn direction="up" delay={100}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-white/10">
+              {services.map((service, i) => (
+                <div
+                  key={service.name}
+                  className={cn(
+                    "flex flex-col",
+                    i > 0 && "border-t sm:border-t-0 sm:border-l border-white/10",
+                    i === 2 && "sm:border-t lg:border-t-0"
+                  )}
+                >
+                  {/* Image */}
+                  <div className="h-48 bg-brand-black flex items-center justify-center border-b border-white/10">
+                    <span className="text-white/20 text-sm">[IMAGE: {service.name}]</span>
                   </div>
 
-                  {/* Includes list */}
-                  <div className="border-t border-white/10 p-6 sm:p-8 md:p-10">
-                    <p className="text-xs uppercase tracking-wider text-white/50 mb-6 font-heading">
-                      What&rsquo;s Included
-                    </p>
-                    <ul className="space-y-4">
+                  {/* Content */}
+                  <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                    <h3 className="text-lg font-heading text-white mb-1">{service.name}</h3>
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-xl font-heading text-brand-orange">{service.price}</span>
+                      <span className="text-xs text-white/40">{service.duration}</span>
+                    </div>
+                    <p className="text-white/60 text-sm leading-relaxed mb-4 flex-grow">{service.description}</p>
+
+                    {/* Includes */}
+                    <ul className="space-y-2 mb-6">
                       {service.includes.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-3 text-white/80"
-                        >
-                          <Check
-                            className="h-5 w-5 text-brand-orange shrink-0 mt-0.5"
-                            strokeWidth={2}
-                          />
-                          <span className="leading-relaxed">{item}</span>
+                        <li key={item} className="flex items-start gap-2 text-white/70 text-xs">
+                          <Check className="h-3.5 w-3.5 text-brand-orange shrink-0 mt-0.5" strokeWidth={2} />
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
+
+                    <div className="mt-auto">
+                      <Link
+                        href={service.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-10 w-full transition-colors"
+                      >
+                        {service.cta}
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          </section>
-
-          {/* Separator between services */}
-          {serviceIndex < services.length - 1 && (
-            <div className="border-t border-white/10" />
-          )}
+          </FadeIn>
         </div>
-      ))}
+      </section>
 
-      {/* -- Separator -- */}
+      {/* -- OR Separator -- */}
+      <div className="border-t border-white/10" />
+      <section className="w-full py-8 bg-brand-black section-lines-light">
+        <div className="container mx-auto">
+          <div className="flex items-center gap-6">
+            <div className="flex-1 border-t border-white/10" />
+            <span className="text-white/40 text-sm font-heading uppercase tracking-widest">or</span>
+            <div className="flex-1 border-t border-white/10" />
+          </div>
+        </div>
+      </section>
       <div className="border-t border-white/10" />
 
       {/* ── 3. Full Detail Package (Featured) ────────────────────── */}
