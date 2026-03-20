@@ -46,7 +46,7 @@ const plans = [
       "15% off vs. one-time pricing",
       "Glass descaling + tar removal included",
     ],
-    detailingBonus: "1 Free Full Detail per year",
+    detailingBonus: null,
     bestFor: "Jakarta drivers who want regular care plus deep restoration",
     cta: "Subscribe to Plus",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.549.000%2F4%20bulan).`,
@@ -66,7 +66,7 @@ const plans = [
       "15% off vs. one-time pricing",
       "Priority scheduling",
     ],
-    detailingBonus: "1 Free Full Detail every 6 months (2x/year)",
+    detailingBonus: "1 Free Full Detail per year",
     bestFor: "Executives and car enthusiasts who want their car pristine at all times",
     cta: "Subscribe to Elite",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%202.119.000%2F4%20bulan).`,
@@ -94,8 +94,8 @@ const comparisonData = [
   {
     category: "FREE FULL DETAIL",
     features: [
-      { name: "Full Detail included", essentials: "\u2014", plus: "1x/year", elite: "2x/year (every 6 months)" },
-      { name: "Full Detail value", essentials: "\u2014", plus: "Rp 2,799,000", elite: "Rp 5,598,000" },
+      { name: "Full Detail included", essentials: "\u2014", plus: "\u2014", elite: "1x/year" },
+      { name: "Full Detail value", essentials: "\u2014", plus: "\u2014", elite: "Rp 2,799,000" },
     ],
   },
   {
@@ -151,7 +151,7 @@ const faqs = [
   {
     question: "What's included in the Free Full Detail bonus?",
     answer:
-      "Plus subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). Elite subscribers receive 1 Free Full Detail every 6 months (2x per year). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing \u2014 approximately 8 hours of work.",
+      "Elite subscribers receive 1 Free Full Detail per year (worth Rp 2,799,000). The Full Detail includes Interior Detailing, Exterior Detailing, Window Detailing, and Tire & Rims Detailing \u2014 approximately 8 hours of work. Essentials and Plus subscribers do not receive the detailing bonus.",
   },
   {
     question: "Can I use Elite for multiple cars?",
@@ -318,10 +318,10 @@ export default function SubscriptionsPage() {
                 SUBSCRIBER BONUS
               </p>
               <h2 className="text-3xl md:text-4xl font-semibold text-brand-white font-heading mb-4">
-                Free Full Detail for Plus &amp; Elite Subscribers
+                Free Full Detail for Elite Subscribers
               </h2>
               <p className="text-brand-white/80 max-w-3xl mx-auto">
-                Subscribe to Plus or Elite and receive a complimentary Full
+                Subscribe to Elite and receive a complimentary Full
                 Detail &mdash; our most comprehensive detailing service worth
                 Rp 2,799,000. Interior, exterior, windows, tires &amp; rims,
                 all in one 8-hour session.
@@ -354,8 +354,7 @@ export default function SubscriptionsPage() {
                 </h3>
                 <ul className="space-y-3">
                   {[
-                    "Plus: 1 Free Full Detail per year",
-                    "Elite: 1 Free Full Detail every 6 months (2x/year)",
+                    "Elite: 1 Free Full Detail per year",
                     "Essentials: Not included (upgrade to unlock)",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start">
