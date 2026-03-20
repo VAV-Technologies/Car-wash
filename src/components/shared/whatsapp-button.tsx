@@ -15,9 +15,6 @@ function getWhatsAppMessage(pathname: string): string {
   if (pathname === '/detailing') {
     return 'Halo, saya ingin booking auto detailing.';
   }
-  if (pathname === '/coverage') {
-    return 'Halo, saya ingin cek apakah area saya tercover.';
-  }
   return 'Halo, saya ingin tahu lebih lanjut tentang layanan Castudio.';
 }
 

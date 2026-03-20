@@ -208,7 +208,7 @@ export default function DetailingPage() {
       <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto border-2 border-brand-orange p-8 md:p-12 relative">
+            <div className="border-2 border-brand-orange p-8 md:p-12 relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
                 <span className="px-6 py-1.5 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
                   BEST VALUE
@@ -274,7 +274,7 @@ export default function DetailingPage() {
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-light">
         <div className="container mx-auto px-4">
           <FadeIn direction="up">
-            <div className="max-w-4xl mx-auto text-center">
+            <div className="text-center">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
                 Subscriber Bonus
               </p>

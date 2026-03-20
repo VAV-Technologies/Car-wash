@@ -114,7 +114,7 @@ export default function OneTimeWashPage() {
   return (
     <div className="bg-brand-black">
       {/* ── Subscription Upsell Banner (Above) ───────────────────── */}
-      <section className="w-full bg-brand-dark-gray py-6 border-b border-white/10">
+      <section className="w-full bg-brand-dark-gray pt-28 pb-6 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="border border-brand-orange/30 bg-brand-orange/5 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>

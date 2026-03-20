@@ -178,7 +178,7 @@ export default function SubscriptionsPage() {
   return (
     <>
       {/* \u2500\u2500 1. Hero \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-dark-gray">
+      <section className="min-h-[60vh] flex items-center py-24 bg-brand-dark-gray">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange mb-3">
             SUBSCRIPTION PLANS
@@ -213,13 +213,13 @@ export default function SubscriptionsPage() {
       {/* \u2500\u2500 3. Subscription Plan Cards \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="py-16 md:py-24 bg-brand-black">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {plans.map((plan) => {
               const IconComponent = plan.icon;
               return (
                 <Card
                   key={plan.name}
-                  className={`flex flex-col shadow-xl rounded-lg overflow-hidden bg-brand-dark-gray ${
+                  className={`flex flex-col shadow-xl rounded-lg bg-brand-dark-gray ${
                     plan.popular
                       ? "border-2 border-brand-orange relative"
                       : "border border-white/10"
@@ -302,7 +302,7 @@ export default function SubscriptionsPage() {
 
       {/* \u2500\u2500 4. Free Full Detail for Plus & Unlimited \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
       <section className="py-16 md:py-24 bg-brand-dark-gray">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4">
           <div className="rounded-lg border border-brand-orange/30 bg-brand-dark-gray p-8 md:p-12">
             <div className="text-center mb-10">
               <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange mb-3">
@@ -385,7 +385,7 @@ export default function SubscriptionsPage() {
           <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading">
             Compare Plans
           </h2>
-          <div className="overflow-x-auto rounded-lg border border-white/10 shadow-lg max-w-5xl mx-auto">
+          <div className="overflow-x-auto rounded-lg border border-white/10 shadow-lg">
             <table className="min-w-full divide-y divide-white/10 bg-brand-dark-gray">
               <thead className="bg-brand-black">
                 <tr>
@@ -470,7 +470,7 @@ export default function SubscriptionsPage() {
           <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading">
             How Subscriptions Work
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {howItWorks.map((item) => {
               const IconComponent = item.icon;
               return (

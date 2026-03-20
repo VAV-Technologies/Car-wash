@@ -29,7 +29,7 @@ src/
 ```
 
 ## Pages
-`/` `/about` `/car-wash/one-time` `/car-wash/subscriptions` `/detailing` `/terms` `/privacy` `/contact` `/faq` `/coverage` `/tips` `/tips/[slug]`
+`/` `/about` `/car-wash/one-time` `/car-wash/subscriptions` `/detailing` `/terms` `/privacy` `/contact` `/faq` `/tips` `/tips/[slug]`
 
 ## Development
 ```bash

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from 'next/link';
-import { Droplets, Sparkles, ArrowRight, Clock, ShieldCheck, MapPin, CheckCircle2, CalendarDays, MessageCircle, Paintbrush, Car } from 'lucide-react';
+import { Droplets, Sparkles, ArrowRight, Clock, ShieldCheck, MapPin, CheckCircle2, CalendarDays, MessageCircle, Paintbrush, Car, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FadeIn } from '@/components/ui/fade-in';
 
@@ -165,9 +165,9 @@ export default function HomePage() {
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Our Services</p>
+              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Car Washing Services</p>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
-                Three tiers. One standard: excellence.
+                Car Wash
               </h2>
               <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
                 Every wash uses pH-neutral shampoo, the two-bucket method, fresh microfiber towels, and professional-grade chemicals. Choose the depth of care your car needs.
@@ -179,7 +179,7 @@ export default function HomePage() {
             const services = [
               {
                 num: "01",
-                title: "Standard",
+                title: "Standard Wash",
                 subtitle: "The Thorough Clean",
                 price: "Rp 339,000",
                 duration: "~2 hours",
@@ -188,7 +188,7 @@ export default function HomePage() {
               },
               {
                 num: "02",
-                title: "Professional",
+                title: "Professional Wash",
                 subtitle: "The Deep Restoration",
                 price: "Rp 569,000",
                 duration: "~3 hours",
@@ -197,7 +197,7 @@ export default function HomePage() {
               },
               {
                 num: "03",
-                title: "Elite",
+                title: "Elite Wash",
                 subtitle: "The Full Transformation",
                 price: "Rp 919,000",
                 duration: "~4 hours",
@@ -235,7 +235,6 @@ export default function HomePage() {
                           </div>
                           <h3 className="text-xl font-normal text-white font-heading mb-1 text-left">{card.title}</h3>
                           <p className="text-sm text-brand-orange font-medium mb-2">{card.subtitle}</p>
-                          <p className="text-lg font-heading text-white mb-4">{card.price}</p>
                           <p className="text-white/60 leading-relaxed mb-6 text-justify flex-grow">{card.body}</p>
                           <div className="flex flex-wrap gap-2 mb-6">
                             {card.tags.map((tag) => (
@@ -271,7 +270,6 @@ export default function HomePage() {
                         </div>
                         <h3 className="text-xl font-normal text-white font-heading mb-1 text-left">{card.title}</h3>
                         <p className="text-sm text-brand-orange font-medium mb-2">{card.subtitle}</p>
-                        <p className="text-lg font-heading text-white mb-4">{card.price}</p>
                         <p className="text-white/60 leading-relaxed mb-6 text-justify">{card.body}</p>
                         <div className="flex flex-wrap gap-2 mb-6">
                           {card.tags.map((tag) => (
@@ -288,38 +286,46 @@ export default function HomePage() {
               </>
             );
           })()}
-        </div>
-      </section>
 
-      {/* Detailing Preview */}
-      <div className="border-t border-white/10" />
-      <section className="py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-12 md:mb-16 px-4">
-              <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Auto Detailing</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                Deep restoration, delivered to your door
-              </h2>
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="up" delay={100}>
-            <div className="max-w-3xl mx-auto border-2 border-brand-orange p-8 md:p-10 text-center relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                <span className="px-4 py-1 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
-                  FEATURED
-                </span>
+          {/* Auto Detailing Services */}
+          <div className="mt-12 md:mt-16">
+            <FadeIn direction="up">
+              <div className="text-center mb-10 md:mb-12 px-4">
+                <p className="text-sm font-normal uppercase text-white/50 tracking-wider mb-3 font-heading">Auto Detailing</p>
+                <h3 className="text-2xl md:text-3xl font-normal tracking-tight text-white font-heading">
+                  Auto Detailing Services
+                </h3>
               </div>
-              <h3 className="text-2xl font-heading text-white mb-2 pt-2">Full Detail Package</h3>
-              <p className="text-2xl font-heading text-brand-orange mb-3">Rp 2,799,000</p>
-              <p className="text-white/60 text-sm mb-4">Interior + Exterior + Windows + Tire &amp; Rims &mdash; ~8 hours</p>
-              <p className="text-white/50 text-sm mb-6">Individual services from Rp 289,000</p>
-              <Link href="/detailing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                See All Detailing Services <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+            </FadeIn>
+
+            <div className="flex flex-col">
+              {[
+                { title: "Interior Detailing", body: "Deep cabin restoration — upholstery, dashboard, leather, odour removal." },
+                { title: "Exterior Detailing", body: "Paint correction, polish, and sealant for deep gloss and protection." },
+                { title: "Window Detailing", body: "Water scale removal and hydrophobic coating, inside and out." },
+                { title: "Tire & Rims Detailing", body: "Brake dust removal, rim polish, and tire dressing." },
+                { title: "Full Detail Package", body: "All four services in one comprehensive 8-hour session." },
+              ].map((item, index) => (
+                <FadeIn key={item.title} delay={index * 80}>
+                  <div className={cn(
+                    "border border-white/10 flex flex-col sm:flex-row p-6 sm:p-8",
+                    index > 0 && "border-t-0"
+                  )}>
+                    <h4 className="text-lg font-normal text-white font-heading mb-2 sm:mb-0 sm:w-1/3 shrink-0">{item.title}</h4>
+                    <p className="text-white/60 leading-relaxed flex-1">{item.body}</p>
+                  </div>
+                </FadeIn>
+              ))}
             </div>
-          </FadeIn>
+
+            <FadeIn direction="up" delay={400}>
+              <div className="border border-white/10 border-t-0 bg-brand-dark-gray p-8 text-center">
+                <Link href="/detailing" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
+                  See All Detailing Services <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+            </FadeIn>
+          </div>
         </div>
       </section>
 
@@ -460,57 +466,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Coverage Area Snapshot */}
+      {/* Reviews */}
       <div className="border-t border-white/10" />
       <section className="py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
-            <div className="text-center mb-12 md:mb-16 px-4">
-              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">Coverage Area</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
-                We come to you, across JABODETABEK
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">Reviews</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
+                What our customers say
               </h2>
-              <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                Our technicians follow a zone schedule to serve all major areas efficiently. Here&apos;s our weekly rotation:
-              </p>
             </div>
           </FadeIn>
 
-          <FadeIn direction="up" delay={100}>
-            <div className="border border-white/10">
-              {[
-                { day: "Monday", zone: "South Jakarta, Depok" },
-                { day: "Tuesday", zone: "Tangerang, BSD" },
-                { day: "Wednesday", zone: "Central &amp; North Jakarta" },
-                { day: "Thursday", zone: "East Jakarta, Bekasi" },
-                { day: "Friday", zone: "Flex Day (Any Zone)" },
-                { day: "Saturday", zone: "Premium Slots (Any Zone)" },
-              ].map((row, index) => (
-                <div key={row.day} className={cn(
-                  "flex flex-col sm:flex-row",
-                  index > 0 && "border-t border-white/10"
+          <div className="grid grid-cols-1 md:grid-cols-3">
+            {[
+              { name: "Andi S.", stars: 5, quote: "Best car wash I\u2019ve ever had. My car looks brand new every time." },
+              { name: "Rina M.", stars: 5, quote: "The convenience of having them come to my apartment is unbeatable. Professional team." },
+              { name: "Budi P.", stars: 5, quote: "Finally a car wash that actually cares about paint protection. Worth every rupiah." },
+              { name: "Diana K.", stars: 5, quote: "Subscribed to Plus and never looked back. The free Full Detail is amazing value." },
+              { name: "Tommy L.", stars: 5, quote: "Their two-bucket method makes a real difference. No more swirl marks on my black car." },
+              { name: "Sarah W.", stars: 5, quote: "On time, professional, and the result speaks for itself. Highly recommended." },
+            ].map((review, index) => (
+              <FadeIn key={review.name} delay={index * 100}>
+                <div className={cn(
+                  "border border-white/10 p-6 sm:p-8 flex flex-col h-full",
+                  index > 0 && "border-t-0 md:border-t",
+                  index % 3 !== 0 && "md:border-l-0",
+                  index >= 3 && "md:border-t-0"
                 )}>
-                  <div className="sm:w-[200px] shrink-0 p-4 sm:p-6 flex items-center sm:justify-center bg-brand-black/30">
-                    <span className="text-sm font-heading font-medium text-white/80">{row.day}</span>
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({ length: review.stars }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 text-brand-orange fill-brand-orange" />
+                    ))}
                   </div>
-                  <div className="flex-1 p-4 sm:p-6 sm:border-l border-white/10 flex items-center">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-brand-orange shrink-0" strokeWidth={1.5} />
-                      <span className="text-white/60 text-sm" dangerouslySetInnerHTML={{ __html: row.zone }} />
-                    </div>
-                  </div>
+                  <p className="text-white/70 leading-relaxed mb-6 flex-grow">&ldquo;{review.quote}&rdquo;</p>
+                  <p className="text-sm font-heading text-white">{review.name}</p>
                 </div>
-              ))}
-            </div>
-          </FadeIn>
-
-          <FadeIn direction="up" delay={200}>
-            <div className="border border-white/10 border-t-0 bg-brand-dark-gray p-8 text-center">
-              <Link href="/coverage" className="inline-flex items-center text-sm font-medium text-brand-orange hover:text-brand-orange/80 transition-colors">
-                Check My Area <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </FadeIn>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 

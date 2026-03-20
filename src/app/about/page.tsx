@@ -82,15 +82,6 @@ const pricingBullets = [
   "Quality you can see and feel every single time",
 ];
 
-const zones = [
-  { day: "Monday", zone: "South", areas: "Jaksel, Depok, Cinere, Pondok Indah" },
-  { day: "Tuesday", zone: "West", areas: "Jakbar, Tangerang, BSD, Alam Sutera" },
-  { day: "Wednesday", zone: "Central/North", areas: "Jakpus, Jakut, Kelapa Gading" },
-  { day: "Thursday", zone: "East", areas: "Bekasi, Jaktim, Cibubur" },
-  { day: "Friday", zone: "Flex", areas: "All areas, priority for Elite + subscribers" },
-  { day: "Saturday", zone: "Premium", areas: "Half-day Elite and overflow" },
-];
-
 export default function AboutPage() {
   return (
     <div className="bg-brand-black">
@@ -347,73 +338,7 @@ export default function AboutPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* -- 6. Where We Operate -- */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="mb-12 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Coverage Area
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal text-white font-heading tracking-tight">
-                Serving all of JABODETABEK
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="flex flex-col lg:flex-row">
-            {/* Left: Zone schedule table */}
-            <FadeIn delay={100} className="flex-1">
-              <div className="border border-white/10 h-full">
-                {zones.map((z, index) => (
-                  <div
-                    key={z.day}
-                    className={cn(
-                      "flex items-center gap-4 px-6 py-5",
-                      index > 0 && "border-t border-white/10"
-                    )}
-                  >
-                    <div className="w-28 shrink-0">
-                      <p className="font-medium text-white">{z.day}</p>
-                    </div>
-                    <span className={cn(
-                      "text-xs px-3 py-1 border shrink-0",
-                      z.zone === "Flex" || z.zone === "Premium"
-                        ? "border-brand-orange/30 text-brand-orange bg-brand-orange/5"
-                        : "border-white/20 text-white/70 bg-white/5"
-                    )}>
-                      {z.zone}
-                    </span>
-                    <p className="text-sm text-white/60">{z.areas}</p>
-                  </div>
-                ))}
-              </div>
-            </FadeIn>
-
-            {/* Right: Body text */}
-            <FadeIn delay={200} className="flex-1">
-              <div className="border border-white/10 border-t-0 lg:border-t lg:border-l-0 p-8 md:p-10 h-full space-y-6">
-                <p className="text-white/60 leading-relaxed">
-                  We serve specific zones on specific days to minimize travel time and ensure prompt service. Subscription clients are assigned to their zone day for recurring appointments.
-                </p>
-                <div className="pt-4">
-                  <Link
-                    href="/coverage"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/5 h-11 py-3 px-8 text-base transition-colors"
-                  >
-                    Check your area
-                  </Link>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* -- 7. CTA -- */}
+      {/* -- 6. CTA -- */}
       <section className="w-full py-12 md:py-12 bg-brand-black section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">

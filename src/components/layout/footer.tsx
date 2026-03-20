@@ -53,9 +53,6 @@ export function Footer() {
                 <Link href="/tips" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Car Care Tips
                 </Link>
-                <Link href="/coverage" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> Coverage Area
-                </Link>
               </div>
             </div>
 
