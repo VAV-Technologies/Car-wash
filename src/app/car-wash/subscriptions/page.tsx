@@ -67,7 +67,7 @@ const plans = [
     oneTimeValue: "Rp 2,494,000",
     savings: "Rp 375,000",
     features: [
-      "4 Standard + 2 Professional washes over 4 months",
+      "3 Standard + 3 Professional washes over 4 months",
       "Frequent maintenance + deep restoration",
       "15% off vs. one-time pricing",
       "Priority scheduling",
@@ -92,8 +92,8 @@ const comparisonData = [
   {
     category: "WASHES INCLUDED (PER QUARTER)",
     features: [
-      { name: "Standard washes", essentials: "4 over 4 months", plus: "2 over 4 months", elite: "4 over 4 months" },
-      { name: "Professional washes", essentials: "\u2014", plus: "2 over 4 months", elite: "2 over 4 months" },
+      { name: "Standard washes", essentials: "4 over 4 months", plus: "2 over 4 months", elite: "3 over 4 months" },
+      { name: "Professional washes", essentials: "\u2014", plus: "2 over 4 months", elite: "3 over 4 months" },
     ],
   },
   {
@@ -401,12 +401,18 @@ export default function SubscriptionsPage() {
             Compare Plans
           </h2>
           <div className="overflow-x-auto border border-white/10">
-            <table className="min-w-full divide-y divide-white/10 bg-brand-dark-gray">
-              <thead className="bg-brand-black">
-                <tr>
+            <table className="w-full table-fixed divide-y divide-white/10">
+              <colgroup>
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+                <col className="w-1/4" />
+              </colgroup>
+              <thead>
+                <tr className="bg-brand-black">
                   <th
                     scope="col"
-                    className="px-6 py-4 text-left text-xs font-semibold text-brand-white uppercase tracking-wider sticky left-0 bg-brand-black z-10 font-heading"
+                    className="px-6 py-4 text-left text-xs font-semibold text-brand-white uppercase tracking-wider font-heading"
                   >
                     Feature
                   </th>
@@ -435,7 +441,7 @@ export default function SubscriptionsPage() {
                     <tr>
                       <th
                         colSpan={4}
-                        className="px-6 py-3 text-left text-sm font-semibold text-brand-white bg-brand-orange/20 tracking-wide sticky left-0 z-10 font-heading"
+                        className="px-6 py-3 text-left text-sm font-semibold text-brand-white bg-brand-orange/20 tracking-wide font-heading"
                       >
                         {group.category}
                       </th>
@@ -443,9 +449,9 @@ export default function SubscriptionsPage() {
                     {group.features.map((feature) => (
                       <tr
                         key={feature.name}
-                        className="hover:bg-brand-orange/5"
+                        className="bg-brand-dark-gray"
                       >
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-white/90 sticky left-0 bg-inherit z-0">
+                        <td className="px-6 py-4 text-sm font-medium text-brand-white/90">
                           {feature.name}
                         </td>
                         {(["essentials", "plus", "elite"] as const).map(
@@ -455,7 +461,7 @@ export default function SubscriptionsPage() {
                             return (
                               <td
                                 key={`${feature.name}-${planKey}`}
-                                className="px-6 py-4 whitespace-nowrap text-sm text-brand-white/80 text-center"
+                                className="px-6 py-4 text-sm text-brand-white/80 text-center"
                               >
                                 {typeof value === "boolean" ? (
                                   value ? (
