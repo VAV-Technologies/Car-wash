@@ -25,7 +25,7 @@ export default function HomePage() {
           </video>
           <div className="absolute inset-0 bg-black/30" />
         </div>
-        <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-screen px-4 py-24 md:py-32 lg:py-40 relative z-10">
+        <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-[calc(100vh-96px)] px-4 py-24 md:py-32 lg:py-40 relative z-10">
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
             Your Car Deserves Better<br />Than a Street Wash
           </h1>
