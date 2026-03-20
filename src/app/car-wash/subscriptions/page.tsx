@@ -16,9 +16,11 @@ const WA_BASE = "https://wa.me/62816104334";
 const plans = [
   {
     name: "Essentials",
+    monthlyPrice: "Rp 287.250",
     price: "Rp 1.149.000",
     priceShort: "Rp 1.149K",
-    perMonth: "/4 months per car",
+    perMonth: "/mo",
+    termNote: "4-month term \u00b7 Rp 1,149,000 total",
     oneTimeValue: "Rp 1,356,000",
     savings: "Rp 207,000",
     features: [
@@ -35,9 +37,11 @@ const plans = [
   },
   {
     name: "Plus",
+    monthlyPrice: "Rp 387.250",
     price: "Rp 1.549.000",
     priceShort: "Rp 1.549K",
-    perMonth: "/4 months per car",
+    perMonth: "/mo",
+    termNote: "4-month term \u00b7 Rp 1,549,000 total",
     oneTimeValue: "Rp 1,816,000",
     savings: "Rp 267,000",
     features: [
@@ -55,9 +59,11 @@ const plans = [
   },
   {
     name: "Elite",
+    monthlyPrice: "Rp 529.750",
     price: "Rp 2.119.000",
     priceShort: "Rp 2.119K",
-    perMonth: "/4 months per car",
+    perMonth: "/mo",
+    termNote: "4-month term \u00b7 Rp 2,119,000 total",
     oneTimeValue: "Rp 2,494,000",
     savings: "Rp 375,000",
     features: [
@@ -227,14 +233,11 @@ export default function SubscriptionsPage() {
                     <h3 className="text-2xl font-semibold text-brand-white mb-2 font-heading">
                       {plan.name}
                     </h3>
-                    <p className="text-sm text-brand-white/40 line-through mt-1">
-                      {plan.oneTimeValue}
-                    </p>
                     <p className="text-4xl font-extrabold text-brand-white">
-                      {plan.price}
+                      {plan.monthlyPrice}<span className="text-lg font-medium text-brand-white/60">{plan.perMonth}</span>
                     </p>
-                    <p className="text-sm text-brand-white/70 mt-1">
-                      {plan.perMonth}
+                    <p className="text-xs text-brand-white/50 mt-1">
+                      {plan.termNote}
                     </p>
                     <span className="inline-block mt-3 px-3 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-semibold uppercase tracking-wider">
                       SAVE {plan.savings}
