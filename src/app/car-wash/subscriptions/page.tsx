@@ -185,8 +185,8 @@ export default function SubscriptionsPage() {
           </h1>
           <p className="mt-4 text-lg md:text-xl text-brand-white/80 max-w-3xl mx-auto">
             We&rsquo;ll keep your car pristine on a schedule that works for you.
-            Save more vs. one-time pricing &mdash; and Plus &amp; Elite
-            subscribers get a free Full Detail worth Rp 2.8M.
+            Save 15% vs. one-time pricing &mdash; Elite subscribers
+            also get a free Full Detail worth Rp 2.8M every year.
           </p>
         </div>
       </section>

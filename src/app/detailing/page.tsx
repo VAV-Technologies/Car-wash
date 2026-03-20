@@ -286,9 +286,9 @@ export default function DetailingPage() {
                 Get Full Detailing for Free
               </h2>
               <p className="text-white/70 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-                Plus subscribers get 1 free Full Detail per year. Elite
-                subscribers get 1 every 6 months. That&rsquo;s up to
-                Rp 5,598,000 in free detailing on top of your regular washes.
+                Elite subscribers get 1 free Full Detail per year (worth
+                Rp 2,799,000) on top of your regular washes. Subscribe to
+                Elite to unlock this bonus.
               </p>
               <Link
                 href="/car-wash/subscriptions"

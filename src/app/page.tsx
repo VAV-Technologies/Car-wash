@@ -358,7 +358,7 @@ export default function HomePage() {
                 </p>
                 <div className="border border-brand-orange/30 bg-brand-orange/5 p-4 mb-6">
                   <p className="text-brand-orange text-sm font-medium">
-                    Plus and Elite subscribers get a free Full Detail worth Rp 2.8M
+                    Elite subscribers get a free Full Detail worth Rp 2.8M/year
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -366,7 +366,7 @@ export default function HomePage() {
                     "Essentials: 2 Professional/quarter from Rp 609K",
                     "Plus: 2 Standard + 2 Professional/quarter from Rp 1,349K",
                     "Elite: 4 Standard + 2 Professional/quarter from Rp 3,199K",
-                    "Plus/Elite bonus: Free Full Detail (Rp 2.8M)",
+                    "Elite bonus: Free Full Detail every year (Rp 2.8M)",
                     "No contracts on monthly plans",
                     "WhatsApp booking for subscribers",
                   ].map((item) => (
@@ -494,7 +494,7 @@ export default function HomePage() {
               { name: "Andi S.", stars: 5, quote: "Best car wash I\u2019ve ever had. My car looks brand new every time." },
               { name: "Rina M.", stars: 5, quote: "The convenience of having them come to my apartment is unbeatable. Professional team." },
               { name: "Budi P.", stars: 5, quote: "Finally a car wash that actually cares about paint protection. Worth every rupiah." },
-              { name: "Diana K.", stars: 5, quote: "Subscribed to Plus and never looked back. The free Full Detail is amazing value." },
+              { name: "Diana K.", stars: 5, quote: "Subscribed to Plus and never looked back. The quarterly plan keeps my car looking showroom fresh." },
               { name: "Tommy L.", stars: 5, quote: "Their two-bucket method makes a real difference. No more swirl marks on my black car." },
               { name: "Sarah W.", stars: 5, quote: "On time, professional, and the result speaks for itself. Highly recommended." },
             ].map((review, index) => (
