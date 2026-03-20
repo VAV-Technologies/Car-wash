@@ -283,27 +283,30 @@ export default function OneTimeWashPage() {
               })}
             </div>
 
-            {/* Book buttons — attached to table, no left label column */}
-            <div className="flex border-x border-b border-white/10">
-              {[
-                { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
-                { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
-                { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
-              ].map((cta, i) => (
-                <div key={cta.label} className={cn(
-                  "flex-1 p-4 sm:p-6 flex items-center justify-center",
-                  i > 0 && "border-l border-white/10"
-                )}>
-                  <Link
-                    href={cta.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
-                  >
-                    {cta.label}
-                  </Link>
-                </div>
-              ))}
+            {/* Book buttons — aligned under the 3 plan columns only */}
+            <div className="flex">
+              <div className="w-[28%] sm:w-[24%] shrink-0" />
+              <div className="flex flex-1 border-x border-b border-white/10">
+                {[
+                  { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
+                  { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
+                  { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
+                ].map((cta, i) => (
+                  <div key={cta.label} className={cn(
+                    "flex-1 p-4 sm:p-6 flex items-center justify-center",
+                    i > 0 && "border-l border-white/10"
+                  )}>
+                    <Link
+                      href={cta.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-xs sm:text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-9 sm:h-10 w-full max-w-[180px] transition-colors"
+                    >
+                      {cta.label}
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </FadeIn>
 
