@@ -422,18 +422,23 @@ export default function HomePage() {
             ].map((review, index) => (
               <FadeIn key={review.name} delay={index * 100}>
                 <div className={cn(
-                  "border border-white/10 p-6 sm:p-8 flex flex-col h-full",
+                  "border border-white/10 flex flex-col h-full",
                   index > 0 && "border-t-0 md:border-t",
                   index % 3 !== 0 && "md:border-l-0",
                   index >= 3 && "md:border-t-0"
                 )}>
-                  <div className="flex items-center gap-1 mb-4">
-                    {Array.from({ length: review.stars }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 text-brand-orange fill-brand-orange" />
-                    ))}
+                  <div className="h-44 bg-brand-black flex items-center justify-center border-b border-white/10">
+                    <span className="text-white/20 text-sm">[IMAGE: {review.name}]</span>
                   </div>
-                  <p className="text-white/70 leading-relaxed mb-6 flex-grow">&ldquo;{review.quote}&rdquo;</p>
-                  <p className="text-sm font-heading text-white">{review.name}</p>
+                  <div className="p-6 sm:p-8 flex flex-col flex-grow">
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array.from({ length: review.stars }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4 text-brand-orange fill-brand-orange" />
+                      ))}
+                    </div>
+                    <p className="text-white/70 leading-relaxed mb-6 flex-grow">&ldquo;{review.quote}&rdquo;</p>
+                    <p className="text-sm font-heading text-white">{review.name}</p>
+                  </div>
                 </div>
               </FadeIn>
             ))}
