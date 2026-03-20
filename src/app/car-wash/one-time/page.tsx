@@ -283,15 +283,17 @@ export default function OneTimeWashPage() {
               })}
             </div>
 
-            {/* Book buttons — no table edges */}
-            <div className="flex mt-6">
-              <div className="w-[28%] sm:w-[24%] shrink-0" />
+            {/* Book buttons — attached to table, no left label column */}
+            <div className="flex border-x border-b border-white/10">
               {[
                 { label: "Book Standard", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
                 { label: "Book Professional", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
                 { label: "Book Elite", href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
-              ].map((cta) => (
-                <div key={cta.label} className="flex-1 flex items-center justify-center py-4">
+              ].map((cta, i) => (
+                <div key={cta.label} className={cn(
+                  "flex-1 p-4 sm:p-6 flex items-center justify-center",
+                  i > 0 && "border-l border-white/10"
+                )}>
                   <Link
                     href={cta.href}
                     target="_blank"
