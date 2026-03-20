@@ -83,7 +83,7 @@ export default function OneTimeWashPage() {
   return (
     <div className="bg-brand-black">
       {/* ── 1. Hero ──────────────────────────────────────────────── */}
-      <section className="w-full min-h-[60vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
+      <section className="w-full min-h-[75vh] bg-brand-black flex items-center py-24 text-white section-lines-light">
         <div className="container mx-auto">
           <FadeIn
             direction="up"
@@ -115,13 +115,106 @@ export default function OneTimeWashPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 2. Unified Comparison Table ────────────────────────────── */}
+      {/* ── 2. How We Clean — Step-by-step process ──────────────── */}
       <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="px-4 mb-12">
               <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Our Services
+                How We Clean
+              </p>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
+                Every detail, every time
+              </h2>
+            </div>
+          </FadeIn>
+
+          <div className="flex flex-col">
+            {processSteps.map((step, index) => (
+              <FadeIn key={step.num} delay={index * 100}>
+                <div className={cn(
+                  "border border-white/10 flex flex-col md:flex-row",
+                  index > 0 && "border-t-0"
+                )}>
+                  <div className="hidden md:flex md:w-[15%] shrink-0 p-8 items-center justify-center">
+                    <span className="text-5xl font-heading font-medium text-white/10 leading-none">
+                      {step.num}
+                    </span>
+                  </div>
+                  <div className="flex-1 p-6 sm:p-8 md:border-l border-white/10 flex items-center">
+                    <div>
+                      <span className="md:hidden text-2xl font-heading font-medium text-white/10 leading-none mb-2 block">
+                        {step.num}
+                      </span>
+                      <h3 className="text-lg font-normal text-white font-heading mb-2">{step.title}</h3>
+                      <p className="text-white/60 leading-relaxed">{step.body}</p>
+                    </div>
+                  </div>
+                  <div className="md:w-[25%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-black flex items-center justify-center">
+                    <span className="text-white/20 text-sm">[IMAGE: {step.title}]</span>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 3. Why We're Different ───────────────────────────────── */}
+      <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="text-center mb-16 md:mb-20 px-4">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                Why We&rsquo;re Different
+              </p>
+              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
+                Not your average car wash
+              </h2>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10">
+            {differentiators.map((card, index) => (
+              <FadeIn key={card.title} delay={(index + 1) * 100}>
+                <div
+                  className={cn(
+                    "p-8 md:p-10 h-full flex flex-col",
+                    index === 1 && "md:border-l border-white/10",
+                    index === 2 && "border-t border-white/10",
+                    index === 3 && "border-t md:border-l border-white/10"
+                  )}
+                >
+                  <card.icon
+                    className="h-5 w-5 text-brand-orange mb-4"
+                    strokeWidth={1.5}
+                  />
+                  <h4 className="text-lg font-normal font-heading mb-3">
+                    {card.title}
+                  </h4>
+                  <p className="text-white/60 text-sm leading-relaxed">
+                    {card.body}
+                  </p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 4. Unified Comparison Table ────────────────────────────── */}
+      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
+        <div className="container mx-auto">
+          <FadeIn direction="up">
+            <div className="px-4 mb-12">
+              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
+                Pricing
               </p>
               <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
                 Three tiers. One standard: excellence.
@@ -140,10 +233,8 @@ export default function OneTimeWashPage() {
                   { name: "Standard", tagline: "The Thorough Clean", price: "Rp 339,000", duration: "~2 hrs" },
                   { name: "Professional", tagline: "The Deep Restoration", price: "Rp 569,000", duration: "~3 hrs" },
                   { name: "Elite", tagline: "The Full Transformation", price: "Rp 919,000", duration: "~4 hrs" },
-                ].map((tier, i) => (
-                  <div key={tier.name} className={cn(
-                    "flex-1 p-4 sm:p-6 text-center border-b border-l border-white/10",
-                  )}>
+                ].map((tier) => (
+                  <div key={tier.name} className="flex-1 p-4 sm:p-6 text-center border-b border-l border-white/10">
                     <p className="text-base sm:text-lg font-heading text-white mb-0.5">{tier.name}</p>
                     <p className="text-xs text-brand-orange mb-1 hidden sm:block">{tier.tagline}</p>
                     <p className="text-lg sm:text-xl font-heading text-brand-orange">{tier.price}</p>
@@ -212,96 +303,6 @@ export default function OneTimeWashPage() {
       {/* -- Separator -- */}
       <div className="border-t border-white/10" />
 
-      {/* ── 3. How We Clean — Step-by-step process ──────────────── */}
-      <section className="w-full py-20 md:py-24 bg-brand-black text-white section-lines-light">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="px-4 mb-12">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                How We Clean
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Every detail, every time
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="flex flex-col">
-            {processSteps.map((step, index) => (
-              <FadeIn key={step.num} delay={index * 100}>
-                <div className={cn(
-                  "border border-white/10 flex flex-col md:flex-row",
-                  index > 0 && "border-t-0"
-                )}>
-                  <div className="hidden md:flex md:w-[15%] shrink-0 p-8 items-center justify-center">
-                    <span className="text-5xl font-heading font-medium text-white/10 leading-none">
-                      {step.num}
-                    </span>
-                  </div>
-                  <div className="flex-1 p-6 sm:p-8 md:border-l border-white/10 flex items-center">
-                    <div>
-                      <span className="md:hidden text-2xl font-heading font-medium text-white/10 leading-none mb-2 block">
-                        {step.num}
-                      </span>
-                      <h3 className="text-lg font-normal text-white font-heading mb-2">{step.title}</h3>
-                      <p className="text-white/60 leading-relaxed">{step.body}</p>
-                    </div>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
-      {/* ── 4. Why We're Different ───────────────────────────────── */}
-      <section className="w-full py-20 md:py-24 bg-brand-dark-gray text-white section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn direction="up">
-            <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm uppercase tracking-wider text-brand-orange mb-3 font-heading">
-                Why We&rsquo;re Different
-              </p>
-              <h2 className="text-3xl md:text-4xl font-normal font-heading tracking-tight">
-                Not your average car wash
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 border border-white/10">
-            {differentiators.map((card, index) => (
-              <FadeIn key={card.title} delay={(index + 1) * 100}>
-                <div
-                  className={cn(
-                    "p-8 md:p-10 h-full flex flex-col",
-                    index === 1 && "md:border-l border-white/10",
-                    index === 2 && "border-t border-white/10",
-                    index === 3 && "border-t md:border-l border-white/10"
-                  )}
-                >
-                  <card.icon
-                    className="h-5 w-5 text-brand-orange mb-4"
-                    strokeWidth={1.5}
-                  />
-                  <h4 className="text-lg font-normal font-heading mb-3">
-                    {card.title}
-                  </h4>
-                  <p className="text-white/60 text-sm leading-relaxed">
-                    {card.body}
-                  </p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* -- Separator -- */}
-      <div className="border-t border-white/10" />
-
       {/* ── 5. CTA ───────────────────────────────────────────────── */}
       <section className="w-full py-12 bg-brand-black text-white section-lines-light">
         <div className="container mx-auto">
@@ -339,7 +340,7 @@ export default function OneTimeWashPage() {
       <div className="border-t border-white/10" />
 
       {/* ── 6. Subscription Upsell ───────────────────────────────── */}
-      <section className="w-full py-12 bg-brand-dark-gray">
+      <section className="w-full py-12 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="border border-white/10 p-6 md:p-8 text-center">

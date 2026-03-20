@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, X, ArrowRight, Droplets, Sparkles, Star, CalendarCheck, CreditCard, MessageCircle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -176,9 +176,9 @@ const faqs = [
 
 export default function SubscriptionsPage() {
   return (
-    <>
-      {/* \u2500\u2500 1. Hero \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="min-h-[60vh] flex items-center py-24 bg-brand-dark-gray">
+    <div className="bg-brand-black">
+      {/* ── 1. Hero ───────────────────────────────────────────────── */}
+      <section className="w-full min-h-[75vh] flex items-center py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange mb-3">
             SUBSCRIPTION PLANS
@@ -194,116 +194,119 @@ export default function SubscriptionsPage() {
         </div>
       </section>
 
-      {/* \u2500\u2500 2. One-time reference note \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="bg-brand-black py-6">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-brand-white/60 text-sm">
-            Looking for a one-time wash? Standard from{" "}
-            <span className="text-brand-orange font-semibold">Rp 339.000</span>.{" "}
-            <Link
-              href="/car-wash/one-time"
-              className="text-brand-orange underline underline-offset-4 hover:text-brand-orange/80 transition-colors"
-            >
-              See our services &rarr;
-            </Link>
-          </p>
-        </div>
-      </section>
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
 
-      {/* \u2500\u2500 3. Subscription Plan Cards \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-black">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {plans.map((plan) => {
+      {/* ── 2. Subscription Plan Cards ──────────────────────────── */}
+      <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 border border-white/10">
+            {plans.map((plan, planIndex) => {
               const IconComponent = plan.icon;
               return (
-                <Card
+                <div
                   key={plan.name}
-                  className={`flex flex-col shadow-xl rounded-lg bg-brand-dark-gray ${
+                  className={cn(
+                    "flex flex-col p-6 sm:p-8",
                     plan.popular
-                      ? "border-2 border-brand-orange relative"
-                      : "border border-white/10"
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                      <span className="px-4 py-1 bg-brand-orange text-brand-white text-xs font-semibold rounded-full uppercase tracking-wider">
-                        MOST POPULAR
-                      </span>
-                    </div>
+                      ? "bg-brand-orange/10"
+                      : "bg-brand-dark-gray",
+                    planIndex > 0 && "border-t md:border-t-0 md:border-l border-white/10"
                   )}
-
-                  <CardHeader
-                    className={`p-6 text-center ${
-                      plan.popular ? "pt-10" : "pt-6"
-                    }`}
-                  >
+                >
+                  {/* Header */}
+                  <div className="text-center mb-6">
                     <div className="mb-4 flex justify-center">
                       <IconComponent className="h-10 w-10 text-brand-orange" />
                     </div>
-                    <CardTitle className="text-2xl font-semibold text-brand-white mb-2 font-heading">
+                    {plan.popular && (
+                      <span className="inline-block px-4 py-1 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider mb-4">
+                        MOST POPULAR
+                      </span>
+                    )}
+                    <h3 className="text-2xl font-semibold text-brand-white mb-2 font-heading">
                       {plan.name}
-                    </CardTitle>
+                    </h3>
                     <p className="text-4xl font-extrabold text-brand-white">
                       {plan.price}
                     </p>
                     <p className="text-sm text-brand-white/70 mt-1">
                       {plan.perMonth}
                     </p>
-                  </CardHeader>
+                  </div>
 
-                  <CardContent className="p-6 flex-grow">
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start">
-                          <Check className="h-5 w-5 text-brand-orange mr-2 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-brand-white/90">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                    {plan.detailingBonus && (
-                      <div className="border border-brand-orange/30 bg-brand-orange/5 p-3 mb-4">
-                        <p className="text-sm text-brand-orange font-medium">
-                          {plan.detailingBonus}
-                        </p>
-                        <p className="text-xs text-brand-white/50 mt-1">
-                          Worth Rp 2,799,000 per session
-                        </p>
-                      </div>
-                    )}
-                    <p className="text-xs text-brand-white/50 italic">
-                      Best for: {plan.bestFor}
-                    </p>
-                  </CardContent>
+                  {/* Features */}
+                  <ul className="space-y-3 mb-6">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <Check className="h-5 w-5 text-brand-orange mr-2 flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-brand-white/90">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
 
-                  <CardFooter className="p-6 mt-auto">
+                  {plan.detailingBonus && (
+                    <div className="border border-brand-orange/30 bg-brand-orange/5 p-3 mb-4">
+                      <p className="text-sm text-brand-orange font-medium">
+                        {plan.detailingBonus}
+                      </p>
+                      <p className="text-xs text-brand-white/50 mt-1">
+                        Worth Rp 2,799,000 per session
+                      </p>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-brand-white/50 italic mb-6">
+                    Best for: {plan.bestFor}
+                  </p>
+
+                  {/* CTA */}
+                  <div className="mt-auto">
                     <Button
                       size="lg"
-                      className={`w-full font-semibold ${
+                      className={cn(
+                        "w-full font-semibold",
                         plan.popular
-                          ? "bg-brand-orange text-brand-white hover:bg-brand-orange/90"
+                          ? "bg-brand-orange text-black hover:bg-brand-orange/90"
                           : "bg-white/10 text-brand-white hover:bg-white/20 border border-white/10"
-                      }`}
+                      )}
                       asChild
                     >
                       <a href={plan.ctaLink} target="_blank" rel="noopener noreferrer">
                         {plan.cta}
                       </a>
                     </Button>
-                  </CardFooter>
-                </Card>
+                  </div>
+                </div>
               );
             })}
+          </div>
+
+          {/* One-time reference note — below cards */}
+          <div className="border border-white/10 border-t-0 p-6 text-center">
+            <p className="text-brand-white/60 text-sm">
+              Looking for a one-time wash? Standard from{" "}
+              <span className="text-brand-orange font-semibold">Rp 339.000</span>.{" "}
+              <Link
+                href="/car-wash/one-time"
+                className="text-brand-orange underline underline-offset-4 hover:text-brand-orange/80 transition-colors"
+              >
+                See our services &rarr;
+              </Link>
+            </p>
           </div>
         </div>
       </section>
 
-      {/* \u2500\u2500 4. Free Full Detail for Plus & Unlimited \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-dark-gray">
-        <div className="container mx-auto px-4">
-          <div className="rounded-lg border border-brand-orange/30 bg-brand-dark-gray p-8 md:p-12">
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 3. Free Full Detail for Plus & Unlimited ─────────────── */}
+      <section className="w-full py-16 md:py-24 bg-brand-dark-gray section-lines-dark">
+        <div className="container mx-auto">
+          <div className="border border-brand-orange/30 bg-brand-dark-gray p-8 md:p-12">
             <div className="text-center mb-10">
               <p className="text-sm font-semibold uppercase tracking-wider text-brand-orange mb-3">
                 SUBSCRIBER BONUS
@@ -320,7 +323,6 @@ export default function SubscriptionsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-              {/* Left column */}
               <div>
                 <h3 className="text-lg font-semibold text-brand-orange mb-4 font-heading">
                   What&rsquo;s Included in a Full Detail
@@ -340,7 +342,6 @@ export default function SubscriptionsPage() {
                 </ul>
               </div>
 
-              {/* Right column */}
               <div>
                 <h3 className="text-lg font-semibold text-brand-orange mb-4 font-heading">
                   Worth Rp 2,799,000
@@ -363,7 +364,7 @@ export default function SubscriptionsPage() {
             <div className="text-center">
               <Button
                 size="lg"
-                className="bg-brand-orange text-brand-white hover:bg-brand-orange/90 font-semibold"
+                className="bg-brand-orange text-black hover:bg-brand-orange/90 font-semibold"
                 asChild
               >
                 <a
@@ -379,13 +380,16 @@ export default function SubscriptionsPage() {
         </div>
       </section>
 
-      {/* \u2500\u2500 5. Comparison Table \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading">
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 4. Comparison Table ────────────────────────────────── */}
+      <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading px-4">
             Compare Plans
           </h2>
-          <div className="overflow-x-auto rounded-lg border border-white/10 shadow-lg">
+          <div className="overflow-x-auto border border-white/10">
             <table className="min-w-full divide-y divide-white/10 bg-brand-dark-gray">
               <thead className="bg-brand-black">
                 <tr>
@@ -399,9 +403,10 @@ export default function SubscriptionsPage() {
                     <th
                       key={plan.name}
                       scope="col"
-                      className={`px-6 py-4 text-center text-sm font-semibold text-brand-white uppercase tracking-wider font-heading ${
+                      className={cn(
+                        "px-6 py-4 text-center text-sm font-semibold text-brand-white uppercase tracking-wider font-heading",
                         plan.popular ? "bg-brand-orange/10" : ""
-                      }`}
+                      )}
                     >
                       {plan.name}
                       {plan.popular && (
@@ -464,17 +469,24 @@ export default function SubscriptionsPage() {
         </div>
       </section>
 
-      {/* \u2500\u2500 6. How Subscriptions Work \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-dark-gray">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading">
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 5. How Subscriptions Work ─────────────────────────── */}
+      <section className="w-full py-16 md:py-24 bg-brand-dark-gray section-lines-dark">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading px-4">
             How Subscriptions Work
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {howItWorks.map((item) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-white/10">
+            {howItWorks.map((item, index) => {
               const IconComponent = item.icon;
               return (
-                <div key={item.title} className="text-center">
+                <div key={item.title} className={cn(
+                  "text-center p-8",
+                  index > 0 && "border-t sm:border-t-0 sm:border-l border-white/10",
+                  index === 2 && "sm:border-t lg:border-t-0"
+                )}>
                   <div className="mb-4 flex justify-center">
                     <div className="rounded-full bg-brand-orange/10 p-4">
                       <IconComponent className="h-8 w-8 text-brand-orange" />
@@ -491,63 +503,73 @@ export default function SubscriptionsPage() {
         </div>
       </section>
 
-      {/* \u2500\u2500 7. FAQ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 md:py-24 bg-brand-black">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading">
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 6. FAQ ────────────────────────────────────────────── */}
+      <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white text-center mb-12 font-heading px-4">
             Frequently Asked Questions
           </h2>
-          <Accordion type="single" collapsible className="w-full">
-            {faqs.map((faq, index) => (
-              <AccordionItem
-                value={`item-${index + 1}`}
-                key={index}
-                className="border-b-white/10"
-              >
-                <AccordionTrigger className="py-5 text-left text-lg font-medium text-brand-white hover:text-brand-orange hover:no-underline font-heading">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="pt-0 pb-5 text-base text-brand-white/80">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
-
-      {/* \u2500\u2500 8. Final CTA \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */}
-      <section className="py-16 bg-brand-dark-gray text-center">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-semibold text-brand-white mb-6 font-heading">
-            Ready to keep your car pristine?
-          </h2>
-          <p className="text-brand-white/70 mb-8 max-w-xl mx-auto">
-            Choose a plan and get started today. We&rsquo;ll handle the rest.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Button
-              size="lg"
-              className="bg-brand-orange text-brand-white hover:bg-brand-orange/90 py-4 px-10 text-lg font-semibold"
-              asChild
-            >
-              <a
-                href={`${WA_BASE}?text=Halo%2C%20saya%20tertarik%20untuk%20berlangganan%20Castudio.`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Start Your Subscription <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
-            </Button>
-            <Link
-              href="/car-wash/one-time"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
-            >
-              Not ready? Try one-time first
-            </Link>
+          <div className="border border-white/10 px-6 sm:px-8 md:px-10">
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem
+                  value={`item-${index + 1}`}
+                  key={index}
+                  className="border-b-white/10"
+                >
+                  <AccordionTrigger className="py-5 text-left text-lg font-medium text-brand-white hover:text-brand-orange hover:no-underline font-heading">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-0 pb-5 text-base text-brand-white/80">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>
-    </>
+
+      {/* -- Separator -- */}
+      <div className="border-t border-white/10" />
+
+      {/* ── 7. Final CTA ──────────────────────────────────────── */}
+      <section className="w-full py-12 bg-brand-dark-gray text-center section-lines-dark">
+        <div className="container mx-auto">
+          <div className="border border-white/10 px-6 sm:px-10 md:px-16 py-16 md:py-20">
+            <h2 className="text-3xl md:text-4xl font-semibold text-brand-white mb-6 font-heading">
+              Ready to keep your car pristine?
+            </h2>
+            <p className="text-brand-white/70 mb-8 max-w-xl mx-auto">
+              Choose a plan and get started today. We&rsquo;ll handle the rest.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <Button
+                size="lg"
+                className="bg-brand-orange text-black hover:bg-brand-orange/90 py-4 px-10 text-lg font-semibold"
+                asChild
+              >
+                <a
+                  href={`${WA_BASE}?text=Halo%2C%20saya%20tertarik%20untuk%20berlangganan%20Castudio.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Start Your Subscription <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </Button>
+              <Link
+                href="/car-wash/one-time"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium border border-brand-orange text-brand-orange hover:bg-brand-orange/10 h-11 py-3 px-8 text-base transition-colors"
+              >
+                Not ready? Try one-time first
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
