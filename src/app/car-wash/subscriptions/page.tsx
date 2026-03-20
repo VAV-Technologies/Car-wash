@@ -16,11 +16,11 @@ const WA_BASE = "https://wa.me/62816104334";
 const plans = [
   {
     name: "Essentials",
-    monthlyPrice: "Rp 287.250",
-    price: "Rp 1.149.000",
-    priceShort: "Rp 1.149K",
+    monthlyPrice: "Rp 387.250",
+    price: "Rp 1.549.000",
+    priceShort: "Rp 1.549K",
     perMonth: "/mo",
-    termNote: "4-month term \u00b7 Rp 1,149,000 total",
+    termNote: "4-month term \u00b7 Rp 1,549,000 total",
     oneTimeValue: "Rp 1,356,000",
     savings: "Rp 207,000",
     features: [
@@ -31,17 +31,17 @@ const plans = [
     detailingBonus: null,
     bestFor: "Car owners who want a professional deep clean every couple of months",
     cta: "Subscribe to Essentials",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.149.000%2F4%20bulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.549.000%2F4%20bulan).`,
     icon: Droplets,
     popular: false,
   },
   {
     name: "Plus",
-    monthlyPrice: "Rp 387.250",
-    price: "Rp 1.549.000",
-    priceShort: "Rp 1.549K",
+    monthlyPrice: "Rp 534.750",
+    price: "Rp 2.139.000",
+    priceShort: "Rp 2.139K",
     perMonth: "/mo",
-    termNote: "4-month term \u00b7 Rp 1,549,000 total",
+    termNote: "4-month term \u00b7 Rp 2,139,000 total",
     oneTimeValue: "Rp 1,816,000",
     savings: "Rp 267,000",
     features: [
@@ -51,19 +51,19 @@ const plans = [
       "Glass descaling + tar removal included",
     ],
     detailingBonus: null,
-    bestFor: "Jakarta drivers who want regular care plus deep restoration",
+    bestFor: "Jakarta drivers who want regular care plus deep restoration every quarter",
     cta: "Subscribe to Plus",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.549.000%2F4%20bulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%202.139.000%2F4%20bulan).`,
     icon: Sparkles,
     popular: true,
   },
   {
     name: "Elite",
-    monthlyPrice: "Rp 529.750",
-    price: "Rp 2.119.000",
-    priceShort: "Rp 2.119K",
+    monthlyPrice: "Rp 802.250",
+    price: "Rp 3.209.000",
+    priceShort: "Rp 3.209K",
     perMonth: "/mo",
-    termNote: "4-month term \u00b7 Rp 2,119,000 total",
+    termNote: "4-month term \u00b7 Rp 3,209,000 total",
     oneTimeValue: "Rp 2,494,000",
     savings: "Rp 375,000",
     features: [
@@ -75,7 +75,7 @@ const plans = [
     detailingBonus: "1 Free Full Detail per year",
     bestFor: "Executives and car enthusiasts who want their car pristine at all times",
     cta: "Subscribe to Elite",
-    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%202.119.000%2F4%20bulan).`,
+    ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%203.209.000%2F4%20bulan).`,
     icon: Star,
     popular: false,
   },
@@ -85,9 +85,8 @@ const comparisonData = [
   {
     category: "QUARTERLY PRICE",
     features: [
-      { name: "Price (per 4 months)", essentials: "Rp 1.149K", plus: "Rp 1.549K", elite: "Rp 2.119K" },
-      { name: "One-time value", essentials: "Rp 1,356K", plus: "Rp 1,816K", elite: "Rp 2,494K" },
-      { name: "You save", essentials: "Rp 207K", plus: "Rp 267K", elite: "Rp 375K" },
+      { name: "Price (per 4 months)", essentials: "Rp 1.549K", plus: "Rp 2.139K", elite: "Rp 3.209K" },
+      { name: "Per month", essentials: "Rp 387K", plus: "Rp 535K", elite: "Rp 802K" },
     ],
   },
   {
@@ -100,8 +99,7 @@ const comparisonData = [
   {
     category: "FREE FULL DETAIL",
     features: [
-      { name: "Full Detail included", essentials: "\u2014", plus: "\u2014", elite: "1x/year" },
-      { name: "Full Detail value", essentials: "\u2014", plus: "\u2014", elite: "Rp 2,799,000" },
+      { name: "Free Full Detail", essentials: "\u2014", plus: "\u2014", elite: "1x/year (Rp 2,799,000 value)" },
     ],
   },
   {
