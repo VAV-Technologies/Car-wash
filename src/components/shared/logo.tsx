@@ -10,11 +10,11 @@ interface LogoProps {
 
 export function Logo({ size = 'xl', forceTheme }: LogoProps) {
   const heights: Record<string, number> = {
-    sm: 24,
-    md: 28,
-    lg: 32,
-    xl: 40,
-    '2xl': 48,
+    sm: 48,
+    md: 56,
+    lg: 64,
+    xl: 80,
+    '2xl': 96,
   };
 
   const h = heights[size] || heights.xl;
