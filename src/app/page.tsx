@@ -29,9 +29,24 @@ export default function HomePage() {
           <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
             Your Car Deserves Better<br />Than a Street Wash
           </h1>
-          <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
-            Premium at-home car wash and detailing across Jakarta and surrounding areas. Professional-grade products. Trained technicians. We keep working until you&apos;re satisfied.
+          <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-8 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
+            Premium at-home car wash and detailing across Jakarta and surrounding areas. We keep working until you&apos;re satisfied.
           </p>
+          <div className="mb-10 text-sm md:text-base text-white/80 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
+            <div className="flex items-center justify-center gap-6 sm:gap-8">
+              <div className="flex items-center">
+                <Sparkles className="mr-2 h-4 w-4 opacity-90" /> Premium Products
+              </div>
+              <span className="text-white/30">|</span>
+              <div className="flex items-center">
+                <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> Trained Technicians
+              </div>
+              <span className="text-white/30">|</span>
+              <div className="flex items-center">
+                <CheckCircle2 className="mr-2 h-4 w-4 opacity-90" /> Proper Best Practices
+              </div>
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
               Book Your First Wash <ArrowRight className="ml-2 h-5 w-5" />
