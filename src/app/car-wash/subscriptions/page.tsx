@@ -29,7 +29,7 @@ const plans = [
       "15% off vs. one-time pricing",
     ],
     detailingBonus: null,
-    bestFor: "Car owners who want regular monthly maintenance",
+    bestFor: "Car owners who want regular monthly maintenance and a consistently clean car.",
     cta: "Subscribe to Essentials",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.549.000%2F4%20bulan).`,
     icon: Droplets,
@@ -51,7 +51,7 @@ const plans = [
       "Glass descaling + tar removal included",
     ],
     detailingBonus: null,
-    bestFor: "Jakarta drivers who want regular care plus deep restoration every quarter",
+    bestFor: "Jakarta drivers who want regular care plus deep restoration every quarter.",
     cta: "Subscribe to Plus",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%202.139.000%2F4%20bulan).`,
     icon: Sparkles,
@@ -73,7 +73,7 @@ const plans = [
       "Priority scheduling",
     ],
     detailingBonus: "1 Free Full Detail per year",
-    bestFor: "Executives and car enthusiasts who want their car pristine at all times",
+    bestFor: "Executives and car enthusiasts who want their car pristine at all times.",
     cta: "Subscribe to Elite",
     ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%203.209.000%2F4%20bulan).`,
     icon: Star,
@@ -197,15 +197,15 @@ export default function SubscriptionsPage() {
       {/* ── 2. Subscription Plan Cards ──────────────────────────── */}
       <section className="w-full py-16 md:py-24 bg-brand-black section-lines-light">
         <div className="container mx-auto">
-          {/* MOST POPULAR badge — outside table, above Plus column */}
-          <div className="hidden md:flex">
-            <div className="flex-1" />
-            <div className="flex-1 flex justify-center">
-              <span className="inline-block px-6 py-1.5 bg-brand-orange text-black text-xs font-semibold uppercase tracking-wider">
+          {/* MOST POPULAR badge — outside table, above Plus column, full column width */}
+          <div className="hidden md:grid grid-cols-3 mb-3">
+            <div />
+            <div className="bg-brand-orange py-2 text-center">
+              <span className="text-black text-xs font-semibold uppercase tracking-wider">
                 MOST POPULAR
               </span>
             </div>
-            <div className="flex-1" />
+            <div />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 border border-white/10">
