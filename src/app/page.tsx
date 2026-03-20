@@ -30,38 +30,8 @@ export default function HomePage() {
             Your Car Deserves Better<br />Than a Street Wash
           </h1>
           <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
-            Premium at-home car wash and detailing, delivered to your doorstep across JABODETABEK. Professional-grade products. Meticulous technique. Zero effort from you.
+            Premium at-home car wash and detailing across Jakarta and surrounding areas. Professional-grade products. Trained technicians. We keep working until you&apos;re satisfied.
           </p>
-          <div className="mb-10 text-sm md:text-base text-white/80 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
-            {/* Desktop: single row with pipes */}
-            <div className="hidden sm:flex items-center justify-center">
-              <div className="flex items-center">
-                <Sparkles className="mr-2 h-4 w-4 opacity-90" /> Premium Products Only
-              </div>
-              <span className="mx-4 text-white/30">|</span>
-              <div className="flex items-center">
-                <ShieldCheck className="mr-2 h-4 w-4 opacity-90" /> Trained &amp; Uniformed Technicians
-              </div>
-              <span className="mx-4 text-white/30">|</span>
-              <div className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4 opacity-90" /> All JABODETABEK
-              </div>
-            </div>
-            {/* Mobile: pills */}
-            <div className="flex sm:hidden flex-col items-center gap-2">
-              <div className="flex gap-2">
-                <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                  <Sparkles className="mr-1.5 h-4 w-4 opacity-90" /> Premium Products Only
-                </div>
-                <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                  <ShieldCheck className="mr-1.5 h-4 w-4 opacity-90" /> Trained Technicians
-                </div>
-              </div>
-              <div className="flex items-center border border-white/20 px-3 py-1.5 text-xs">
-                <MapPin className="mr-1.5 h-4 w-4 opacity-90" /> All JABODETABEK
-              </div>
-            </div>
-          </div>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-500">
             <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-8 text-base min-w-[220px] sm:min-w-[260px]">
               Book Your First Wash <ArrowRight className="ml-2 h-5 w-5" />
@@ -73,27 +43,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust Bar */}
-      <div className="border-t border-white/10" />
-      <section className="py-10 md:py-14 bg-brand-dark-gray section-lines-dark">
-        <div className="container mx-auto">
-          <FadeIn>
-            <div className="flex flex-wrap">
-              {[
-                { icon: Sparkles, label: "Premium Products Only" },
-                { icon: ShieldCheck, label: "Trained Technicians" },
-                { icon: MapPin, label: "Serving All JABODETABEK" },
-                { icon: CheckCircle2, label: "Satisfaction Guaranteed" },
-              ].map((item, index) => (
-                <div key={index} className="flex items-center justify-center gap-3 h-20 md:h-24 w-1/2 md:w-1/4 border border-white/10 px-6">
-                  <item.icon className="h-5 w-5 text-white/50 shrink-0" strokeWidth={1.5} />
-                  <span className="text-white/70 text-sm md:text-base font-medium text-center">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
-        </div>
-      </section>
 
       {/* Separator */}
       <div className="border-t border-white/10" />
