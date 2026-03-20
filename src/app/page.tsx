@@ -62,59 +62,64 @@ export default function HomePage() {
       {/* Separator */}
       <div className="border-t border-white/10" />
 
-      {/* How It Works */}
+      {/* What Happens When You Choose the Wrong Wash */}
       <section className="py-20 md:py-24 bg-brand-dark-gray section-lines-dark">
         <div className="container mx-auto">
           <FadeIn direction="up">
             <div className="text-center mb-16 md:mb-20 px-4">
-              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading">
-                Three steps to a spotless car
+              <p className="text-sm font-normal uppercase text-white/60 tracking-wider mb-3 font-heading">Protect Your Investment</p>
+              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-white font-heading mb-6">
+                You worked hard for your car. Here&apos;s what happens when the wrong person washes it.
               </h2>
+              <p className="text-white/70 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+                Cheap washes cut corners. The damage adds up fast &mdash; and it&apos;s expensive to fix.
+              </p>
             </div>
           </FadeIn>
 
-          <div className="flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-white/10">
             {[
               {
-                num: "01",
-                title: "Choose",
-                body: "Pick your wash tier, detailing service, or subscription.",
+                title: "Swirl Marks & Scratches",
+                body: "Dirty rags and single-bucket washes grind dirt into your paint. Those circular scratches you see in sunlight? That\u2019s permanent damage from improper technique.",
               },
               {
-                num: "02",
-                title: "Schedule",
-                body: "Tell us your preferred date, time, and location via WhatsApp. We\u2019ll confirm your slot and assign a technician in your zone.",
+                title: "Faded & Oxidised Paint",
+                body: "Harsh chemicals and cheap detergents strip your car\u2019s protective clear coat. Over time, your paint fades, oxidises, and loses its depth and gloss.",
               },
               {
-                num: "03",
-                title: "Relax",
-                body: "Our technician arrives fully equipped with premium products and fresh microfiber towels. Your car comes back spotless. Zero effort from you.",
+                title: "Water Spot Etching",
+                body: "Hard water left to dry on your paint bonds with the surface and etches into the clear coat. Once it\u2019s baked in by the sun, it\u2019s nearly impossible to remove without polishing.",
               },
-            ].map((step, index) => (
-              <FadeIn key={step.num} delay={index * 100}>
+              {
+                title: "Cracked Interior Surfaces",
+                body: "Generic cleaners dry out leather, vinyl, and rubber. Dashboard cracks, seats fade, and trim pieces deteriorate years before they should.",
+              },
+              {
+                title: "Brake Dust Corrosion",
+                body: "Neglected wheels accumulate brake dust that bonds with the rim surface. Left untreated, it causes permanent pitting and corrosion that no amount of cleaning can fix.",
+              },
+              {
+                title: "Reduced Resale Value",
+                body: "Swirl marks, faded paint, cracked interiors, and corroded rims all add up. A poorly maintained car can lose millions in resale value compared to one that\u2019s been properly cared for.",
+              },
+            ].map((problem, index) => (
+              <FadeIn key={problem.title} delay={(index % 3) * 100}>
                 <div className={cn(
-                  "border border-white/10 flex flex-col md:flex-row",
-                  index > 0 && "border-t-0"
+                  "flex flex-col h-full",
+                  index > 0 && "border-t sm:border-t-0 sm:border-l border-white/10",
+                  index >= 3 && "sm:border-t lg:border-t border-white/10",
+                  index === 3 && "sm:border-l-0",
+                  index >= 3 && index % 3 !== 0 && "sm:border-l"
                 )}>
-                  {/* Step number — separate column on desktop */}
-                  <div className="hidden md:flex md:w-[23%] shrink-0 p-8 md:p-10 items-center justify-center">
-                    <span className="text-6xl font-heading font-medium text-white/10 leading-none">
-                      {step.num}
-                    </span>
+                  {/* Image */}
+                  <div className="h-44 bg-brand-black flex items-center justify-center border-b border-white/10">
+                    <span className="text-white/20 text-sm">[IMAGE: {problem.title}]</span>
                   </div>
-                  <div className="flex-1 p-6 sm:p-8 md:p-10 md:border-l border-white/10 flex items-center">
-                    <div>
-                      {/* Step number — inline on mobile */}
-                      <span className="md:hidden text-2xl font-heading font-medium text-white/10 leading-none mb-2 block">
-                        {step.num}
-                      </span>
-                      <h3 className="text-lg font-normal text-white font-heading mb-2">{step.title}</h3>
-                      <p className="text-white/60 leading-relaxed">{step.body}</p>
-                    </div>
-                  </div>
-                  <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-black flex items-center justify-center">
-                    <span className="text-white/20 text-sm">[IMAGE: Step {step.num}]</span>
+                  {/* Content */}
+                  <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                    <h3 className="text-base font-heading text-white mb-2">{problem.title}</h3>
+                    <p className="text-white/60 text-sm leading-relaxed">{problem.body}</p>
                   </div>
                 </div>
               </FadeIn>
