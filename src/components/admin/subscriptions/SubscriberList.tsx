@@ -136,6 +136,7 @@ export default function SubscriberList() {
         <AdminSelect
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
+          width="w-[170px]"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -147,6 +148,7 @@ export default function SubscriberList() {
         <AdminSelect
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value)}
+          width="w-[170px]"
         >
           <option value="">All Tiers</option>
           {SUBSCRIPTION_TIERS_V2.map((t) => (

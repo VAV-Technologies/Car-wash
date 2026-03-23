@@ -108,7 +108,7 @@ export default function AdminSidebar() {
     <aside className="w-56 bg-[#111111] border-r border-white/10 flex flex-col h-screen sticky top-0">
       <div className="h-14 flex items-center px-4 border-b border-white/10">
         <Link href="/admin" className="flex items-center">
-          <img src="/logo-light.png" alt="Castudio" className="h-6" />
+          <img src="/logo-admin.png" alt="Castudio" className="h-5" />
         </Link>
       </div>
 

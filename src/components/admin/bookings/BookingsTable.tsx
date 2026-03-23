@@ -127,6 +127,7 @@ export default function BookingsTable() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <AdminSelect
+          width="w-[170px]"
           value={filters.status}
           onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value as BookingStatus | '' }))}
         >
@@ -137,6 +138,7 @@ export default function BookingsTable() {
         </AdminSelect>
 
         <AdminSelect
+          width="w-[170px]"
           value={filters.service_type}
           onChange={(e) => setFilters((f) => ({ ...f, service_type: e.target.value as ServiceType | '' }))}
         >
@@ -147,6 +149,7 @@ export default function BookingsTable() {
         </AdminSelect>
 
         <AdminSelect
+          width="w-[170px]"
           value={filters.washer_id}
           onChange={(e) => setFilters((f) => ({ ...f, washer_id: e.target.value }))}
         >
@@ -156,16 +159,20 @@ export default function BookingsTable() {
           ))}
         </AdminSelect>
 
-        <AdminDateInput
-          value={filters.date_from}
-          onChange={(e) => setFilters((f) => ({ ...f, date_from: e.target.value }))}
-          placeholder="From"
-        />
-        <AdminDateInput
-          value={filters.date_to}
-          onChange={(e) => setFilters((f) => ({ ...f, date_to: e.target.value }))}
-          placeholder="To"
-        />
+        <div className="w-[170px]">
+          <AdminDateInput
+            value={filters.date_from}
+            onChange={(e) => setFilters((f) => ({ ...f, date_from: e.target.value }))}
+            placeholder="From"
+          />
+        </div>
+        <div className="w-[170px]">
+          <AdminDateInput
+            value={filters.date_to}
+            onChange={(e) => setFilters((f) => ({ ...f, date_to: e.target.value }))}
+            placeholder="To"
+          />
+        </div>
 
         {(filters.status || filters.service_type || filters.date_from || filters.date_to || filters.washer_id) && (
           <button

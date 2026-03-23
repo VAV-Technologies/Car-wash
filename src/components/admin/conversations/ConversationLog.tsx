@@ -135,6 +135,7 @@ export default function ConversationLog() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <AdminSelect
+          width="w-[170px]"
           value={filterChannel}
           onChange={(e) => setFilterChannel(e.target.value as ConversationChannel | '')}
         >
@@ -147,6 +148,7 @@ export default function ConversationLog() {
         </AdminSelect>
 
         <AdminSelect
+          width="w-[170px]"
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as MessageType | '')}
         >
@@ -162,6 +164,7 @@ export default function ConversationLog() {
         </AdminSelect>
 
         <AdminSelect
+          width="w-[170px]"
           value={filterFollowUp}
           onChange={(e) => setFilterFollowUp(e.target.value as 'pending' | 'completed' | '')}
         >

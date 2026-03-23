@@ -94,6 +94,7 @@ export default function InvoiceList() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <AdminSelect
+          width="w-[170px]"
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as PaymentStatus | '')}
         >
@@ -104,15 +105,19 @@ export default function InvoiceList() {
           <option value="refunded">Refunded</option>
         </AdminSelect>
 
-        <AdminDateInput
-          value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
-        />
+        <div className="w-[170px]">
+          <AdminDateInput
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+        </div>
         <span className="text-white/30 text-sm">to</span>
-        <AdminDateInput
-          value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
-        />
+        <div className="w-[170px]">
+          <AdminDateInput
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+        </div>
 
         <input
           type="text"
