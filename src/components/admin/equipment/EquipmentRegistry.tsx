@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Loader2, ChevronDown, ChevronUp, Wrench } from 'lucide-react'
-import { getEquipment, logMaintenance } from '@/lib/admin/equipment'
+import { Loader2, ChevronDown, ChevronUp, Wrench, Trash2 } from 'lucide-react'
+import { getEquipment, logMaintenance, deleteEquipment } from '@/lib/admin/equipment'
 import { formatDate } from '@/lib/admin/constants'
 import type { Equipment } from '@/lib/admin/types'
 
@@ -41,6 +41,17 @@ export default function EquipmentRegistry() {
   useEffect(() => {
     loadEquipment()
   }, [])
+
+  async function handleDeleteEquipment(id: string, e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!confirm('Delete this equipment? This cannot be undone.')) return
+    try {
+      await deleteEquipment(id)
+      await loadEquipment()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete equipment')
+    }
+  }
 
   async function handleLogMaintenance(id: string) {
     setLoggingId(id)
@@ -84,6 +95,7 @@ export default function EquipmentRegistry() {
               <th className="px-4 py-3 font-medium">Last Maintenance</th>
               <th className="px-4 py-3 font-medium">Next Due</th>
               <th className="px-4 py-3 font-medium">Warranty</th>
+              <th className="px-4 py-3 font-medium w-10"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -119,10 +131,19 @@ export default function EquipmentRegistry() {
                         {warrantyCfg.label}
                       </span>
                     </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={(e) => handleDeleteEquipment(item.id, e)}
+                        className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                        title="Delete equipment"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
                   </tr>
                   {isExpanded && (
                     <tr key={`${item.id}-details`} className="bg-white/[0.02]">
-                      <td colSpan={8} className="px-4 py-4">
+                      <td colSpan={9} className="px-4 py-4">
                         <div className="flex items-center justify-between pl-8">
                           <div className="space-y-1 text-sm">
                             <p className="text-white/40">

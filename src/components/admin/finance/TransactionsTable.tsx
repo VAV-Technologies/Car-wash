@@ -8,8 +8,9 @@ import {
   Plus,
   ArrowUpCircle,
   ArrowDownCircle,
+  Trash2,
 } from 'lucide-react'
-import { getTransactions } from '@/lib/admin/finance'
+import { getTransactions, deleteTransaction } from '@/lib/admin/finance'
 import { formatCurrency, formatDate, SERVICE_TYPES } from '@/lib/admin/constants'
 import type { TransactionWithCustomer, TransactionType, PaymentStatus } from '@/lib/admin/types'
 import AddExpenseForm from './AddExpenseForm'
@@ -94,6 +95,16 @@ export default function TransactionsTable() {
   useEffect(() => {
     setPage(1)
   }, [filterType, filterStatus, dateFrom, dateTo])
+
+  async function handleDeleteTransaction(id: string) {
+    if (!confirm('Delete this transaction? This cannot be undone.')) return
+    try {
+      await deleteTransaction(id)
+      loadData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete transaction')
+    }
+  }
 
   const totalPages = Math.ceil(count / LIMIT)
 
@@ -180,6 +191,7 @@ export default function TransactionsTable() {
                   <th className="text-left py-2 px-3 font-medium">Status</th>
                   <th className="text-left py-2 px-3 font-medium">Customer</th>
                   <th className="text-left py-2 px-3 font-medium">Description</th>
+                  <th className="py-2 px-3 font-medium w-10"></th>
                 </tr>
               </thead>
               <tbody>
@@ -208,6 +220,15 @@ export default function TransactionsTable() {
                     </td>
                     <td className="py-2.5 px-3 text-white/50 max-w-[200px] truncate">
                       {txn.description ?? txn.notes ?? '-'}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <button
+                        onClick={() => handleDeleteTransaction(txn.id)}
+                        className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                        title="Delete transaction"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}

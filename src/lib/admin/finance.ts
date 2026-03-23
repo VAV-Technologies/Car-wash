@@ -133,6 +133,13 @@ export async function markPaymentFailed(
   return data as Transaction
 }
 
+// ─── Delete Transaction ──────────────────────────────────────────────
+
+export async function deleteTransaction(id: string): Promise<void> {
+  const { error } = await supabase.from('transactions').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete transaction: ${error.message}`)
+}
+
 // ─── Pending Payments ────────────────────────────────────────────────
 
 export async function getPendingPayments(): Promise<TransactionWithCustomer[]> {

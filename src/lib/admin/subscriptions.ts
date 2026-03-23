@@ -171,6 +171,13 @@ export async function updateSubscription(
   return updated
 }
 
+// ─── Delete Subscription ─────────────────────────────────────────────
+
+export async function deleteSubscription(id: string): Promise<void> {
+  const { error } = await supabase.from('subscriptions').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete subscription: ${error.message}`)
+}
+
 // ─── Active Subscription Stats ────────────────────────────────────────
 
 export async function getActiveSubscriptionStats(): Promise<SubscriptionStats> {

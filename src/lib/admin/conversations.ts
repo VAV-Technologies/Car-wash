@@ -113,6 +113,13 @@ export async function createConversation(
   return created as Conversation
 }
 
+// ─── Delete Conversation ────────────────────────────────────────────
+
+export async function deleteConversation(id: string): Promise<void> {
+  const { error } = await supabase.from('conversations').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete conversation: ${error.message}`)
+}
+
 // ─── Get Conversations by Customer ──────────────────────────────────
 
 export async function getConversationsByCustomer(

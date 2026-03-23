@@ -53,6 +53,13 @@ export async function updateEquipment(
   return updated as Equipment
 }
 
+// ─── Delete Equipment ───────────────────────────────────────────────
+
+export async function deleteEquipment(id: string): Promise<void> {
+  const { error } = await supabase.from('equipment').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete equipment: ${error.message}`)
+}
+
 // ─── Log Maintenance ────────────────────────────────────────────────
 
 export async function logMaintenance(id: string): Promise<Equipment> {

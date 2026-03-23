@@ -104,6 +104,13 @@ export async function updateEmployee(
   return updated as EmployeeExtended
 }
 
+// ─── Delete Employee ────────────────────────────────────────────────
+
+export async function deleteEmployee(id: string): Promise<void> {
+  const { error } = await supabase.from('employees').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete employee: ${error.message}`)
+}
+
 // ─── Employee Stats ─────────────────────────────────────────────────
 
 export async function getEmployeeStats(

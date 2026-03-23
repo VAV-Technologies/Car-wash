@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Loader2, PackagePlus } from 'lucide-react'
-import { getInventoryItems } from '@/lib/admin/inventory'
+import { Loader2, PackagePlus, Trash2 } from 'lucide-react'
+import { getInventoryItems, deleteInventoryItem } from '@/lib/admin/inventory'
 import { formatCurrency, formatDate } from '@/lib/admin/constants'
 import type { InventoryItem } from '@/lib/admin/types'
 import RestockForm from './RestockForm'
@@ -40,6 +40,16 @@ export default function StockLevels() {
     }
     load()
   }, [])
+
+  async function handleDeleteItem(id: string) {
+    if (!confirm('Delete this inventory item? This cannot be undone.')) return
+    try {
+      await deleteInventoryItem(id)
+      setItems((prev) => prev.filter((item) => item.id !== id))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete inventory item')
+    }
+  }
 
   const handleRestocked = (updated: InventoryItem) => {
     setItems((prev) =>
@@ -163,13 +173,22 @@ export default function StockLevels() {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => setRestockItem(item)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 transition-colors"
-                    >
-                      <PackagePlus className="h-3 w-3" />
-                      Restock
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setRestockItem(item)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 transition-colors"
+                      >
+                        <PackagePlus className="h-3 w-3" />
+                        Restock
+                      </button>
+                      <button
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                        title="Delete item"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )

@@ -155,6 +155,15 @@ export async function addConversation(
   return created as Conversation
 }
 
+// ─── Delete Customer ────────────────────────────────────────────────
+
+export async function deleteCustomer(id: string): Promise<void> {
+  // Delete related conversations first
+  await supabase.from('conversations').delete().eq('customer_id', id)
+  const { error } = await supabase.from('customers').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete customer: ${error.message}`)
+}
+
 // ─── Follow-Up Queries ──────────────────────────────────────────────
 
 export async function getFollowUpCustomers(): Promise<{

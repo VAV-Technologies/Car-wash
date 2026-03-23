@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Loader2, Plus, AlertTriangle } from 'lucide-react'
-import { getSubscriptions } from '@/lib/admin/subscriptions'
+import { Loader2, Plus, AlertTriangle, Trash2 } from 'lucide-react'
+import { getSubscriptions, deleteSubscription } from '@/lib/admin/subscriptions'
 import { formatCurrency, formatDate, getTierConfig, SUBSCRIPTION_TIERS_V2 } from '@/lib/admin/constants'
 import type { SubscriptionWithCustomer, SubscriptionTier } from '@/lib/admin/types'
 import SubscriptionForm from './SubscriptionForm'
@@ -88,6 +88,16 @@ export default function SubscriberList() {
   useEffect(() => {
     setPage(1)
   }, [statusFilter, tierFilter])
+
+  async function handleDeleteSubscription(id: string) {
+    if (!confirm('Delete this subscription? This cannot be undone.')) return
+    try {
+      await deleteSubscription(id)
+      fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete subscription')
+    }
+  }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE)
 
@@ -174,25 +184,26 @@ export default function SubscriberList() {
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/50">
                 Risk
               </th>
+              <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-white/50 w-10"></th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-white/40">
+                <td colSpan={8} className="px-4 py-12 text-center text-white/40">
                   <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-red-400">
+                <td colSpan={8} className="px-4 py-12 text-center text-red-400">
                   {error}
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-white/40">
+                <td colSpan={8} className="px-4 py-12 text-center text-white/40">
                   No subscriptions found.
                 </td>
               </tr>
@@ -240,6 +251,15 @@ export default function SubscriberList() {
                           At Risk
                         </span>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => handleDeleteSubscription(sub.id)}
+                        className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                        title="Delete subscription"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </td>
                   </tr>
                 )

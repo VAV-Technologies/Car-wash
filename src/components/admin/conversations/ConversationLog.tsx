@@ -8,8 +8,9 @@ import {
   Plus,
   ArrowDownLeft,
   ArrowUpRight,
+  Trash2,
 } from 'lucide-react'
-import { getConversations } from '@/lib/admin/conversations'
+import { getConversations, deleteConversation } from '@/lib/admin/conversations'
 import { formatDate } from '@/lib/admin/constants'
 import type { ConversationWithCustomer, ConversationChannel, MessageType } from '@/lib/admin/types'
 import LogConversationForm from './LogConversationForm'
@@ -111,6 +112,16 @@ export default function ConversationLog() {
     setPage(1)
   }, [filterChannel, filterType, filterFollowUp])
 
+  async function handleDeleteConversation(id: string) {
+    if (!confirm('Delete this conversation? This cannot be undone.')) return
+    try {
+      await deleteConversation(id)
+      loadData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete conversation')
+    }
+  }
+
   const totalPages = Math.ceil(count / LIMIT)
 
   function formatDateTime(dateStr: string): string {
@@ -206,6 +217,7 @@ export default function ConversationLog() {
                   <th className="text-left py-2 px-3 font-medium">Type</th>
                   <th className="text-left py-2 px-3 font-medium">Content</th>
                   <th className="text-left py-2 px-3 font-medium">Follow-up</th>
+                  <th className="py-2 px-3 font-medium w-10"></th>
                 </tr>
               </thead>
               <tbody>
@@ -234,6 +246,15 @@ export default function ConversationLog() {
                     </td>
                     <td className="py-2.5 px-3">
                       <FollowUpBadge conversation={conv} />
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <button
+                        onClick={() => handleDeleteConversation(conv.id)}
+                        className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                        title="Delete conversation"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}

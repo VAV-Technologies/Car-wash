@@ -116,6 +116,13 @@ export async function updateBooking(
   return updated as Booking
 }
 
+// ─── Delete Booking ─────────────────────────────────────────────────
+
+export async function deleteBooking(id: string): Promise<void> {
+  const { error } = await supabase.from('bookings').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete booking: ${error.message}`)
+}
+
 // ─── Today's Bookings ───────────────────────────────────────────────
 
 export async function getTodaysBookings(): Promise<BookingWithDetails[]> {

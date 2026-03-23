@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Loader2 } from 'lucide-react'
-import { getEmployees } from '@/lib/admin/team'
+import { Plus, Loader2, Trash2 } from 'lucide-react'
+import { getEmployees, deleteEmployee } from '@/lib/admin/team'
 import { calculatePayslip } from '@/lib/admin/team'
 import { formatCurrency, formatDate } from '@/lib/admin/constants'
 import type { EmployeeExtended } from '@/lib/admin/types'
@@ -69,6 +69,17 @@ export default function EmployeeList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  async function handleDeleteEmployee(id: string, e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!confirm('Delete this employee? This cannot be undone.')) return
+    try {
+      await deleteEmployee(id)
+      loadEmployees()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete employee')
+    }
+  }
+
   function handleFormClose() {
     setShowForm(false)
     setEditingEmployee(null)
@@ -120,6 +131,7 @@ export default function EmployeeList() {
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium text-right">Jobs (Month)</th>
                   <th className="px-4 py-3 font-medium text-right">Total Comp</th>
+                  <th className="px-4 py-3 font-medium w-10"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -148,6 +160,15 @@ export default function EmployeeList() {
                       <td className="px-4 py-3 text-white/60 text-right">{emp.jobsThisMonth}</td>
                       <td className="px-4 py-3 text-white font-medium text-right">
                         {formatCurrency(emp.totalCompThisMonth)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={(e) => handleDeleteEmployee(emp.id, e)}
+                          className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                          title="Delete employee"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </td>
                     </tr>
                   )

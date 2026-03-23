@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { getBookings, getWashers, type BookingWithDetails } from '@/lib/admin/bookings'
+import { Trash2 } from 'lucide-react'
+import { getBookings, getWashers, deleteBooking, type BookingWithDetails } from '@/lib/admin/bookings'
 import { SERVICE_TYPES, BOOKING_STATUSES, formatDate } from '@/lib/admin/constants'
 import type { BookingStatus, ServiceType } from '@/lib/admin/types'
 
@@ -86,6 +87,16 @@ export default function BookingsTable() {
   useEffect(() => {
     setPage(1)
   }, [filters])
+
+  async function handleDeleteBooking(id: string) {
+    if (!confirm('Delete this booking? This cannot be undone.')) return
+    try {
+      await deleteBooking(id)
+      fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete booking')
+    }
+  }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE)
 
@@ -183,20 +194,21 @@ export default function BookingsTable() {
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/50">Status</th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/50">Washer</th>
               <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-white/50">Notes</th>
+              <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-white/50 w-10"></th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-white/40">Loading...</td>
+                <td colSpan={8} className="px-4 py-12 text-center text-white/40">Loading...</td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-red-400">{error}</td>
+                <td colSpan={8} className="px-4 py-12 text-center text-red-400">{error}</td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-white/40">No bookings found.</td>
+                <td colSpan={8} className="px-4 py-12 text-center text-white/40">No bookings found.</td>
               </tr>
             ) : (
               data.map((booking) => (
@@ -219,6 +231,15 @@ export default function BookingsTable() {
                   <td className="px-4 py-3"><StatusBadge status={booking.status} /></td>
                   <td className="px-4 py-3 text-white/70">{booking.washer?.name ?? '—'}</td>
                   <td className="px-4 py-3 text-white/50 max-w-[200px] truncate">{booking.notes || '—'}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => handleDeleteBooking(booking.id)}
+                      className="text-white/20 hover:text-red-400 p-1 transition-colors"
+                      title="Delete booking"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </td>
                 </tr>
               ))
             )}

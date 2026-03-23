@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { getCustomerById, getCustomerConversations, addConversation, updateCustomer } from '@/lib/admin/customers'
+import { useRouter } from 'next/navigation'
+import { getCustomerById, getCustomerConversations, addConversation, updateCustomer, deleteCustomer } from '@/lib/admin/customers'
 import {
   formatCurrency,
   formatDate,
@@ -17,10 +18,12 @@ interface CustomerProfileProps {
 }
 
 export default function CustomerProfile({ customerId }: CustomerProfileProps) {
+  const router = useRouter()
   const [customer, setCustomer] = useState<CustomerWithStats | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   // Notes editing
   const [notes, setNotes] = useState('')
@@ -71,6 +74,19 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
       // silently fail, user can retry
     } finally {
       setSavingNotes(false)
+    }
+  }
+
+  async function handleDelete() {
+    if (!customer) return
+    if (!confirm('Delete this customer? This cannot be undone.')) return
+    setDeleting(true)
+    try {
+      await deleteCustomer(customer.id)
+      router.push('/admin/customers')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete customer')
+      setDeleting(false)
     }
   }
 
@@ -289,6 +305,19 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Danger Zone */}
+      <div className="border border-red-500/20 rounded-lg p-4 mt-8">
+        <h3 className="text-sm font-semibold text-red-400 mb-2">Danger Zone</h3>
+        <p className="text-xs text-white/40 mb-3">Permanently delete this customer and all their data.</p>
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          className="bg-red-500/20 text-red-400 border border-red-500/30 px-4 py-2 text-sm rounded-lg hover:bg-red-500/30 disabled:opacity-50"
+        >
+          {deleting ? 'Deleting...' : 'Delete Customer'}
+        </button>
       </div>
     </div>
   )

@@ -74,6 +74,13 @@ export async function restockItem(
   return updated as InventoryItem
 }
 
+// ─── Delete Inventory Item ────────────────────────────────────────────
+
+export async function deleteInventoryItem(id: string): Promise<void> {
+  const { error } = await supabase.from('inventory').delete().eq('id', id)
+  if (error) throw new Error(`Failed to delete inventory item: ${error.message}`)
+}
+
 // ─── Low Stock Items ──────────────────────────────────────────────────
 
 export async function getLowStockItems(): Promise<InventoryItem[]> {
