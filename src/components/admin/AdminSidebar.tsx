@@ -45,6 +45,8 @@ const navGroups: NavGroup[] = [
       { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
       { label: 'Job Tracker', href: '/admin/jobs', icon: Wrench },
       { label: 'Route Planner', href: '/admin/routes', icon: MapPin },
+      { label: 'Team & Bonus', href: '/admin/team', icon: UserCog },
+      { label: 'Equipment', href: '/admin/equipment', icon: Cog },
     ],
   },
   {
@@ -53,13 +55,6 @@ const navGroups: NavGroup[] = [
       { label: 'Finance', href: '/admin/finance', icon: DollarSign },
       { label: 'Invoicing', href: '/admin/invoicing', icon: FileText },
       { label: 'Inventory', href: '/admin/inventory', icon: Package },
-    ],
-  },
-  {
-    label: 'Execution',
-    items: [
-      { label: 'Team & Bonus', href: '/admin/team', icon: UserCog },
-      { label: 'Equipment', href: '/admin/equipment', icon: Cog },
     ],
   },
   {
