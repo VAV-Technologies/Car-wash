@@ -1,0 +1,109 @@
+import { NextRequest, NextResponse } from 'next/server'
+import Anthropic from '@anthropic-ai/sdk'
+import { getSupabaseAdmin } from '@/lib/supabase'
+
+const SYSTEM_PROMPT = `You are an API connector analyzer. Given a service name and a description of what an API key is for, analyze the connector and return a JSON object with this exact structure:
+
+{
+  "scope": "Brief description of what this API key grants access to",
+  "capabilities": ["list", "of", "things", "this", "connector", "can", "do"],
+  "auth_method": "bearer_token | api_key_header | oauth2 | basic_auth | query_param",
+  "base_url": "https://api.example.com/v1",
+  "functions": [
+    {"name": "function_name", "description": "What this function does", "params": ["param1", "param2"]}
+  ],
+  "notes": "Any important notes about rate limits, pricing, or usage"
+}
+
+Rules:
+- Return ONLY the JSON object, no markdown, no explanation
+- Base your analysis on the service name and the user's description
+- If docs URLs are mentioned, reference what you know about that API
+- List the most commonly used functions/endpoints
+- Be specific about capabilities — what can and cannot be done
+- If you're unsure about something, note it in the "notes" field`
+
+export async function POST(request: NextRequest) {
+  let body: { connectorId: string; description: string; serviceName: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  if (!body.connectorId || !body.serviceName) {
+    return NextResponse.json({ error: 'connectorId and serviceName required' }, { status: 400 })
+  }
+
+  // Get the Claude base model key from connectors table
+  const admin = getSupabaseAdmin()
+  const { data: baseModel } = await admin
+    .from('connectors')
+    .select('encrypted_key')
+    .eq('is_base_model', true)
+    .single()
+
+  if (!baseModel?.encrypted_key) {
+    // Fallback to env var
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { error: 'No Claude API key configured. Please add your Claude key in Connectors first.' },
+        { status: 503 }
+      )
+    }
+  }
+
+  let apiKey: string
+  try {
+    apiKey = baseModel?.encrypted_key
+      ? Buffer.from(baseModel.encrypted_key, 'base64').toString('utf-8')
+      : process.env.ANTHROPIC_API_KEY!
+  } catch {
+    apiKey = process.env.ANTHROPIC_API_KEY!
+  }
+
+  try {
+    const anthropic = new Anthropic({ apiKey })
+
+    const userMessage = `Service: ${body.serviceName}\n\nDescription from user:\n${body.description || 'No description provided. Analyze based on the service name.'}`
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2048,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: userMessage }],
+    })
+
+    const textBlock = response.content.find(b => b.type === 'text')
+    if (!textBlock || textBlock.type !== 'text') {
+      return NextResponse.json({ error: 'No response from AI' }, { status: 500 })
+    }
+
+    let jsonStr = textBlock.text.trim()
+    if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
+    }
+
+    let analysis: Record<string, unknown>
+    try {
+      analysis = JSON.parse(jsonStr)
+    } catch {
+      return NextResponse.json({ error: 'AI returned invalid analysis. Try adding more detail to your description.' }, { status: 422 })
+    }
+
+    // Save analysis to the connector record
+    const { error: updateError } = await admin
+      .from('connectors')
+      .update({ ai_analysis: analysis, updated_at: new Date().toISOString() })
+      .eq('id', body.connectorId)
+
+    if (updateError) {
+      return NextResponse.json({ error: 'Failed to save analysis' }, { status: 500 })
+    }
+
+    return NextResponse.json({ analysis })
+  } catch (err) {
+    console.error('Connector analysis error:', err)
+    return NextResponse.json({ error: 'Failed to analyze connector' }, { status: 500 })
+  }
+}
