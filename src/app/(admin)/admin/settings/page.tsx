@@ -179,16 +179,96 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Info card */}
-      <div className="border border-white/10 bg-[#171717] rounded-lg p-6">
-        <h3 className="text-sm font-semibold text-white mb-2">How it works</h3>
-        <ul className="text-xs text-white/40 space-y-2">
-          <li>• The Claude API key powers the floating AI chatbot (orange button, bottom-right on every admin page)</li>
-          <li>• Ask it anything: revenue this month, customer count, inventory levels, upsell rates, scenario comparison</li>
-          <li>• It queries your Supabase database in real-time to answer questions</li>
-          <li>• The same key is used for analyzing connectors in the Automations module</li>
-          <li>• Your key is stored encrypted and never exposed client-side</li>
-        </ul>
+      {/* API Access */}
+      <div className="border border-white/10 bg-[#171717] rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/10 flex items-center gap-3">
+          <Key className="h-5 w-5 text-orange-500" />
+          <div>
+            <h2 className="text-base font-semibold text-white">API Access</h2>
+            <p className="text-xs text-white/40">Connect external chatbots and agents to your admin panel</p>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="text-sm text-white/60 block mb-1">Base URL</label>
+            <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 font-mono text-sm text-orange-400">
+              https://car-wash-six-chi.vercel.app/api/admin
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm text-white/60 block mb-1">API Key</label>
+            <div className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 font-mono text-sm text-white/50">
+              Authorization: Bearer {'<'}CASTUDIO_API_KEY{'>'}
+            </div>
+            <p className="text-xs text-white/30 mt-1">Use the same key from your .env.local / Vercel environment variables</p>
+          </div>
+
+          <div>
+            <label className="text-sm text-white/60 block mb-2">Endpoints</label>
+            <div className="space-y-2 text-xs">
+              {[
+                { module: 'Customers', path: '/customers', methods: 'GET POST PUT DELETE', actions: 'list, get, follow-ups, conversations, create, add-conversation, update, delete' },
+                { module: 'Bookings', path: '/bookings', methods: 'GET POST PUT DELETE', actions: 'list, get, today, queue, by-date, washers, search-customers, create, update, delete' },
+                { module: 'Jobs', path: '/jobs', methods: 'GET', actions: 'list, get, stats, recent' },
+                { module: 'Subscriptions', path: '/subscriptions', methods: 'GET POST PUT DELETE', actions: 'list, get, stats, churn-risk, renewals, create, update, delete' },
+                { module: 'Finance', path: '/finance', methods: 'GET POST PUT DELETE', actions: 'list, pending, monthly-pl, revenue-breakdown, expenses, cash-position, aging, create, confirm-payment, fail-payment, delete' },
+                { module: 'Invoicing', path: '/invoicing', methods: 'GET', actions: 'list, get, monthly-summary, receipt' },
+                { module: 'Conversations', path: '/conversations', methods: 'GET POST PUT DELETE', actions: 'list, by-customer, follow-ups, stats, create, complete-follow-up, delete' },
+                { module: 'Inventory', path: '/inventory', methods: 'GET PUT DELETE', actions: 'list, low-stock, critical, default-chemicals, update, restock, deduct, delete' },
+                { module: 'Equipment', path: '/equipment', methods: 'GET PUT DELETE', actions: 'list, get, maintenance-due, update, log-maintenance, increment-cycles, delete' },
+                { module: 'Team', path: '/team', methods: 'GET POST PUT DELETE', actions: 'list, get, stats, payslip, create, update, delete' },
+                { module: 'Automations', path: '/automations', methods: 'GET POST PUT DELETE', actions: 'list, get, runs, run, keys, create, add-key, update, toggle, delete, delete-key' },
+                { module: 'Dashboard', path: '/dashboard', methods: 'GET', actions: 'stats, targets, month-number' },
+                { module: 'Analytics', path: '/analytics', methods: 'GET', actions: 'service-mix, acquisition, retention, concentration, seasonal, upsell, scorecard, all-scorecards' },
+                { module: 'AI Chat', path: '/chat', methods: 'POST', actions: 'Send message, get AI response with database access' },
+              ].map((ep) => (
+                <div key={ep.path} className="border border-white/10 rounded-lg p-3 bg-black/20">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-medium text-white">{ep.module}</span>
+                    <span className="font-mono text-orange-400/70">/api/admin{ep.path}</span>
+                  </div>
+                  <div className="flex gap-1 mb-1">
+                    {ep.methods.split(' ').map(m => (
+                      <span key={m} className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                        m === 'GET' ? 'bg-green-500/20 text-green-400' :
+                        m === 'POST' ? 'bg-blue-500/20 text-blue-400' :
+                        m === 'PUT' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>{m}</span>
+                    ))}
+                  </div>
+                  <p className="text-white/30">Actions: {ep.actions}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <p className="text-xs font-semibold text-white mb-2">Example: Create a customer</p>
+            <pre className="text-[11px] text-white/40 overflow-x-auto whitespace-pre">{`curl -X POST /api/admin/customers \\
+  -H "Authorization: Bearer <KEY>" \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"John","phone":"+628123456"}'`}</pre>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <p className="text-xs font-semibold text-white mb-2">Example: Ask the AI chatbot</p>
+            <pre className="text-[11px] text-white/40 overflow-x-auto whitespace-pre">{`curl -X POST /api/admin/chat \\
+  -H "Authorization: Bearer <KEY>" \\
+  -H "Content-Type: application/json" \\
+  -d '{"message":"How many services this month?"}'`}</pre>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <p className="text-xs font-semibold text-white mb-2">Query pattern</p>
+            <pre className="text-[11px] text-white/40 overflow-x-auto whitespace-pre">{`GET /api/admin/{module}?action={action}&id={id}&page=1&limit=20
+POST /api/admin/{module}?action={action}  (body = JSON)
+PUT /api/admin/{module}?action={action}&id={id}  (body = JSON)
+DELETE /api/admin/{module}?id={id}`}</pre>
+          </div>
+        </div>
       </div>
     </div>
   )
