@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Calendar, Wrench, DollarSign, FileText, MessageCircle, UserCog, MapPin, Cog, Package, BarChart3, Target, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, Calendar, Wrench, DollarSign, FileText, MessageCircle, UserCog, MapPin, Cog, Package, BarChart3, Target, Zap, LogOut } from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
 
 const supabase = createBrowserClient(
@@ -25,6 +25,7 @@ const navItems = [
   { label: 'Inventory', href: '/admin/inventory', icon: Package },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Scorecard', href: '/admin/scorecard', icon: Target },
+  { label: 'Automations', href: '/admin/automations', icon: Zap },
 ]
 
 export default function AdminSidebar() {
