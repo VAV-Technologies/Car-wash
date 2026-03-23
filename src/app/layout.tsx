@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: 'Castudio',
     images: [
       {
-        url: '/assets/nobridge_app_icon.png',
+        url: '/assets/castudio_app_icon.png',
         width: 512,
         height: 512,
         alt: 'Castudio Logo',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Castudio | Premium Car Wash & Detailing',
     description: 'Premium car wash and car detailing studio in Indonesia. Professional hand wash, ceramic coating, interior detailing, and flexible subscription plans.',
-    images: ['/assets/nobridge_app_icon.png'],
+    images: ['/assets/castudio_app_icon.png'],
   },
   robots: {
     index: true,
@@ -56,16 +56,16 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/nobridge-favicon.ico?v=3', sizes: 'any' },
-      { url: '/nobridge-favicon.png?v=3', type: 'image/png', sizes: '32x32' },
-      { url: '/assets/nobridge_app_icon.png?v=3', type: 'image/png', sizes: '512x512' },
-      { url: '/assets/nobridge_app_icon.png?v=3', type: 'image/png', sizes: '192x192' },
-      { url: '/assets/nobridge_app_icon.png?v=3', type: 'image/png', sizes: '16x16' },
+      { url: '/castudio-favicon.ico?v=3', sizes: 'any' },
+      { url: '/castudio-favicon.png?v=3', type: 'image/png', sizes: '32x32' },
+      { url: '/assets/castudio_app_icon.png?v=3', type: 'image/png', sizes: '512x512' },
+      { url: '/assets/castudio_app_icon.png?v=3', type: 'image/png', sizes: '192x192' },
+      { url: '/assets/castudio_app_icon.png?v=3', type: 'image/png', sizes: '16x16' },
     ],
     apple: [
       { url: '/assets/apple-touch-icon.png?v=3', sizes: '180x180', type: 'image/png' },
     ],
-    shortcut: '/nobridge-favicon.ico?v=3',
+    shortcut: '/castudio-favicon.ico?v=3',
   },
   manifest: '/manifest.json?v=3',
 };
@@ -79,8 +79,8 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning>
       <head>
         {/* Favicons and icons */}
-        <link rel="icon" href="/nobridge-favicon.ico?v=3" sizes="any" />
-        <link rel="icon" href="/nobridge-favicon.png?v=3" type="image/png" />
+        <link rel="icon" href="/castudio-favicon.ico?v=3" sizes="any" />
+        <link rel="icon" href="/castudio-favicon.png?v=3" type="image/png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=3" />
         <meta name="theme-color" content="#0A0A0A" />
 

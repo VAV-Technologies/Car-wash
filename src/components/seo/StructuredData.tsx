@@ -20,7 +20,7 @@ export default function StructuredData({
       "name": "Castudio",
       "description": description,
       "url": url,
-      "logo": "https://www.castudio.co/assets/nobridge_app_icon.png",
+      "logo": "https://www.castudio.co/assets/castudio_app_icon.png",
       "sameAs": []
     };
 
