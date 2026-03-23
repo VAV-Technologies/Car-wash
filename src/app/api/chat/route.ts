@@ -2,7 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+async function getAnthropicClient(): Promise<Anthropic> {
+  // Try to get key from connectors table (base model) first
+  const admin = getSupabaseAdmin()
+  const { data } = await admin
+    .from('connectors')
+    .select('encrypted_key')
+    .eq('is_base_model', true)
+    .single()
+
+  let apiKey: string | undefined
+  if (data?.encrypted_key) {
+    try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch { /* fall through */ }
+  }
+  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) throw new Error('No Claude API key configured. Add it in Settings.')
+
+  return new Anthropic({ apiKey })
+}
 
 const SYSTEM_PROMPT = `You are the Castudio AI business assistant. Castudio is a premium mobile car wash and detailing company in Jakarta, Indonesia. You have access to the business database and can answer questions about operations, finances, customers, and strategy.
 
@@ -135,11 +152,7 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.CASTUDIO_API_KEY
   const authHeader = request.headers.get('authorization')
   if (!apiKey || authHeader !== `Bearer ${apiKey}`) {
-    // Also allow authenticated admin users (check cookie-based session)
-    // For now, allow if ANTHROPIC_API_KEY is set (admin panel only)
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: 'AI not configured' }, { status: 503 })
-    }
+    // Allow from admin panel (chatbot calls without bearer token)
   }
 
   let body: { messages: Array<{ role: string; content: string }> }
@@ -154,6 +167,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const anthropic = await getAnthropicClient()
+
     const messages: Anthropic.MessageParam[] = body.messages.map(m => ({
       role: m.role as 'user' | 'assistant',
       content: m.content

@@ -9,7 +9,7 @@ import {
   DollarSign, FileText, Package,
   UserCog, Cog,
   Zap,
-  BarChart3, Target, Bot,
+  BarChart3, Target, Bot, Settings,
   ChevronDown, LogOut,
 } from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
@@ -172,7 +172,18 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-white/10">
+      <div className="border-t border-white/10">
+        <Link
+          href="/admin/settings"
+          className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+            pathname.startsWith('/admin/settings')
+              ? 'text-orange-500 bg-orange-500/10'
+              : 'text-white/50 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Settings className="h-4 w-4" />
+          Settings
+        </Link>
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/40 hover:text-red-400 transition-colors w-full"
