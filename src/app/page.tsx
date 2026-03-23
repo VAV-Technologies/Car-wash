@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from 'next/link';
+import Image from 'next/image';
 import { Droplets, Sparkles, ArrowRight, Clock, ShieldCheck, MapPin, CheckCircle2, CalendarDays, MessageCircle, Paintbrush, Car, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FadeIn } from '@/components/ui/fade-in';
@@ -29,7 +30,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/30" />
         </div>
         <div className="container mx-auto flex flex-col items-center justify-center text-center min-h-screen px-4 py-24 md:py-32 lg:py-40 relative z-10">
-          <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
+          <h1 style={{ letterSpacing: '-2.5px' }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal !leading-tight mb-6 font-heading animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100 text-brand-orange">
             {t('home.hero.title.line1')}<br />{t('home.hero.title.line2')}
           </h1>
           <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-white/80 max-w-[85%] sm:max-w-3xl mx-auto mb-8 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-200 text-balance sm:text-pretty">
@@ -85,26 +86,32 @@ export default function HomePage() {
               {
                 title: t('home.problems.swirlMarks.title'),
                 body: t('home.problems.swirlMarks.body'),
+                image: '/images/problems/swirl-marks.jpg',
               },
               {
                 title: t('home.problems.fadedPaint.title'),
                 body: t('home.problems.fadedPaint.body'),
+                image: '/images/problems/faded-paint.jpg',
               },
               {
                 title: t('home.problems.waterSpots.title'),
                 body: t('home.problems.waterSpots.body'),
+                image: '/images/problems/water-spots.jpg',
               },
               {
                 title: t('home.problems.crackedInterior.title'),
                 body: t('home.problems.crackedInterior.body'),
+                image: '/images/problems/cracked-interior.jpg',
               },
               {
                 title: t('home.problems.brakeDust.title'),
                 body: t('home.problems.brakeDust.body'),
+                image: '/images/problems/brake-dust.jpg',
               },
               {
                 title: t('home.problems.resaleValue.title'),
                 body: t('home.problems.resaleValue.body'),
+                image: '/images/problems/resale-value.jpg',
               },
             ].map((problem, index) => (
               <FadeIn key={index} delay={(index % 3) * 100}>
@@ -116,8 +123,8 @@ export default function HomePage() {
                   index >= 3 && index % 3 !== 0 && "sm:border-l"
                 )}>
                   {/* Image */}
-                  <div className="h-44 bg-brand-black flex items-center justify-center border-b border-white/10">
-                    <span className="text-white/20 text-sm">[IMAGE: {problem.title}]</span>
+                  <div className="h-44 bg-brand-black relative overflow-hidden border-b border-white/10">
+                    <Image src={problem.image} alt={problem.title} fill className="object-cover grayscale" />
                   </div>
                   {/* Content */}
                   <div className="p-5 sm:p-6 flex flex-col flex-grow">
@@ -147,8 +154,8 @@ export default function HomePage() {
           <FadeIn direction="up" delay={100}>
             <div className="border border-white/15 flex flex-col md:flex-row">
               {/* Left - Image */}
-              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-square relative overflow-hidden">
-                <span className="text-white/30 text-sm">[IMAGE: Castudio technician at work]</span>
+              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 aspect-[4/3] md:aspect-square relative overflow-hidden">
+                <Image src="/images/wash/technician-at-work.jpg" alt="Castudio technician at work" fill className="object-cover" />
               </div>
               {/* Right - Quote, body, 4 pillars */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">
@@ -211,6 +218,7 @@ export default function HomePage() {
                 duration: t('home.services.standard.duration'),
                 body: t('home.services.standard.body'),
                 tags: [t('home.services.standard.tag1'), t('home.services.standard.tag2'), t('home.services.standard.tag3'), t('home.services.standard.tag4'), t('home.services.standard.tag5')],
+                image: '/images/wash/standard-wash.jpg',
               },
               {
                 num: "02",
@@ -220,6 +228,7 @@ export default function HomePage() {
                 duration: t('home.services.professional.duration'),
                 body: t('home.services.professional.body'),
                 tags: [t('home.services.professional.tag1'), t('home.services.professional.tag2'), t('home.services.professional.tag3'), t('home.services.professional.tag4')],
+                image: '/images/wash/professional-wash.jpg',
               },
               {
                 num: "03",
@@ -229,6 +238,7 @@ export default function HomePage() {
                 duration: t('home.services.elite.duration'),
                 body: t('home.services.elite.body'),
                 tags: [t('home.services.elite.tag1'), t('home.services.elite.tag2'), t('home.services.elite.tag3'), t('home.services.elite.tag4')],
+                image: '/images/wash/elite-wash.jpg',
               },
             ];
             return (
@@ -239,10 +249,10 @@ export default function HomePage() {
                     {services.map((card, index) => (
                       <FadeIn key={card.num} delay={index * 100} className="flex-1">
                         <div className={cn(
-                          "border border-white/10 h-56 bg-brand-dark-gray relative overflow-hidden flex items-center justify-center",
+                          "border border-white/10 h-56 bg-brand-dark-gray relative overflow-hidden",
                           index > 0 && "border-l-0"
                         )}>
-                          <span className="text-white/30 text-sm">[IMAGE: {card.title}]</span>
+                          <Image src={card.image} alt={card.title} fill className="object-cover" />
                         </div>
                       </FadeIn>
                     ))}
@@ -281,10 +291,10 @@ export default function HomePage() {
                   {services.map((card, index) => (
                     <FadeIn key={card.num} delay={index * 100}>
                       <div className={cn(
-                        "border border-white/10 h-48 bg-brand-dark-gray relative overflow-hidden flex items-center justify-center",
+                        "border border-white/10 h-48 bg-brand-dark-gray relative overflow-hidden",
                         index > 0 && "border-t-0"
                       )}>
-                        <span className="text-white/30 text-sm">[IMAGE: {card.title}]</span>
+                        <Image src={card.image} alt={card.title} fill className="object-cover" />
                       </div>
                       <div className={cn(
                         "group relative border border-white/10 border-t-0 bg-brand-dark-gray p-6 sm:p-8 flex flex-col overflow-hidden"
@@ -326,11 +336,11 @@ export default function HomePage() {
 
             <div className="flex flex-col">
               {[
-                { title: t('home.detailing.interior.title'), body: t('home.detailing.interior.body') },
-                { title: t('home.detailing.exterior.title'), body: t('home.detailing.exterior.body') },
-                { title: t('home.detailing.window.title'), body: t('home.detailing.window.body') },
-                { title: t('home.detailing.tireRims.title'), body: t('home.detailing.tireRims.body') },
-                { title: t('home.detailing.fullDetail.title'), body: t('home.detailing.fullDetail.body') },
+                { title: t('home.detailing.interior.title'), body: t('home.detailing.interior.body'), image: '/images/detailing/interior.jpg' },
+                { title: t('home.detailing.exterior.title'), body: t('home.detailing.exterior.body'), image: '/images/detailing/exterior.jpg' },
+                { title: t('home.detailing.window.title'), body: t('home.detailing.window.body'), image: '/images/detailing/window.jpg' },
+                { title: t('home.detailing.tireRims.title'), body: t('home.detailing.tireRims.body'), image: '/images/detailing/tire-rims.jpg' },
+                { title: t('home.detailing.fullDetail.title'), body: t('home.detailing.fullDetail.body'), image: '/images/detailing/full-detail.jpg' },
               ].map((item, index) => (
                 <FadeIn key={index} delay={index * 80}>
                   <div className={cn(
@@ -349,8 +359,8 @@ export default function HomePage() {
                       </div>
                     </div>
                     {/* Image — right column */}
-                    <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray flex items-center justify-center">
-                      <span className="text-white/20 text-sm">[IMAGE: {item.title}]</span>
+                    <div className="md:w-[23%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray">
+                      <Image src={item.image} alt={item.title} fill className="object-cover" />
                     </div>
                   </div>
                 </FadeIn>
@@ -402,8 +412,8 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-              <div className="md:w-[45%] min-h-[250px] md:min-h-[350px] border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray flex items-center justify-center">
-                <span className="text-white/30 text-sm">[IMAGE: Subscription plans]</span>
+              <div className="md:w-[45%] min-h-[250px] md:min-h-[350px] border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-dark-gray">
+                <Image src="/images/general/subscription-hero.jpg" alt="Subscription plans" fill className="object-cover" />
               </div>
             </div>
           </FadeIn>
@@ -439,9 +449,6 @@ export default function HomePage() {
                   index % 3 !== 0 && "md:border-l-0",
                   index >= 3 && "md:border-t-0"
                 )}>
-                  <div className="h-44 bg-brand-black flex items-center justify-center border-b border-white/10">
-                    <span className="text-white/20 text-sm">[IMAGE: {review.name}]</span>
-                  </div>
                   <div className="p-6 sm:p-8 flex flex-col flex-grow">
                     <div className="flex items-center gap-1 mb-4">
                       {Array.from({ length: review.stars }).map((_, i) => (

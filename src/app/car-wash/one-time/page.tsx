@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 import { Check, Sparkles, Droplets, ShieldCheck, MapPin, ArrowRight, Waves, Wind, CircleDot, Eraser, Wrench, GlassWater, Flame, Gem } from "lucide-react";
@@ -32,21 +33,25 @@ export default function OneTimeWashPage() {
       num: "01",
       title: t('oneTime.process.step1.title'),
       body: t('oneTime.process.step1.body'),
+      image: '/images/process/foam-pre-wash.jpg',
     },
     {
       num: "02",
       title: t('oneTime.process.step2.title'),
       body: t('oneTime.process.step2.body'),
+      image: '/images/process/hand-wash.jpg',
     },
     {
       num: "03",
       title: t('oneTime.process.step3.title'),
       body: t('oneTime.process.step3.body'),
+      image: '/images/process/interior-clean.jpg',
     },
     {
       num: "04",
       title: t('oneTime.process.step4.title'),
       body: t('oneTime.process.step4.body'),
+      image: '/images/process/tire-polish.jpg',
     },
   ];
 
@@ -140,8 +145,8 @@ export default function OneTimeWashPage() {
                       <p className="text-white/60 leading-relaxed">{step.body}</p>
                     </div>
                   </div>
-                  <div className="md:w-[25%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-black flex items-center justify-center">
-                    <span className="text-white/20 text-sm">[IMAGE: {step.title}]</span>
+                  <div className="md:w-[25%] h-40 md:h-auto border-t md:border-t-0 md:border-l border-white/10 relative overflow-hidden shrink-0 bg-brand-black">
+                    <Image src={step.image} alt={step.title} fill className="object-cover" />
                   </div>
                 </div>
               </FadeIn>
@@ -216,12 +221,16 @@ export default function OneTimeWashPage() {
             {/* Image placeholders — above table, no borders on left cell */}
             <div className="flex">
               <div className="w-[28%] sm:w-[24%] shrink-0" />
-              {[t('oneTime.pricing.standard'), t('oneTime.pricing.professional'), t('oneTime.pricing.elite')].map((name, i) => (
-                <div key={name} className={cn(
-                  "flex-1 h-40 sm:h-48 bg-brand-black flex items-center justify-center",
+              {[
+                { name: t('oneTime.pricing.standard'), image: '/images/wash/standard-wash.jpg' },
+                { name: t('oneTime.pricing.professional'), image: '/images/wash/professional-wash.jpg' },
+                { name: t('oneTime.pricing.elite'), image: '/images/wash/elite-wash.jpg' },
+              ].map((tier, i) => (
+                <div key={tier.name} className={cn(
+                  "flex-1 h-40 sm:h-48 bg-brand-black relative overflow-hidden",
                   i > 0 && "border-l border-white/10"
                 )}>
-                  <span className="text-white/20 text-sm">[IMAGE: {name}]</span>
+                  <Image src={tier.image} alt={tier.name} fill className="object-cover" />
                 </div>
               ))}
             </div>
@@ -271,9 +280,9 @@ export default function OneTimeWashPage() {
               <div className="w-[28%] sm:w-[24%] shrink-0" />
               <div className="flex flex-1 border-x border-b border-white/10">
                 {[
-                  { label: t('oneTime.pricing.bookStandard'), tagline: t('oneTime.pricing.thoroughClean'), price: t('oneTime.pricing.standardPrice'), duration: t('oneTime.pricing.standardDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20339.000).` },
-                  { label: t('oneTime.pricing.bookProfessional'), tagline: t('oneTime.pricing.deepRestoration'), price: t('oneTime.pricing.professionalPrice'), duration: t('oneTime.pricing.professionalDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20569.000).` },
-                  { label: t('oneTime.pricing.bookElite'), tagline: t('oneTime.pricing.fullTransformation'), price: t('oneTime.pricing.elitePrice'), duration: t('oneTime.pricing.eliteDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20919.000).` },
+                  { label: t('oneTime.pricing.bookStandard'), tagline: t('oneTime.pricing.thoroughClean'), price: t('oneTime.pricing.standardPrice'), duration: t('oneTime.pricing.standardDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Standard%20Wash%20(Rp%20349.000).` },
+                  { label: t('oneTime.pricing.bookProfessional'), tagline: t('oneTime.pricing.deepRestoration'), price: t('oneTime.pricing.professionalPrice'), duration: t('oneTime.pricing.professionalDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Professional%20Wash%20(Rp%20649.000).` },
+                  { label: t('oneTime.pricing.bookElite'), tagline: t('oneTime.pricing.fullTransformation'), price: t('oneTime.pricing.elitePrice'), duration: t('oneTime.pricing.eliteDuration'), href: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20booking%20Elite%20Wash%20(Rp%20949.000).` },
                 ].map((cta, i) => (
                   <div key={cta.label} className={cn(
                     "flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center gap-2",

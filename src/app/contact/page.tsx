@@ -205,12 +205,12 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20cuci%20mobil."
+                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20sesi%20detailing."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
                 >
-                  {t('common.cta.subscribeViaWhatsApp')}{" "}
+                  {t('common.cta.bookViaWhatsApp')}{" "}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </div>

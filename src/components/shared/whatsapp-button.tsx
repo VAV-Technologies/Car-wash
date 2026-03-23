@@ -26,7 +26,14 @@ export function WhatsAppButton() {
 
   return (
     <div className="fixed bottom-6 right-0 left-0 z-50 pointer-events-none">
-      <div className="container mx-auto flex justify-end">
+      <div className="container mx-auto flex justify-between items-center">
+        <button
+          onClick={toggleLocale}
+          className="pointer-events-auto flex items-center gap-2 px-4 py-3 border border-white/10 bg-brand-black/90 backdrop-blur-xl supports-[backdrop-filter]:bg-brand-black/80 shadow-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <Globe className="h-4 w-4" strokeWidth={1.5} />
+          <span className="text-sm font-medium">{locale === 'id' ? 'EN' : 'ID'}</span>
+        </button>
         <div className="pointer-events-auto flex border border-white/10 bg-brand-black/90 backdrop-blur-xl supports-[backdrop-filter]:bg-brand-black/80 shadow-lg">
           <a
             href={waHref}
@@ -53,14 +60,6 @@ export function WhatsAppButton() {
             <Phone className="h-4 w-4" strokeWidth={1.5} />
             <span className="text-sm font-medium">{t('common.contact.phone')}</span>
           </a>
-          <div className="w-px bg-white/10" />
-          <button
-            onClick={toggleLocale}
-            className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            <Globe className="h-4 w-4" strokeWidth={1.5} />
-            <span className="text-sm font-medium">{locale === 'id' ? 'EN' : 'ID'}</span>
-          </button>
         </div>
       </div>
     </div>

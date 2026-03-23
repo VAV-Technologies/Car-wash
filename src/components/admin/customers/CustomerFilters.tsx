@@ -1,0 +1,110 @@
+'use client'
+
+import { NEIGHBORHOODS, ACQUISITION_SOURCES, SEGMENTS } from '@/lib/admin/constants'
+import type { CustomerFiltersState } from '@/lib/admin/types'
+
+interface CustomerFiltersProps {
+  filters: CustomerFiltersState
+  onFiltersChange: (filters: CustomerFiltersState) => void
+}
+
+export default function CustomerFilters({ filters, onFiltersChange }: CustomerFiltersProps) {
+  function updateFilter<K extends keyof CustomerFiltersState>(
+    key: K,
+    value: CustomerFiltersState[K]
+  ) {
+    onFiltersChange({ ...filters, [key]: value })
+  }
+
+  function clearFilters() {
+    onFiltersChange({
+      search: '',
+      neighborhood: '',
+      segment: '',
+      acquisition_source: '',
+    })
+  }
+
+  const hasActiveFilters =
+    filters.search !== '' ||
+    filters.neighborhood !== '' ||
+    filters.segment !== '' ||
+    filters.acquisition_source !== ''
+
+  return (
+    <div className="flex flex-wrap items-end gap-3">
+      {/* Search */}
+      <div className="flex-1 min-w-[200px]">
+        <label className="block text-xs font-medium text-white/50 mb-1">Search</label>
+        <input
+          type="text"
+          placeholder="Search name, phone, plate..."
+          value={filters.search}
+          onChange={(e) => updateFilter('search', e.target.value)}
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30"
+        />
+      </div>
+
+      {/* Neighborhood */}
+      <div className="min-w-[160px]">
+        <label className="block text-xs font-medium text-white/50 mb-1">Neighborhood</label>
+        <select
+          value={filters.neighborhood}
+          onChange={(e) => updateFilter('neighborhood', e.target.value as CustomerFiltersState['neighborhood'])}
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30"
+        >
+          <option value="" className="bg-[#171717]">All Neighborhoods</option>
+          {NEIGHBORHOODS.map((n) => (
+            <option key={n.value} value={n.value} className="bg-[#171717]">
+              {n.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Segment */}
+      <div className="min-w-[140px]">
+        <label className="block text-xs font-medium text-white/50 mb-1">Segment</label>
+        <select
+          value={filters.segment}
+          onChange={(e) => updateFilter('segment', e.target.value as CustomerFiltersState['segment'])}
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30"
+        >
+          <option value="" className="bg-[#171717]">All Segments</option>
+          {SEGMENTS.map((s) => (
+            <option key={s.value} value={s.value} className="bg-[#171717]">
+              {s.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Acquisition Source */}
+      <div className="min-w-[140px]">
+        <label className="block text-xs font-medium text-white/50 mb-1">Source</label>
+        <select
+          value={filters.acquisition_source}
+          onChange={(e) => updateFilter('acquisition_source', e.target.value as CustomerFiltersState['acquisition_source'])}
+          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/30"
+        >
+          <option value="" className="bg-[#171717]">All Sources</option>
+          {ACQUISITION_SOURCES.map((s) => (
+            <option key={s.value} value={s.value} className="bg-[#171717]">
+              {s.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Clear Filters */}
+      {hasActiveFilters && (
+        <button
+          onClick={clearFilters}
+          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+        >
+          Clear Filters
+        </button>
+      )}
+    </div>
+  )
+}

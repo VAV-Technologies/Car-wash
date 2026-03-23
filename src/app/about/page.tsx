@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 import { useTranslation } from '@/i18n';
@@ -102,8 +103,8 @@ export default function AboutPage() {
           <FadeIn delay={100}>
             <div className="border border-white/15 flex flex-col md:flex-row">
               {/* Left - Image placeholder */}
-              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 flex items-center justify-center aspect-[4/3] md:aspect-auto relative overflow-hidden">
-                <span className="text-white/30 text-sm">[IMAGE: The Castudio Team]</span>
+              <div className="md:w-1/2 bg-brand-dark-gray border-b md:border-b-0 md:border-r border-white/10 aspect-[4/3] md:aspect-auto relative overflow-hidden">
+                <Image src="/images/wash/technician-at-work.jpg" alt="The Castudio Team" fill className="object-cover" />
               </div>
               {/* Right - Content */}
               <div className="md:w-1/2 bg-brand-dark-gray p-6 sm:p-8 md:p-10 flex flex-col justify-center">

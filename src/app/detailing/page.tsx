@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { FadeIn } from "@/components/ui/fade-in";
 import { cn } from "@/lib/utils";
 import { Check, ArrowRight, ShieldCheck, Sparkles, Paintbrush, Eye } from "lucide-react";
@@ -16,6 +17,7 @@ export default function DetailingPage() {
       name: t('detailing.interior.name'),
       price: t('detailing.interior.price'),
       duration: t('detailing.interior.duration'),
+      image: '/images/detailing/interior.jpg',
       bg: "bg-brand-black",
       description: t('detailing.interior.desc'),
       includes: [
@@ -33,6 +35,7 @@ export default function DetailingPage() {
       name: t('detailing.exterior.name'),
       price: t('detailing.exterior.price'),
       duration: t('detailing.exterior.duration'),
+      image: '/images/detailing/exterior.jpg',
       bg: "bg-brand-dark-gray",
       description: t('detailing.exterior.desc'),
       includes: [
@@ -50,6 +53,7 @@ export default function DetailingPage() {
       name: t('detailing.window.name'),
       price: t('detailing.window.price'),
       duration: t('detailing.window.duration'),
+      image: '/images/detailing/window.jpg',
       bg: "bg-brand-black",
       description: t('detailing.window.desc'),
       includes: [
@@ -65,6 +69,7 @@ export default function DetailingPage() {
       name: t('detailing.tireRims.name'),
       price: t('detailing.tireRims.price'),
       duration: t('detailing.tireRims.duration'),
+      image: '/images/detailing/tire-rims.jpg',
       bg: "bg-brand-dark-gray",
       description: t('detailing.tireRims.desc'),
       includes: [
@@ -169,8 +174,8 @@ export default function DetailingPage() {
                 </div>
 
                 {/* Right: image placeholder */}
-                <div className="md:w-1/3 min-h-[200px] border-t md:border-t-0 md:border-l border-white/10 bg-brand-black flex items-center justify-center">
-                  <span className="text-white/20 text-sm">[IMAGE: Full Detail]</span>
+                <div className="md:w-1/3 min-h-[200px] border-t md:border-t-0 md:border-l border-white/10 bg-brand-black relative overflow-hidden">
+                  <Image src="/images/detailing/full-detail.jpg" alt="Full Detail" fill className="object-cover" />
                 </div>
               </div>
 
@@ -215,8 +220,8 @@ export default function DetailingPage() {
                     i === 2 && "sm:border-t lg:border-t-0"
                   )}
                 >
-                  <div className="h-48 bg-brand-black flex items-center justify-center border-b border-white/10">
-                    <span className="text-white/20 text-sm">[IMAGE: {service.name}]</span>
+                  <div className="h-48 bg-brand-black relative overflow-hidden border-b border-white/10">
+                    <Image src={service.image} alt={service.name} fill className="object-cover" />
                   </div>
                   <div className="p-5 sm:p-6 flex flex-col flex-grow">
                     <h3 className="text-lg font-heading text-white mb-1">{service.name}</h3>

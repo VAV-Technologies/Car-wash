@@ -14,6 +14,12 @@ interface GlobalLayoutWrapperProps {
 
 export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperProps) {
   const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return <>{children}</>;
+  }
+
   const isHomePage = pathname === '/';
 
   return (

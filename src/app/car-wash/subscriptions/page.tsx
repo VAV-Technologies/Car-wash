@@ -36,7 +36,7 @@ export default function SubscriptionsPage() {
       detailingBonusValue: null as string | null,
       bestFor: t('subscriptions.plans.essentials.bestFor'),
       cta: t('subscriptions.plans.essentials.cta'),
-      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.549.000%2F4%20bulan).`,
+      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Essentials%20(Rp%201.356.000%2F4%20bulan).`,
       icon: Droplets,
       popular: false,
     },
@@ -55,7 +55,7 @@ export default function SubscriptionsPage() {
       detailingBonusValue: null as string | null,
       bestFor: t('subscriptions.plans.plus.bestFor'),
       cta: t('subscriptions.plans.plus.cta'),
-      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%202.139.000%2F4%20bulan).`,
+      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Plus%20(Rp%201.796.000%2F4%20bulan).`,
       icon: Sparkles,
       popular: true,
     },
@@ -74,7 +74,7 @@ export default function SubscriptionsPage() {
       detailingBonusValue: t('subscriptions.plans.elite.detailingBonusValue'),
       bestFor: t('subscriptions.plans.elite.bestFor'),
       cta: t('subscriptions.plans.elite.cta'),
-      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%203.209.000%2F4%20bulan).`,
+      ctaLink: `${WA_BASE}?text=Halo%2C%20saya%20ingin%20berlangganan%20paket%20Elite%20(Rp%2012.000.000%2Ftahun).`,
       icon: Star,
       popular: false,
     },
@@ -210,9 +210,11 @@ export default function SubscriptionsPage() {
                     <p className="text-xs text-brand-white/50 mt-3">
                       {plan.termNote}
                     </p>
-                    <span className="inline-block mt-3 px-3 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-semibold uppercase tracking-wider">
-                      {t('subscriptions.save')} {plan.savings}
-                    </span>
+                    {plan.savings && (
+                      <span className="inline-block mt-3 px-3 py-1 bg-green-500/20 border border-green-500/30 text-green-400 text-xs font-semibold uppercase tracking-wider">
+                        {t('subscriptions.save')} {plan.savings}
+                      </span>
+                    )}
                   </div>
 
                   {/* Features */}
