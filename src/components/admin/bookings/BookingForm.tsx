@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createBooking, searchCustomers, getWashers } from '@/lib/admin/bookings'
 import { SERVICE_TYPES } from '@/lib/admin/constants'
 import type { ServiceType, BookingStatus } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 interface CustomerResult {
   id: string
@@ -208,32 +210,30 @@ export default function BookingForm() {
           <label className={labelClass}>
             Service Type <span className="text-red-400">*</span>
           </label>
-          <select
+          <AdminSelect
             value={form.service_type}
             onChange={(e) => updateField('service_type', e.target.value)}
-            className={inputClass}
           >
-            <option value="" className="bg-[#171717]">Select service</option>
+            <option value="">Select service</option>
             {SERVICE_TYPES.map((s) => (
-              <option key={s.value} value={s.value} className="bg-[#171717]">{s.label}</option>
+              <option key={s.value} value={s.value}>{s.label}</option>
             ))}
-          </select>
+          </AdminSelect>
           {errors.service_type && <p className={errorClass}>{errors.service_type}</p>}
         </div>
 
         {/* Washer Assignment */}
         <div>
           <label className={labelClass}>Assign Washer</label>
-          <select
+          <AdminSelect
             value={selectedWasherId}
             onChange={(e) => setSelectedWasherId(e.target.value)}
-            className={inputClass}
           >
-            <option value="" className="bg-[#171717]">Assign later</option>
+            <option value="">Assign later</option>
             {washers.map((w) => (
-              <option key={w.id} value={w.id} className="bg-[#171717]">{w.name}</option>
+              <option key={w.id} value={w.id}>{w.name}</option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
 
         {/* Date */}
@@ -241,11 +241,9 @@ export default function BookingForm() {
           <label className={labelClass}>
             Date <span className="text-red-400">*</span>
           </label>
-          <input
-            type="date"
+          <AdminDateInput
             value={form.scheduled_date}
             onChange={(e) => updateField('scheduled_date', e.target.value)}
-            className={inputClass}
           />
           {errors.scheduled_date && <p className={errorClass}>{errors.scheduled_date}</p>}
         </div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createCustomer, updateCustomer } from '@/lib/admin/customers'
 import { NEIGHBORHOODS, ACQUISITION_SOURCES } from '@/lib/admin/constants'
 import type { Customer } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 
 interface CustomerFormProps {
   customer?: Customer
@@ -167,35 +168,33 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
         {/* Neighborhood */}
         <div>
           <label className={labelClass}>Neighborhood</label>
-          <select
+          <AdminSelect
             value={form.neighborhood}
             onChange={(e) => updateField('neighborhood', e.target.value)}
-            className={inputClass}
           >
-            <option value="" className="bg-[#171717]">Select neighborhood</option>
+            <option value="">Select neighborhood</option>
             {NEIGHBORHOODS.map((n) => (
-              <option key={n.value} value={n.value} className="bg-[#171717]">
+              <option key={n.value} value={n.value}>
                 {n.label}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
 
         {/* Acquisition Source */}
         <div>
           <label className={labelClass}>Acquisition Source</label>
-          <select
+          <AdminSelect
             value={form.acquisition_source}
             onChange={(e) => updateField('acquisition_source', e.target.value)}
-            className={inputClass}
           >
-            <option value="" className="bg-[#171717]">Select source</option>
+            <option value="">Select source</option>
             {ACQUISITION_SOURCES.map((s) => (
-              <option key={s.value} value={s.value} className="bg-[#171717]">
+              <option key={s.value} value={s.value}>
                 {s.label}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
       </div>
 

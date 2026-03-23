@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { createEmployee, updateEmployee } from '@/lib/admin/team'
 import type { EmployeeExtended, EmployeeStatus, EmployeeRole } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 interface EmployeeFormProps {
   employee?: EmployeeExtended
@@ -124,10 +126,9 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
             </div>
             <div>
               <label className="block text-xs text-white/40 mb-1.5">Role</label>
-              <select
+              <AdminSelect
                 value={role}
                 onChange={(e) => setRole(e.target.value as EmployeeRole)}
-                className={inputClasses}
               >
                 <option value="washer">Washer</option>
                 <option value="detailer">Detailer</option>
@@ -135,15 +136,13 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
                 <option value="supervisor">Supervisor</option>
                 <option value="admin">Admin</option>
                 <option value="manager">Manager</option>
-              </select>
+              </AdminSelect>
             </div>
             <div>
               <label className="block text-xs text-white/40 mb-1.5">Hire Date</label>
-              <input
-                type="date"
+              <AdminDateInput
                 value={hireDate}
                 onChange={(e) => setHireDate(e.target.value)}
-                className={inputClasses}
               />
             </div>
             <div>
@@ -157,15 +156,14 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
             </div>
             <div>
               <label className="block text-xs text-white/40 mb-1.5">Status</label>
-              <select
+              <AdminSelect
                 value={status}
                 onChange={(e) => setStatus(e.target.value as EmployeeStatus)}
-                className={inputClasses}
               >
                 <option value="active">Active</option>
                 <option value="on_leave">On Leave</option>
                 <option value="terminated">Terminated</option>
-              </select>
+              </AdminSelect>
             </div>
           </div>
 

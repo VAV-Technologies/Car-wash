@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight, Loader2, ChevronDown, ChevronUp } from 'luci
 import { getInvoices, type InvoiceRow } from '@/lib/admin/invoicing'
 import { formatCurrency, formatDate, SERVICE_TYPES } from '@/lib/admin/constants'
 import type { PaymentStatus } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 import InvoiceDetail from './InvoiceDetail'
 
 function getCategoryLabel(category: string | null): string {
@@ -91,30 +93,25 @@ export default function InvoiceList() {
     <div>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <select
+        <AdminSelect
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as PaymentStatus | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="confirmed">Confirmed</option>
           <option value="failed">Failed</option>
           <option value="refunded">Refunded</option>
-        </select>
+        </AdminSelect>
 
-        <input
-          type="date"
+        <AdminDateInput
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         />
         <span className="text-white/30 text-sm">to</span>
-        <input
-          type="date"
+        <AdminDateInput
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         />
 
         <input

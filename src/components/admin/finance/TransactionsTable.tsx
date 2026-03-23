@@ -13,6 +13,8 @@ import {
 import { getTransactions, deleteTransaction } from '@/lib/admin/finance'
 import { formatCurrency, formatDate, SERVICE_TYPES } from '@/lib/admin/constants'
 import type { TransactionWithCustomer, TransactionType, PaymentStatus } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 import AddExpenseForm from './AddExpenseForm'
 
 function getCategoryLabel(category: string | null): string {
@@ -112,41 +114,35 @@ export default function TransactionsTable() {
     <div>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <select
+        <AdminSelect
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as TransactionType | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Types</option>
           <option value="revenue">Revenue</option>
           <option value="expense">Expense</option>
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as PaymentStatus | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="confirmed">Confirmed</option>
           <option value="failed">Failed</option>
-        </select>
+        </AdminSelect>
 
-        <input
-          type="date"
+        <AdminDateInput
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
           placeholder="From"
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         />
         <span className="text-white/30 text-sm">to</span>
-        <input
-          type="date"
+        <AdminDateInput
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
           placeholder="To"
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         />
 
         <div className="ml-auto">

@@ -13,6 +13,7 @@ import {
 import { getConversations, deleteConversation } from '@/lib/admin/conversations'
 import { formatDate } from '@/lib/admin/constants'
 import type { ConversationWithCustomer, ConversationChannel, MessageType } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 import LogConversationForm from './LogConversationForm'
 
 function ChannelBadge({ channel }: { channel: ConversationChannel }) {
@@ -133,10 +134,9 @@ export default function ConversationLog() {
     <div>
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <select
+        <AdminSelect
           value={filterChannel}
           onChange={(e) => setFilterChannel(e.target.value as ConversationChannel | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Channels</option>
           <option value="whatsapp">WhatsApp</option>
@@ -144,12 +144,11 @@ export default function ConversationLog() {
           <option value="instagram">Instagram</option>
           <option value="in_person">In Person</option>
           <option value="email">Email</option>
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as MessageType | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Types</option>
           <option value="general">General</option>
@@ -160,17 +159,16 @@ export default function ConversationLog() {
           <option value="referral_ask">Referral Ask</option>
           <option value="reengagement">Re-engagement</option>
           <option value="receipt">Receipt</option>
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={filterFollowUp}
           onChange={(e) => setFilterFollowUp(e.target.value as 'pending' | 'completed' | '')}
-          className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-orange-500"
         >
           <option value="">All Follow-ups</option>
           <option value="pending">Pending</option>
           <option value="completed">Completed</option>
-        </select>
+        </AdminSelect>
 
         <div className="ml-auto">
           <button

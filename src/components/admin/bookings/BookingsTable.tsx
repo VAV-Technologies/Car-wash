@@ -6,6 +6,8 @@ import { Trash2 } from 'lucide-react'
 import { getBookings, getWashers, deleteBooking, type BookingWithDetails } from '@/lib/admin/bookings'
 import { SERVICE_TYPES, BOOKING_STATUSES, formatDate } from '@/lib/admin/constants'
 import type { BookingStatus, ServiceType } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 const PAGE_SIZE = 25
 
@@ -124,52 +126,45 @@ export default function BookingsTable() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <select
+        <AdminSelect
           value={filters.status}
           onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value as BookingStatus | '' }))}
-          className={selectClass}
         >
-          <option value="" className="bg-[#171717]">All statuses</option>
+          <option value="">All statuses</option>
           {BOOKING_STATUSES.map((s) => (
-            <option key={s.value} value={s.value} className="bg-[#171717]">{s.label}</option>
+            <option key={s.value} value={s.value}>{s.label}</option>
           ))}
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={filters.service_type}
           onChange={(e) => setFilters((f) => ({ ...f, service_type: e.target.value as ServiceType | '' }))}
-          className={selectClass}
         >
-          <option value="" className="bg-[#171717]">All services</option>
+          <option value="">All services</option>
           {SERVICE_TYPES.map((s) => (
-            <option key={s.value} value={s.value} className="bg-[#171717]">{s.label}</option>
+            <option key={s.value} value={s.value}>{s.label}</option>
           ))}
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={filters.washer_id}
           onChange={(e) => setFilters((f) => ({ ...f, washer_id: e.target.value }))}
-          className={selectClass}
         >
-          <option value="" className="bg-[#171717]">All washers</option>
+          <option value="">All washers</option>
           {washers.map((w) => (
-            <option key={w.id} value={w.id} className="bg-[#171717]">{w.name}</option>
+            <option key={w.id} value={w.id}>{w.name}</option>
           ))}
-        </select>
+        </AdminSelect>
 
-        <input
-          type="date"
+        <AdminDateInput
           value={filters.date_from}
           onChange={(e) => setFilters((f) => ({ ...f, date_from: e.target.value }))}
           placeholder="From"
-          className={inputClass}
         />
-        <input
-          type="date"
+        <AdminDateInput
           value={filters.date_to}
           onChange={(e) => setFilters((f) => ({ ...f, date_to: e.target.value }))}
           placeholder="To"
-          className={inputClass}
         />
 
         {(filters.status || filters.service_type || filters.date_from || filters.date_to || filters.washer_id) && (

@@ -5,6 +5,8 @@ import { X, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { createConversation } from '@/lib/admin/conversations'
 import type { ConversationChannel, MessageType, PitchResult } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 interface Props {
   onClose: () => void
@@ -137,37 +139,34 @@ export default function LogConversationForm({ onClose, onSuccess }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="block text-white/50 text-xs uppercase tracking-wider mb-1">Channel</label>
-            <select
+            <AdminSelect
               value={channel}
               onChange={(e) => setChannel(e.target.value as ConversationChannel)}
-              className="w-full bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
             >
               <option value="whatsapp">WhatsApp</option>
               <option value="phone">Phone</option>
               <option value="instagram">Instagram</option>
               <option value="in_person">In Person</option>
               <option value="email">Email</option>
-            </select>
+            </AdminSelect>
           </div>
 
           <div>
             <label className="block text-white/50 text-xs uppercase tracking-wider mb-1">Direction</label>
-            <select
+            <AdminSelect
               value={direction}
               onChange={(e) => setDirection(e.target.value as 'inbound' | 'outbound')}
-              className="w-full bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
             >
               <option value="inbound">Inbound</option>
               <option value="outbound">Outbound</option>
-            </select>
+            </AdminSelect>
           </div>
 
           <div>
             <label className="block text-white/50 text-xs uppercase tracking-wider mb-1">Message Type</label>
-            <select
+            <AdminSelect
               value={messageType}
               onChange={(e) => setMessageType(e.target.value as MessageType)}
-              className="w-full bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
             >
               <option value="general">General</option>
               <option value="booking_request">Booking Request</option>
@@ -177,7 +176,7 @@ export default function LogConversationForm({ onClose, onSuccess }: Props) {
               <option value="referral_ask">Referral Ask</option>
               <option value="reengagement">Re-engagement</option>
               <option value="receipt">Receipt</option>
-            </select>
+            </AdminSelect>
           </div>
         </div>
 
@@ -205,11 +204,9 @@ export default function LogConversationForm({ onClose, onSuccess }: Props) {
             <span className="text-white/70 text-sm">Follow-up needed</span>
           </label>
           {followUpNeeded && (
-            <input
-              type="date"
+            <AdminDateInput
               value={followUpDate}
               onChange={(e) => setFollowUpDate(e.target.value)}
-              className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
             />
           )}
         </div>
@@ -226,16 +223,15 @@ export default function LogConversationForm({ onClose, onSuccess }: Props) {
             <span className="text-white/70 text-sm">Subscription pitched</span>
           </label>
           {subscriptionPitched && (
-            <select
+            <AdminSelect
               value={pitchResult}
               onChange={(e) => setPitchResult(e.target.value as PitchResult | '')}
-              className="bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
             >
               <option value="">Select result...</option>
               <option value="converted">Converted</option>
               <option value="declined">Declined</option>
               <option value="thinking">Thinking</option>
-            </select>
+            </AdminSelect>
           )}
         </div>
 

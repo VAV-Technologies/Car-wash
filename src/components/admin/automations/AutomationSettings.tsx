@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Automation } from '@/lib/admin/automations'
+import AdminSelect from '@/components/admin/AdminSelect'
 
 // Simple cron-to-human parser for common patterns
 function parseCron(cron: string): string {
@@ -125,29 +126,27 @@ export default function AutomationSettings({ automation, onSave, onDelete }: Aut
       {/* Status */}
       <div>
         <label className={labelClass}>Status</label>
-        <select
+        <AdminSelect
           value={status}
           onChange={(e) => setStatus(e.target.value as 'active' | 'paused' | 'draft')}
-          className={inputClass}
         >
-          <option value="active" className="bg-[#171717]">Active</option>
-          <option value="paused" className="bg-[#171717]">Paused</option>
-          <option value="draft" className="bg-[#171717]">Draft</option>
-        </select>
+          <option value="active">Active</option>
+          <option value="paused">Paused</option>
+          <option value="draft">Draft</option>
+        </AdminSelect>
       </div>
 
       {/* Trigger Type */}
       <div>
         <label className={labelClass}>Trigger Type</label>
-        <select
+        <AdminSelect
           value={triggerType}
           onChange={(e) => setTriggerType(e.target.value as 'webhook' | 'schedule' | 'manual')}
-          className={inputClass}
         >
-          <option value="manual" className="bg-[#171717]">Manual</option>
-          <option value="webhook" className="bg-[#171717]">Webhook</option>
-          <option value="schedule" className="bg-[#171717]">Schedule</option>
-        </select>
+          <option value="manual">Manual</option>
+          <option value="webhook">Webhook</option>
+          <option value="schedule">Schedule</option>
+        </AdminSelect>
       </div>
 
       {/* Schedule Cron */}

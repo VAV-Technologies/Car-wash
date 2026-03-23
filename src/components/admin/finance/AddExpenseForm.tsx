@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Loader2, Plus, X } from 'lucide-react'
 import { createTransaction } from '@/lib/admin/finance'
 import type { ExpenseCategory } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 const EXPENSE_CATEGORIES: { value: ExpenseCategory; label: string }[] = [
   { value: 'salary', label: 'Salary' },
@@ -81,17 +83,16 @@ export default function AddExpenseForm({ onClose, onSuccess }: AddExpenseFormPro
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs text-white/50 mb-1">Category</label>
-          <select
+          <AdminSelect
             value={category}
             onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-            className="w-full bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
           >
             {EXPENSE_CATEGORIES.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.label}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
 
         <div>
@@ -120,11 +121,9 @@ export default function AddExpenseForm({ onClose, onSuccess }: AddExpenseFormPro
 
         <div>
           <label className="block text-xs text-white/50 mb-1">Date</label>
-          <input
-            type="date"
+          <AdminDateInput
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-[#0A0A0A] border border-white/10 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
           />
         </div>
 

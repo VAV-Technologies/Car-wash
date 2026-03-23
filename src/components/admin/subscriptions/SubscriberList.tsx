@@ -6,6 +6,7 @@ import { Loader2, Plus, AlertTriangle, Trash2 } from 'lucide-react'
 import { getSubscriptions, deleteSubscription } from '@/lib/admin/subscriptions'
 import { formatCurrency, formatDate, getTierConfig, SUBSCRIPTION_TIERS_V2 } from '@/lib/admin/constants'
 import type { SubscriptionWithCustomer, SubscriptionTier } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 import SubscriptionForm from './SubscriptionForm'
 
 const PAGE_SIZE = 25
@@ -132,22 +133,20 @@ export default function SubscriberList() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <select
+        <AdminSelect
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-white/10 bg-[#171717] px-3 py-2 text-sm text-white/80 focus:outline-none focus:border-orange-500/50"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
-        </select>
+        </AdminSelect>
 
-        <select
+        <AdminSelect
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value)}
-          className="rounded-lg border border-white/10 bg-[#171717] px-3 py-2 text-sm text-white/80 focus:outline-none focus:border-orange-500/50"
         >
           <option value="">All Tiers</option>
           {SUBSCRIPTION_TIERS_V2.map((t) => (
@@ -155,7 +154,7 @@ export default function SubscriberList() {
               {t.label}
             </option>
           ))}
-        </select>
+        </AdminSelect>
       </div>
 
       {/* Table */}

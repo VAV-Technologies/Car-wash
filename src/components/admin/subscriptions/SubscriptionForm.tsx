@@ -6,6 +6,8 @@ import { createSubscription } from '@/lib/admin/subscriptions'
 import { getCustomers } from '@/lib/admin/customers'
 import { formatCurrency, SUBSCRIPTION_TIERS_V2 } from '@/lib/admin/constants'
 import type { CustomerWithStats, SubscriptionTier } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 interface SubscriptionFormProps {
   onClose: () => void
@@ -136,17 +138,16 @@ export default function SubscriptionForm({ onClose, onCreated }: SubscriptionFor
           {/* Tier Select */}
           <div>
             <label className="block text-sm font-medium text-white/60 mb-1">Tier</label>
-            <select
+            <AdminSelect
               value={tier}
               onChange={(e) => setTier(e.target.value as SubscriptionTier)}
-              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-4 py-2 text-sm text-white focus:outline-none focus:border-orange-500/50"
             >
               {SUBSCRIPTION_TIERS_V2.map((t) => (
                 <option key={t.value} value={t.value}>
                   {t.label} - {formatCurrency(t.price)}/mo ({t.washType})
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </div>
 
           {/* Auto-filled Price & Washes */}
@@ -167,20 +168,16 @@ export default function SubscriptionForm({ onClose, onCreated }: SubscriptionFor
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-white/60 mb-1">Start Date</label>
-              <input
-                type="date"
+              <AdminDateInput
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-4 py-2 text-sm text-white focus:outline-none focus:border-orange-500/50"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-white/60 mb-1">Renewal Date</label>
-              <input
-                type="date"
+              <AdminDateInput
                 value={renewalDate}
                 readOnly
-                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-4 py-2 text-sm text-white/50 cursor-not-allowed"
               />
             </div>
           </div>
@@ -188,10 +185,9 @@ export default function SubscriptionForm({ onClose, onCreated }: SubscriptionFor
           {/* Payment Method */}
           <div>
             <label className="block text-sm font-medium text-white/60 mb-1">Payment Method</label>
-            <select
+            <AdminSelect
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A] px-4 py-2 text-sm text-white focus:outline-none focus:border-orange-500/50"
             >
               <option value="">Select...</option>
               <option value="bank_transfer">Bank Transfer</option>
@@ -200,7 +196,7 @@ export default function SubscriptionForm({ onClose, onCreated }: SubscriptionFor
               <option value="cash">Cash</option>
               <option value="gopay">GoPay</option>
               <option value="ovo">OVO</option>
-            </select>
+            </AdminSelect>
           </div>
 
           {/* Notes */}

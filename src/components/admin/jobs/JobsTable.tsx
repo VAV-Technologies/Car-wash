@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { getJobs, type JobWithDetails } from '@/lib/admin/jobs'
 import { getWashers } from '@/lib/admin/bookings'
 import { SERVICE_TYPES, formatDate } from '@/lib/admin/constants'
+import AdminSelect from '@/components/admin/AdminSelect'
+import AdminDateInput from '@/components/admin/AdminDateInput'
 
 const PAGE_SIZE = 25
 
@@ -94,28 +96,23 @@ export default function JobsTable() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <select
+        <AdminSelect
           value={filters.washer_id}
           onChange={(e) => setFilters((f) => ({ ...f, washer_id: e.target.value }))}
-          className={inputClass}
         >
-          <option value="" className="bg-[#171717]">All washers</option>
+          <option value="">All washers</option>
           {washers.map((w) => (
-            <option key={w.id} value={w.id} className="bg-[#171717]">{w.name}</option>
+            <option key={w.id} value={w.id}>{w.name}</option>
           ))}
-        </select>
+        </AdminSelect>
 
-        <input
-          type="date"
+        <AdminDateInput
           value={filters.date_from}
           onChange={(e) => setFilters((f) => ({ ...f, date_from: e.target.value }))}
-          className={inputClass}
         />
-        <input
-          type="date"
+        <AdminDateInput
           value={filters.date_to}
           onChange={(e) => setFilters((f) => ({ ...f, date_to: e.target.value }))}
-          className={inputClass}
         />
 
         {(filters.washer_id || filters.date_from || filters.date_to) && (

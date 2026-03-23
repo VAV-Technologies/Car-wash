@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getTodaysBookings, updateBooking, type BookingWithDetails } from '@/lib/admin/bookings'
 import { SERVICE_TYPES, BOOKING_STATUSES, formatDate } from '@/lib/admin/constants'
 import type { BookingStatus } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   pending: { bg: 'bg-gray-500/20', text: 'text-gray-400' },
@@ -136,15 +137,14 @@ export default function TodaySchedule() {
 
                   <div className="flex items-center gap-2 shrink-0">
                     {/* Quick status change */}
-                    <select
+                    <AdminSelect
                       value={booking.status}
                       onChange={(e) => handleStatusChange(booking.id, e.target.value as BookingStatus)}
-                      className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-orange-500/50"
                     >
                       {BOOKING_STATUSES.map((s) => (
-                        <option key={s.value} value={s.value} className="bg-[#171717]">{s.label}</option>
+                        <option key={s.value} value={s.value}>{s.label}</option>
                       ))}
-                    </select>
+                    </AdminSelect>
 
                     {/* WhatsApp link */}
                     {booking.customer?.phone && (

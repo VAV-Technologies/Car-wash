@@ -11,6 +11,7 @@ import {
   getAcquisitionSourceLabel,
 } from '@/lib/admin/constants'
 import type { CustomerWithStats, Conversation, ConversationChannel } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 import SegmentBadge from './SegmentBadge'
 
 interface CustomerProfileProps {
@@ -247,25 +248,23 @@ export default function CustomerProfile({ customerId }: CustomerProfileProps) {
         {/* Add Conversation Form */}
         <form onSubmit={handleAddConversation} className="space-y-3 border-b border-white/10 pb-4">
           <div className="flex flex-wrap gap-3">
-            <select
+            <AdminSelect
               value={convChannel}
               onChange={(e) => setConvChannel(e.target.value as ConversationChannel)}
-              className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white outline-none"
             >
-              <option value="whatsapp" className="bg-[#171717]">WhatsApp</option>
-              <option value="phone" className="bg-[#171717]">Phone</option>
-              <option value="instagram" className="bg-[#171717]">Instagram</option>
-              <option value="in_person" className="bg-[#171717]">In Person</option>
-              <option value="email" className="bg-[#171717]">Email</option>
-            </select>
-            <select
+              <option value="whatsapp">WhatsApp</option>
+              <option value="phone">Phone</option>
+              <option value="instagram">Instagram</option>
+              <option value="in_person">In Person</option>
+              <option value="email">Email</option>
+            </AdminSelect>
+            <AdminSelect
               value={convDirection}
               onChange={(e) => setConvDirection(e.target.value as 'inbound' | 'outbound')}
-              className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white outline-none"
             >
-              <option value="outbound" className="bg-[#171717]">Outbound</option>
-              <option value="inbound" className="bg-[#171717]">Inbound</option>
-            </select>
+              <option value="outbound">Outbound</option>
+              <option value="inbound">Inbound</option>
+            </AdminSelect>
           </div>
           <textarea
             value={convSummary}

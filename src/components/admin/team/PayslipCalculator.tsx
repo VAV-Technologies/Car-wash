@@ -5,6 +5,7 @@ import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { getEmployees, calculatePayslip } from '@/lib/admin/team'
 import { formatCurrency } from '@/lib/admin/constants'
 import type { EmployeeExtended, PayslipResult } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 
 const SERVICE_LABELS: Record<string, string> = {
   standard_wash: 'Standard Wash',
@@ -92,41 +93,39 @@ export default function PayslipCalculator() {
       <div className="flex flex-wrap items-end gap-4">
         <div>
           <label className="block text-xs text-white/40 mb-1.5">Employee</label>
-          <select
+          <AdminSelect
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
-            className={`${selectClasses} min-w-[200px]`}
+            className="min-w-[200px]"
             disabled={loadingEmployees}
           >
             <option value="">Select employee...</option>
             {employees.map((emp) => (
               <option key={emp.id} value={emp.id}>{emp.name}</option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
         <div>
           <label className="block text-xs text-white/40 mb-1.5">Month</label>
-          <select
+          <AdminSelect
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className={selectClasses}
           >
             {MONTH_NAMES.map((name, i) => (
               <option key={i} value={i + 1}>{name}</option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
         <div>
           <label className="block text-xs text-white/40 mb-1.5">Year</label>
-          <select
+          <AdminSelect
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className={selectClasses}
           >
             {[now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1].map((y) => (
               <option key={y} value={y}>{y}</option>
             ))}
-          </select>
+          </AdminSelect>
         </div>
       </div>
 

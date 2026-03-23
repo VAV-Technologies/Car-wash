@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { getBookingQueue, updateBooking, getWashers, type BookingWithDetails } from '@/lib/admin/bookings'
 import { SERVICE_TYPES, formatDate, daysSince } from '@/lib/admin/constants'
 import type { BookingStatus } from '@/lib/admin/types'
+import AdminSelect from '@/components/admin/AdminSelect'
 
 export default function BookingQueue() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([])
@@ -145,16 +146,15 @@ export default function BookingQueue() {
                           Confirm
                         </button>
 
-                        <select
+                        <AdminSelect
                           defaultValue=""
                           onChange={(e) => handleAssignWasher(booking.id, e.target.value)}
-                          className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-orange-500/50"
                         >
-                          <option value="" className="bg-[#171717]">Assign Washer</option>
+                          <option value="">Assign Washer</option>
                           {washers.map((w) => (
-                            <option key={w.id} value={w.id} className="bg-[#171717]">{w.name}</option>
+                            <option key={w.id} value={w.id}>{w.name}</option>
                           ))}
-                        </select>
+                        </AdminSelect>
 
                         {cancellingId === booking.id ? (
                           <div className="flex items-center gap-1">
