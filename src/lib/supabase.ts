@@ -4,13 +4,13 @@ import { createBrowserClient } from '@supabase/ssr'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Browser client — uses cookies for auth session, respects RLS
-// Used by all admin components for authenticated CRUD
+// Browser: uses cookies for auth session (RLS sees 'authenticated')
+// Server: uses service role key (bypasses RLS — for API routes + SSR)
 export const supabase = typeof window !== 'undefined'
   ? createBrowserClient(supabaseUrl, supabaseAnonKey)
-  : createClient(supabaseUrl, supabaseAnonKey)
+  : createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey)
 
-// Admin client — bypasses RLS, server-side only (API routes)
+// Explicit admin client — same as server-side supabase but named for clarity
 let _supabaseAdmin: ReturnType<typeof createClient> | null = null
 export function getSupabaseAdmin() {
   if (!_supabaseAdmin) {
