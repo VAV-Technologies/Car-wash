@@ -1,13 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Public client — respects RLS, safe for client-side reads
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Browser client — uses cookies for auth session, respects RLS
+// Used by all admin components for authenticated CRUD
+export const supabase = typeof window !== 'undefined'
+  ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+  : createClient(supabaseUrl, supabaseAnonKey)
 
 // Admin client — bypasses RLS, server-side only (API routes)
-// Lazy-initialized to avoid accessing server-only env var on the client
 let _supabaseAdmin: ReturnType<typeof createClient> | null = null
 export function getSupabaseAdmin() {
   if (!_supabaseAdmin) {
