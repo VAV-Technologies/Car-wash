@@ -1,8 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Users, CreditCard, Calendar, Wrench, DollarSign, FileText, MessageCircle, UserCog, MapPin, Cog, Package, BarChart3, Target, Zap, LogOut } from 'lucide-react'
+import {
+  LayoutDashboard, Users, CreditCard, MessageCircle,
+  Calendar, Wrench, MapPin,
+  DollarSign, FileText, Package,
+  UserCog, Cog,
+  Zap,
+  BarChart3, Target, Bot,
+  ChevronDown, LogOut,
+} from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
 
 const supabase = createBrowserClient(
@@ -10,27 +19,89 @@ const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-const navItems = [
-  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { label: 'Customers', href: '/admin/customers', icon: Users },
-  { label: 'Subscriptions', href: '/admin/subscriptions', icon: CreditCard },
-  { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
-  { label: 'Jobs', href: '/admin/jobs', icon: Wrench },
-  { label: 'Finance', href: '/admin/finance', icon: DollarSign },
-  { label: 'Invoicing', href: '/admin/invoicing', icon: FileText },
-  { label: 'Conversations', href: '/admin/conversations', icon: MessageCircle },
-  { label: 'Team', href: '/admin/team', icon: UserCog },
-  { label: 'Routes', href: '/admin/routes', icon: MapPin },
-  { label: 'Equipment', href: '/admin/equipment', icon: Cog },
-  { label: 'Inventory', href: '/admin/inventory', icon: Package },
-  { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-  { label: 'Scorecard', href: '/admin/scorecard', icon: Target },
-  { label: 'Automations', href: '/admin/automations', icon: Zap },
+interface NavItem {
+  label: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+}
+
+interface NavGroup {
+  label: string
+  items: NavItem[]
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: 'Sales & Marketing',
+    items: [
+      { label: 'Customers', href: '/admin/customers', icon: Users },
+      { label: 'Subscriptions', href: '/admin/subscriptions', icon: CreditCard },
+      { label: 'Conversations', href: '/admin/conversations', icon: MessageCircle },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
+      { label: 'Job Tracker', href: '/admin/jobs', icon: Wrench },
+      { label: 'Route Planner', href: '/admin/routes', icon: MapPin },
+    ],
+  },
+  {
+    label: 'Finance',
+    items: [
+      { label: 'Finance', href: '/admin/finance', icon: DollarSign },
+      { label: 'Invoicing', href: '/admin/invoicing', icon: FileText },
+      { label: 'Inventory', href: '/admin/inventory', icon: Package },
+    ],
+  },
+  {
+    label: 'Execution',
+    items: [
+      { label: 'Team & Bonus', href: '/admin/team', icon: UserCog },
+      { label: 'Equipment', href: '/admin/equipment', icon: Cog },
+    ],
+  },
+  {
+    label: 'Technology',
+    items: [
+      { label: 'Automations', href: '/admin/automations', icon: Zap },
+    ],
+  },
+  {
+    label: 'Analysis',
+    items: [
+      { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+      { label: 'Scorecard', href: '/admin/scorecard', icon: Target },
+    ],
+  },
 ]
 
 export default function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+
+  // Auto-open groups that contain the active page
+  const initialOpen = new Set<string>()
+  for (const group of navGroups) {
+    if (group.items.some(item => pathname.startsWith(item.href))) {
+      initialOpen.add(group.label)
+    }
+  }
+
+  const [openGroups, setOpenGroups] = useState<Set<string>>(initialOpen)
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(label)) {
+        next.delete(label)
+      } else {
+        next.add(label)
+      }
+      return next
+    })
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -46,23 +117,62 @@ export default function AdminSidebar() {
         </Link>
       </div>
 
-      <nav className="flex-1 py-3">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href)
-          const Icon = item.icon
+      <nav className="flex-1 py-2 overflow-y-auto">
+        {/* Dashboard — standalone */}
+        <Link
+          href="/admin/dashboard"
+          className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+            pathname.startsWith('/admin/dashboard')
+              ? 'text-orange-500 bg-orange-500/10 border-r-2 border-orange-500'
+              : 'text-white/60 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
+        </Link>
+
+        {/* Grouped sections */}
+        {navGroups.map((group) => {
+          const isOpen = openGroups.has(group.label)
+          const hasActive = group.items.some(item => pathname.startsWith(item.href))
+
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
-                isActive
-                  ? 'text-orange-500 bg-orange-500/10 border-r-2 border-orange-500'
-                  : 'text-white/60 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </Link>
+            <div key={group.label} className="mt-1">
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className={`w-full flex items-center justify-between px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                  hasActive ? 'text-orange-400' : 'text-white/30 hover:text-white/50'
+                }`}
+              >
+                {group.label}
+                <ChevronDown
+                  className={`h-3 w-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {isOpen && (
+                <div className="pb-1">
+                  {group.items.map((item) => {
+                    const isActive = pathname.startsWith(item.href)
+                    const Icon = item.icon
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex items-center gap-3 pl-6 pr-4 py-2 text-sm transition-colors ${
+                          isActive
+                            ? 'text-orange-500 bg-orange-500/10 border-r-2 border-orange-500'
+                            : 'text-white/50 hover:text-white hover:bg-white/5'
+                        }`}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                        {item.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           )
         })}
       </nav>
