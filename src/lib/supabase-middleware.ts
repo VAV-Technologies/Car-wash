@@ -28,17 +28,31 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-  const isLoginPage = request.nextUrl.pathname === '/admin/login'
+  const isAdminLogin = request.nextUrl.pathname === '/admin/login'
+  const isWashRoute = request.nextUrl.pathname.startsWith('/wash')
+  const isWashLogin = request.nextUrl.pathname === '/wash/login'
 
-  if (isAdminRoute && !isLoginPage && !user) {
+  // Admin auth
+  if (isAdminRoute && !isAdminLogin && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/login'
     return NextResponse.redirect(url)
   }
-
-  if (isLoginPage && user) {
+  if (isAdminLogin && user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/admin/customers'
+    url.pathname = '/admin/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  // Washer auth
+  if (isWashRoute && !isWashLogin && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/wash/login'
+    return NextResponse.redirect(url)
+  }
+  if (isWashLogin && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/wash/today'
     return NextResponse.redirect(url)
   }
 

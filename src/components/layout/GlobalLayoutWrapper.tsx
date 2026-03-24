@@ -15,8 +15,9 @@ interface GlobalLayoutWrapperProps {
 export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
+  const isWashRoute = pathname.startsWith('/wash');
 
-  if (isAdminRoute) {
+  if (isAdminRoute || isWashRoute) {
     return <>{children}</>;
   }
 
