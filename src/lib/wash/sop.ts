@@ -125,3 +125,64 @@ export async function getJobPhotos(jobId: string) {
   if (error) throw error
   return data ?? []
 }
+
+/**
+ * Upload a photo for an SOP step (pre-job, tied to booking).
+ * Stores in Supabase Storage under sop-checklist/{bookingId}/.
+ * Returns the public URL.
+ */
+export async function uploadSOPStepPhoto(
+  file: File,
+  bookingId: string,
+  sopStepId: string
+): Promise<string> {
+  const compressed = await compressImage(file)
+  const timestamp = Date.now()
+  const filePath = `sop-checklist/${bookingId}/${sopStepId}_${timestamp}.jpg`
+
+  const { error: uploadError } = await supabase.storage
+    .from('castudio-photos')
+    .upload(filePath, compressed, {
+      contentType: 'image/jpeg',
+      cacheControl: '31536000',
+    })
+
+  if (uploadError) throw uploadError
+
+  const { data: urlData } = supabase.storage
+    .from('castudio-photos')
+    .getPublicUrl(filePath)
+
+  return urlData.publicUrl
+}
+
+/**
+ * List all uploaded SOP step photos for a booking.
+ * Returns a map of stepId → array of public URLs.
+ */
+export async function listSOPStepPhotos(
+  bookingId: string
+): Promise<Map<string, string[]>> {
+  const { data, error } = await supabase.storage
+    .from('castudio-photos')
+    .list(`sop-checklist/${bookingId}`, { sortBy: { column: 'created_at', order: 'asc' } })
+
+  if (error) throw error
+
+  const result = new Map<string, string[]>()
+  for (const file of data || []) {
+    // filename: {stepId}_{timestamp}.jpg
+    const stepId = file.name.split('_')[0]
+    if (!stepId) continue
+
+    const { data: urlData } = supabase.storage
+      .from('castudio-photos')
+      .getPublicUrl(`sop-checklist/${bookingId}/${file.name}`)
+
+    const urls = result.get(stepId) || []
+    urls.push(urlData.publicUrl)
+    result.set(stepId, urls)
+  }
+
+  return result
+}
