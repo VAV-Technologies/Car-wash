@@ -15,16 +15,16 @@ import {
 // ── SOP document data ──
 const SOP_DOCS: Record<string, { description: string; documentUrl: string | null }> = {
   standard_wash: {
-    description: 'Full procedure for the Standard Wash service — foam pre-wash, premium hand wash, interior clean & vacuum, tire polish & rim clean, and body spot remover.',
-    documentUrl: null,
+    description: 'SOP Standard Wash — Durasi 60-90 menit. Pre-wash, cuci kontak dua ember, pengeringan, interior cepat, tire dressing, dan sentuhan akhir.',
+    documentUrl: '/sops/Castudio_SOP_Standard_Wash_ID.docx',
   },
   professional: {
-    description: 'Full procedure for the Professional Wash service — everything in Standard plus glass spot remover and tar remover.',
-    documentUrl: null,
+    description: 'SOP Professional Wash — Durasi 2-2,5 jam. Semua langkah Standard plus dekontaminasi besi & tar, paint sealant, interior mendalam dengan conditioning kulit.',
+    documentUrl: '/sops/Castudio_SOP_Professional_Wash_ID.docx',
   },
   elite_wash: {
-    description: 'Full procedure for the Elite Wash service — everything in Professional plus clay bar decontamination and sealant coating.',
-    documentUrl: null,
+    description: 'SOP Elite Wash — Durasi 3-3,5 jam. Semua langkah Professional plus clay bar, glass coating, engine bay ringan, detail bagasi, netralisasi bau.',
+    documentUrl: '/sops/Castudio_SOP_Elite_Wash_ID.docx',
   },
   interior_detail: {
     description: 'Full procedure for Interior Detailing — deep vacuum, upholstery extraction cleaning, leather conditioning, dashboard UV treatment, air vent detail, and odour neutralisation.',
