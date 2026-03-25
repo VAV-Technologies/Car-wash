@@ -25,8 +25,8 @@ export default function PhotoGallery() {
       try {
         let query = supabase
           .from('jobs')
-          .select('id, service_type, completed_at, photos_before, photos_after, customers!left(name)')
-          .eq('status', 'completed')
+          .select('id, service_type, completed_at, bookings!left(customers(name)), job_photos(photo_url, photo_type)')
+          .not('completed_at', 'is', null)
           .order('completed_at', { ascending: false })
           .limit(50)
 
@@ -39,15 +39,18 @@ export default function PhotoGallery() {
         if (error) throw error
 
         const mapped: PhotoJob[] = (data ?? [])
-          .map((row: Record<string, unknown>) => {
-            const { customers, ...rest } = row
+          .map((row: any) => {
+            const booking = Array.isArray(row.bookings) ? row.bookings[0] : row.bookings
+            const customer = booking?.customers
+            const customerName = Array.isArray(customer) ? customer[0]?.name : customer?.name
+            const photos = (row.job_photos as any[]) || []
             return {
-              id: rest.id as string,
-              service_type: rest.service_type as string,
-              completed_at: rest.completed_at as string | null,
-              photos_before: (rest.photos_before as string[] | null) ?? [],
-              photos_after: (rest.photos_after as string[] | null) ?? [],
-              customer_name: (customers as { name: string } | null)?.name ?? null,
+              id: row.id as string,
+              service_type: row.service_type as string,
+              completed_at: row.completed_at as string | null,
+              photos_before: photos.filter((p: any) => p.photo_type?.startsWith('before')).map((p: any) => p.photo_url),
+              photos_after: photos.filter((p: any) => !p.photo_type?.startsWith('before')).map((p: any) => p.photo_url),
+              customer_name: customerName ?? null,
             }
           })
           .filter((j) => j.photos_before.length > 0 || j.photos_after.length > 0)
