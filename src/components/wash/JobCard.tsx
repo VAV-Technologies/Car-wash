@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  MapPin, Phone, Navigation, Play, Truck, Clock,
-  Star, User, Crown, Loader2
+  MapPin, Phone, Navigation, Play, Clock,
+  Star, User, Crown, Loader2, MessageCircle
 } from 'lucide-react'
-import { SERVICE_TYPES, formatCurrency } from '@/lib/wash/constants'
-import { updateBookingStatus, createJobRecord } from '@/lib/wash/jobs'
+import { SERVICE_TYPES, formatCurrency, formatWhatsAppLink } from '@/lib/wash/constants'
+import { updateBookingStatus, createJobRecord, getJobByBookingId } from '@/lib/wash/jobs'
+import { useToast } from '@/hooks/use-toast'
+import JobDetailSheet from '@/components/wash/JobDetailSheet'
 
 interface Booking {
   id: string
@@ -36,7 +38,9 @@ interface JobCardProps {
 
 export default function JobCard({ booking, washerId, onStatusChange, readOnly }: JobCardProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [loading, setLoading] = useState<string | null>(null)
+  const [showDetail, setShowDetail] = useState(false)
 
   const customer = booking.customers
   const serviceInfo = SERVICE_TYPES[booking.service_type] || {
@@ -45,7 +49,6 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
     duration: 0,
   }
 
-  // Format scheduled time
   function formatTime(time: string) {
     if (!time) return ''
     const [h, m] = time.split(':')
@@ -107,25 +110,18 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
     return null
   }
 
-  async function handleOnMyWay() {
-    setLoading('en_route')
-    try {
-      await updateBookingStatus(booking.id, 'en_route')
-      onStatusChange?.()
-    } catch (err) {
-      console.error('Failed to update status:', err)
-    } finally {
-      setLoading(null)
-    }
+  function handleNavigate(e: React.MouseEvent) {
+    e.stopPropagation()
+    const address = booking.address || customer.neighborhood
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+    window.open(url, '_blank')
   }
 
-  async function handleStartJob() {
+  async function handleStartJob(e: React.MouseEvent) {
+    e.stopPropagation()
     setLoading('start')
     try {
-      // 1. Update booking status to in_progress
-      await updateBookingStatus(booking.id, 'in_progress')
-
-      // 2. Create job record
+      // 1. Create job record FIRST (more failure-prone)
       const job = await createJobRecord({
         booking_id: booking.id,
         washer_id: washerId,
@@ -133,150 +129,196 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
         service_type: booking.service_type,
       })
 
+      // 2. Update booking status (safe — job record exists)
+      try {
+        await updateBookingStatus(booking.id, 'in_progress')
+      } catch {
+        // Non-critical: job exists, status will be slightly stale
+        toast({
+          title: 'Warning',
+          description: 'Job started but status update lagged. Proceeding.',
+        })
+      }
+
       // 3. Navigate to active job screen
       router.push(`/wash/job/${job.id}`)
-    } catch (err) {
-      console.error('Failed to start job:', err)
+    } catch (err: any) {
+      toast({
+        title: 'Failed to start job',
+        description: err?.message || 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      })
     } finally {
       setLoading(null)
     }
   }
 
-  function handleNavigate() {
-    const address = booking.address || customer.neighborhood
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
-    window.open(url, '_blank')
+  async function handleResumeJob(e: React.MouseEvent) {
+    e.stopPropagation()
+    setLoading('resume')
+    try {
+      const job = await getJobByBookingId(booking.id)
+      if (job) {
+        router.push(`/wash/job/${job.id}`)
+      } else {
+        toast({
+          title: 'Job not found',
+          description: 'No active job record found for this booking.',
+          variant: 'destructive',
+        })
+      }
+    } catch (err: any) {
+      toast({
+        title: 'Error',
+        description: err?.message || 'Failed to resume job.',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(null)
+    }
   }
 
   const isCompleted = booking.status === 'completed'
+  const showActions = !readOnly && !isCompleted
 
   return (
-    <div className={`bg-[#171717] border rounded-xl p-4 space-y-3 ${
-      isCompleted ? 'border-green-500/20 opacity-70' : 'border-white/10'
-    }`}>
-      {/* Header: time + status */}
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-semibold text-white">
-          {formatTime(booking.scheduled_time)}
-        </span>
-        {statusBadge(booking.status)}
-      </div>
-
-      {/* Customer name + segment */}
-      <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <h3 className="text-white font-medium">{customer.name}</h3>
-          {segmentBadge(customer.segment)}
+    <>
+      <div
+        onClick={() => setShowDetail(true)}
+        className={`bg-[#171717] border rounded-xl p-4 space-y-3 transition-colors ${
+          isCompleted
+            ? 'border-green-500/20 opacity-70'
+            : 'border-white/10 cursor-pointer hover:border-white/20'
+        }`}
+      >
+        {/* Header: time + status */}
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-semibold text-white">
+            {formatTime(booking.scheduled_time)}
+          </span>
+          {statusBadge(booking.status)}
         </div>
-        <p className="text-sm text-white/50">
-          {customer.car_model}  &middot;  {customer.plate_number}
-        </p>
-      </div>
 
-      {/* Service info */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-orange-400 font-medium">{serviceInfo.label}</span>
-        <span className="text-xs text-white/40">
-          <Clock className="inline w-3 h-3 mr-1" />
-          {formatDuration(serviceInfo.duration)} &middot; Bonus: {formatCurrency(serviceInfo.bonus)}
-        </span>
-      </div>
-
-      {/* Location */}
-      {(booking.address || customer.neighborhood) && (
-        <div className="flex items-start gap-2 text-sm text-white/50">
-          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-white/30" />
-          <div>
-            {booking.address && <p className="text-white/60">{booking.address}</p>}
-            <p className="text-white/40">{customer.neighborhood}</p>
+        {/* Customer name + segment */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-white font-medium">{customer.name}</h3>
+            {segmentBadge(customer.segment)}
           </div>
+          <p className="text-sm text-white/50">
+            {customer.car_model}  &middot;  {customer.plate_number}
+          </p>
         </div>
-      )}
 
-      {/* Action buttons */}
-      {!readOnly && !isCompleted && (
-        <div className="flex gap-2 pt-1">
-          {/* Navigate */}
-          <button
-            type="button"
-            onClick={handleNavigate}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-          >
-            <Navigation className="w-3.5 h-3.5" />
-            Navigate
-          </button>
-
-          {/* Call */}
-          <a
-            href={`tel:${customer.phone}`}
-            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            Call
-          </a>
-
-          {/* On My Way (only when confirmed) */}
-          {booking.status === 'confirmed' && (
-            <button
-              type="button"
-              onClick={handleOnMyWay}
-              disabled={loading === 'en_route'}
-              className="flex items-center gap-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors disabled:opacity-50"
-            >
-              {loading === 'en_route' ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Truck className="w-3.5 h-3.5" />
-              )}
-              On My Way
-            </button>
-          )}
-
-          {/* Start Job (when confirmed or en_route) */}
-          {(booking.status === 'confirmed' || booking.status === 'en_route') && (
-            <button
-              type="button"
-              onClick={handleStartJob}
-              disabled={loading === 'start'}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-2.5 px-3 text-xs font-medium transition-colors disabled:opacity-50"
-            >
-              {loading === 'start' ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Play className="w-3.5 h-3.5" />
-              )}
-              Start Job
-            </button>
-          )}
-
-          {/* In-progress: resume */}
-          {booking.status === 'in_progress' && (
-            <button
-              type="button"
-              onClick={() => {
-                // Need to find the job ID for this booking — navigate via booking
-                router.push(`/wash/job/booking/${booking.id}`)
-              }}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-            >
-              <Play className="w-3.5 h-3.5" />
-              Resume Job
-            </button>
-          )}
+        {/* Service info */}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-orange-400 font-medium">{serviceInfo.label}</span>
+          <span className="text-xs text-white/40">
+            <Clock className="inline w-3 h-3 mr-1" />
+            {formatDuration(serviceInfo.duration)} &middot; Bonus: {formatCurrency(serviceInfo.bonus)}
+          </span>
         </div>
-      )}
 
-      {/* Completed badge */}
-      {isCompleted && (
-        <div className="flex items-center gap-2 text-green-400 text-sm">
-          <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+        {/* Location */}
+        {(booking.address || customer.neighborhood) && (
+          <div className="flex items-start gap-2 text-sm text-white/50">
+            <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-white/30" />
+            <div>
+              {booking.address && <p className="text-white/60">{booking.address}</p>}
+              <p className="text-white/40">{customer.neighborhood}</p>
+            </div>
           </div>
-          Done
-        </div>
-      )}
-    </div>
+        )}
+
+        {/* Action buttons */}
+        {showActions && (
+          <div className="space-y-2 pt-1">
+            {/* Row 1: Utility buttons */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleNavigate}
+                className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                Navigate
+              </button>
+
+              <a
+                href={formatWhatsAppLink(customer.phone)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                WhatsApp
+              </a>
+
+              <a
+                href={`tel:${customer.phone}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                Call
+              </a>
+            </div>
+
+            {/* Row 2: Primary action */}
+            {(booking.status === 'confirmed' || booking.status === 'en_route') && (
+              <button
+                type="button"
+                onClick={handleStartJob}
+                disabled={loading === 'start'}
+                className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-3 px-4 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                {loading === 'start' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                Start Job
+              </button>
+            )}
+
+            {booking.status === 'in_progress' && (
+              <button
+                type="button"
+                onClick={handleResumeJob}
+                disabled={loading === 'resume'}
+                className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-3 px-4 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                {loading === 'resume' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                Resume Job
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Completed badge */}
+        {isCompleted && (
+          <div className="flex items-center gap-2 text-green-400 text-sm">
+            <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            Done
+          </div>
+        )}
+      </div>
+
+      {/* Detail bottom sheet */}
+      <JobDetailSheet
+        booking={booking}
+        open={showDetail}
+        onOpenChange={setShowDetail}
+      />
+    </>
   )
 }

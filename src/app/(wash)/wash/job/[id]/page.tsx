@@ -5,11 +5,11 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { getJobById, updateJobRecord, updateBookingStatus } from '@/lib/wash/jobs'
 import { getSOPChecklist, uploadJobPhoto, getJobPhotos } from '@/lib/wash/sop'
-import { SERVICE_TYPES } from '@/lib/wash/constants'
+import { SERVICE_TYPES, formatWhatsAppLink } from '@/lib/wash/constants'
 import SOPChecklist, { type SOPStep } from '@/components/wash/SOPChecklist'
 import {
   Phone, AlertTriangle, CheckCircle2, ArrowLeft, Clock,
-  Loader2, Camera, X
+  Loader2, Camera, X, MessageCircle
 } from 'lucide-react'
 
 export default function ActiveJobPage() {
@@ -327,6 +327,19 @@ export default function ActiveJobPage() {
             >
               <Phone className="w-4 h-4" />
               Call
+            </a>
+          )}
+
+          {/* WhatsApp */}
+          {customer?.phone && (
+            <a
+              href={formatWhatsAppLink(customer.phone)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-green-500/10 hover:bg-green-500/15 border border-green-500/20 text-green-400 rounded-lg py-3 px-4 text-sm font-medium transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              WA
             </a>
           )}
 

@@ -22,3 +22,9 @@ export function formatDate(dateStr: string): string {
     year: 'numeric',
   })
 }
+
+export function formatWhatsAppLink(phone: string): string {
+  if (!phone) return '#'
+  const intl = phone.startsWith('+') ? phone.replace('+', '') : phone.startsWith('0') ? '62' + phone.slice(1) : phone
+  return `https://wa.me/${intl}`
+}
