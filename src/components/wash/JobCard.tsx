@@ -1,14 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
-  MapPin, Phone, Navigation, Play, Clock,
-  Star, User, Crown, Loader2, MessageCircle
+  MapPin, Phone, Navigation, Clock,
+  Star, User, Crown, MessageCircle
 } from 'lucide-react'
 import { SERVICE_TYPES, formatCurrency, formatWhatsAppLink } from '@/lib/wash/constants'
-import { updateBookingStatus, createJobRecord, getJobByBookingId } from '@/lib/wash/jobs'
-import { useToast } from '@/hooks/use-toast'
 import JobDetailSheet from '@/components/wash/JobDetailSheet'
 
 interface Booking {
@@ -37,9 +34,6 @@ interface JobCardProps {
 }
 
 export default function JobCard({ booking, washerId, onStatusChange, readOnly }: JobCardProps) {
-  const router = useRouter()
-  const { toast } = useToast()
-  const [loading, setLoading] = useState<string | null>(null)
   const [showDetail, setShowDetail] = useState(false)
 
   const customer = booking.customers
@@ -113,73 +107,10 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
   function handleNavigate(e: React.MouseEvent) {
     e.stopPropagation()
     const address = booking.address || customer.neighborhood
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
-    window.open(url, '_blank')
-  }
-
-  async function handleStartJob(e: React.MouseEvent) {
-    e.stopPropagation()
-    setLoading('start')
-    try {
-      // 1. Create job record FIRST (more failure-prone)
-      const job = await createJobRecord({
-        booking_id: booking.id,
-        washer_id: washerId,
-        started_at: new Date().toISOString(),
-        service_type: booking.service_type,
-      })
-
-      // 2. Update booking status (safe — job record exists)
-      try {
-        await updateBookingStatus(booking.id, 'in_progress')
-      } catch {
-        // Non-critical: job exists, status will be slightly stale
-        toast({
-          title: 'Warning',
-          description: 'Job started but status update lagged. Proceeding.',
-        })
-      }
-
-      // 3. Navigate to active job screen
-      router.push(`/wash/job/${job.id}`)
-    } catch (err: any) {
-      toast({
-        title: 'Failed to start job',
-        description: err?.message || 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(null)
-    }
-  }
-
-  async function handleResumeJob(e: React.MouseEvent) {
-    e.stopPropagation()
-    setLoading('resume')
-    try {
-      const job = await getJobByBookingId(booking.id)
-      if (job) {
-        router.push(`/wash/job/${job.id}`)
-      } else {
-        toast({
-          title: 'Job not found',
-          description: 'No active job record found for this booking.',
-          variant: 'destructive',
-        })
-      }
-    } catch (err: any) {
-      toast({
-        title: 'Error',
-        description: err?.message || 'Failed to resume job.',
-        variant: 'destructive',
-      })
-    } finally {
-      setLoading(null)
-    }
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank')
   }
 
   const isCompleted = booking.status === 'completed'
-  const showActions = !readOnly && !isCompleted
 
   return (
     <>
@@ -193,9 +124,7 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
       >
         {/* Header: time + status */}
         <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold text-white">
-            {formatTime(booking.scheduled_time)}
-          </span>
+          <span className="text-lg font-semibold text-white">{formatTime(booking.scheduled_time)}</span>
           {statusBadge(booking.status)}
         </div>
 
@@ -230,73 +159,32 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
           </div>
         )}
 
-        {/* Action buttons */}
-        {showActions && (
-          <div className="space-y-2 pt-1">
-            {/* Row 1: Utility buttons */}
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleNavigate}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-              >
-                <Navigation className="w-3.5 h-3.5" />
-                Navigate
-              </button>
-
-              <a
-                href={formatWhatsAppLink(customer.phone)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-              >
-                <MessageCircle className="w-3.5 h-3.5" />
-                WhatsApp
-              </a>
-
-              <a
-                href={`tel:${customer.phone}`}
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                Call
-              </a>
-            </div>
-
-            {/* Row 2: Primary action */}
-            {(booking.status === 'confirmed' || booking.status === 'en_route') && (
-              <button
-                type="button"
-                onClick={handleStartJob}
-                disabled={loading === 'start'}
-                className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-3 px-4 text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                {loading === 'start' ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Play className="w-4 h-4" />
-                )}
-                Start Job
-              </button>
-            )}
-
-            {booking.status === 'in_progress' && (
-              <button
-                type="button"
-                onClick={handleResumeJob}
-                disabled={loading === 'resume'}
-                className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-3 px-4 text-sm font-medium transition-colors disabled:opacity-50"
-              >
-                {loading === 'resume' ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Play className="w-4 h-4" />
-                )}
-                Resume Job
-              </button>
-            )}
+        {/* Utility buttons — always visible for active jobs */}
+        {!readOnly && !isCompleted && (
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={handleNavigate}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+            >
+              <Navigation className="w-3.5 h-3.5" /> Navigate
+            </button>
+            <a
+              href={formatWhatsAppLink(customer.phone)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+            >
+              <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+            </a>
+            <a
+              href={`tel:${customer.phone}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2.5 px-3 text-xs font-medium transition-colors"
+            >
+              <Phone className="w-3.5 h-3.5" /> Call
+            </a>
           </div>
         )}
 
@@ -313,11 +201,13 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
         )}
       </div>
 
-      {/* Detail bottom sheet */}
+      {/* Floating modal — entire job workflow happens here */}
       <JobDetailSheet
         booking={booking}
+        washerId={washerId}
         open={showDetail}
         onOpenChange={setShowDetail}
+        onJobCompleted={onStatusChange}
       />
     </>
   )
