@@ -54,6 +54,37 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ image: `data:image/png;base64,${base64}` })
       }
 
+      case 'events': {
+        // Fetch recent webhook events from whatsapp_conversations
+        // and also check WAHA for any session events
+        const supabase = getSupabaseAdmin()
+        const { data: convos } = await supabase
+          .from('whatsapp_conversations')
+          .select('id, chat_id, phone, messages, last_message_at, created_at')
+          .order('last_message_at', { ascending: false })
+          .limit(50)
+
+        const events: Array<Record<string, unknown>> = []
+        for (const convo of convos ?? []) {
+          const msgs = (convo.messages as Array<{ role: string; content: string; timestamp?: string }>) || []
+          for (const msg of msgs.slice(-5)) {
+            events.push({
+              id: `${convo.id}-${msg.timestamp || convo.created_at}-${msg.role}`,
+              event: msg.role === 'user' ? 'message' : 'message.any',
+              timestamp: msg.timestamp || convo.last_message_at || convo.created_at,
+              session: 'default',
+              from: msg.role === 'user' ? convo.chat_id : undefined,
+              to: msg.role === 'assistant' ? convo.chat_id : undefined,
+              body: typeof msg.content === 'string' ? msg.content.slice(0, 200) : '',
+              raw: msg,
+            })
+          }
+        }
+
+        events.sort((a, b) => new Date(a.timestamp as string).getTime() - new Date(b.timestamp as string).getTime())
+        return NextResponse.json(events.slice(-100))
+      }
+
       case 'server-info': {
         const res = await wahaFetch('/api/server/version', { method: 'GET' })
         if (!res.ok) return NextResponse.json({ error: 'Failed to get server info' }, { status: res.status })

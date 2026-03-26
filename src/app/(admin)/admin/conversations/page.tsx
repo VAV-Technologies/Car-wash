@@ -6,11 +6,13 @@ import FollowUpTracker from '@/components/admin/conversations/FollowUpTracker'
 import Templates from '@/components/admin/conversations/Templates'
 import WADashboard from '@/components/admin/conversations/WADashboard'
 import WASessions from '@/components/admin/conversations/WASessions'
+import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'conversations', label: 'Conversations' },
   { key: 'sessions', label: 'Sessions' },
+  { key: 'events', label: 'Event Monitor' },
   { key: 'followups', label: 'Follow-Ups' },
   { key: 'templates', label: 'Templates' },
 ] as const
@@ -45,6 +47,7 @@ export default function ConversationsPage() {
       {activeTab === 'dashboard' && <WADashboard />}
       {activeTab === 'conversations' && <ConversationLog />}
       {activeTab === 'sessions' && <WASessions />}
+      {activeTab === 'events' && <WAEventMonitor />}
       {activeTab === 'followups' && <FollowUpTracker />}
       {activeTab === 'templates' && <Templates />}
     </div>
