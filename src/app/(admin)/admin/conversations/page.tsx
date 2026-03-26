@@ -7,6 +7,7 @@ import Templates from '@/components/admin/conversations/Templates'
 import WADashboard from '@/components/admin/conversations/WADashboard'
 import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
+import WASettings from '@/components/admin/conversations/WASettings'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
@@ -15,6 +16,7 @@ const TABS = [
   { key: 'events', label: 'Event Monitor' },
   { key: 'followups', label: 'Follow-Ups' },
   { key: 'templates', label: 'Templates' },
+  { key: 'settings', label: 'Settings' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -50,6 +52,7 @@ export default function ConversationsPage() {
       {activeTab === 'events' && <WAEventMonitor />}
       {activeTab === 'followups' && <FollowUpTracker />}
       {activeTab === 'templates' && <Templates />}
+      {activeTab === 'settings' && <WASettings />}
     </div>
   )
 }

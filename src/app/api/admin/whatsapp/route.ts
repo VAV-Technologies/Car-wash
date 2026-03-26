@@ -118,6 +118,120 @@ export async function GET(req: NextRequest) {
         })
       }
 
+      case 'settings': {
+        const supabase = getSupabaseAdmin()
+        const { data } = await supabase
+          .from('agent_settings')
+          .select('*')
+          .eq('agent_name', 'shera')
+          .single()
+
+        if (!data) {
+          return NextResponse.json({
+            api_key: null,
+            has_key: false,
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1024,
+            system_prompt: null,
+          })
+        }
+
+        // Mask the API key
+        let maskedKey = null
+        let hasKey = false
+        if (data.api_key) {
+          try {
+            const decoded = Buffer.from(data.api_key, 'base64').toString('utf-8')
+            maskedKey = decoded.length > 4 ? '••••' + decoded.slice(-4) : '••••'
+            hasKey = true
+          } catch {
+            hasKey = false
+          }
+        }
+
+        return NextResponse.json({
+          api_key: maskedKey,
+          has_key: hasKey,
+          model: data.model || 'claude-sonnet-4-20250514',
+          max_tokens: data.max_tokens || 1024,
+          system_prompt: data.system_prompt,
+        })
+      }
+
+      case 'health-check': {
+        const results: Array<{ name: string; status: 'pass' | 'fail'; error?: string }> = []
+
+        // 1. Check Claude API Key
+        try {
+          const supabase = getSupabaseAdmin()
+          const { data: settings } = await supabase
+            .from('agent_settings')
+            .select('api_key')
+            .eq('agent_name', 'shera')
+            .single()
+
+          let apiKey: string | undefined
+          if (settings?.api_key) {
+            try { apiKey = Buffer.from(settings.api_key, 'base64').toString('utf-8') } catch {}
+          }
+          if (!apiKey) {
+            // Fallback to connectors base model
+            const { data: connector } = await supabase.from('connectors').select('encrypted_key').eq('is_base_model', true).single()
+            if (connector?.encrypted_key) {
+              try { apiKey = Buffer.from(connector.encrypted_key, 'base64').toString('utf-8') } catch {}
+            }
+          }
+          if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
+
+          if (!apiKey) {
+            results.push({ name: 'Claude API Key', status: 'fail', error: 'No API key configured' })
+          } else {
+            // Try a minimal API call
+            const anthropic = new (await import('@anthropic-ai/sdk')).default({ apiKey })
+            await anthropic.messages.create({ model: 'claude-haiku-4-5-20251001', max_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
+            results.push({ name: 'Claude API Key', status: 'pass' })
+          }
+        } catch (err: any) {
+          results.push({ name: 'Claude API Key', status: 'fail', error: err?.message || 'API call failed' })
+        }
+
+        // 2. Check Castudio Database
+        try {
+          const supabase = getSupabaseAdmin()
+          const { count, error } = await supabase.from('customers').select('*', { count: 'exact', head: true })
+          if (error) throw error
+          results.push({ name: 'Castudio Database', status: 'pass' })
+        } catch (err: any) {
+          results.push({ name: 'Castudio Database', status: 'fail', error: err?.message || 'Database query failed' })
+        }
+
+        // 3. Check WAHA Server
+        try {
+          const res = await wahaFetch('/api/sessions', { method: 'GET' })
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          results.push({ name: 'WAHA Server', status: 'pass' })
+        } catch (err: any) {
+          results.push({ name: 'WAHA Server', status: 'fail', error: err?.message || 'WAHA unreachable' })
+        }
+
+        // 4. Check Webhook Endpoint
+        try {
+          const webhookUrl = 'https://castudio.id/api/webhook/whatsapp'
+          const res = await fetch(webhookUrl, { method: 'GET' })
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          const data = await res.json()
+          if (data.status === 'ok') {
+            results.push({ name: 'Webhook Endpoint', status: 'pass' })
+          } else {
+            results.push({ name: 'Webhook Endpoint', status: 'fail', error: 'Unexpected response' })
+          }
+        } catch (err: any) {
+          results.push({ name: 'Webhook Endpoint', status: 'fail', error: err?.message || 'Webhook unreachable' })
+        }
+
+        return NextResponse.json({ results })
+      }
+
       default:
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
     }
@@ -181,6 +295,38 @@ export async function POST(req: NextRequest) {
         }
         const data = await res.json()
         return NextResponse.json(data)
+      }
+
+      case 'save-settings': {
+        const supabase = getSupabaseAdmin()
+        const body = await req.json()
+
+        // Check if settings row exists
+        const { data: existing } = await supabase
+          .from('agent_settings')
+          .select('id')
+          .eq('agent_name', 'shera')
+          .single()
+
+        const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
+        if (body.api_key !== undefined) updates.api_key = body.api_key // already base64 from client
+        if (body.model !== undefined) updates.model = body.model
+        if (body.max_tokens !== undefined) updates.max_tokens = body.max_tokens
+
+        if (existing) {
+          const { error } = await supabase
+            .from('agent_settings')
+            .update(updates)
+            .eq('id', existing.id)
+          if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        } else {
+          const { error } = await supabase
+            .from('agent_settings')
+            .insert({ agent_name: 'shera', ...updates })
+          if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ ok: true })
       }
 
       default:

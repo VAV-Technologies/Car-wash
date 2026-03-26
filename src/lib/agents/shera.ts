@@ -355,7 +355,34 @@ function cleanPhone(phone: string): string {
   return phone.replace(/[\s+\-()]/g, '')
 }
 
+export async function getSheraSettings(): Promise<{ apiKey: string | null; model: string; maxTokens: number }> {
+  const supabase = getSupabaseAdmin()
+  const { data } = await supabase
+    .from('agent_settings')
+    .select('api_key, model, max_tokens')
+    .eq('agent_name', 'shera')
+    .single()
+
+  let apiKey: string | null = null
+  if (data?.api_key) {
+    try { apiKey = Buffer.from(data.api_key, 'base64').toString('utf-8') } catch {}
+  }
+
+  return {
+    apiKey,
+    model: data?.model || 'claude-sonnet-4-20250514',
+    maxTokens: data?.max_tokens || 1024,
+  }
+}
+
 async function getAnthropicClient(): Promise<Anthropic> {
+  // 1. Check agent_settings table first (dedicated Shera key)
+  const settings = await getSheraSettings()
+  if (settings.apiKey) {
+    return new Anthropic({ apiKey: settings.apiKey })
+  }
+
+  // 2. Fall back to connectors base model (shared key)
   const admin = getSupabaseAdmin()
   const { data } = await admin
     .from('connectors')
@@ -365,12 +392,10 @@ async function getAnthropicClient(): Promise<Anthropic> {
 
   let apiKey: string | undefined
   if (data?.encrypted_key) {
-    try {
-      apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8')
-    } catch {
-      /* fall through */
-    }
+    try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
   }
+
+  // 3. Fall back to env var
   if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) throw new Error('No Claude API key configured.')
 
@@ -434,10 +459,13 @@ export async function processMessage(
 
   // 6. Call Claude
   const anthropic = await getAnthropicClient()
+  const settings = await getSheraSettings()
+  const modelToUse = settings.model
+  const maxTokensToUse = settings.maxTokens
 
   let response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1024,
+    model: modelToUse,
+    max_tokens: maxTokensToUse,
     system: systemPrompt,
     tools: SHERA_TOOLS,
     messages: claudeMessages,
@@ -469,8 +497,8 @@ export async function processMessage(
     claudeMessages.push({ role: 'user', content: toolResults as Anthropic.ToolResultBlockParam[] })
 
     response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
+      model: modelToUse,
+      max_tokens: maxTokensToUse,
       system: systemPrompt,
       tools: SHERA_TOOLS,
       messages: claudeMessages,
