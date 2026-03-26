@@ -4,10 +4,6 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 const WAHA_API_URL = process.env.WAHA_API_URL!
 const WAHA_API_KEY = process.env.WAHA_API_KEY!
 
-// No bearer auth needed — this route is called from the admin panel
-// which is already behind login. External access is prevented by
-// the admin layout's auth check.
-
 async function wahaFetch(path: string, options: RequestInit = {}): Promise<Response> {
   const url = `${WAHA_API_URL}${path}`
   return fetch(url, {
@@ -21,10 +17,6 @@ async function wahaFetch(path: string, options: RequestInit = {}): Promise<Respo
 }
 
 export async function GET(req: NextRequest) {
-  if (!auth(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
   const session = searchParams.get('session') || 'default'
@@ -60,6 +52,12 @@ export async function GET(req: NextRequest) {
         const arrayBuffer = await res.arrayBuffer()
         const base64 = Buffer.from(arrayBuffer).toString('base64')
         return NextResponse.json({ image: `data:image/png;base64,${base64}` })
+      }
+
+      case 'server-info': {
+        const res = await wahaFetch('/api/server/version', { method: 'GET' })
+        if (!res.ok) return NextResponse.json({ error: 'Failed to get server info' }, { status: res.status })
+        return NextResponse.json(await res.json())
       }
 
       case 'stats': {
@@ -102,10 +100,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!auth(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
   const session = searchParams.get('session') || 'default'
