@@ -119,14 +119,7 @@ export default function WASessions() {
       )
       if (res.ok) {
         const data = await res.json()
-        // data could be { mimetype, data } base64 or { screenshot } URL
-        const imageData = data.screenshot ?? data.data ?? null
-        const mimetype = data.mimetype ?? 'image/png'
-        const imageSrc = imageData
-          ? imageData.startsWith('data:')
-            ? imageData
-            : `data:${mimetype};base64,${imageData}`
-          : null
+        const imageSrc = data.image ?? data.screenshot ?? data.data ?? null
         setQrModal({ session: sessionName, image: imageSrc })
       }
     } catch {
