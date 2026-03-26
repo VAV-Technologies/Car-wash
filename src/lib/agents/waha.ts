@@ -69,3 +69,35 @@ export async function getQR(session = 'default'): Promise<string> {
   const data = await res.json()
   return data.value
 }
+
+/** List all sessions */
+export async function getSessions(): Promise<any[]> {
+  const res = await wahaFetch('/api/sessions', { method: 'GET' })
+  return res.json()
+}
+
+/** Stop a session */
+export async function stopSession(session = 'default'): Promise<any> {
+  const res = await wahaFetch(`/api/sessions/${session}/stop`, { method: 'POST' })
+  return res.json()
+}
+
+/** Restart a session (stop + start) */
+export async function restartSession(session = 'default'): Promise<any> {
+  try { await wahaFetch(`/api/sessions/${session}/stop`, { method: 'POST' }) } catch {}
+  await new Promise(r => setTimeout(r, 2000))
+  const res = await wahaFetch(`/api/sessions/${session}/start`, { method: 'POST' })
+  return res.json()
+}
+
+/** Logout from WhatsApp (unlink device) */
+export async function logoutSession(session = 'default'): Promise<void> {
+  await wahaFetch(`/api/sessions/${session}/logout`, { method: 'POST' })
+}
+
+/** Get screenshot (QR code page) as buffer */
+export async function getScreenshot(session = 'default'): Promise<Buffer> {
+  const res = await wahaFetch(`/api/screenshot?session=${session}`, { method: 'GET' })
+  const arrayBuffer = await res.arrayBuffer()
+  return Buffer.from(arrayBuffer)
+}

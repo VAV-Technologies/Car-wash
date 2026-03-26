@@ -4,9 +4,13 @@ import { useState } from 'react'
 import ConversationLog from '@/components/admin/conversations/ConversationLog'
 import FollowUpTracker from '@/components/admin/conversations/FollowUpTracker'
 import Templates from '@/components/admin/conversations/Templates'
+import WADashboard from '@/components/admin/conversations/WADashboard'
+import WASessions from '@/components/admin/conversations/WASessions'
 
 const TABS = [
-  { key: 'all', label: 'All Conversations' },
+  { key: 'dashboard', label: 'Dashboard' },
+  { key: 'conversations', label: 'Conversations' },
+  { key: 'sessions', label: 'Sessions' },
   { key: 'followups', label: 'Follow-Ups' },
   { key: 'templates', label: 'Templates' },
 ] as const
@@ -14,7 +18,7 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key']
 
 export default function ConversationsPage() {
-  const [activeTab, setActiveTab] = useState<TabKey>('all')
+  const [activeTab, setActiveTab] = useState<TabKey>('dashboard')
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -38,7 +42,9 @@ export default function ConversationsPage() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'all' && <ConversationLog />}
+      {activeTab === 'dashboard' && <WADashboard />}
+      {activeTab === 'conversations' && <ConversationLog />}
+      {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'followups' && <FollowUpTracker />}
       {activeTab === 'templates' && <Templates />}
     </div>
