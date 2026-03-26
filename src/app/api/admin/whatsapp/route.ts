@@ -232,6 +232,18 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ results })
       }
 
+      case 'list-knowledge': {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('agent_knowledge')
+          .select('id, file_name, file_type, file_size, created_at')
+          .eq('agent_name', 'shera')
+          .order('created_at', { ascending: false })
+
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json(data ?? [])
+      }
+
       default:
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
     }
@@ -312,6 +324,7 @@ export async function POST(req: NextRequest) {
         if (body.api_key !== undefined) updates.api_key = body.api_key // already base64 from client
         if (body.model !== undefined) updates.model = body.model
         if (body.max_tokens !== undefined) updates.max_tokens = body.max_tokens
+        if (body.system_prompt !== undefined) updates.system_prompt = body.system_prompt
 
         if (existing) {
           const { error } = await supabase
@@ -329,6 +342,47 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true })
       }
 
+      case 'upload-knowledge': {
+        const supabase = getSupabaseAdmin()
+        const formData = await req.formData()
+        const file = formData.get('file') as File | null
+        if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+
+        // Extract text content based on file type
+        let content: string
+        const fileName = file.name
+        const fileType = fileName.split('.').pop()?.toLowerCase() || 'txt'
+
+        if (fileType === 'txt' || fileType === 'md') {
+          content = await file.text()
+        } else if (fileType === 'pdf' || fileType === 'docx') {
+          // For PDF/DOCX, store the raw text. In production, use a proper parser.
+          // For now, try reading as text (works for text-based content)
+          content = await file.text()
+        } else {
+          return NextResponse.json({ error: 'Unsupported file type. Use .txt, .md, .pdf, or .docx' }, { status: 400 })
+        }
+
+        if (!content.trim()) {
+          return NextResponse.json({ error: 'File is empty or could not be read' }, { status: 400 })
+        }
+
+        const { data, error } = await supabase
+          .from('agent_knowledge')
+          .insert({
+            agent_name: 'shera',
+            file_name: fileName,
+            file_type: fileType,
+            content: content.slice(0, 50000), // Limit to 50K chars per file
+            file_size: file.size,
+          })
+          .select()
+          .single()
+
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ data }, { status: 201 })
+      }
+
       default:
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
     }
@@ -338,5 +392,28 @@ export async function POST(req: NextRequest) {
       { error: error.message || 'Internal server error' },
       { status: 500 }
     )
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const action = searchParams.get('action')
+
+  try {
+    switch (action) {
+      case 'delete-knowledge': {
+        const supabase = getSupabaseAdmin()
+        const id = searchParams.get('id')
+        if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+        const { error } = await supabase.from('agent_knowledge').delete().eq('id', id)
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ ok: true })
+      }
+      default:
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
+    }
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 }

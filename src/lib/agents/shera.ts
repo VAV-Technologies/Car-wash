@@ -355,11 +355,11 @@ function cleanPhone(phone: string): string {
   return phone.replace(/[\s+\-()]/g, '')
 }
 
-export async function getSheraSettings(): Promise<{ apiKey: string | null; model: string; maxTokens: number }> {
+export async function getSheraSettings(): Promise<{ apiKey: string | null; model: string; maxTokens: number; systemPrompt: string | null }> {
   const supabase = getSupabaseAdmin()
   const { data } = await supabase
     .from('agent_settings')
-    .select('api_key, model, max_tokens')
+    .select('api_key, model, max_tokens, system_prompt')
     .eq('agent_name', 'shera')
     .single()
 
@@ -372,6 +372,7 @@ export async function getSheraSettings(): Promise<{ apiKey: string | null; model
     apiKey,
     model: data?.model || 'claude-sonnet-4-20250514',
     maxTokens: data?.max_tokens || 1024,
+    systemPrompt: data?.system_prompt || null,
   }
 }
 
@@ -451,17 +452,31 @@ export async function processMessage(
   // 5. Add new user message
   claudeMessages.push({ role: 'user', content: messageText })
 
-  // Build system prompt with customer context
-  let systemPrompt = SHERA_SYSTEM_PROMPT
+  // Use DB prompt if configured, otherwise default
+  const settings = await getSheraSettings()
+  const modelToUse = settings.model
+  const maxTokensToUse = settings.maxTokens
+  let systemPrompt = settings.systemPrompt || SHERA_SYSTEM_PROMPT
+
+  // Load knowledge base documents
+  const { data: knowledgeDocs } = await supabase
+    .from('agent_knowledge')
+    .select('file_name, content')
+    .eq('agent_name', 'shera')
+
+  if (knowledgeDocs && knowledgeDocs.length > 0) {
+    systemPrompt += '\n\n--- Reference Documents ---'
+    for (const doc of knowledgeDocs) {
+      systemPrompt += `\n\n[${doc.file_name}]\n${doc.content}`
+    }
+  }
+
   if (customer) {
     systemPrompt += `\n\nCurrent customer context: ${customer.name} (ID: ${customer.id}, phone: ${customer.phone})`
   }
 
   // 6. Call Claude
   const anthropic = await getAnthropicClient()
-  const settings = await getSheraSettings()
-  const modelToUse = settings.model
-  const maxTokensToUse = settings.maxTokens
 
   let response = await anthropic.messages.create({
     model: modelToUse,
