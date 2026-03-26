@@ -448,12 +448,11 @@ export async function processMessage(
   while (response.stop_reason === 'tool_use' && iterations < 5) {
     iterations++
 
-    const toolUseBlocks = response.content.filter(
-      (b): b is Anthropic.ContentBlock & { type: 'tool_use' } => b.type === 'tool_use'
-    )
+    const toolUseBlocks = response.content.filter(b => b.type === 'tool_use')
 
-    const toolResults: Anthropic.ToolResultBlockParam[] = await Promise.all(
+    const toolResults = await Promise.all(
       toolUseBlocks.map(async (block) => {
+        if (block.type !== 'tool_use') return { type: 'text' as const, text: '' }
         const result = await executeSheraTool(
           block.name,
           block.input as Record<string, unknown>
@@ -467,7 +466,7 @@ export async function processMessage(
     )
 
     claudeMessages.push({ role: 'assistant', content: response.content })
-    claudeMessages.push({ role: 'user', content: toolResults })
+    claudeMessages.push({ role: 'user', content: toolResults as Anthropic.ToolResultBlockParam[] })
 
     response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
@@ -485,11 +484,12 @@ export async function processMessage(
   const reply = textBlock?.text ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
 
   // 9. Save both user message and assistant reply to conversation messages
+  const now = new Date().toISOString()
   const updatedMessages = [
     ...existingMessages,
-    { role: 'user', content: messageText },
-    { role: 'assistant', content: reply },
-  ]
+    { role: 'user', content: messageText, timestamp: now },
+    { role: 'assistant', content: reply, timestamp: now },
+  ].slice(-30) // Keep last 30 messages to prevent unbounded growth
 
   // 10. Update last_message_at
   await supabase

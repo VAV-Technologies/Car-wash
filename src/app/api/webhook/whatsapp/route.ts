@@ -80,17 +80,19 @@ export async function POST(req: NextRequest) {
 
     // ── Extract identifiers ────────────────────────────────────────
     const chatId = from // e.g. "6281234567890@c.us"
-    const phone = chatId.replace('@c.us', '').replace(/^(\d)/, '+$1')
+    const phone = '+' + chatId.replace('@c.us', '')
 
     // ── Mark as seen (fire-and-forget) ─────────────────────────────
-    try {
-      sendSeen(chatId) // intentionally not awaited
-    } catch {
-      // silently ignore — marking seen is non-critical
-    }
+    sendSeen(chatId).catch(() => {}) // fire-and-forget with proper catch
 
     // ── Process with Shera agent ───────────────────────────────────
-    const reply = await processMessage(chatId, phone, messageText)
+    let reply: string
+    try {
+      reply = await processMessage(chatId, phone, messageText)
+    } catch (err) {
+      console.error('[shera-error]', err)
+      reply = 'Maaf, terjadi kesalahan saat memproses pesan Anda. Tim kami akan menghubungi Anda segera. 🙏'
+    }
 
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
