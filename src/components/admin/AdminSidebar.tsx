@@ -60,7 +60,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Technology',
     items: [
-      { label: 'Automations', href: '/admin/automations', icon: Zap },
+      { label: 'Agents', href: '/admin/agents', icon: Bot },
     ],
   },
   {

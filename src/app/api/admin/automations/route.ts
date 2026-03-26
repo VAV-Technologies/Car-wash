@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {
-  getAutomations,
-  getAutomationById,
-  getAutomationRuns,
+  getAgents,
+  getAgentById,
+  getAgentRuns,
   getRunById,
-  getAutomationKeys,
-  createAutomation,
-  addAutomationKey,
-  updateAutomation,
-  toggleAutomationStatus,
-  deleteAutomation,
-  deleteAutomationKey,
-} from '@/lib/admin/automations'
+  createAgent,
+  updateAgent,
+  toggleAgentStatus,
+  deleteAgent,
+} from '@/lib/admin/agents'
 
 function auth(req: NextRequest): boolean {
   const key = process.env.CASTUDIO_API_KEY
@@ -35,26 +32,26 @@ export async function GET(request: NextRequest) {
         if (isNaN(page) || isNaN(limit)) {
           return NextResponse.json({ error: 'page and limit must be integers' }, { status: 400 })
         }
-        const data = await getAutomations({ search, status, page, limit })
+        const data = await getAgents({ search, status, page, limit })
         return NextResponse.json({ data: data.data, count: data.count })
       }
 
       case 'get': {
         const id = sp.get('id')
         if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
-        const data = await getAutomationById(id)
+        const data = await getAgentById(id)
         return NextResponse.json({ data })
       }
 
       case 'runs': {
-        const automationId = sp.get('automation_id')
-        if (!automationId) return NextResponse.json({ error: 'automation_id is required' }, { status: 400 })
+        const agentId = sp.get('automation_id') || sp.get('agent_id')
+        if (!agentId) return NextResponse.json({ error: 'agent_id is required' }, { status: 400 })
         const page = parseInt(sp.get('page') ?? '1', 10)
         const limit = parseInt(sp.get('limit') ?? '20', 10)
         if (isNaN(page) || isNaN(limit)) {
           return NextResponse.json({ error: 'page and limit must be integers' }, { status: 400 })
         }
-        const data = await getAutomationRuns(automationId, { page, limit })
+        const data = await getAgentRuns(agentId, { page, limit })
         return NextResponse.json({ data: data.data, count: data.count })
       }
 
@@ -62,13 +59,6 @@ export async function GET(request: NextRequest) {
         const runId = sp.get('run_id')
         if (!runId) return NextResponse.json({ error: 'run_id is required' }, { status: 400 })
         const data = await getRunById(runId)
-        return NextResponse.json({ data })
-      }
-
-      case 'keys': {
-        const automationId = sp.get('automation_id')
-        if (!automationId) return NextResponse.json({ error: 'automation_id is required' }, { status: 400 })
-        const data = await getAutomationKeys(automationId)
         return NextResponse.json({ data })
       }
 
@@ -84,26 +74,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   if (!auth(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const sp = request.nextUrl.searchParams
-  const action = sp.get('action') ?? 'create'
-
   try {
     const body = await request.json()
-
-    switch (action) {
-      case 'create': {
-        const data = await createAutomation(body)
-        return NextResponse.json({ data }, { status: 201 })
-      }
-
-      case 'add-key': {
-        const data = await addAutomationKey(body)
-        return NextResponse.json({ data }, { status: 201 })
-      }
-
-      default:
-        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
-    }
+    const data = await createAgent(body)
+    return NextResponse.json({ data }, { status: 201 })
   } catch (err) {
     console.error('POST /api/admin/automations error:', err)
     return NextResponse.json({ error: (err as Error).message }, { status: 500 })
@@ -123,7 +97,7 @@ export async function PUT(request: NextRequest) {
 
     switch (action) {
       case 'update': {
-        const data = await updateAutomation(id, body)
+        const data = await updateAgent(id, body)
         return NextResponse.json({ data })
       }
 
@@ -132,7 +106,7 @@ export async function PUT(request: NextRequest) {
         if (!status || (status !== 'active' && status !== 'paused')) {
           return NextResponse.json({ error: 'status must be "active" or "paused"' }, { status: 400 })
         }
-        const data = await toggleAutomationStatus(id, status)
+        const data = await toggleAgentStatus(id, status)
         return NextResponse.json({ data })
       }
 
@@ -149,25 +123,12 @@ export async function DELETE(request: NextRequest) {
   if (!auth(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const sp = request.nextUrl.searchParams
-  const action = sp.get('action') ?? 'delete'
   const id = sp.get('id')
   if (!id) return NextResponse.json({ error: 'id is required' }, { status: 400 })
 
   try {
-    switch (action) {
-      case 'delete': {
-        await deleteAutomation(id)
-        return NextResponse.json({ data: { success: true } })
-      }
-
-      case 'delete-key': {
-        await deleteAutomationKey(id)
-        return NextResponse.json({ data: { success: true } })
-      }
-
-      default:
-        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
-    }
+    await deleteAgent(id)
+    return NextResponse.json({ data: { success: true } })
   } catch (err) {
     console.error('DELETE /api/admin/automations error:', err)
     return NextResponse.json({ error: (err as Error).message }, { status: 500 })
