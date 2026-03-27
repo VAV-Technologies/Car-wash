@@ -161,10 +161,10 @@ export default function JobsTable() {
               data.map((job) => {
                 const raw = job as unknown as Record<string, unknown>
                 const rating = typeof raw.rating === 'number' ? (raw.rating as number) : 0
-                const serviceType = job.booking?.service_type ?? job.service_type
+                const serviceType = job.booking?.service_type ?? job.service_type ?? ''
                 const serviceLabel =
                   SERVICE_TYPES.find((s) => s.value === serviceType)?.label ??
-                  serviceType.replace(/_/g, ' ')
+                  (serviceType ? serviceType.replace(/_/g, ' ') : '—')
                 const isExpanded = expandedId === job.id
 
                 const statusColors: Record<string, string> = {
