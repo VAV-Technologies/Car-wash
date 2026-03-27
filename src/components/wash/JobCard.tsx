@@ -122,9 +122,14 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
             : 'border-white/10 cursor-pointer hover:border-white/20'
         }`}
       >
-        {/* Header: time + status */}
+        {/* Header: date + time + status */}
         <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold text-white">{formatTime(booking.scheduled_time)}</span>
+          <div>
+            <span className="text-lg font-semibold text-white">{formatTime(booking.scheduled_time)}</span>
+            <span className="text-xs text-white/40 ml-2">
+              {new Date(booking.scheduled_date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+            </span>
+          </div>
           {statusBadge(booking.status)}
         </div>
 
