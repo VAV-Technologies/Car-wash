@@ -9,7 +9,7 @@ import {
   DollarSign, FileText, Package,
   UserCog, Cog,
   Zap,
-  BarChart3, Target, Bot, Settings,
+  BarChart3, Target, Bot, Shield, Settings,
   ChevronDown, LogOut,
 } from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
@@ -60,6 +60,7 @@ const navGroups: NavGroup[] = [
     label: 'Technology',
     items: [
       { label: 'Agents', href: '/admin/agents', icon: Bot },
+      { label: 'Accounts', href: '/admin/accounts', icon: Shield },
     ],
   },
   {

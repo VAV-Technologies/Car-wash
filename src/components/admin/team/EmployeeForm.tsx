@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Copy, CheckCircle2 } from 'lucide-react'
 import { createEmployee, updateEmployee } from '@/lib/admin/team'
 import type { EmployeeExtended, EmployeeStatus, EmployeeRole } from '@/lib/admin/types'
 import AdminSelect from '@/components/admin/AdminSelect'
@@ -27,6 +27,8 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
   const [notes, setNotes] = useState(employee?.notes ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [showCredentials, setShowCredentials] = useState(false)
+  const [credentials, setCredentials] = useState<{ email: string; password: string } | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -54,7 +56,13 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
       if (isEdit && employee) {
         await updateEmployee(employee.id, payload)
       } else {
-        await createEmployee(payload as Omit<EmployeeExtended, 'id' | 'created_at' | 'updated_at'>)
+        const result = await createEmployee(payload as any)
+        if (result.generated_password && payload.email) {
+          setCredentials({ email: payload.email, password: result.generated_password })
+          setShowCredentials(true)
+          setSaving(false)
+          return // Don't close the modal yet — show credentials first
+        }
       }
       onClose()
     } catch (err) {
@@ -195,6 +203,53 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
             </button>
           </div>
         </form>
+
+        {/* Credentials display after successful creation */}
+        {showCredentials && credentials && (
+          <div className="mt-6 rounded-lg border border-green-500/20 bg-green-500/10 p-5 space-y-4">
+            <div className="flex items-center gap-3 text-green-300">
+              <CheckCircle2 className="h-5 w-5" />
+              <span className="text-sm font-semibold">Login credentials created!</span>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-[#0A0A0A] p-4 space-y-3">
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Email</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-white font-mono">{credentials.email}</span>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(credentials.email)}
+                    className="text-white/30 hover:text-white transition-colors"
+                    title="Copy email"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-white/40 mb-1">Password</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-white font-mono">{credentials.password}</span>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(credentials.password)}
+                    className="text-white/30 hover:text-white transition-colors"
+                    title="Copy password"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full rounded-lg bg-orange-500 px-5 py-2 text-sm font-medium text-white hover:bg-orange-600 transition-colors"
+            >
+              Done
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

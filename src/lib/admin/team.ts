@@ -70,10 +70,38 @@ export async function getEmployeeById(
 
 export async function createEmployee(
   data: Omit<EmployeeExtended, 'id' | 'created_at' | 'updated_at'>
-): Promise<EmployeeExtended> {
+): Promise<EmployeeExtended & { generated_password?: string }> {
+  let authUserId: string | null = null
+  let generatedPassword: string | null = null
+
+  // If email provided, create Supabase Auth user first
+  if (data.email) {
+    // Generate default password: first 4 chars of name (lowercase) + last 4 digits of phone + "!"
+    const namePart = data.name.toLowerCase().replace(/\s/g, '').slice(0, 4)
+    const phonePart = data.phone.replace(/\D/g, '').slice(-4)
+    generatedPassword = `${namePart}${phonePart}!`
+
+    try {
+      const res = await fetch('/api/admin/auth?action=create-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, password: generatedPassword, name: data.name }),
+      })
+      if (res.ok) {
+        const { user_id } = await res.json()
+        authUserId = user_id
+      }
+    } catch {
+      // Auth creation failed — continue without login
+    }
+  }
+
+  // Insert employee with auth user ID (so washer panel login matches)
+  const insertData = authUserId ? { ...data, id: authUserId } : data
+
   const { data: created, error } = await supabase
     .from('employees')
-    .insert(data)
+    .insert(insertData)
     .select()
     .single()
 
@@ -81,7 +109,7 @@ export async function createEmployee(
     throw new Error(`Failed to create employee: ${error.message}`)
   }
 
-  return created as EmployeeExtended
+  return { ...(created as EmployeeExtended), generated_password: generatedPassword || undefined }
 }
 
 // ─── Update Employee ────────────────────────────────────────────────
