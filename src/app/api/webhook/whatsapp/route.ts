@@ -82,9 +82,19 @@ export async function POST(req: NextRequest) {
     const chatId = from // e.g. "6281234567890@c.us"
     const phone = '+' + chatId.replace('@c.us', '')
 
-    // ── Mark as seen after a brief pause (like a human opening the chat) ─
-    const seenDelay = 1000 + Math.random() * 2000 // 1-3 seconds
+    // ── Mark as seen after a brief pause ─────────────────────────
+    const seenDelay = 3000 + Math.random() * 5000 // 3-8 seconds
     setTimeout(() => { sendSeen(chatId).catch(() => {}) }, seenDelay)
+
+    // ── Check if this is the first message in the conversation ───
+    const { getSupabaseAdmin } = await import('@/lib/supabase')
+    const supabase = getSupabaseAdmin()
+    const { data: convo } = await supabase
+      .from('whatsapp_conversations')
+      .select('messages')
+      .eq('chat_id', chatId)
+      .single()
+    const isFirstMessage = !convo || !convo.messages || (Array.isArray(convo.messages) && convo.messages.length === 0)
 
     // ── Process with Shera agent ───────────────────────────────────
     let reply: string
@@ -92,21 +102,17 @@ export async function POST(req: NextRequest) {
       reply = await processMessage(chatId, phone, messageText)
     } catch (err) {
       console.error('[shera-error]', err)
-      reply = 'Maaf, ada error nih. Tim kami akan hubungi kamu segera ya 🙏'
+      reply = 'Maaf ada error nih. Tim kami akan hubungi kamu segera ya'
     }
 
     // ── Human-like typing delay before sending ─────────────────────
-    // Short messages (< 80 chars): 3-8 seconds
-    // Medium messages (80-200 chars): 8-15 seconds
-    // Long messages (> 200 chars): 15-25 seconds
-    const replyLength = reply.length
+    // First message: 90-120 seconds (like a person picking up the phone)
+    // Subsequent: 40-60 seconds (like actually typing a reply)
     let minDelay: number, maxDelay: number
-    if (replyLength < 80) {
-      minDelay = 3000; maxDelay = 8000
-    } else if (replyLength < 200) {
-      minDelay = 8000; maxDelay = 15000
+    if (isFirstMessage) {
+      minDelay = 90000; maxDelay = 120000
     } else {
-      minDelay = 15000; maxDelay = 25000
+      minDelay = 40000; maxDelay = 60000
     }
     const typingDelay = minDelay + Math.random() * (maxDelay - minDelay)
     await new Promise(resolve => setTimeout(resolve, typingDelay))
