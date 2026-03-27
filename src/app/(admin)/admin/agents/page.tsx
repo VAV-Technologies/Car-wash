@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { MessageCircle, Bot } from 'lucide-react';
 import AgentGrid from '@/components/admin/agents/AgentGrid';
 import CreateAgentModal from '@/components/admin/agents/CreateAgentModal';
 import ConnectorsPanel from '@/components/admin/agents/ConnectorsPanel';
@@ -34,6 +36,27 @@ export default function AgentsPage() {
             </button>
           </div>
         </div>
+
+        {/* Shera Agent Card */}
+        <Link
+          href="/admin/agents/shera"
+          className="block mb-6 rounded-xl border border-green-500/20 bg-[#171717] p-5 hover:border-green-500/40 transition-colors"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <MessageCircle className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Shera</h3>
+                <p className="text-sm text-white/50">WhatsApp AI Agent</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
+              Active
+            </span>
+          </div>
+        </Link>
 
         {/* Agent Grid */}
         <AgentGrid key={refreshKey} />
