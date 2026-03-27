@@ -301,20 +301,17 @@ export async function executeSheraTool(
       }
 
       case 'create_booking': {
-        const { data, error } = await supabase
-          .from('bookings')
-          .insert({
-            customer_id: String(input.customer_id),
-            service_type: String(input.service_type),
-            scheduled_date: String(input.scheduled_date),
-            scheduled_time: String(input.scheduled_time),
-            notes: input.notes ? String(input.notes) : null,
-            status: 'confirmed',
-          })
-          .select()
-          .single()
-        if (error) throw error
-        return JSON.stringify(data)
+        // Use the createBooking function so auto-assign kicks in
+        const { createBooking } = await import('@/lib/admin/bookings')
+        const booking = await createBooking({
+          customer_id: String(input.customer_id),
+          service_type: String(input.service_type) as any,
+          scheduled_date: String(input.scheduled_date),
+          scheduled_time: String(input.scheduled_time),
+          notes: input.notes ? String(input.notes) : null,
+          status: 'confirmed' as any,
+        })
+        return JSON.stringify(booking)
       }
 
       case 'update_booking': {

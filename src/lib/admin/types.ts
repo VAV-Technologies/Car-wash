@@ -51,6 +51,7 @@ export interface Booking {
   service_type: ServiceType
   scheduled_date: string
   scheduled_time: string
+  washer_id?: string | null
   status: BookingStatus
   notes: string | null
   created_at: string

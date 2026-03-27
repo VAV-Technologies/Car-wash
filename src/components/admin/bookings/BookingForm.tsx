@@ -131,8 +131,9 @@ export default function BookingForm() {
         service_type: form.service_type as ServiceType,
         scheduled_date: form.scheduled_date,
         scheduled_time: form.scheduled_time,
-        status: 'pending' as BookingStatus,
+        status: 'confirmed' as BookingStatus,
         notes: form.notes.trim() || null,
+        ...(selectedWasherId ? { washer_id: selectedWasherId } : {}),
       })
       router.push('/admin/bookings')
     } catch (err) {
