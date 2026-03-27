@@ -82,8 +82,9 @@ export async function POST(req: NextRequest) {
     const chatId = from // e.g. "6281234567890@c.us"
     const phone = '+' + chatId.replace('@c.us', '')
 
-    // ── Mark as seen (fire-and-forget) ─────────────────────────────
-    sendSeen(chatId).catch(() => {}) // fire-and-forget with proper catch
+    // ── Mark as seen after a brief pause (like a human opening the chat) ─
+    const seenDelay = 1000 + Math.random() * 2000 // 1-3 seconds
+    setTimeout(() => { sendSeen(chatId).catch(() => {}) }, seenDelay)
 
     // ── Process with Shera agent ───────────────────────────────────
     let reply: string
@@ -91,8 +92,24 @@ export async function POST(req: NextRequest) {
       reply = await processMessage(chatId, phone, messageText)
     } catch (err) {
       console.error('[shera-error]', err)
-      reply = 'Maaf, terjadi kesalahan saat memproses pesan Anda. Tim kami akan menghubungi Anda segera. 🙏'
+      reply = 'Maaf, ada error nih. Tim kami akan hubungi kamu segera ya 🙏'
     }
+
+    // ── Human-like typing delay before sending ─────────────────────
+    // Short messages (< 80 chars): 3-8 seconds
+    // Medium messages (80-200 chars): 8-15 seconds
+    // Long messages (> 200 chars): 15-25 seconds
+    const replyLength = reply.length
+    let minDelay: number, maxDelay: number
+    if (replyLength < 80) {
+      minDelay = 3000; maxDelay = 8000
+    } else if (replyLength < 200) {
+      minDelay = 8000; maxDelay = 15000
+    } else {
+      minDelay = 15000; maxDelay = 25000
+    }
+    const typingDelay = minDelay + Math.random() * (maxDelay - minDelay)
+    await new Promise(resolve => setTimeout(resolve, typingDelay))
 
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
