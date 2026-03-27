@@ -1,5 +1,5 @@
-import PlaceholderPage from '@/components/admin/PlaceholderPage'
+import { redirect } from 'next/navigation'
 
-export default function RoutesPage() {
-  return <PlaceholderPage title="Route Planner" />
+export default function RoutesRedirect() {
+  redirect('/admin/customer-map')
 }

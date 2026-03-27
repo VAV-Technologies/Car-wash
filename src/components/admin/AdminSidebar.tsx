@@ -44,7 +44,6 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Bookings', href: '/admin/bookings', icon: Calendar },
       { label: 'Job Tracker', href: '/admin/jobs', icon: Wrench },
-      { label: 'Route Planner', href: '/admin/routes', icon: MapPin },
       { label: 'Team & Bonus', href: '/admin/team', icon: UserCog },
       { label: 'Equipment', href: '/admin/equipment', icon: Cog },
     ],
@@ -67,6 +66,7 @@ const navGroups: NavGroup[] = [
     label: 'Analysis',
     items: [
       { label: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+      { label: 'Customer Map', href: '/admin/customer-map', icon: MapPin },
       { label: 'Scorecard', href: '/admin/scorecard', icon: Target },
     ],
   },
