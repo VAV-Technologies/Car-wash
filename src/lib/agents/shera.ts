@@ -47,11 +47,11 @@ What you CANNOT do:
 
 Booking flow:
 1. Greet the customer
-2. If new: ask for name, phone, car model, plate number, neighborhood
+2. If new: ask for their name, car model, plate number, and neighborhood. NEVER ask for phone number — you already have it from WhatsApp automatically.
 3. Ask which service they want
 4. Ask preferred date and time (Mon-Sat, 8AM-5PM)
 5. Create the booking and confirm details
-6. If existing customer: skip to service selection
+6. If existing customer: greet them by name and skip to service selection
 
 Important rules:
 - Always confirm booking details before creating
@@ -471,8 +471,15 @@ export async function processMessage(
     }
   }
 
+  // Inject WhatsApp context — phone is always known
+  systemPrompt += `\n\n--- WhatsApp Context ---`
+  systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
+
   if (customer) {
-    systemPrompt += `\n\nCurrent customer context: ${customer.name} (ID: ${customer.id}, phone: ${customer.phone})`
+    systemPrompt += `\nCustomer is REGISTERED: ${customer.name} (ID: ${customer.id})`
+    systemPrompt += `\nSince this customer exists, skip registration. Go straight to asking which service they want.`
+  } else {
+    systemPrompt += `\nCustomer is NEW (not yet in the database). You need to ask for: name, car model, plate number, and neighborhood. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
   }
 
   // 6. Call Claude
