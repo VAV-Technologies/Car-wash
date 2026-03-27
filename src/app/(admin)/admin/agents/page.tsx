@@ -37,10 +37,13 @@ export default function AgentsPage() {
           </div>
         </div>
 
+        {/* Agent Grid */}
+        <AgentGrid key={refreshKey} />
+
         {/* Shera Agent Card */}
         <Link
           href="/admin/agents/shera"
-          className="block mb-6 rounded-xl border border-green-500/20 bg-[#171717] p-5 hover:border-green-500/40 transition-colors"
+          className="block mt-4 rounded-xl border border-green-500/20 bg-[#171717] p-5 hover:border-green-500/40 transition-colors"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -57,9 +60,6 @@ export default function AgentsPage() {
             </span>
           </div>
         </Link>
-
-        {/* Agent Grid */}
-        <AgentGrid key={refreshKey} />
 
         {/* Modals */}
         {showCreate && (
