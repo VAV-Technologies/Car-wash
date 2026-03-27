@@ -154,14 +154,23 @@ export default function JobCard({ booking, washerId, onStatusChange, readOnly }:
         </div>
 
         {/* Location */}
-        {(booking.address || customer.neighborhood) && (
+        {(booking.address || booking.location_address || customer.neighborhood) && (
           <div className="flex items-start gap-2 text-sm text-white/50">
             <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-white/30" />
             <div>
-              {booking.address && <p className="text-white/60">{booking.address}</p>}
+              {(booking.location_address || booking.address) && <p className="text-white/60">{booking.location_address || booking.address}</p>}
               <p className="text-white/40">{customer.neighborhood}</p>
             </div>
           </div>
+        )}
+
+        {/* Notes */}
+        {booking.notes ? (
+          <div className="bg-orange-500/5 border border-orange-500/10 rounded-lg px-3 py-2">
+            <p className="text-xs text-orange-400/70">📝 {booking.notes}</p>
+          </div>
+        ) : (
+          <p className="text-xs text-white/20">No notes</p>
         )}
 
         {/* Utility buttons — always visible for active jobs */}

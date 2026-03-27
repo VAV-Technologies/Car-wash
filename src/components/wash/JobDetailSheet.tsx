@@ -333,17 +333,22 @@ export default function JobDetailSheet({ booking, washerId, open, onOpenChange, 
               <span className="text-white/30">&middot;</span>
               <span className="text-white/50">{customer.plate_number}</span>
             </div>
-            {(booking.address || customer.neighborhood) && (
+            {(booking.location_address || booking.address || customer.neighborhood) && (
               <div className="flex items-start gap-2 text-sm text-white/50">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-white/30" />
                 <div>
-                  {booking.address && <p className="text-white/60">{booking.address}</p>}
+                  {(booking.location_address || booking.address) && <p className="text-white/60">{booking.location_address || booking.address}</p>}
                   <p className="text-white/40">{customer.neighborhood}</p>
                 </div>
               </div>
             )}
+            {/* Notes */}
+            <div className="bg-[#0f0f0f] border border-white/5 rounded-lg px-3 py-2">
+              <p className="text-[10px] text-white/30 uppercase tracking-wide mb-1">Notes</p>
+              <p className="text-xs text-white/50">{booking.notes || 'No notes'}</p>
+            </div>
             <div className="flex gap-2 pt-1">
-              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(booking.address || customer.neighborhood)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2 px-3 text-xs font-medium transition-colors">
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(booking.location_address || booking.address || customer.neighborhood)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg py-2 px-3 text-xs font-medium transition-colors">
                 <Navigation className="w-3.5 h-3.5" /> Navigate
               </a>
               <a href={formatWhatsAppLink(customer.phone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-green-500/10 hover:bg-green-500/15 border border-green-500/20 text-green-400 rounded-lg py-2 px-3 text-xs font-medium transition-colors">
