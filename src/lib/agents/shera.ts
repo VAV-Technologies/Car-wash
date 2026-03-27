@@ -5,7 +5,7 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 // A. System Prompt
 // ---------------------------------------------------------------------------
 
-export const SHERA_SYSTEM_PROMPT = `Kamu adalah Shera dari Castudio, layanan cuci mobil dan detailing premium yang datang ke lokasi customer di Jakarta Selatan.
+export const SHERA_SYSTEM_PROMPT = `Kamu adalah Shera dari Castudio, layanan cuci mobil dan detailing premium yang datang ke lokasi customer di area Jabodetabek.
 
 Cara kamu ngobrol:
 - Kamu itu manusia, bukan robot. Tulis pesan seperti orang biasa chat di WhatsApp.
@@ -34,7 +34,7 @@ Essentials Rp 339.000/bulan (4x Standard Wash)
 Plus Rp 449.000/bulan (4x Professional Wash)
 Elite Rp 1.000.000/bulan (4x Professional + 2x Elite Wash)
 
-Area layanan: Jakarta Selatan, termasuk Pondok Indah, Kebayoran, Senayan, Permata Hijau, Kemang, Cipete, Cilandak, dan sekitarnya.
+Area layanan: Seluruh Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi dan sekitarnya). Kalau customer di luar Jabodetabek (misalnya Bandung, Surabaya, Semarang, dll), bilang belum tersedia di kota tersebut.
 
 Yang BISA kamu lakukan:
 Jawab pertanyaan soal layanan, harga, dan area
@@ -51,7 +51,9 @@ Kasih diskon atau negosiasi harga
 
 Alur booking:
 1. Sapa customer, tanya namanya dulu
-2. Kalau customer baru: tanya nama, mobil apa, plat nomor, dan daerah mana. JANGAN tanya nomor HP, kamu sudah punya dari WhatsApp.
+2. Kalau customer baru: tanya nama, mobil apa, plat nomor, dan alamat lengkap. JANGAN tanya nomor HP, kamu sudah punya dari WhatsApp.
+   Untuk alamat, minta alamat lengkap termasuk nama jalan dan nomor rumah. Contoh: "Jalan Kemang Raya No. 15, Kemang, Jakarta Selatan". Jangan cuma terima "Kemang" doang, tanya alamat jelasnya.
+   Kalau ada catatan khusus soal lokasi (misalnya "rumah warna kuning", "masuk gang kedua", "apartemen Tower B lantai 2"), simpan di catatan booking.
 3. Tanya mau cuci berapa mobil
 4. Untuk tiap mobil: tanya jenis mobil, plat, dan layanan apa
 5. Tanya mau tanggal dan jam berapa (Senin-Sabtu, 08.00-17.00)
@@ -93,7 +95,7 @@ Kapan HARUS escalate ke manusia (pakai tool escalate_to_human):
 3. Komplain tentang kualitas layanan sebelumnya
 4. Permintaan harga khusus atau paket korporat
 5. Pertanyaan tentang partnership atau kerjasama bisnis
-6. Request layanan di luar area Jakarta Selatan
+6. Request layanan di luar Jabodetabek (misalnya Bandung, Surabaya, Semarang, dll)
 7. Situasi apapun yang kamu tidak yakin bisa handle sendiri
 
 Kapan JANGAN escalate (handle sendiri):
@@ -185,9 +187,13 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
           type: 'string',
           description: 'Time in HH:MM format (24h)',
         },
+        location_address: {
+          type: 'string',
+          description: 'Full street address for the service location, e.g. "Jalan Kemang Raya No. 15, Kemang, Jakarta Selatan"',
+        },
         notes: {
           type: 'string',
-          description: 'Optional notes for the booking',
+          description: 'Location notes and special instructions, e.g. "rumah warna kuning, masuk gang kedua sebelah kiri" or "Apartemen Tower B lantai 2, parkir basement"',
         },
       },
       required: ['customer_id', 'service_type', 'scheduled_date', 'scheduled_time'],
@@ -258,9 +264,13 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
           type: 'string',
           description: 'License plate number (e.g. B 1234 ABC)',
         },
+        address: {
+          type: 'string',
+          description: 'Full street address, e.g. "Jalan Kemang Raya No. 15, Kemang, Jakarta Selatan"',
+        },
         neighborhood: {
           type: 'string',
-          description: 'Neighborhood or area (e.g. Pondok Indah)',
+          description: 'Area or neighborhood for routing, e.g. kemang, pondok_indah, bintaro, tangerang, bekasi, bogor, depok',
         },
       },
       required: ['name', 'phone'],
@@ -339,13 +349,16 @@ export async function executeSheraTool(
       case 'create_booking': {
         // Use the createBooking function so auto-assign kicks in
         const { createBooking } = await import('@/lib/admin/bookings')
-        const booking = await createBooking({
+        const bookingData: Record<string, unknown> = {
           customer_id: String(input.customer_id),
-          service_type: String(input.service_type) as any,
+          service_type: String(input.service_type),
           scheduled_date: String(input.scheduled_date),
           scheduled_time: String(input.scheduled_time),
           notes: input.notes ? String(input.notes) : null,
-          status: 'confirmed' as any,
+          status: 'confirmed',
+        }
+        if (input.location_address) bookingData.location_address = String(input.location_address)
+        const booking = await createBooking(bookingData as any)
         })
         return JSON.stringify(booking)
       }
@@ -384,6 +397,7 @@ export async function executeSheraTool(
             phone: String(input.phone),
             car_model: input.car_model ? String(input.car_model) : null,
             plate_number: input.plate_number ? String(input.plate_number) : null,
+            address: input.address ? String(input.address) : null,
             neighborhood: input.neighborhood ? String(input.neighborhood) : null,
             segment: 'new',
           })
