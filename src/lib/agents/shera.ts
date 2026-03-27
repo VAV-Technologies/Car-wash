@@ -491,6 +491,21 @@ export async function processMessage(
     }
   }
 
+  // Inject real-time context
+  const now = new Date()
+  const jakartaTime = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Jakarta',
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(now)
+  const jakartaDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(now) // YYYY-MM-DD
+
+  systemPrompt += `\n\n--- Real-Time Context ---`
+  systemPrompt += `\nCurrent date and time (Jakarta/WIB): ${jakartaTime}`
+  systemPrompt += `\nToday's date: ${jakartaDate}`
+  systemPrompt += `\nUse this to resolve relative dates: "tomorrow", "next week", "this Saturday", "April 6" (assume current year ${now.getFullYear()}), etc.`
+  systemPrompt += `\nNEVER ask the customer to clarify the year — always assume the current or next occurrence of a date.`
+
   // Inject WhatsApp context — phone is always known
   systemPrompt += `\n\n--- WhatsApp Context ---`
   systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
