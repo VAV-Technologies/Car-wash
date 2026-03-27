@@ -4,7 +4,11 @@ import { useEffect, useState, useMemo } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import { Search, Users, Filter } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import 'leaflet/dist/leaflet.css'
+
+// Import Leaflet CSS only on client side
+if (typeof window !== 'undefined') {
+  require('leaflet/dist/leaflet.css')
+}
 
 const NEIGHBORHOOD_COORDS: Record<string, [number, number]> = {
   pondok_indah: [-6.2750, 106.7840],
