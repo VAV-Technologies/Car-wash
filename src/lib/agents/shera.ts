@@ -359,7 +359,6 @@ export async function executeSheraTool(
         }
         if (input.location_address) bookingData.location_address = String(input.location_address)
         const booking = await createBooking(bookingData as any)
-        })
         return JSON.stringify(booking)
       }
 
