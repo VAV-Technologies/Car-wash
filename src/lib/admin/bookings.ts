@@ -181,7 +181,7 @@ export async function getWashers(): Promise<{ id: string; name: string }[]> {
     .from('employees')
     .select('id, name')
     .eq('role', 'washer')
-    .eq('is_active', true)
+    .eq('status', 'active')
     .order('name')
 
   if (error) {

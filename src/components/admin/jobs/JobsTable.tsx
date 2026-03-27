@@ -160,7 +160,7 @@ export default function JobsTable() {
             ) : (
               data.map((job) => {
                 const raw = job as unknown as Record<string, unknown>
-                const rating = typeof raw.rating === 'number' ? (raw.rating as number) : 0
+                const rating = typeof raw.customer_rating === 'number' ? (raw.customer_rating as number) : 0
                 const serviceType = job.booking?.service_type ?? job.service_type ?? ''
                 const serviceLabel =
                   SERVICE_TYPES.find((s) => s.value === serviceType)?.label ??
@@ -233,7 +233,7 @@ export default function JobsTable() {
                                 <p className="text-white/40 mb-1">Upsell</p>
                                 <p className="text-white/70">
                                   {raw.upsell_attempted ? 'Attempted' : 'Not attempted'}
-                                  {raw.upsell_accepted ? ' — Accepted' : raw.upsell_attempted ? ' — Declined' : ''}
+                                  {raw.upsell_converted ? ' — Accepted' : raw.upsell_attempted ? ' — Declined' : ''}
                                 </p>
                               </div>
                             ) : null}

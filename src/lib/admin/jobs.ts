@@ -100,7 +100,7 @@ export async function getJobStats(): Promise<JobStats> {
   const { data: jobs, error } = await supabase
     .from('jobs')
     .select('*')
-    .eq('status', 'completed')
+    .not('completed_at', 'is', null)
     .gte('completed_at', monthStart)
     .lte('completed_at', monthEnd)
 
@@ -136,14 +136,14 @@ export async function getJobStats(): Promise<JobStats> {
   type RawJob = Record<string, unknown>
   const rawJobs = completedJobs as unknown as RawJob[]
 
-  const ratings = rawJobs.filter((j) => typeof j.rating === 'number' && (j.rating as number) > 0)
+  const ratings = rawJobs.filter((j) => typeof j.customer_rating === 'number' && (j.customer_rating as number) > 0)
   const avgRating =
     ratings.length > 0
-      ? Math.round((ratings.reduce((sum, j) => sum + (j.rating as number), 0) / ratings.length) * 10) / 10
+      ? Math.round((ratings.reduce((sum, j) => sum + (j.customer_rating as number), 0) / ratings.length) * 10) / 10
       : 0
 
   const upsellAttempted = rawJobs.filter((j) => j.upsell_attempted === true)
-  const upsellAccepted = rawJobs.filter((j) => j.upsell_accepted === true)
+  const upsellAccepted = rawJobs.filter((j) => j.upsell_converted === true)
   const upsellRate = totalJobs > 0 ? Math.round((upsellAttempted.length / totalJobs) * 100) : 0
   const upsellConversion =
     upsellAttempted.length > 0
