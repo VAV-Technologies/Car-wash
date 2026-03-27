@@ -62,15 +62,31 @@ export async function POST(req: NextRequest) {
     }
 
     const messageText: string | undefined = message.body
-    const hasMedia: boolean = message.hasMedia ?? false
+    const mediaType: string | undefined = message.type // chat, image, video, sticker, document, audio, ptt
 
-    // Media-only message (no text body)
-    if (hasMedia && !messageText) {
-      await sendText(
-        from,
-        'Maaf, saat ini saya hanya bisa memproses pesan teks. 😊',
-      )
-      return NextResponse.json({ ok: true, handled: 'media-only reply' })
+    // Stickers: silently ignore (like an emoji, no response needed)
+    if (mediaType === 'sticker') {
+      return NextResponse.json({ ok: true, skipped: 'sticker' })
+    }
+
+    // Images, videos, audio, documents WITHOUT text: escalate to human
+    if (mediaType && ['image', 'video', 'audio', 'ptt', 'document'].includes(mediaType) && !messageText) {
+      const { getSupabaseAdmin } = await import('@/lib/supabase')
+      const supabase = getSupabaseAdmin()
+      await supabase.from('human_escalations').insert({
+        chat_id: from,
+        phone: '+' + from.replace('@c.us', ''),
+        reason: `Customer sent ${mediaType} — needs human review`,
+        category: 'other',
+        customer_message: `[${mediaType} attachment]`,
+        status: 'pending',
+      })
+
+      const seenDelay = 2000 + Math.random() * 2000
+      setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay)
+      await new Promise(r => setTimeout(r, 10000 + Math.random() * 10000))
+      await sendText(from, 'Oke aku terima filenya. Nanti aku teruskan ke tim ya')
+      return NextResponse.json({ ok: true, handled: 'media-escalated' })
     }
 
     // Empty / undefined body
@@ -83,7 +99,7 @@ export async function POST(req: NextRequest) {
     const phone = '+' + chatId.replace('@c.us', '')
 
     // ── Mark as seen after a brief pause ─────────────────────────
-    const seenDelay = 3000 + Math.random() * 5000 // 3-8 seconds
+    const seenDelay = 2000 + Math.random() * 2000 // 2-4 seconds
     setTimeout(() => { sendSeen(chatId).catch(() => {}) }, seenDelay)
 
     // ── Check if this is the first message in the conversation ───
@@ -106,13 +122,13 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Human-like typing delay before sending ─────────────────────
-    // First message: 90-120 seconds (like a person picking up the phone)
-    // Subsequent: 40-60 seconds (like actually typing a reply)
+    // First message: ~60 seconds
+    // Subsequent: 10-20 seconds
     let minDelay: number, maxDelay: number
     if (isFirstMessage) {
-      minDelay = 90000; maxDelay = 120000
+      minDelay = 55000; maxDelay = 65000
     } else {
-      minDelay = 40000; maxDelay = 60000
+      minDelay = 10000; maxDelay = 20000
     }
     const typingDelay = minDelay + Math.random() * (maxDelay - minDelay)
     await new Promise(resolve => setTimeout(resolve, typingDelay))
