@@ -95,8 +95,31 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Extract identifiers ────────────────────────────────────────
-    const chatId = from // e.g. "6281234567890@c.us"
-    const phone = '+' + chatId.replace('@c.us', '')
+    const chatId = from // e.g. "6281234567890@c.us" or "116015774097507@lid"
+    let phone: string
+
+    if (from.includes('@lid')) {
+      // @lid format doesn't contain real phone number — resolve via WAHA contacts API
+      try {
+        const WAHA_API_URL = process.env.WAHA_API_URL!
+        const WAHA_API_KEY = process.env.WAHA_API_KEY!
+        const contactRes = await fetch(`${WAHA_API_URL}/api/contacts?session=default&contactId=${from}`, {
+          headers: { 'X-Api-Key': WAHA_API_KEY },
+        })
+        if (contactRes.ok) {
+          const contact = await contactRes.json()
+          // Contact may have a phone in 'number' or nested 'id' with @c.us
+          const realNumber = contact?.number || contact?.id?.user || from.replace('@lid', '')
+          phone = realNumber.startsWith('+') ? realNumber : '+' + realNumber
+        } else {
+          phone = from.replace('@lid', '') // fallback: use lid number as-is
+        }
+      } catch {
+        phone = from.replace('@lid', '')
+      }
+    } else {
+      phone = '+' + from.replace('@c.us', '')
+    }
 
     // ── Mark as seen after a brief pause ─────────────────────────
     const seenDelay = 2000 + Math.random() * 2000 // 2-4 seconds
