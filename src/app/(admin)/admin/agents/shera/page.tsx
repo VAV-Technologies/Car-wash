@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import WADashboard from '@/components/admin/conversations/WADashboard'
-import WAEscalations from '@/components/admin/conversations/WAEscalations'
 import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 import FollowUpTracker from '@/components/admin/conversations/FollowUpTracker'
@@ -13,7 +12,6 @@ import WASettings from '@/components/admin/conversations/WASettings'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
-  { key: 'attention', label: 'Needs Attention' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
   { key: 'followups', label: 'Follow-Ups' },
@@ -64,7 +62,6 @@ export default function SheraAgentPage() {
 
       {/* Tab Content */}
       {activeTab === 'dashboard' && <WADashboard />}
-      {activeTab === 'attention' && <WAEscalations />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}
       {activeTab === 'followups' && <FollowUpTracker />}
