@@ -38,7 +38,7 @@ export default function TimeAnalysis() {
         const { data: jobs, error } = await supabase
           .from('jobs')
           .select('service_type, actual_duration_min')
-          .eq('status', 'completed')
+          .not('completed_at', 'is', null)
           .not('actual_duration_min', 'is', null)
 
         if (error) throw error

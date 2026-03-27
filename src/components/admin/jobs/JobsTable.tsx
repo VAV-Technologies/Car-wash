@@ -195,8 +195,8 @@ export default function JobsTable() {
                         <span className="text-white/70">{getDurationMinutes(job)}</span>
                         <span>{rating > 0 ? <StarRating rating={rating} /> : <span className="text-white/20">—</span>}</span>
                         <span className="text-white/70">{job.washer?.name ?? '—'}</span>
-                        <span className={`text-xs font-medium capitalize ${statusColors[job.status] ?? 'text-white/50'}`}>
-                          {job.status.replace(/_/g, ' ')}
+                        <span className={`text-xs font-medium capitalize ${statusColors[job.completed_at ? 'completed' : 'in_progress'] ?? 'text-white/50'}`}>
+                          {job.completed_at ? 'Completed' : 'In Progress'}
                         </span>
                       </div>
 
