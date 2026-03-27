@@ -357,21 +357,50 @@ export async function executeSheraTool(
       }
 
       case 'create_customer': {
-        const { data, error } = await supabase
+        const phoneClean = cleanPhone(String(input.phone))
+        // Check if stub customer already exists (auto-created on first message)
+        const { data: existing } = await supabase
           .from('customers')
-          .insert({
-            name: String(input.name),
-            phone: String(input.phone),
-            car_model: input.car_model ? String(input.car_model) : null,
-            plate_number: input.plate_number ? String(input.plate_number) : null,
-            address: input.address ? String(input.address) : null,
-            neighborhood: input.neighborhood ? String(input.neighborhood) : null,
-            segment: 'new',
-          })
-          .select()
+          .select('id')
+          .or(`phone.ilike.%${phoneClean}%`)
+          .limit(1)
           .single()
-        if (error) throw error
-        return JSON.stringify(data)
+
+        if (existing) {
+          // Update the stub with real details
+          const { data, error } = await supabase
+            .from('customers')
+            .update({
+              name: String(input.name),
+              car_model: input.car_model ? String(input.car_model) : null,
+              plate_number: input.plate_number ? String(input.plate_number) : null,
+              address: input.address ? String(input.address) : null,
+              neighborhood: input.neighborhood ? String(input.neighborhood) : null,
+            })
+            .eq('id', existing.id)
+            .select()
+            .single()
+          if (error) throw error
+          return JSON.stringify(data)
+        } else {
+          // No stub exists — create new
+          const { data, error } = await supabase
+            .from('customers')
+            .insert({
+              name: String(input.name),
+              phone: String(input.phone),
+              car_model: input.car_model ? String(input.car_model) : null,
+              plate_number: input.plate_number ? String(input.plate_number) : null,
+              address: input.address ? String(input.address) : null,
+              neighborhood: input.neighborhood ? String(input.neighborhood) : null,
+              segment: 'new',
+              acquisition_source: 'whatsapp',
+            })
+            .select()
+            .single()
+          if (error) throw error
+          return JSON.stringify(data)
+        }
       }
 
       case 'escalate_to_human': {
@@ -485,13 +514,35 @@ export async function processMessage(
     conversation = newConv
   }
 
-  // 2. Try to find existing customer by phone
-  const { data: customer } = await supabase
+  // 2. Try to find existing customer by phone, or auto-create stub
+  let { data: customer } = await supabase
     .from('customers')
     .select('id, name, phone')
     .or(`phone.ilike.%${cleanedPhone}%,phone.ilike.%${phone}%`)
     .limit(1)
     .single()
+
+  // Auto-create customer stub if first time texting
+  if (!customer) {
+    const { data: newCustomer } = await supabase
+      .from('customers')
+      .insert({
+        phone: cleanedPhone,
+        name: 'WhatsApp User',
+        segment: 'new',
+        acquisition_source: 'whatsapp',
+      })
+      .select('id, name, phone')
+      .single()
+    if (newCustomer) {
+      customer = newCustomer
+      // Link conversation to this customer
+      await supabase
+        .from('whatsapp_conversations')
+        .update({ customer_id: newCustomer.id })
+        .eq('chat_id', chatId)
+    }
+  }
 
   // 3. Load last 20 messages from conversation for context
   const existingMessages: Array<{ role: string; content: string }> =
