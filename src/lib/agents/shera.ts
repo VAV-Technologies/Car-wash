@@ -642,11 +642,11 @@ export async function processMessage(
     .eq('status', 'pending')
 
   // 9. Save both user message and assistant reply to conversation messages
-  const now = new Date().toISOString()
+  const saveTimestamp = new Date().toISOString()
   const updatedMessages = [
     ...existingMessages,
-    { role: 'user', content: messageText, timestamp: now },
-    { role: 'assistant', content: reply, timestamp: now },
+    { role: 'user', content: messageText, timestamp: saveTimestamp },
+    { role: 'assistant', content: reply, timestamp: saveTimestamp },
   ].slice(-30) // Keep last 30 messages to prevent unbounded growth
 
   // 10. Update last_message_at
