@@ -1,24 +1,19 @@
-'use client'
-
 import { ChevronDown } from 'lucide-react'
 
 interface AdminSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  children: React.ReactNode
   width?: string
 }
 
-export default function AdminSelect({ children, className, width, ...props }: AdminSelectProps) {
+export default function AdminSelect({ width, className, children, ...props }: AdminSelectProps) {
   return (
-    <div className={`relative inline-flex ${width ?? ''}`}>
+    <div className={`relative ${width || ''}`}>
       <select
+        className={`w-full appearance-none rounded-lg border border-white/10 bg-[#171717] px-3 py-2 pr-8 text-sm text-white outline-none transition focus:border-orange-500/50 ${className || ''}`}
         {...props}
-        className={`appearance-none w-full rounded-lg border border-white/10 bg-[#171717] px-3 pr-11 py-2 text-sm text-white/80 focus:outline-none focus:border-orange-500/50 cursor-pointer ${className ?? ''}`}
       >
         {children}
       </select>
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center border-l border-white/10 rounded-r-lg">
-        <ChevronDown className="h-4 w-4 text-white/40" />
-      </div>
+      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/40" />
     </div>
   )
 }
