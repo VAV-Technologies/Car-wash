@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
       reply = await processMessage(chatId, phone, messageText)
     } catch (err) {
       console.error('[shera-error]', err)
-      reply = 'Maaf ada error nih. Tim kami akan hubungi kamu segera ya'
+      reply = 'Maaf nih, ada gangguan bentar. Coba kirim lagi pesannya ya'
     }
 
     // ── Human-like typing delay before sending ─────────────────────
