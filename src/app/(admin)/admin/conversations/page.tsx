@@ -8,9 +8,11 @@ import WADashboard from '@/components/admin/conversations/WADashboard'
 import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 import WASettings from '@/components/admin/conversations/WASettings'
+import WAEscalations from '@/components/admin/conversations/WAEscalations'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
+  { key: 'attention', label: 'Needs Attention' },
   { key: 'conversations', label: 'Conversations' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
@@ -47,6 +49,7 @@ export default function ConversationsPage() {
 
       {/* Tab Content */}
       {activeTab === 'dashboard' && <WADashboard />}
+      {activeTab === 'attention' && <WAEscalations />}
       {activeTab === 'conversations' && <ConversationLog />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}

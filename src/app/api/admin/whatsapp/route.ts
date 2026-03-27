@@ -244,6 +244,29 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(data ?? [])
       }
 
+      case 'list-escalations': {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('human_escalations')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(50)
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json(data ?? [])
+      }
+
+      case 'escalation-chat': {
+        const chatId = searchParams.get('chat_id')
+        if (!chatId) return NextResponse.json({ error: 'chat_id required' }, { status: 400 })
+        const supabase = getSupabaseAdmin()
+        const { data } = await supabase
+          .from('whatsapp_conversations')
+          .select('messages, phone, customer_id')
+          .eq('chat_id', chatId)
+          .single()
+        return NextResponse.json(data ?? { messages: [], phone: '', customer_id: null })
+      }
+
       default:
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 })
     }
@@ -339,6 +362,43 @@ export async function POST(req: NextRequest) {
           if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
+        return NextResponse.json({ ok: true })
+      }
+
+      case 'send-escalation-reply': {
+        const body = await req.json()
+        const { chat_id, reply_text } = body
+        if (!chat_id || !reply_text) return NextResponse.json({ error: 'chat_id and reply_text required' }, { status: 400 })
+        const supabase = getSupabaseAdmin()
+
+        await wahaFetch('/api/sendText', {
+          method: 'POST',
+          body: JSON.stringify({ session: session, chatId: chat_id, text: reply_text }),
+        })
+
+        const { data: convo } = await supabase
+          .from('whatsapp_conversations')
+          .select('messages')
+          .eq('chat_id', chat_id)
+          .single()
+
+        const messages = Array.isArray(convo?.messages) ? convo.messages : []
+        messages.push({ role: 'assistant', content: reply_text, timestamp: new Date().toISOString(), from_human: true })
+
+        await supabase
+          .from('whatsapp_conversations')
+          .update({ messages, last_message_at: new Date().toISOString() })
+          .eq('chat_id', chat_id)
+
+        return NextResponse.json({ ok: true })
+      }
+
+      case 'resolve-escalation': {
+        const body = await req.json()
+        const { id } = body
+        if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+        const supabase = getSupabaseAdmin()
+        await supabase.from('human_escalations').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', id)
         return NextResponse.json({ ok: true })
       }
 

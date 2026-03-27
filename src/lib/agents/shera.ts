@@ -85,7 +85,26 @@ Jam operasional Senin-Sabtu 08.00-17.00
 Minggu libur
 Minimal 2 jam sebelumnya untuk booking hari yang sama
 Kalau banyak mobil, jadwalkan berurutan jangan overlap
-Tampilkan total harga untuk semua mobil di ringkasan`
+Tampilkan total harga untuk semua mobil di ringkasan
+
+Kapan HARUS escalate ke manusia (pakai tool escalate_to_human):
+1. Pesanan bulk (lebih dari 8 mobil sekaligus)
+2. Akses gedung apartemen yang belum pernah dikerjakan sebelumnya
+3. Komplain tentang kualitas layanan sebelumnya
+4. Permintaan harga khusus atau paket korporat
+5. Pertanyaan tentang partnership atau kerjasama bisnis
+6. Request layanan di luar area Jakarta Selatan
+7. Situasi apapun yang kamu tidak yakin bisa handle sendiri
+
+Kapan JANGAN escalate (handle sendiri):
+1. Booking normal (1-8 mobil)
+2. Tanya harga standar
+3. Reschedule atau cancel booking
+4. Pertanyaan tentang layanan dan area
+5. Customer baru yang mau registrasi
+
+Kalau escalate, bilang ke customer: "Oke, ini perlu saya tanyakan ke tim dulu ya. Nanti saya kabarin secepatnya."
+Jangan bilang "saya adalah AI" atau "saya bot". Cukup bilang perlu tanya ke tim.`
 
 // ---------------------------------------------------------------------------
 // B. Tool Definitions
@@ -247,6 +266,19 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
       required: ['name', 'phone'],
     },
   },
+  {
+    name: 'escalate_to_human',
+    description: 'Escalate the conversation to a human team member. Use ONLY when the request genuinely requires human judgment: bulk orders (10+ cars), apartment building access permissions, service complaints, custom pricing, partnership inquiries, requests outside Jakarta Selatan.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        reason: { type: 'string', description: 'Brief reason why this needs human attention' },
+        category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' },
+        customer_message: { type: 'string', description: 'The customer message that triggered escalation' },
+      },
+      required: ['reason', 'category'],
+    },
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -359,6 +391,23 @@ export async function executeSheraTool(
           .single()
         if (error) throw error
         return JSON.stringify(data)
+      }
+
+      case 'escalate_to_human': {
+        const { data, error } = await supabase
+          .from('human_escalations')
+          .insert({
+            chat_id: 'pending',
+            phone: 'pending',
+            reason: String(input.reason),
+            category: String(input.category || 'other'),
+            customer_message: input.customer_message ? String(input.customer_message) : null,
+            status: 'pending',
+          })
+          .select()
+          .single()
+        if (error) throw error
+        return JSON.stringify({ escalated: true, id: data.id })
       }
 
       default:
@@ -571,6 +620,13 @@ export async function processMessage(
     (b): b is Anthropic.TextBlock => b.type === 'text'
   )
   const reply = textBlock?.text ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
+
+  // Update any pending escalations with correct chat_id and phone
+  await supabase
+    .from('human_escalations')
+    .update({ chat_id: chatId, phone })
+    .eq('chat_id', 'pending')
+    .eq('status', 'pending')
 
   // 9. Save both user message and assistant reply to conversation messages
   const now = new Date().toISOString()
