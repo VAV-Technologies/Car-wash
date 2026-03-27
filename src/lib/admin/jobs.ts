@@ -49,7 +49,7 @@ export async function getJobs(
       { count: 'exact' }
     )
 
-  if (washer_id) query = query.eq('employee_id', washer_id)
+  if (washer_id) query = query.eq('washer_id', washer_id)
   if (date_from) query = query.gte('created_at', date_from)
   if (date_to) query = query.lte('created_at', date_to + 'T23:59:59')
 

@@ -53,6 +53,8 @@ export interface Booking {
   scheduled_time: string
   washer_id?: string | null
   status: BookingStatus
+  location_address?: string | null
+  address?: string | null
   notes: string | null
   created_at: string
   updated_at: string

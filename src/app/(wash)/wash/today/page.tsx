@@ -58,6 +58,9 @@ export default function TodayPage() {
   useEffect(() => {
     if (washerId) {
       fetchData()
+      // Auto-refresh every 30 seconds so washer sees new/updated bookings
+      const interval = setInterval(fetchData, 30000)
+      return () => clearInterval(interval)
     }
   }, [washerId, fetchData])
 

@@ -18,7 +18,7 @@ function tomorrowRange() {
 const BOOKING_SELECT = `
   *,
   customers (
-    id, name, phone, car_model, plate_number, neighborhood, segment
+    id, name, phone, car_model, plate_number, neighborhood, segment, address
   )
 `
 

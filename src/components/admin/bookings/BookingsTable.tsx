@@ -84,6 +84,9 @@ export default function BookingsTable() {
 
   useEffect(() => {
     fetchData()
+    // Auto-refresh every 30 seconds so admin sees washer status updates
+    const interval = setInterval(fetchData, 30000)
+    return () => clearInterval(interval)
   }, [fetchData])
 
   useEffect(() => {
