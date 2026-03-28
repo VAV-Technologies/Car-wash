@@ -68,12 +68,12 @@ export default function AgentCard({ agent, onToggle }: AgentCardProps) {
             {/* Status Badge */}
             <span
               className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                agent.is_active
+                agent.status === 'active'
                   ? 'bg-green-500/20 text-green-400'
                   : 'bg-white/10 text-white/40'
               }`}
             >
-              {agent.is_active ? 'Active' : 'Inactive'}
+              {agent.status === 'active' ? 'Active' : 'Inactive'}
             </span>
           </div>
         </div>
@@ -108,14 +108,14 @@ export default function AgentCard({ agent, onToggle }: AgentCardProps) {
             e.stopPropagation();
             onToggle();
           }}
-          aria-label={`Toggle agent ${agent.name} ${agent.is_active ? 'off' : 'on'}`}
+          aria-label={`Toggle agent ${agent.name} ${agent.status === 'active' ? 'off' : 'on'}`}
           className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-            agent.is_active ? 'bg-orange-500' : 'bg-white/20'
+            agent.status === 'active' ? 'bg-orange-500' : 'bg-white/20'
           }`}
         >
           <span
             className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-              agent.is_active ? 'translate-x-4' : 'translate-x-0'
+              agent.status === 'active' ? 'translate-x-4' : 'translate-x-0'
             }`}
           />
         </button>
