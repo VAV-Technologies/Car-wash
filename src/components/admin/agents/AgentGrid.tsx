@@ -19,8 +19,8 @@ export default function AgentGrid() {
   const fetchAgents = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getAgents();
-      setAgents(data);
+      const result = await getAgents({ search: '', status: '', page: 1, limit: 50 });
+      setAgents(result.data);
     } catch (err) {
       console.error('Failed to fetch agents:', err);
     } finally {
@@ -34,9 +34,10 @@ export default function AgentGrid() {
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
     try {
-      await toggleAgentStatus(id, !currentStatus);
+      const newStatus = currentStatus ? 'paused' : 'active';
+      await toggleAgentStatus(id, newStatus as 'active' | 'paused');
       setAgents((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, is_active: !currentStatus } : a))
+        prev.map((a) => (a.id === id ? { ...a, status: newStatus as any } : a))
       );
     } catch (err) {
       console.error('Failed to toggle agent status:', err);
@@ -50,8 +51,8 @@ export default function AgentGrid() {
 
   // Filter by status tab
   const filtered = searched.filter((a) => {
-    if (statusTab === 'active') return a.is_active;
-    if (statusTab === 'inactive') return !a.is_active;
+    if (statusTab === 'active') return a.status === 'active';
+    if (statusTab === 'inactive') return a.status !== 'active';
     return true;
   });
 
