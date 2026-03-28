@@ -201,8 +201,8 @@ export async function POST(req: NextRequest) {
     // Store the timestamp of this message
     const msgTimestamp = Date.now()
 
-    // Wait 8 seconds to collect more messages
-    const BUFFER_WAIT = 8000
+    // Wait 15 seconds to collect more messages
+    const BUFFER_WAIT = 15000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
     // After waiting, check if newer messages arrived during the buffer period
@@ -258,9 +258,9 @@ export async function POST(req: NextRequest) {
     // Subsequent: 5-12 seconds (minus buffer wait already done)
     let extraDelay: number
     if (isFirstMessage) {
-      extraDelay = Math.max(0, 50000 + Math.random() * 10000 - BUFFER_WAIT)
+      extraDelay = Math.max(0, 40000 + Math.random() * 10000 - BUFFER_WAIT)
     } else {
-      extraDelay = Math.max(0, 5000 + Math.random() * 7000)
+      extraDelay = Math.max(0, Math.random() * 5000)
     }
     if (extraDelay > 0) {
       await new Promise(resolve => setTimeout(resolve, extraDelay))
