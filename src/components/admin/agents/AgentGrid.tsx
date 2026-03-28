@@ -113,11 +113,16 @@ export default function AgentGrid() {
         </div>
       )}
 
-      {/* Empty State */}
-      {!loading && filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-white/40">
-          <p className="text-lg font-medium">No agents found.</p>
-          <p className="text-sm mt-1">Try adjusting your search or filters.</p>
+      {/* Empty State — only show if actively searching/filtering */}
+      {!loading && filtered.length === 0 && (search || statusFilter) && (
+        <div className="flex flex-col items-center justify-center py-12 text-white/40">
+          <p className="text-sm">No agents match your search.</p>
+          <button
+            onClick={() => { setSearch(''); setStatusFilter(''); }}
+            className="mt-2 text-xs text-orange-500 hover:text-orange-400"
+          >
+            Clear filters
+          </button>
         </div>
       )}
 
