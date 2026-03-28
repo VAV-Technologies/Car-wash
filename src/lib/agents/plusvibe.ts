@@ -1,0 +1,326 @@
+import Anthropic from '@anthropic-ai/sdk'
+import { getSupabaseAdmin } from '@/lib/supabase'
+import { replyToEmail } from './plusvibe-client'
+
+const CLASSIFICATION_PROMPT = `You are an email reply classifier for a B2B sales outreach campaign. Classify the reply into exactly ONE category and extract relevant data.
+
+Categories:
+PHONE_NUMBER_FOUND: Reply contains a phone/WhatsApp number in any format (+62xxx, 08xxx, with/without dashes/spaces, international)
+INTERESTED_NO_NUMBER: Positive or curious reply but no phone number (wants info, asking questions, sounds open)
+OBJECTION: Pushback but still engaged (too expensive, bad timing, already have solution, what makes you different)
+NOT_INTERESTED: Clear rejection (not interested, stop emailing, remove me, unsubscribe)
+OUT_OF_OFFICE: Auto-reply, vacation, OOO message
+UNRELATED: Reply doesn't relate to the sales offer at all
+ASKED_FOR_OUR_NUMBER: Lead asks for our contact/WhatsApp number instead of giving theirs
+
+IMPORTANT: If the reply contains ANY of these words, ALWAYS classify as NOT_INTERESTED regardless of other content: "unsubscribe", "stop emailing", "remove me", "opt out", "take me off"
+
+Respond in JSON format:
+{
+  "classification": "CATEGORY_NAME",
+  "phone_number": "extracted number or null",
+  "objection_type": "pricing/timing/existing_solution/other or null",
+  "sentiment": "positive/neutral/negative",
+  "summary": "one line summary of the reply"
+}`
+
+const REPLY_GENERATION_PROMPT = `You are writing email replies for a B2B sales outreach campaign on behalf of a sales rep. Your company is Castudio, a premium mobile car wash and detailing service for corporate fleets and executives in Indonesia (Jabodetabek area).
+
+Style rules:
+1. Casual professional. Not corporate, not overly friendly.
+2. Short. 2-4 sentences per reply. No long paragraphs.
+3. No em dashes, en dashes, or bullet dashes ever.
+4. No filler phrases like "I hope this finds you well" or "Thank you for your response"
+5. Reference something specific from their reply to show you read it.
+6. Always end with a clear, single CTA: get their WhatsApp number.
+7. Output clean HTML with simple <p> tags. No heavy formatting.
+
+The CTA angle: "Easiest way is a quick WhatsApp chat. Drop your number and I'll message you right away."
+
+For objections:
+- Price: mention fleet discounts, ROI on employee time saved, subscription plans
+- Timing: keep the door open, suggest a future date
+- Existing solution: differentiate (we come to them, premium products, no downtime)
+- After 4+ replies without a number: pivot to sharing OUR WhatsApp number as final CTA
+
+For NOT_INTERESTED: graceful exit in 1-2 sentences. Thank them, leave the door open. No further follow-ups.
+
+For ASKED_FOR_OUR_NUMBER: share the WhatsApp number naturally.`
+
+function extractPhoneNumber(text: string): string | null {
+  // Match various formats: +62xxx, 08xxx, 62-xxx, (021) xxx, etc.
+  const patterns = [
+    /(?:\+?62|0)[\s\-.]?\d{2,4}[\s\-.]?\d{3,4}[\s\-.]?\d{3,4}/g,
+    /(?:\+?1|0)[\s\-.]?\(?\d{3}\)?[\s\-.]?\d{3}[\s\-.]?\d{4}/g,
+    /\+\d{10,15}/g,
+  ]
+  for (const pattern of patterns) {
+    const match = text.match(pattern)
+    if (match) {
+      let num = match[0].replace(/[\s\-.()\+]/g, '')
+      if (num.startsWith('0')) num = '62' + num.slice(1)
+      if (!num.startsWith('62') && num.length >= 10) return '+' + num
+      return '+' + num
+    }
+  }
+  return null
+}
+
+export async function classifyReply(replyText: string): Promise<{
+  classification: string
+  phone_number: string | null
+  objection_type: string | null
+  sentiment: string
+  summary: string
+}> {
+  const anthropic = await getAnthropicClient()
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 512,
+    system: CLASSIFICATION_PROMPT,
+    messages: [{ role: 'user', content: `Classify this email reply:\n\n${replyText}` }],
+  })
+  const text = response.content.find(b => b.type === 'text')?.text || '{}'
+  // Extract JSON from response (might have text before/after)
+  const jsonMatch = text.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error('No JSON in classification response')
+  return JSON.parse(jsonMatch[0])
+}
+
+export async function generateReply(
+  lead: { first_name: string; company_name: string; job_title: string; reply_count: number; objections_raised: string[]; classification_history: string[] },
+  classification: string,
+  replyText: string,
+  whatsappNumber: string
+): Promise<string> {
+  const anthropic = await getAnthropicClient()
+
+  let context = `Lead: ${lead.first_name} from ${lead.company_name} (${lead.job_title})\n`
+  context += `Reply #${lead.reply_count + 1}\n`
+  context += `Classification: ${classification}\n`
+  if (lead.objections_raised.length > 0) context += `Previous objections: ${lead.objections_raised.join(', ')}\n`
+  if (lead.classification_history.length > 0) context += `Previous classifications: ${lead.classification_history.join(' \u2192 ')}\n`
+  if (lead.reply_count >= 4) context += `\nIMPORTANT: This is reply #${lead.reply_count + 1}. We've been going back and forth. Time to share our WhatsApp number (${whatsappNumber}) as the final CTA instead of asking for theirs.\n`
+
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 512,
+    system: REPLY_GENERATION_PROMPT,
+    messages: [{ role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` }],
+  })
+  return response.content.find(b => b.type === 'text')?.text || '<p>Thanks for getting back to us.</p>'
+}
+
+export async function triggerWhatsAppAgent(
+  lead: { first_name: string; lead_email: string; company_name: string; job_title: string; campaign_name: string },
+  phone: string,
+  threadSummary: string
+) {
+  const supabase = getSupabaseAdmin()
+
+  // Clean phone
+  let cleanPhone = phone.replace(/[\s\-.()\+]/g, '')
+  if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1)
+
+  // Create customer in Castudio DB
+  const { data: existingCustomer } = await supabase
+    .from('customers')
+    .select('id')
+    .ilike('phone', `%${cleanPhone}%`)
+    .limit(1)
+    .single()
+
+  if (!existingCustomer) {
+    await supabase.from('customers').insert({
+      name: lead.first_name || 'Email Lead',
+      phone: cleanPhone,
+      email: lead.lead_email,
+      segment: 'new',
+      acquisition_source: 'email_campaign',
+      notes: `From campaign: ${lead.campaign_name}. Company: ${lead.company_name}. Title: ${lead.job_title}`,
+    })
+  }
+
+  // Send opening WhatsApp via WAHA
+  const WAHA_API_URL = process.env.WAHA_API_URL
+  const WAHA_API_KEY = process.env.WAHA_API_KEY
+  if (!WAHA_API_URL || !WAHA_API_KEY) {
+    console.error('[plusvibe] Missing WAHA env vars for WhatsApp handoff')
+    return
+  }
+
+  const chatId = cleanPhone + '@c.us'
+  const openingMessage = `Hey ${lead.first_name || 'there'}! Ini dari Castudio. Kamu sempat balas email kita soal layanan cuci mobil premium. Aku mau follow up disini aja biar lebih gampang. Ada waktu buat ngobrol sebentar?`
+
+  await fetch(`${WAHA_API_URL}/api/sendText`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Api-Key': WAHA_API_KEY },
+    body: JSON.stringify({ session: 'default', chatId, text: openingMessage }),
+  })
+
+  // Create conversation record with context for Shera
+  const { data: convo } = await supabase
+    .from('whatsapp_conversations')
+    .select('id')
+    .eq('chat_id', chatId)
+    .single()
+
+  if (!convo) {
+    await supabase.from('whatsapp_conversations').insert({
+      chat_id: chatId,
+      phone: cleanPhone,
+      messages: [
+        { role: 'assistant', content: openingMessage, timestamp: new Date().toISOString(), context: `Email lead from ${lead.campaign_name}. ${threadSummary}` },
+      ],
+    })
+  }
+}
+
+async function getAnthropicClient(): Promise<Anthropic> {
+  const supabase = getSupabaseAdmin()
+  // Check agent_settings first
+  const { data: settings } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'plusvibe').single()
+  let apiKey: string | undefined
+  if (settings?.api_key) {
+    try { apiKey = Buffer.from(settings.api_key, 'base64').toString('utf-8') } catch {}
+  }
+  // Fall back to shera's key
+  if (!apiKey) {
+    const { data: sheraSettings } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'shera').single()
+    if (sheraSettings?.api_key) {
+      try { apiKey = Buffer.from(sheraSettings.api_key, 'base64').toString('utf-8') } catch {}
+    }
+  }
+  // Fall back to connectors
+  if (!apiKey) {
+    const { data } = await supabase.from('connectors').select('encrypted_key').eq('is_base_model', true).single()
+    if (data?.encrypted_key) {
+      try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
+    }
+  }
+  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) throw new Error('No Claude API key configured')
+  return new Anthropic({ apiKey })
+}
+
+export async function processEmailReply(payload: any) {
+  const supabase = getSupabaseAdmin()
+  const whatsappNumber = process.env.WHATSAPP_BUSINESS_NUMBER || '+6285591222000'
+
+  const leadId = payload.lead_id
+  const email = payload.email || payload.from_email
+  const replyText = payload.text_body || payload.snippet || ''
+  const subject = payload.subject || ''
+
+  if (!replyText.trim()) return { action: 'skipped', reason: 'empty reply' }
+
+  // Get or create lead record
+  let { data: lead } = await supabase
+    .from('email_leads')
+    .select('*')
+    .eq('lead_id', leadId)
+    .single()
+
+  if (!lead) {
+    const { data: newLead } = await supabase
+      .from('email_leads')
+      .insert({
+        lead_id: leadId,
+        lead_email: email,
+        first_name: payload.first_name || null,
+        last_name: payload.last_name || null,
+        company_name: payload.company_name || null,
+        job_title: payload.job_title || null,
+        campaign_id: payload.campaign_id || null,
+        campaign_name: payload.campaign_name || null,
+        last_email_id: payload.last_email_id || null,
+        from_email: payload.from_email || null,
+        to_email: payload.to_email || null,
+      })
+      .select()
+      .single()
+    lead = newLead
+  }
+
+  if (!lead) throw new Error('Failed to create lead record')
+
+  // Update last_email_id
+  await supabase.from('email_leads').update({ last_email_id: payload.last_email_id, updated_at: new Date().toISOString() }).eq('id', lead.id)
+
+  // Classify the reply
+  const classification = await classifyReply(replyText)
+
+  // Also check phone extraction directly (LLM might miss it)
+  const directPhone = extractPhoneNumber(replyText)
+  if (directPhone && classification.classification !== 'PHONE_NUMBER_FOUND') {
+    classification.classification = 'PHONE_NUMBER_FOUND'
+    classification.phone_number = directPhone
+  }
+
+  // Update lead history
+  const history = Array.isArray(lead.classification_history) ? lead.classification_history : []
+  history.push(classification.classification)
+  const objections = Array.isArray(lead.objections_raised) ? lead.objections_raised : []
+  if (classification.objection_type && !objections.includes(classification.objection_type)) {
+    objections.push(classification.objection_type)
+  }
+
+  await supabase.from('email_leads').update({
+    classification_history: history,
+    objections_raised: objections,
+    reply_count: (lead.reply_count || 0) + 1,
+    updated_at: new Date().toISOString(),
+  }).eq('id', lead.id)
+
+  // Route based on classification
+  const cat = classification.classification
+
+  if (cat === 'OUT_OF_OFFICE') {
+    await supabase.from('email_leads').update({ current_status: 'ooo' }).eq('id', lead.id)
+    return { action: 'ignored', classification: cat, reason: 'OOO auto-reply' }
+  }
+
+  if (cat === 'NOT_INTERESTED') {
+    const reply = await generateReply(
+      { first_name: lead.first_name || '', company_name: lead.company_name || '', job_title: lead.job_title || '', reply_count: lead.reply_count || 0, objections_raised: objections, classification_history: history },
+      cat, replyText, whatsappNumber
+    )
+    await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
+    await supabase.from('email_leads').update({ current_status: 'closed' }).eq('id', lead.id)
+    return { action: 'replied', classification: cat, reply }
+  }
+
+  if (cat === 'PHONE_NUMBER_FOUND') {
+    const phone = classification.phone_number || directPhone
+    if (!phone) return { action: 'error', reason: 'classification said phone found but extraction failed' }
+
+    // Save phone and send confirmation
+    await supabase.from('email_leads').update({ phone_number: phone, current_status: 'handed_off_to_whatsapp', handed_off_to_whatsapp: true }).eq('id', lead.id)
+
+    const confirmReply = `<p>Got it, ${lead.first_name || 'there'}! You'll hear from us on WhatsApp shortly.</p>`
+    await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, confirmReply)
+
+    // Trigger WhatsApp agent
+    await triggerWhatsAppAgent(
+      { first_name: lead.first_name || '', lead_email: lead.lead_email, company_name: lead.company_name || '', job_title: lead.job_title || '', campaign_name: lead.campaign_name || '' },
+      phone,
+      classification.summary || 'Lead replied to email campaign with phone number'
+    )
+
+    return { action: 'handed_off', classification: cat, phone }
+  }
+
+  if (cat === 'ASKED_FOR_OUR_NUMBER') {
+    const reply = `<p>Of course! You can reach us on WhatsApp at ${whatsappNumber}. Just shoot us a message anytime and we'll get right back to you.</p>`
+    await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
+    return { action: 'replied', classification: cat, reply }
+  }
+
+  // INTERESTED_NO_NUMBER, OBJECTION, UNRELATED — generate reply
+  const reply = await generateReply(
+    { first_name: lead.first_name || '', company_name: lead.company_name || '', job_title: lead.job_title || '', reply_count: lead.reply_count || 0, objections_raised: objections, classification_history: history },
+    cat, replyText, whatsappNumber
+  )
+  await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
+  return { action: 'replied', classification: cat, reply }
+}

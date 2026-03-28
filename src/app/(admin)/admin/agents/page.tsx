@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { MessageCircle, Bot } from 'lucide-react';
+import { MessageCircle, Bot, Mail } from 'lucide-react';
 import AgentGrid from '@/components/admin/agents/AgentGrid';
 import CreateAgentModal from '@/components/admin/agents/CreateAgentModal';
 import ConnectorsPanel from '@/components/admin/agents/ConnectorsPanel';
@@ -56,6 +56,27 @@ export default function AgentsPage() {
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
+              Active
+            </span>
+          </div>
+        </Link>
+
+        {/* Plusvibe Agent Card */}
+        <Link
+          href="/admin/agents/plusvibe"
+          className="block mt-4 rounded-xl border border-purple-500/20 bg-[#171717] p-5 hover:border-purple-500/40 transition-colors"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <Mail className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Plusvibe</h3>
+                <p className="text-sm text-white/50">Email Reply Agent</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-purple-500/20 text-purple-400">
               Active
             </span>
           </div>
