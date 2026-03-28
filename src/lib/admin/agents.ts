@@ -55,7 +55,7 @@ interface GetRunsParams {
 
 // ─── Agents CRUD ──────────────────────────────────────────────────
 
-export async function getAgents({ search, status, page, limit }: GetAgentsParams) {
+export async function getAgents({ search, status, page, limit }: GetAgentsParams = { page: 1, limit: 50 }) {
   let query = supabase
     .from('automations')
     .select('*', { count: 'exact' })
