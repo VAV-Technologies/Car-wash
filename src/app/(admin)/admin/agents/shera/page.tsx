@@ -9,9 +9,11 @@ import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 import FollowUpTracker from '@/components/admin/conversations/FollowUpTracker'
 import Templates from '@/components/admin/conversations/Templates'
 import WASettings from '@/components/admin/conversations/WASettings'
+import WARules from '@/components/admin/conversations/WARules'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
+  { key: 'rules', label: 'Rules' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
   { key: 'followups', label: 'Follow-Ups' },
@@ -62,6 +64,7 @@ export default function SheraAgentPage() {
 
       {/* Tab Content */}
       {activeTab === 'dashboard' && <WADashboard />}
+      {activeTab === 'rules' && <WARules />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}
       {activeTab === 'followups' && <FollowUpTracker />}

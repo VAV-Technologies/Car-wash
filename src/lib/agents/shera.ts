@@ -588,6 +588,20 @@ export async function processMessage(
     }
   }
 
+  // Load custom rules
+  const { data: activeRules } = await supabase
+    .from('agent_rules')
+    .select('title, content')
+    .eq('agent_name', 'shera')
+    .eq('is_active', true)
+
+  if (activeRules && activeRules.length > 0) {
+    systemPrompt += '\n\n--- Custom Rules ---'
+    for (const rule of activeRules) {
+      systemPrompt += `\n\n[${rule.title}]\n${rule.content}`
+    }
+  }
+
   // Inject real-time context
   const now = new Date()
   const jakartaTime = new Intl.DateTimeFormat('en-GB', {
