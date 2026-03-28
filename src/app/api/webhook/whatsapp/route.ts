@@ -56,9 +56,48 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'no from field' })
     }
 
-    // Skip group messages
-    if (from.includes('@g.us')) {
-      return NextResponse.json({ ok: true, skipped: 'group message' })
+    // Skip group messages and channels
+    if (from.includes('@g.us') || from.includes('@newsletter') || from.includes('@broadcast')) {
+      return NextResponse.json({ ok: true, skipped: 'group/channel message' })
+    }
+
+    // Skip business/verified accounts (chatbots like Indosat, Telkomsel, etc.)
+    if (message.isFromBusiness || message._data?.notifyName === '' || message._data?.isBusinessMessage) {
+      return NextResponse.json({ ok: true, skipped: 'business account' })
+    }
+
+    // Known bot/service numbers blocklist (Indonesian telcos, WhatsApp official, etc.)
+    const blockedPrefixes = [
+      '628551',     // Indosat official
+      '628112',     // Telkomsel
+      '6221',       // Jakarta landlines
+      '1500',       // Service numbers
+      '155',        // Short codes
+      '15517',      // WhatsApp official
+    ]
+    const senderNumber = from.replace('@c.us', '').replace('@lid', '')
+    if (blockedPrefixes.some(p => senderNumber.startsWith(p)) || senderNumber.length < 8) {
+      return NextResponse.json({ ok: true, skipped: 'blocked number' })
+    }
+
+    // Bot loop detection: if 5+ messages from same sender in last 3 minutes, stop replying
+    const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
+    const db = getAdmin()
+    const { data: recentConvo } = await db
+      .from('whatsapp_conversations')
+      .select('messages')
+      .eq('chat_id', from)
+      .single()
+
+    if (recentConvo?.messages && Array.isArray(recentConvo.messages)) {
+      const threeMinAgo = Date.now() - 3 * 60 * 1000
+      const recentMsgs = recentConvo.messages.filter(
+        (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
+      )
+      if (recentMsgs.length >= 10) {
+        console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
+        return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
+      }
     }
 
     const messageText: string | undefined = message.body
