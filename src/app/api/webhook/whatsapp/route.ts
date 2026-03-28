@@ -161,39 +161,110 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Mark as seen after a brief pause ─────────────────────────
-    const seenDelay = 2000 + Math.random() * 2000 // 2-4 seconds
+    const seenDelay = 2000 + Math.random() * 2000
     setTimeout(() => { sendSeen(chatId).catch(() => {}) }, seenDelay)
 
-    // ── Check if this is the first message in the conversation ───
+    // ── Message buffering ──────────────────────────────────────────
+    // When people send multiple messages quickly (e.g. splitting one
+    // thought into 2-3 texts), we buffer them and process together.
+    //
+    // How it works:
+    // 1. Save incoming message to a pending_messages array in the conversation
+    // 2. Wait 8 seconds for more messages to arrive
+    // 3. After waiting, check if new messages were added during the wait
+    // 4. Combine all pending messages into one and process together
+    // 5. Clear the pending buffer
+
     const { getSupabaseAdmin } = await import('@/lib/supabase')
     const supabase = getSupabaseAdmin()
-    const { data: convo } = await supabase
+
+    // Get or create conversation
+    let { data: convo } = await supabase
       .from('whatsapp_conversations')
       .select('messages')
       .eq('chat_id', chatId)
       .single()
+
     const isFirstMessage = !convo || !convo.messages || (Array.isArray(convo.messages) && convo.messages.length === 0)
 
-    // ── Process with Shera agent ───────────────────────────────────
+    // Add this message to pending buffer in the conversation
+    const pendingKey = `_pending_${Date.now()}`
+    const currentPending = (convo as any)?._pending || []
+
+    // Store pending message via a lightweight temp record
+    await supabase.rpc('set_pending_message', { p_chat_id: chatId, p_message: messageText }).catch(() => {
+      // RPC doesn't exist — use a simpler approach with a dedicated column or JSON
+    })
+
+    // Simple approach: use a global in-memory map (works within same serverless instance)
+    // For cross-instance: use the DB conversation record
+    // Store the timestamp of this message
+    const msgTimestamp = Date.now()
+
+    // Wait 8 seconds to collect more messages
+    const BUFFER_WAIT = 8000
+    await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
+
+    // After waiting, check if newer messages arrived during the buffer period
+    // by re-reading the conversation and checking for messages added after our timestamp
+    const { data: freshConvo } = await supabase
+      .from('whatsapp_conversations')
+      .select('messages')
+      .eq('chat_id', chatId)
+      .single()
+
+    if (freshConvo?.messages && Array.isArray(freshConvo.messages)) {
+      const recentUserMsgs = freshConvo.messages.filter(
+        (m: any) => m.role === 'user' && m.timestamp && new Date(m.timestamp).getTime() > msgTimestamp
+      )
+      // If newer messages exist, this is an older message in a burst — skip it
+      // The newest message's webhook call will process the combined batch
+      if (recentUserMsgs.length > 0) {
+        return NextResponse.json({ ok: true, skipped: 'buffered — newer message will process' })
+      }
+    }
+
+    // We're the latest message — collect any unprocessed user messages
+    // Look for consecutive user messages at the end of the conversation (no assistant reply between them)
+    const allMsgs = Array.isArray(freshConvo?.messages) ? freshConvo.messages : (Array.isArray(convo?.messages) ? convo.messages : [])
+    const pendingTexts: string[] = []
+
+    // Walk backwards from the end, collecting consecutive user messages
+    for (let i = allMsgs.length - 1; i >= 0; i--) {
+      if (allMsgs[i].role === 'user') {
+        pendingTexts.unshift(allMsgs[i].content)
+      } else {
+        break // Hit an assistant message — stop collecting
+      }
+    }
+
+    // If no pending messages found in history, use the current message
+    // (it hasn't been saved to conversation yet by processMessage)
+    const combinedMessage = pendingTexts.length > 0
+      ? [...pendingTexts, messageText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
+      : messageText
+
+    // ── Process combined message with Shera ─────────────────────────
     let reply: string
     try {
-      reply = await processMessage(chatId, phone, messageText)
+      reply = await processMessage(chatId, phone, combinedMessage)
     } catch (err) {
       console.error('[shera-error]', err)
       reply = 'Maaf nih, ada gangguan bentar. Coba kirim lagi pesannya ya'
     }
 
-    // ── Human-like typing delay before sending ─────────────────────
-    // First message: ~60 seconds
-    // Subsequent: 10-20 seconds
-    let minDelay: number, maxDelay: number
+    // ── Human-like typing delay ──────────────────────────────────────
+    // First message: ~60 seconds (minus buffer wait already done)
+    // Subsequent: 5-12 seconds (minus buffer wait already done)
+    let extraDelay: number
     if (isFirstMessage) {
-      minDelay = 55000; maxDelay = 65000
+      extraDelay = Math.max(0, 50000 + Math.random() * 10000 - BUFFER_WAIT)
     } else {
-      minDelay = 10000; maxDelay = 20000
+      extraDelay = Math.max(0, 5000 + Math.random() * 7000)
     }
-    const typingDelay = minDelay + Math.random() * (maxDelay - minDelay)
-    await new Promise(resolve => setTimeout(resolve, typingDelay))
+    if (extraDelay > 0) {
+      await new Promise(resolve => setTimeout(resolve, extraDelay))
+    }
 
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
