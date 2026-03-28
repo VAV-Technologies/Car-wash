@@ -228,6 +228,12 @@ export default function JobsTable() {
                                 <p className="text-white/70">{String(raw.washer_notes ?? job.notes)}</p>
                               </div>
                             ) : null}
+                            {raw.customer_feedback ? (
+                              <div>
+                                <p className="text-white/40 mb-1">Customer Feedback</p>
+                                <p className="text-white/70">{String(raw.customer_feedback)}</p>
+                              </div>
+                            ) : null}
                             {raw.upsell_attempted !== undefined ? (
                               <div>
                                 <p className="text-white/40 mb-1">Upsell</p>

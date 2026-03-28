@@ -269,6 +269,30 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
       required: ['reason', 'category'],
     },
   },
+  {
+    name: 'get_completed_jobs',
+    description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        customer_id: { type: 'string', description: 'The customer UUID' },
+      },
+      required: ['customer_id'],
+    },
+  },
+  {
+    name: 'submit_job_rating',
+    description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        job_id: { type: 'string', description: 'The job UUID to rate' },
+        rating: { type: 'number', description: 'Rating from 1 to 5' },
+        feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' },
+      },
+      required: ['job_id', 'rating'],
+    },
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -413,6 +437,51 @@ export async function executeSheraTool(
           if (error) throw error
           return JSON.stringify(data)
         }
+      }
+
+      case 'get_completed_jobs': {
+        const { data, error } = await supabase
+          .from('jobs')
+          .select('id, service_type, completed_at, customer_rating, customer_feedback, booking_id')
+          .eq('booking_id', String(input.customer_id))
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: false })
+          .limit(5)
+        // Also try via bookings → customer_id
+        if (!data || data.length === 0) {
+          const { data: bookings } = await supabase
+            .from('bookings')
+            .select('id')
+            .eq('customer_id', String(input.customer_id))
+          const bookingIds = (bookings || []).map(b => b.id)
+          if (bookingIds.length > 0) {
+            const { data: jobs } = await supabase
+              .from('jobs')
+              .select('id, service_type, completed_at, customer_rating, customer_feedback')
+              .in('booking_id', bookingIds)
+              .not('completed_at', 'is', null)
+              .order('completed_at', { ascending: false })
+              .limit(5)
+            return JSON.stringify(jobs || [])
+          }
+        }
+        if (error) throw error
+        return JSON.stringify(data || [])
+      }
+
+      case 'submit_job_rating': {
+        const rating = Math.min(5, Math.max(1, Number(input.rating) || 0))
+        const { data, error } = await supabase
+          .from('jobs')
+          .update({
+            customer_rating: rating,
+            customer_feedback: input.feedback ? String(input.feedback) : null,
+          })
+          .eq('id', String(input.job_id))
+          .select()
+          .single()
+        if (error) throw error
+        return JSON.stringify({ success: true, rating, feedback: input.feedback || null })
       }
 
       case 'escalate_to_human': {

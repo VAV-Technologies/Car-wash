@@ -106,7 +106,7 @@ export async function createJobRecord(data: {
   return job
 }
 
-/** Update job record (completion, notes, upsell, etc.) */
+/** Update job record (completion, notes, upsell, rating, feedback, etc.) */
 export async function updateJobRecord(
   jobId: string,
   data: {
@@ -115,6 +115,8 @@ export async function updateJobRecord(
     washer_notes?: string
     upsell_attempted?: boolean
     upsell_converted?: boolean
+    customer_rating?: number
+    customer_feedback?: string
   }
 ) {
   const { data: job, error } = await supabase
