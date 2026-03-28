@@ -260,6 +260,13 @@ export default function JobDetailSheet({ booking, washerId, open, onOpenChange, 
 
       await updateBookingStatus(booking!.id, 'completed')
 
+      // Schedule follow-up rating request (2 hours later)
+      fetch('/api/cron/follow-up', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_id: jobId }),
+      }).catch(() => {}) // fire-and-forget
+
       toast({ title: 'Job completed', description: 'Great work!' })
       onOpenChange(false)
       onJobCompleted?.()
