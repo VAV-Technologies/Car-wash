@@ -388,7 +388,7 @@ export default function PlusvibeAgentPage() {
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">Plusvibe</h1>
+          <h1 className="text-2xl font-bold text-white">Ryan</h1>
           <p className="text-sm text-white/50 mt-1">Email Reply Agent</p>
         </div>
         <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-purple-500/20 text-purple-400">

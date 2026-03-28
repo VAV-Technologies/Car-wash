@@ -72,7 +72,7 @@ export default function AgentsPage() {
                 <Mail className="w-6 h-6 text-purple-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Plusvibe</h3>
+                <h3 className="text-lg font-bold text-white">Ryan</h3>
                 <p className="text-sm text-white/50">Email Reply Agent</p>
               </div>
             </div>
