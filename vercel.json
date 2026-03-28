@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/follow-up",
       "schedule": "0 */2 * * *"
+    },
+    {
+      "path": "/api/cron/re-engage",
+      "schedule": "0 10 * * *"
     }
   ]
 }
