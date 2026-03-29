@@ -5,6 +5,7 @@ interface GeneratedPost {
   title: string
   slug: string
   content: string
+  cover_image_url: string | null
   meta_title: string
   meta_description: string
   target_keyword: string
@@ -13,6 +14,44 @@ interface GeneratedPost {
   estimated_reading_time: number
   search_intent: string
   content_type: string
+}
+
+async function fetchCoverImage(keyword: string): Promise<string | null> {
+  // Try Unsplash Source (no API key, direct URL)
+  // This redirects to a random relevant photo
+  const unsplashUrl = `https://source.unsplash.com/1200x630/?${encodeURIComponent(keyword.replace(/\s+/g, ','))}`
+
+  // Try Pixabay API (free, no key needed for basic)
+  try {
+    const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
+    const searchTerms = keyword.split(' ').slice(0, 3).join('+')
+    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=5&lang=id`)
+    if (res.ok) {
+      const data = await res.json()
+      if (data.hits && data.hits.length > 0) {
+        // Pick a random one from top 5
+        const hit = data.hits[Math.floor(Math.random() * Math.min(5, data.hits.length))]
+        return hit.largeImageURL || hit.webformatURL
+      }
+    }
+  } catch {}
+
+  // Fallback: try English search terms
+  try {
+    const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
+    const englishTerms = keyword.includes('mobil') ? 'car+wash+detailing' : keyword.includes('F1') ? 'formula+one+racing' : 'car+automotive'
+    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(englishTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=5`)
+    if (res.ok) {
+      const data = await res.json()
+      if (data.hits && data.hits.length > 0) {
+        const hit = data.hits[Math.floor(Math.random() * Math.min(5, data.hits.length))]
+        return hit.largeImageURL || hit.webformatURL
+      }
+    }
+  } catch {}
+
+  // Last fallback: Unsplash direct URL (always works but redirects)
+  return unsplashUrl
 }
 
 function generateSlug(title: string): string {
@@ -88,10 +127,14 @@ Only mention Castudio where it naturally fits`
   const content = contentSection.trim()
   const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length
 
+  // Fetch cover image
+  const coverImage = await fetchCoverImage(keyword.keyword)
+
   return {
     title,
     slug: generateSlug(title),
     content,
+    cover_image_url: coverImage,
     meta_title: (metaTitleMatch?.[1] || title).trim().slice(0, 60),
     meta_description: (metaDescMatch?.[1] || '').trim().slice(0, 155),
     target_keyword: keyword.keyword,

@@ -77,6 +77,7 @@ export async function GET(req: Request) {
           title: post.title,
           slug: post.slug,
           content: post.content,
+          cover_image_url: post.cover_image_url || null,
           excerpt: post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 200) + '...',
           category: 'tips',
           tags: post.secondary_keywords || [],
