@@ -6,8 +6,6 @@ import { ArrowLeft } from 'lucide-react'
 import WADashboard from '@/components/admin/conversations/WADashboard'
 import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
-import FollowUpTracker from '@/components/admin/conversations/FollowUpTracker'
-import Templates from '@/components/admin/conversations/Templates'
 import WASettings from '@/components/admin/conversations/WASettings'
 import WARules from '@/components/admin/conversations/WARules'
 
@@ -16,8 +14,6 @@ const TABS = [
   { key: 'rules', label: 'Rules' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
-  { key: 'followups', label: 'Follow-Ups' },
-  { key: 'templates', label: 'Templates' },
   { key: 'settings', label: 'Settings' },
 ] as const
 
@@ -67,8 +63,6 @@ export default function SheraAgentPage() {
       {activeTab === 'rules' && <WARules />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}
-      {activeTab === 'followups' && <FollowUpTracker />}
-      {activeTab === 'templates' && <Templates />}
       {activeTab === 'settings' && <WASettings />}
     </div>
   )
