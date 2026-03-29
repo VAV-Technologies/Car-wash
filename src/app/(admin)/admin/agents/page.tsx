@@ -53,10 +53,11 @@ export default function AgentsPage() {
               <div>
                 <h3 className="text-lg font-bold text-white">Shera</h3>
                 <p className="text-sm text-white/50">WhatsApp AI Agent</p>
+                <p className="text-xs text-white/30 mt-0.5">Runs 24/7</p>
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
-              Active
+              24/7
             </span>
           </div>
         </Link>
@@ -74,10 +75,11 @@ export default function AgentsPage() {
               <div>
                 <h3 className="text-lg font-bold text-white">Ryan</h3>
                 <p className="text-sm text-white/50">Email Reply Agent</p>
+                <p className="text-xs text-white/30 mt-0.5">Runs 24/7</p>
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-purple-500/20 text-purple-400">
-              Active
+              24/7
             </span>
           </div>
         </Link>
@@ -95,10 +97,11 @@ export default function AgentsPage() {
               <div>
                 <h3 className="text-lg font-bold text-white">Dimas</h3>
                 <p className="text-sm text-white/50">SEO Blog Autopilot</p>
+                <p className="text-xs text-white/30 mt-0.5">Runs daily at 6:00 AM</p>
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-blue-500/20 text-blue-400">
-              Active
+              Daily
             </span>
           </div>
         </Link>
