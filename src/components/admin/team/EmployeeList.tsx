@@ -52,7 +52,7 @@ export default function EmployeeList() {
               totalCompThisMonth: payslip.totalComp,
             }
           } catch {
-            return { ...emp, jobsThisMonth: 0, totalCompThisMonth: 6_600_000 }
+            return { ...emp, jobsThisMonth: 0, totalCompThisMonth: emp.base_salary || 0 }
           }
         })
       )

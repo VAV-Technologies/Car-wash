@@ -22,7 +22,7 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
     (employee?.role as EmployeeRole | 'ops_manager') ?? 'washer'
   )
   const [hireDate, setHireDate] = useState(employee?.hire_date ?? '')
-  const [baseSalary, setBaseSalary] = useState(employee?.base_salary ?? 6_600_000)
+  const [baseSalary, setBaseSalary] = useState(employee?.base_salary ?? 0)
   const [status, setStatus] = useState<EmployeeStatus>(employee?.status ?? 'active')
   const [notes, setNotes] = useState(employee?.notes ?? '')
   const [saving, setSaving] = useState(false)
