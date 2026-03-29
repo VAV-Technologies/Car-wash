@@ -254,17 +254,13 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Human-like typing delay ──────────────────────────────────────
-    // First message: ~60 seconds (minus buffer wait already done)
-    // Subsequent: 5-12 seconds (minus buffer wait already done)
-    let extraDelay: number
-    if (isFirstMessage) {
-      extraDelay = Math.max(0, 40000 + Math.random() * 10000 - BUFFER_WAIT)
-    } else {
-      extraDelay = Math.max(0, Math.random() * 5000)
-    }
-    if (extraDelay > 0) {
-      await new Promise(resolve => setTimeout(resolve, extraDelay))
-    }
+    // Buffer (15s) already provides the main delay.
+    // Add small extra delay to feel natural, but stay under Vercel 60s limit.
+    // Total target: first msg ~20-25s total, subsequent ~18-20s total
+    const extraDelay = isFirstMessage
+      ? 5000 + Math.random() * 5000   // 5-10s extra for first message
+      : 2000 + Math.random() * 3000   // 2-5s extra for subsequent
+    await new Promise(resolve => setTimeout(resolve, extraDelay))
 
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
