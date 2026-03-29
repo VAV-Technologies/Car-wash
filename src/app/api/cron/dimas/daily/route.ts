@@ -70,7 +70,7 @@ export async function GET(req: Request) {
         details: { title: post.title, slug: post.slug, word_count: post.word_count, keyword: keyword.keyword },
       })
 
-      // Save as draft first
+      // Save and publish directly (no separate step needed)
       const { data: saved } = await supabase
         .from('blog_posts')
         .insert({
@@ -85,7 +85,8 @@ export async function GET(req: Request) {
           meta_title: post.meta_title,
           meta_description: post.meta_description,
           reading_time_minutes: post.estimated_reading_time,
-          is_published: false,
+          is_published: true,
+          published_at: new Date().toISOString(),
           target_keyword: post.target_keyword,
           word_count: post.word_count,
           search_intent: post.search_intent,
@@ -94,13 +95,13 @@ export async function GET(req: Request) {
         .select('id')
         .single()
 
-      // Trigger step 3
+      // Update keyword research
       if (saved) {
-        const publishUrl = `${baseUrl}/api/cron/dimas/daily?step=publish&post_id=${saved.id}`
-        fetch(publishUrl).catch(() => {})
+        await supabase.from('keyword_research').update({ status: 'published', blog_post_id: saved.id }).eq('keyword', keyword.keyword)
+        await supabase.from('agent_logs').insert({ action: 'publish', details: { post_id: saved.id, title: post.title, slug: post.slug, word_count: post.word_count } })
       }
 
-      return NextResponse.json({ ok: true, step: 'write', title: post.title, slug: post.slug })
+      return NextResponse.json({ ok: true, step: 'write+publish', title: post.title, slug: post.slug, post_id: saved?.id })
     }
 
     // ── STEP 3: Publish ──
