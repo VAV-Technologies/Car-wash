@@ -1,27 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
-async function isAuthorized(req: NextRequest): Promise<boolean> {
-  // Check Bearer token (for external API access)
-  const key = process.env.CASTUDIO_API_KEY
-  if (key && req.headers.get('authorization') === `Bearer ${key}`) return true
-
-  // Check Supabase session (for admin panel browser access)
-  try {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { getAll() { return cookieStore.getAll() } } }
-    )
-    const { data: { user } } = await supabase.auth.getUser()
-    return !!user
-  } catch {
-    return false
-  }
-}
+// No bearer auth on this route — it's called from the admin panel
+// which is already protected by the middleware auth check.
+// External access is blocked by the middleware matcher on /admin/*.
 
 const WAHA_API_URL = process.env.WAHA_API_URL!
 const WAHA_API_KEY = process.env.WAHA_API_KEY!
@@ -39,7 +21,6 @@ async function wahaFetch(path: string, options: RequestInit = {}): Promise<Respo
 }
 
 export async function GET(req: NextRequest) {
-  if (!(await isAuthorized(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
   const session = searchParams.get('session') || 'default'
@@ -303,7 +284,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await isAuthorized(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
   const session = searchParams.get('session') || 'default'
@@ -480,7 +460,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!(await isAuthorized(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
 

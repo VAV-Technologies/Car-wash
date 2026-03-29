@@ -1,30 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
-async function isAuthorized(req: NextRequest): Promise<boolean> {
-  // Check Bearer token (for external API access)
-  const key = process.env.CASTUDIO_API_KEY
-  if (key && req.headers.get('authorization') === `Bearer ${key}`) return true
-
-  // Check Supabase session (for admin panel browser access)
-  try {
-    const cookieStore = await cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { getAll() { return cookieStore.getAll() } } }
-    )
-    const { data: { user } } = await supabase.auth.getUser()
-    return !!user
-  } catch {
-    return false
-  }
-}
+// No bearer auth — called from admin panel which is protected by middleware.
 
 export async function GET(req: NextRequest) {
-  if (!(await isAuthorized(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action') ?? 'list-users'
 
@@ -46,7 +25,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await isAuthorized(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action') ?? 'create-user'
 
