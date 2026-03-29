@@ -35,36 +35,58 @@ function translateToEnglish(keyword: string): string {
 }
 
 async function fetchCoverImage(keyword: string): Promise<string | null> {
-  const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
   const englishKeyword = translateToEnglish(keyword)
-  const searchTerms = englishKeyword.split(' ').slice(0, 4).join('+')
+  const searchTerms = englishKeyword.split(' ').slice(0, 4).join(' ')
 
-  // Search Pixabay in English for better results
-  try {
-    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
-    if (res.ok) {
-      const data = await res.json()
-      if (data.hits && data.hits.length > 0) {
-        const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
-        return hit.largeImageURL || hit.webformatURL
+  // Try Pexels API (free, high quality, reliable)
+  const pexelsKey = process.env.PEXELS_API_KEY
+  if (pexelsKey) {
+    try {
+      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchTerms)}&per_page=10&orientation=landscape`, {
+        headers: { 'Authorization': pexelsKey },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.photos && data.photos.length > 0) {
+          const photo = data.photos[Math.floor(Math.random() * Math.min(8, data.photos.length))]
+          return photo.src?.large2x || photo.src?.large || photo.src?.original
+        }
       }
-    }
-  } catch {}
+    } catch {}
 
-  // Broader fallback: just "car automotive"
-  try {
-    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=car+automotive+clean&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
-    if (res.ok) {
-      const data = await res.json()
-      if (data.hits && data.hits.length > 0) {
-        const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
-        return hit.largeImageURL || hit.webformatURL
+    // Broader car search on Pexels
+    try {
+      const res = await fetch(`https://api.pexels.com/v1/search?query=car+automotive&per_page=10&orientation=landscape`, {
+        headers: { 'Authorization': pexelsKey },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.photos && data.photos.length > 0) {
+          const photo = data.photos[Math.floor(Math.random() * Math.min(8, data.photos.length))]
+          return photo.src?.large2x || photo.src?.large || photo.src?.original
+        }
       }
-    }
-  } catch {}
+    } catch {}
+  }
 
-  // Last fallback: Unsplash direct
-  return `https://source.unsplash.com/1200x630/?${encodeURIComponent(englishKeyword.replace(/\s+/g, ','))}`
+  // Try Pixabay if key is set
+  const pixabayKey = process.env.PIXABAY_API_KEY
+  if (pixabayKey) {
+    try {
+      const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.hits && data.hits.length > 0) {
+          const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
+          return hit.largeImageURL || hit.webformatURL
+        }
+      }
+    } catch {}
+  }
+
+  // Fallback: picsum.photos (always works, random high quality photo)
+  const seed = keyword.replace(/\s+/g, '').slice(0, 10) + Date.now() % 1000
+  return `https://picsum.photos/seed/${seed}/1200/630`
 }
 
 function generateSlug(title: string): string {
