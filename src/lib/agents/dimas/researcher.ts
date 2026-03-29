@@ -1,5 +1,5 @@
 import { querySearchAnalytics } from './gsc'
-import { DIMAS_CONFIG, getSupabaseClient } from './config'
+import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
 import Anthropic from '@anthropic-ai/sdk'
 
 function getDateString(daysAgo: number): string {
@@ -61,12 +61,46 @@ export async function fetchAutocomplete(seed: string): Promise<string[]> {
 
 export async function brainstormTopics(): Promise<Array<{ keyword: string; intent: string; content_type: string }>> {
   const client = await getAnthropicClient()
+  const supabase = getSupabaseClient()
+
+  // Load existing posts for semantic dedup
+  const { data: existingPosts } = await supabase
+    .from('blog_posts')
+    .select('title, target_keyword')
+    .eq('is_published', true)
+
+  const existingTopics = (existingPosts || [])
+    .map((p: any) => p.target_keyword || p.title)
+    .filter(Boolean)
+    .join('\n')
+
   const response = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
+    system: DIMAS_BRAND_CONTEXT,
     messages: [{
       role: 'user',
-      content: `I'm building a blog about ${DIMAS_CONFIG.blogNiche}. Generate 10 blog post topics targeting informational search intent. For each, provide a JSON object with: keyword (2-4 words, specific), intent (informational/transactional), content_type (how-to/listicle/guide/comparison/explainer). Return as a JSON array.`
+      content: `Generate 10 blog post topics for our Indonesian automotive lifestyle blog. Mix across these categories:
+
+1. Car care (washing, waxing, polishing, paint protection, interior care)
+2. New car reviews and comparisons (Indonesian market, popular brands like Toyota, Honda, Mitsubishi, Hyundai, Wuling)
+3. Car brand news and industry updates
+4. Automotive technology (ADAS, EV tech, connected cars)
+5. F1 and motorsport
+6. Car content creators and community in Indonesia
+7. Road trip guides and driving tips in Indonesia
+8. Car modifications and accessories
+9. Electric vehicles in Indonesia
+10. Car buying guides
+
+${existingTopics ? `IMPORTANT: We already have posts about these topics. DO NOT suggest anything similar or overlapping:\n${existingTopics}` : ''}
+
+For each topic, return a JSON object with:
+- keyword: specific 2-5 word keyword in Bahasa Indonesia (target what Indonesians actually search)
+- intent: informational or transactional
+- content_type: how-to, listicle, guide, comparison, explainer, review, news
+
+Return as a JSON array.`
     }],
   })
 

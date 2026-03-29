@@ -1,5 +1,5 @@
 import { getAnthropicClient } from './researcher'
-import { DIMAS_CONFIG, getSupabaseClient } from './config'
+import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
 
 interface PostOutline {
   title: string
@@ -45,7 +45,7 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
   const { data: existingPosts } = await supabase
     .from('blog_posts')
     .select('title, slug')
-    .eq('status', 'published')
+    .eq('is_published', true)
     .limit(20)
 
   const existingLinks = (existingPosts || []).map((p: any) => `"${p.title}" (/tips/${p.slug})`).join('\n')
@@ -54,13 +54,12 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
   const outlineResponse = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
-    system: 'You are an expert SEO content strategist. Return valid JSON only.',
+    system: `You are an expert SEO content strategist for an Indonesian automotive lifestyle blog. Return valid JSON only.\n\n${DIMAS_BRAND_CONTEXT}`,
     messages: [{
       role: 'user',
       content: `Create a blog post outline targeting the keyword "${keyword.keyword}".
 Search intent: ${keyword.intent}
 Content type: ${keyword.content_type}
-Blog niche: ${DIMAS_CONFIG.blogNiche}
 Language: Indonesian (Bahasa Indonesia)
 
 Existing posts to link to:
@@ -87,7 +86,7 @@ Return JSON:
   const writeResponse = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 4096,
-    system: `You are an expert SEO content writer. Write in Bahasa Indonesia. Never use em dashes. Write in a direct, conversational tone. Output clean HTML with h2, h3, p, ul, li tags. Do NOT include h1.`,
+    system: `You are an expert SEO content writer for Castudio's automotive lifestyle blog. Write in Bahasa Indonesia. Never use em dashes. Write like a car enthusiast, not a corporate brand. Direct, conversational, knowledgeable. Only mention Castudio naturally where it fits (don't force it). Output clean HTML with h2, h3, p, ul, li tags. Do NOT include h1.\n\n${DIMAS_BRAND_CONTEXT}`,
     messages: [{
       role: 'user',
       content: `Write a complete blog post following this outline:
