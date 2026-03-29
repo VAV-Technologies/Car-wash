@@ -248,6 +248,7 @@ function LeadsTab() {
 // ─── Settings Tab ────────────────────────────────────────────────
 function SettingsTab() {
   const [apiKey, setApiKey] = useState('')
+  const [claudeKey, setClaudeKey] = useState('')
   const [workspaceId, setWorkspaceId] = useState('')
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -287,13 +288,16 @@ function SettingsTab() {
 
   async function handleSave() {
     setSaving(true)
-    const encoded = btoa(apiKey)
-    const systemPrompt = JSON.stringify({ workspace_id: workspaceId })
+    const claudeEncoded = claudeKey ? btoa(claudeKey) : undefined
+    const systemPrompt = JSON.stringify({ workspace_id: workspaceId, plusvibe_api_key: apiKey })
+
+    const upsertData: Record<string, unknown> = { agent_name: 'plusvibe', system_prompt: systemPrompt }
+    if (claudeEncoded) upsertData.api_key = claudeEncoded
 
     const { error } = await supabase
       .from('agent_settings')
       .upsert(
-        { agent_name: 'plusvibe', api_key: encoded, system_prompt: systemPrompt },
+        upsertData,
         { onConflict: 'agent_name' }
       )
 
@@ -316,7 +320,22 @@ function SettingsTab() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      {/* API Key */}
+      {/* Claude API Key */}
+      <div className="rounded-xl border border-orange-500/20 bg-[#171717] p-5 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-white mb-1.5">Claude API Key</label>
+          <p className="text-xs text-white/30 mb-2">Powers Ryan's AI. If not set, falls back to Shera's key.</p>
+          <input
+            type="password"
+            value={claudeKey}
+            onChange={(e) => setClaudeKey(e.target.value)}
+            placeholder="sk-ant-api03-..."
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-orange-500/50 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Plusvibe API Key */}
       <div className="rounded-xl border border-white/10 bg-[#171717] p-5 space-y-4">
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Plusvibe API Key</label>
