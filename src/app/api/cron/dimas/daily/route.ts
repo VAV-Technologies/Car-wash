@@ -25,7 +25,13 @@ export async function GET(req: Request) {
     if (step === 'research') {
       await supabase.from('agent_logs').insert({ action: 'daily_start', details: { timestamp: new Date().toISOString() } })
 
-      const keyword = await scoreAndPickKeyword()
+      let keyword: { keyword: string; intent: string; content_type: string } | null = null
+      try {
+        keyword = await scoreAndPickKeyword()
+      } catch (researchErr: any) {
+        await supabase.from('agent_logs').insert({ action: 'error', details: { step: 'research', error: researchErr?.message || String(researchErr) } })
+        return NextResponse.json({ ok: false, error: 'Research failed: ' + (researchErr?.message || '') }, { status: 500 })
+      }
       if (!keyword) {
         await supabase.from('agent_logs').insert({ action: 'daily_skip', details: { reason: 'No keyword found' } })
         return NextResponse.json({ ok: true, skipped: true, reason: 'No keyword found' })
