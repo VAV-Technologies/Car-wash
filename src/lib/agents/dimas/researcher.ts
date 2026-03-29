@@ -135,7 +135,8 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
     if (!count || count === 0) {
       const { count: kwCount } = await supabase.from('keyword_research').select('*', { count: 'exact', head: true }).eq('keyword', s).in('status', ['planned', 'published'])
       if (!kwCount || kwCount === 0) {
-        await supabase.from('keyword_research').upsert({ keyword: s, status: 'planned', source: 'autocomplete' }, { onConflict: 'keyword' })        return { keyword: s, intent: 'informational', content_type: 'guide' }
+        await supabase.from('keyword_research').upsert({ keyword: s, status: 'planned', source: 'autocomplete' }, { onConflict: 'keyword' })
+        return { keyword: s, intent: 'informational', content_type: 'guide' }
       }
     }
   }
