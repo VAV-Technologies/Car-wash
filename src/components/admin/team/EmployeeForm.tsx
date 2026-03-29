@@ -50,7 +50,6 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
         base_salary: baseSalary,
         status,
         notes: notes.trim() || null,
-        is_active: status === 'active',
       }
 
       if (isEdit && employee) {
