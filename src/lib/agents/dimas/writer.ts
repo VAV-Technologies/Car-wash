@@ -34,58 +34,88 @@ function translateToEnglish(keyword: string): string {
   return result.trim()
 }
 
+// Map keyword topics to guaranteed-good Pexels search terms
+function getImageSearchTerm(keyword: string): string {
+  const kw = keyword.toLowerCase()
+  if (kw.includes('f1') || kw.includes('formula')) return 'formula one racing car'
+  if (kw.includes('listrik') || kw.includes('ev') || kw.includes('electric')) return 'electric car charging'
+  if (kw.includes('cuci') || kw.includes('wash')) return 'car wash cleaning'
+  if (kw.includes('detail') || kw.includes('poles') || kw.includes('wax') || kw.includes('coating')) return 'car detailing polish'
+  if (kw.includes('interior')) return 'car interior luxury'
+  if (kw.includes('road trip') || kw.includes('perjalanan')) return 'road trip highway scenic'
+  if (kw.includes('modifikasi') || kw.includes('modification')) return 'modified car custom'
+  if (kw.includes('suv')) return 'SUV car'
+  if (kw.includes('sedan')) return 'sedan car luxury'
+  if (kw.includes('hybrid')) return 'hybrid car technology'
+  if (kw.includes('mesin') || kw.includes('engine')) return 'car engine mechanic'
+  if (kw.includes('ban') || kw.includes('tire') || kw.includes('velg')) return 'car tire wheel'
+  if (kw.includes('cat') || kw.includes('paint') || kw.includes('gores')) return 'car paint shiny'
+  if (kw.includes('beli') || kw.includes('buy')) return 'car dealership showroom'
+  if (kw.includes('aksesoris') || kw.includes('accessories')) return 'car accessories'
+  if (kw.includes('toyota')) return 'Toyota car'
+  if (kw.includes('honda')) return 'Honda car'
+  if (kw.includes('wuling')) return 'electric car compact'
+  if (kw.includes('hyundai')) return 'Hyundai car'
+  if (kw.includes('putih') || kw.includes('white')) return 'white car clean'
+  if (kw.includes('merawat') || kw.includes('care') || kw.includes('tips')) return 'car care maintenance'
+  return 'car automotive clean'
+}
+
 async function fetchCoverImage(keyword: string): Promise<string | null> {
-  const englishKeyword = translateToEnglish(keyword)
-  const searchTerms = englishKeyword.split(' ').slice(0, 4).join(' ')
-
-  // Try Pexels API (free, high quality, reliable)
+  const supabase = getSupabaseClient()
   const pexelsKey = process.env.PEXELS_API_KEY
+  const searchTerm = getImageSearchTerm(keyword)
+
+  // Get existing image URLs to avoid duplicates
+  const { data: existingPosts } = await supabase
+    .from('blog_posts')
+    .select('cover_image_url')
+    .not('cover_image_url', 'is', null)
+  const usedUrls = new Set((existingPosts || []).map((p: any) => p.cover_image_url))
+
   if (pexelsKey) {
+    // Search with mapped term + random page offset for variety
+    const page = Math.floor(Math.random() * 5) + 1
     try {
-      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchTerms)}&per_page=10&orientation=landscape`, {
+      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchTerm)}&per_page=15&orientation=landscape&page=${page}`, {
         headers: { 'Authorization': pexelsKey },
       })
       if (res.ok) {
         const data = await res.json()
         if (data.photos && data.photos.length > 0) {
-          const photo = data.photos[Math.floor(Math.random() * Math.min(8, data.photos.length))]
-          return photo.src?.large2x || photo.src?.large || photo.src?.original
+          // Find a photo not already used
+          for (const photo of data.photos) {
+            const url = photo.src?.large2x || photo.src?.large
+            if (url && !usedUrls.has(url)) return url
+          }
+          // All used — just pick one anyway
+          const photo = data.photos[0]
+          return photo.src?.large2x || photo.src?.large
         }
       }
     } catch {}
 
-    // Broader car search on Pexels
+    // Broader fallback
     try {
-      const res = await fetch(`https://api.pexels.com/v1/search?query=car+automotive&per_page=10&orientation=landscape`, {
+      const fallbackTerms = ['car wash detailing', 'luxury car', 'car driving road', 'automotive garage']
+      const fallback = fallbackTerms[Math.floor(Math.random() * fallbackTerms.length)]
+      const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(fallback)}&per_page=15&orientation=landscape&page=${Math.floor(Math.random() * 3) + 1}`, {
         headers: { 'Authorization': pexelsKey },
       })
       if (res.ok) {
         const data = await res.json()
         if (data.photos && data.photos.length > 0) {
-          const photo = data.photos[Math.floor(Math.random() * Math.min(8, data.photos.length))]
-          return photo.src?.large2x || photo.src?.large || photo.src?.original
+          for (const photo of data.photos) {
+            const url = photo.src?.large2x || photo.src?.large
+            if (url && !usedUrls.has(url)) return url
+          }
         }
       }
     } catch {}
   }
 
-  // Try Pixabay if key is set
-  const pixabayKey = process.env.PIXABAY_API_KEY
-  if (pixabayKey) {
-    try {
-      const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
-      if (res.ok) {
-        const data = await res.json()
-        if (data.hits && data.hits.length > 0) {
-          const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
-          return hit.largeImageURL || hit.webformatURL
-        }
-      }
-    } catch {}
-  }
-
-  // Fallback: picsum.photos (always works, random high quality photo)
-  const seed = keyword.replace(/\s+/g, '').slice(0, 10) + Date.now() % 1000
+  // Last fallback
+  const seed = keyword.replace(/\s+/g, '').slice(0, 10) + Date.now() % 10000
   return `https://picsum.photos/seed/${seed}/1200/630`
 }
 
