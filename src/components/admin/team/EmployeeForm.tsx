@@ -153,11 +153,16 @@ export default function EmployeeForm({ employee, onClose }: EmployeeFormProps) {
               />
             </div>
             <div>
-              <label className="block text-xs text-white/40 mb-1.5">Base Salary</label>
+              <label className="block text-xs text-white/40 mb-1.5">Base Salary (IDR)</label>
               <input
-                type="number"
-                value={baseSalary}
-                onChange={(e) => setBaseSalary(Number(e.target.value))}
+                type="text"
+                inputMode="numeric"
+                value={baseSalary ? baseSalary.toLocaleString('id-ID') : ''}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/\D/g, '')
+                  setBaseSalary(raw ? parseInt(raw, 10) : 0)
+                }}
+                placeholder="e.g. 6,600,000"
                 className={inputClasses}
               />
             </div>
