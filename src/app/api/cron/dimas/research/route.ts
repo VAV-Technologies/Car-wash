@@ -6,7 +6,13 @@ import { DIMAS_CONFIG } from '@/lib/agents/dimas/config'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
-export async function GET() {
+export async function GET(req: Request) {
+  // Verify cron request (Vercel sends this header)
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const supabase = getSupabaseClient()
 
   try {

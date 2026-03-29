@@ -14,7 +14,13 @@ export const dynamic = 'force-dynamic'
  * - customer_rating is null
  * - washer_notes doesn't contain follow_up_sent: true
  */
-export async function GET() {
+export async function GET(req: Request) {
+  // Verify cron request (Vercel sends this header)
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const supabase = getSupabaseAdmin()
 
   try {

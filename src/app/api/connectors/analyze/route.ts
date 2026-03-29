@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import Anthropic from '@anthropic-ai/sdk'
 import { getSupabaseAdmin } from '@/lib/supabase'
+
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+  // Check Bearer token (for external API access)
+  const key = process.env.CASTUDIO_API_KEY
+  if (key && req.headers.get('authorization') === `Bearer ${key}`) return true
+
+  // Check Supabase session (for admin panel browser access)
+  try {
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { cookies: { getAll() { return cookieStore.getAll() } } }
+    )
+    const { data: { user } } = await supabase.auth.getUser()
+    return !!user
+  } catch {
+    return false
+  }
+}
 
 const SYSTEM_PROMPT = `You are an API connector analyzer. Given a service name and a description of what an API key is for, analyze the connector and return a JSON object with this exact structure:
 
@@ -24,6 +46,8 @@ Rules:
 - If you're unsure about something, note it in the "notes" field`
 
 export async function POST(request: NextRequest) {
+  if (!(await isAuthorized(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   let body: { connectorId: string; description: string; serviceName: string }
   try {
     body = await request.json()

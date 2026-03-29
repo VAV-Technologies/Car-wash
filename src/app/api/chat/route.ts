@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import Anthropic from '@anthropic-ai/sdk'
 import { getSupabaseAdmin } from '@/lib/supabase'
+
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+  // Check Bearer token (for external API access)
+  const key = process.env.CASTUDIO_API_KEY
+  if (key && req.headers.get('authorization') === `Bearer ${key}`) return true
+
+  // Check Supabase session (for admin panel browser access)
+  try {
+    const cookieStore = await cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { cookies: { getAll() { return cookieStore.getAll() } } }
+    )
+    const { data: { user } } = await supabase.auth.getUser()
+    return !!user
+  } catch {
+    return false
+  }
+}
 
 async function getAnthropicClient(): Promise<Anthropic> {
   // Try to get key from connectors table (base model) first
@@ -149,11 +171,7 @@ const tools: Anthropic.Tool[] = [
 ]
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.CASTUDIO_API_KEY
-  const authHeader = request.headers.get('authorization')
-  if (!apiKey || authHeader !== `Bearer ${apiKey}`) {
-    // Allow from admin panel (chatbot calls without bearer token)
-  }
+  if (!(await isAuthorized(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   let body: { messages: Array<{ role: string; content: string }> }
   try {

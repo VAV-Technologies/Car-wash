@@ -9,7 +9,13 @@ export const dynamic = 'force-dynamic'
  * whose last wash was 30+ days ago, and sends a subscription upsell.
  * Runs daily via Vercel cron.
  */
-export async function GET() {
+export async function GET(req: Request) {
+  // Verify cron request (Vercel sends this header)
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const supabase = getSupabaseAdmin()
 
   try {

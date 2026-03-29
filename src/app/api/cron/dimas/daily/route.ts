@@ -15,6 +15,12 @@ export const maxDuration = 60
  * GET /api/cron/dimas/daily?step=publish → Step 3: Publish
  */
 export async function GET(req: Request) {
+  // Verify cron request (Vercel sends this header)
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url)
   const step = searchParams.get('step') || 'research'
   const supabase = getSupabaseClient()
