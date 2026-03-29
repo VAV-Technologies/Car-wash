@@ -80,24 +80,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'blocked number' })
     }
 
-    // Bot loop detection: if 5+ messages from same sender in last 3 minutes, stop replying
-    const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
-    const db = getAdmin()
-    const { data: recentConvo } = await db
-      .from('whatsapp_conversations')
-      .select('messages')
-      .eq('chat_id', from)
-      .single()
+    // Bot loop detection: if 10+ messages from same sender in last 3 minutes, stop replying
+    try {
+      const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
+      const db = getAdmin()
+      const { data: recentConvo } = await db
+        .from('whatsapp_conversations')
+        .select('messages')
+        .eq('chat_id', from)
+        .maybeSingle()
 
-    if (recentConvo?.messages && Array.isArray(recentConvo.messages)) {
-      const threeMinAgo = Date.now() - 3 * 60 * 1000
-      const recentMsgs = recentConvo.messages.filter(
-        (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
-      )
-      if (recentMsgs.length >= 10) {
-        console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
-        return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
+      if (recentConvo?.messages && Array.isArray(recentConvo.messages)) {
+        const threeMinAgo = Date.now() - 3 * 60 * 1000
+        const recentMsgs = recentConvo.messages.filter(
+          (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
+        )
+        if (recentMsgs.length >= 10) {
+          console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
+          return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
+        }
       }
+    } catch {
+      // Bot loop check failed — continue processing anyway
     }
 
     const messageText: string | undefined = message.body
@@ -142,8 +146,11 @@ export async function POST(req: NextRequest) {
       try {
         const WAHA_API_URL = process.env.WAHA_API_URL!
         const WAHA_API_KEY = process.env.WAHA_API_KEY!
+        const controller = new AbortController()
+        setTimeout(() => controller.abort(), 5000) // 5 second timeout
         const contactRes = await fetch(`${WAHA_API_URL}/api/contacts?session=default&contactId=${from}`, {
           headers: { 'X-Api-Key': WAHA_API_KEY },
+          signal: controller.signal,
         })
         if (contactRes.ok) {
           const contact = await contactRes.json()
