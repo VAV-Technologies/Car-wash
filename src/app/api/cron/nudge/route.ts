@@ -48,9 +48,9 @@ export async function GET(req: Request) {
       const firstName = msgs.find((m: any) => m.role === 'assistant' && m.content?.includes('Hai '))?.content?.match(/Hai (\w+)/)?.[1] || 'kak'
 
       const nudges = [
-        `Hai ${firstName}, masih mau lanjut bookingnya? Kabarin aja ya kalau udah siap`,
-        `Eh ${firstName}, masih interest ga nih? Tinggal kabarin aja kalau mau dijadwalin`,
-        `${firstName}, tadi kita lagi ngobrol nih. Mau dilanjut ga?`,
+        `Hai ${firstName}! Ga ada rush ya, kalau nanti mau lanjut tinggal chat aja`,
+        `${firstName}, kalau ada pertanyaan lagi nanti kabarin aja ya. Aku standby kok`,
+        `No worries ${firstName}, kapan aja mau lanjut aku disini ya`,
       ]
       const nudge = nudges[Math.floor(Math.random() * nudges.length)]
 
