@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getAutomationRuns } from '@/lib/admin/automations'
-import type { AutomationRun, TraceStep } from '@/lib/admin/automations'
+import { getAgentRuns, type AgentRun, type TraceStep } from '@/lib/admin/agents'
 
 const PAGE_SIZE = 20
 
@@ -81,7 +80,7 @@ interface RunHistoryTableProps {
 }
 
 export default function RunHistoryTable({ automationId }: RunHistoryTableProps) {
-  const [runs, setRuns] = useState<AutomationRun[]>([])
+  const [runs, setRuns] = useState<AgentRun[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -92,7 +91,7 @@ export default function RunHistoryTable({ automationId }: RunHistoryTableProps) 
     setLoading(true)
     setError(null)
     try {
-      const result = await getAutomationRuns(automationId, { page, limit: PAGE_SIZE })
+      const result = await getAgentRuns(automationId, { page, limit: PAGE_SIZE })
       setRuns(result.data)
       setTotalCount(result.count)
     } catch (err) {

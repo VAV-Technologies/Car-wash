@@ -26,7 +26,7 @@ export default function BreakEvenMonitor() {
         const { count } = await supabase
           .from('jobs')
           .select('*', { count: 'exact', head: true })
-          .eq('status', 'completed')
+          .not('completed_at', 'is', null)
           .gte('completed_at', startDate)
           .lt('completed_at', endDate)
 

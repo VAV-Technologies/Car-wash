@@ -49,7 +49,7 @@ export default function BookingQueue() {
       const { supabase } = await import('@/lib/supabase')
       await supabase
         .from('bookings')
-        .update({ employee_id: washerId, updated_at: new Date().toISOString() })
+        .update({ washer_id: washerId, status: 'confirmed', updated_at: new Date().toISOString() })
         .eq('id', bookingId)
       setBookings((prev) => prev.filter((b) => b.id !== bookingId))
     } catch {
