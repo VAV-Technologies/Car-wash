@@ -194,18 +194,6 @@ export async function POST(req: NextRequest) {
 
     const isFirstMessage = !convo || !convo.messages || (Array.isArray(convo.messages) && convo.messages.length === 0)
 
-    // Add this message to pending buffer in the conversation
-    const pendingKey = `_pending_${Date.now()}`
-    const currentPending = (convo as any)?._pending || []
-
-    // Store pending message via a lightweight temp record
-    await supabase.rpc('set_pending_message', { p_chat_id: chatId, p_message: messageText }).catch(() => {
-      // RPC doesn't exist — use a simpler approach with a dedicated column or JSON
-    })
-
-    // Simple approach: use a global in-memory map (works within same serverless instance)
-    // For cross-instance: use the DB conversation record
-    // Store the timestamp of this message
     const msgTimestamp = Date.now()
 
     // Wait 15 seconds to collect more messages
