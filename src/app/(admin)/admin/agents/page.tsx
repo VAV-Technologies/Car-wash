@@ -57,7 +57,7 @@ export default function AgentsPage() {
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
-              24/7
+              Active
             </span>
           </div>
         </Link>
@@ -78,8 +78,8 @@ export default function AgentsPage() {
                 <p className="text-xs text-white/30 mt-0.5">Runs 24/7</p>
               </div>
             </div>
-            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-purple-500/20 text-purple-400">
-              24/7
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
+              Active
             </span>
           </div>
         </Link>
@@ -100,8 +100,8 @@ export default function AgentsPage() {
                 <p className="text-xs text-white/30 mt-0.5">Runs daily at 6:00 AM</p>
               </div>
             </div>
-            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-blue-500/20 text-blue-400">
-              Daily
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
+              Active
             </span>
           </div>
         </Link>
