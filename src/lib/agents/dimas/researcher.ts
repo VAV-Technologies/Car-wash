@@ -217,7 +217,8 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
         keyword: s,
         status: 'planned',
         source: 'autocomplete',
-      }, { onConflict: 'keyword' })      return { keyword: s, intent: 'informational', content_type: 'guide' }
+      }, { onConflict: 'keyword' })
+      return { keyword: s, intent: 'informational', content_type: 'guide' }
     }
   }
 
