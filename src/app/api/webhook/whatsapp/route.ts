@@ -273,10 +273,10 @@ export async function POST(req: NextRequest) {
     await sendText(chatId, reply)
 
     return NextResponse.json({ ok: true })
-  } catch (error) {
+  } catch (error: any) {
     console.error('[whatsapp-webhook] Error processing message:', error)
-    // Always return 200 so WAHA does not retry
-    return NextResponse.json({ ok: false, error: 'internal error' }, { status: 200 })
+    // Return actual error for debugging — change to generic message in production
+    return NextResponse.json({ ok: false, error: error?.message || String(error) }, { status: 200 })
   }
 }
 
