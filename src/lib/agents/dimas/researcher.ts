@@ -126,11 +126,22 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
   }
 
   // 2. Try autocomplete first (fast, no auth)
-  const searchTerms = ['cuci mobil', 'tips mobil', 'detailing mobil', 'mobil baru 2026', 'review mobil', 'modifikasi mobil', 'road trip Indonesia', 'mobil listrik Indonesia', 'F1 2026', 'cara merawat mobil']
+  const searchTerms = [
+    'cuci mobil premium', 'tips merawat cat mobil', 'auto detailing Indonesia',
+    'mobil baru Indonesia 2026', 'perbandingan SUV Indonesia', 'modifikasi mobil keren',
+    'road trip Jawa', 'mobil listrik murah Indonesia', 'jadwal F1 2026',
+    'cara poles mobil sendiri', 'coating mobil ceramic', 'interior mobil bersih',
+    'Toyota Innova 2026', 'Honda HRV review', 'Wuling Air EV',
+    'tips beli mobil bekas', 'perawatan mesin mobil', 'aksesoris mobil terbaik',
+  ]
   const randomSeed = searchTerms[Math.floor(Math.random() * searchTerms.length)]
   const acSuggestions = await fetchAutocomplete(randomSeed)
 
-  for (const s of acSuggestions) {
+  // Filter out non-automotive topics
+  const blockedWords = ['phone', 'hp', 'smartphone', 'handphone', 'laptop', 'tablet', 'iphone', 'samsung galaxy', 'oppo', 'vivo', 'xiaomi', 'game', 'gaming', 'profit', 'money', 'crypto', 'forex', 'saham']
+  const filteredSuggestions = acSuggestions.filter(s => !blockedWords.some(w => s.toLowerCase().includes(w)))
+
+  for (const s of filteredSuggestions) {
     const { count } = await supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('target_keyword', s)
     if (!count || count === 0) {
       const { count: kwCount } = await supabase.from('keyword_research').select('*', { count: 'exact', head: true }).eq('keyword', s).in('status', ['planned', 'published'])
