@@ -109,8 +109,35 @@ Return as a JSON array.`
   return jsonMatch ? JSON.parse(jsonMatch[0]) : []
 }
 
-export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: string; content_type: string } | null> {
+const BLOG_CATEGORIES = ['tips', 'guides', 'news'] as const
+
+async function getNextCategory(): Promise<string> {
   const supabase = getSupabaseClient()
+  const { data: lastPost } = await supabase
+    .from('blog_posts')
+    .select('category')
+    .eq('is_published', true)
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  const lastCategory = lastPost?.category || 'news'
+  const currentIdx = BLOG_CATEGORIES.indexOf(lastCategory as any)
+  const nextIdx = (currentIdx + 1) % BLOG_CATEGORIES.length
+  return BLOG_CATEGORIES[nextIdx]
+}
+
+export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: string; content_type: string; category: string } | null> {
+  const supabase = getSupabaseClient()
+  const category = await getNextCategory()
+
+  // Map category to content_type preference
+  const categoryContentTypes: Record<string, string> = {
+    'tips': 'how-to',
+    'guides': 'guide',
+    'news': 'news',
+  }
+  const contentType = categoryContentTypes[category] || 'guide'
 
   // 1. Check for pre-planned keywords in DB
   const { data: planned } = await supabase
@@ -122,7 +149,7 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
 
   if (planned) {
     await supabase.from('keyword_research').update({ status: 'planned' }).eq('keyword', planned.keyword)
-    return { keyword: planned.keyword, intent: 'informational', content_type: 'guide' }
+    return { keyword: planned.keyword, intent: 'informational', content_type: contentType, category }
   }
 
   // 2. Try autocomplete first (fast, no auth)
@@ -147,7 +174,7 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
       const { count: kwCount } = await supabase.from('keyword_research').select('*', { count: 'exact', head: true }).eq('keyword', s).in('status', ['planned', 'published'])
       if (!kwCount || kwCount === 0) {
         await supabase.from('keyword_research').upsert({ keyword: s, status: 'planned', source: 'autocomplete' }, { onConflict: 'keyword' })
-        return { keyword: s, intent: 'informational', content_type: 'guide' }
+        return { keyword: s, intent: 'informational', content_type: contentType, category }
       }
     }
   }
@@ -189,7 +216,7 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
             status: 'planned',
             source: 'gsc',
           }, { onConflict: 'keyword' })
-          return { keyword: item.keyword, intent: 'informational', content_type: 'guide' }
+          return { keyword: item.keyword, intent: 'informational', content_type: contentType, category }
         }
       }
     }
@@ -229,7 +256,7 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
         status: 'planned',
         source: 'autocomplete',
       }, { onConflict: 'keyword' })
-      return { keyword: s, intent: 'informational', content_type: 'guide' }
+      return { keyword: s, intent: 'informational', content_type: contentType, category }
     }
   }
 

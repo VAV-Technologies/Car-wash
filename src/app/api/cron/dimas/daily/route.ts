@@ -79,7 +79,7 @@ export async function GET(req: Request) {
           content: post.content,
           cover_image_url: post.cover_image_url || null,
           excerpt: post.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 200) + '...',
-          category: 'tips',
+          category: keyword.category || 'tips',
           tags: post.secondary_keywords || [],
           author_name: 'Dimas',
           author_role: 'SEO Content Writer',

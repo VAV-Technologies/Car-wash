@@ -128,9 +128,18 @@ function generateSlug(title: string): string {
     .slice(0, 80)
 }
 
-export async function generatePost(keyword: { keyword: string; intent: string; content_type: string }): Promise<GeneratedPost> {
+export async function generatePost(keyword: { keyword: string; intent: string; content_type: string; category?: string }): Promise<GeneratedPost> {
   const client = await getAnthropicClient()
   const supabase = getSupabaseClient()
+  const category = keyword.category || 'tips'
+
+  // Category-specific writing instructions
+  const categoryInstructions: Record<string, string> = {
+    'tips': 'This is a TIPS article. Write practical, actionable advice. Use numbered steps or clear takeaways. Reader should be able to apply these tips immediately. Keep it concise and hands-on.',
+    'guides': 'This is a GUIDE article. Write a comprehensive, in-depth walkthrough. Cover the topic thoroughly from start to finish. Include detailed explanations, prerequisites, and step-by-step instructions. Longer and more thorough than a tips article.',
+    'news': 'This is a NEWS article. Write about recent developments, trends, or announcements in the automotive world. Be timely and informative. Cover the who/what/when/where/why. Include context and what it means for Indonesian car owners.',
+  }
+  const categoryInstruction = categoryInstructions[category] || categoryInstructions['tips']
 
   // Get existing posts for internal linking
   const { data: existingPosts } = await supabase
@@ -149,6 +158,8 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
     messages: [{
       role: 'user',
       content: `Write a complete SEO blog post targeting: "${keyword.keyword}"
+Category: ${category.toUpperCase()}
+${categoryInstruction}
 Search intent: ${keyword.intent}
 Content type: ${keyword.content_type}
 
