@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { MessageCircle, Bot, Mail } from 'lucide-react';
+import { MessageCircle, Bot, Mail, PenTool } from 'lucide-react';
 import AgentGrid from '@/components/admin/agents/AgentGrid';
 import CreateAgentModal from '@/components/admin/agents/CreateAgentModal';
 import ConnectorsPanel from '@/components/admin/agents/ConnectorsPanel';
@@ -77,6 +77,27 @@ export default function AgentsPage() {
               </div>
             </div>
             <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-purple-500/20 text-purple-400">
+              Active
+            </span>
+          </div>
+        </Link>
+
+        {/* Dimas Agent Card */}
+        <Link
+          href="/admin/agents/dimas"
+          className="block mt-4 rounded-xl border border-blue-500/20 bg-[#171717] p-5 hover:border-blue-500/40 transition-colors"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <PenTool className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Dimas</h3>
+                <p className="text-sm text-white/50">SEO Blog Autopilot</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-blue-500/20 text-blue-400">
               Active
             </span>
           </div>

@@ -11,6 +11,18 @@
     {
       "path": "/api/cron/upsell",
       "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/dimas/daily",
+      "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/dimas/track",
+      "schedule": "0 0 * * 1"
+    },
+    {
+      "path": "/api/cron/dimas/research",
+      "schedule": "0 22 1 * *"
     }
   ]
 }
