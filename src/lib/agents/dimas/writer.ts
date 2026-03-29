@@ -16,42 +16,55 @@ interface GeneratedPost {
   content_type: string
 }
 
+// Translate Indonesian car terms to English for better image results
+const KEYWORD_TRANSLATIONS: Record<string, string> = {
+  'mobil': 'car', 'cuci': 'wash', 'detailing': 'detailing', 'merawat': 'car care',
+  'wax': 'car wax', 'poles': 'car polish', 'interior': 'car interior', 'eksterior': 'car exterior',
+  'ban': 'tire', 'velg': 'wheel rim', 'cat': 'car paint', 'gores': 'car scratch',
+  'listrik': 'electric car', 'SUV': 'SUV', 'sedan': 'sedan', 'hatchback': 'hatchback',
+  'road trip': 'road trip', 'modifikasi': 'car modification', 'aksesoris': 'car accessories',
+  'F1': 'formula one racing', 'balap': 'racing', 'mesin': 'car engine',
+}
+
+function translateToEnglish(keyword: string): string {
+  let result = keyword.toLowerCase()
+  for (const [id, en] of Object.entries(KEYWORD_TRANSLATIONS)) {
+    result = result.replace(new RegExp(id, 'gi'), en)
+  }
+  return result.trim()
+}
+
 async function fetchCoverImage(keyword: string): Promise<string | null> {
-  // Try Unsplash Source (no API key, direct URL)
-  // This redirects to a random relevant photo
-  const unsplashUrl = `https://source.unsplash.com/1200x630/?${encodeURIComponent(keyword.replace(/\s+/g, ','))}`
+  const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
+  const englishKeyword = translateToEnglish(keyword)
+  const searchTerms = englishKeyword.split(' ').slice(0, 4).join('+')
 
-  // Try Pixabay API (free, no key needed for basic)
+  // Search Pixabay in English for better results
   try {
-    const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
-    const searchTerms = keyword.split(' ').slice(0, 3).join('+')
-    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=5&lang=id`)
+    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(searchTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
     if (res.ok) {
       const data = await res.json()
       if (data.hits && data.hits.length > 0) {
-        // Pick a random one from top 5
-        const hit = data.hits[Math.floor(Math.random() * Math.min(5, data.hits.length))]
+        const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
         return hit.largeImageURL || hit.webformatURL
       }
     }
   } catch {}
 
-  // Fallback: try English search terms
+  // Broader fallback: just "car automotive"
   try {
-    const pixabayKey = process.env.PIXABAY_API_KEY || '47268181-0d62f59e33f7ead4f4f82b3c0'
-    const englishTerms = keyword.includes('mobil') ? 'car+wash+detailing' : keyword.includes('F1') ? 'formula+one+racing' : 'car+automotive'
-    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=${encodeURIComponent(englishTerms)}&image_type=photo&orientation=horizontal&min_width=1200&per_page=5`)
+    const res = await fetch(`https://pixabay.com/api/?key=${pixabayKey}&q=car+automotive+clean&image_type=photo&orientation=horizontal&min_width=1200&per_page=10`)
     if (res.ok) {
       const data = await res.json()
       if (data.hits && data.hits.length > 0) {
-        const hit = data.hits[Math.floor(Math.random() * Math.min(5, data.hits.length))]
+        const hit = data.hits[Math.floor(Math.random() * Math.min(8, data.hits.length))]
         return hit.largeImageURL || hit.webformatURL
       }
     }
   } catch {}
 
-  // Last fallback: Unsplash direct URL (always works but redirects)
-  return unsplashUrl
+  // Last fallback: Unsplash direct
+  return `https://source.unsplash.com/1200x630/?${encodeURIComponent(englishKeyword.replace(/\s+/g, ','))}`
 }
 
 function generateSlug(title: string): string {
@@ -103,12 +116,22 @@ RULES:
 Write in Bahasa Indonesia
 Short paragraphs (2-3 sentences max)
 Use "${keyword.keyword}" naturally 3-5 times
-Include internal links as <a href="/tips/slug">text</a>
+Include internal links as <a href="/tips/slug">text</a> where relevant
 Start with a hook, not generic openings
 End with a conclusion
 Use specific examples and numbers
 Never use em dashes
-Only mention Castudio where it naturally fits`
+Only mention Castudio where it naturally fits
+
+EXTERNAL LINKS (SEO best practice):
+Where relevant, include 1-3 external links to authoritative sources. These build trust and improve SEO. Use <a href="URL" target="_blank" rel="noopener">anchor text</a>.
+Good sources to link to (only when genuinely relevant to the topic):
+Wikipedia for definitions or background context
+Official manufacturer sites (toyota.co.id, honda-indonesia.com, etc.) for car specs
+Kompas Otomotif, Oto.com, or GridOto for Indonesian automotive news
+Formula1.com for F1 content
+Government sites (dephub.go.id) for traffic regulations
+DO NOT force external links. Only include them when they genuinely add value. Some posts won't need any external links. That's fine.`
     }],
   })
 
