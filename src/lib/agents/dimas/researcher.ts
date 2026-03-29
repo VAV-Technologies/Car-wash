@@ -112,8 +112,38 @@ Return as a JSON array.`
 export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: string; content_type: string } | null> {
   const supabase = getSupabaseClient()
 
-  // Try GSC data first
-  const opportunities = await fetchOpportunityKeywords()
+  // 1. Check for pre-planned keywords in DB
+  const { data: planned } = await supabase
+    .from('keyword_research')
+    .select('keyword')
+    .eq('status', 'candidate')
+    .limit(1)
+    .single()
+
+  if (planned) {
+    await supabase.from('keyword_research').update({ status: 'planned' }).eq('keyword', planned.keyword)
+    return { keyword: planned.keyword, intent: 'informational', content_type: 'guide' }
+  }
+
+  // 2. Try autocomplete first (fast, no auth)
+  const searchTerms = ['cuci mobil', 'tips mobil', 'detailing mobil', 'mobil baru 2026', 'review mobil', 'modifikasi mobil', 'road trip Indonesia', 'mobil listrik Indonesia', 'F1 2026', 'cara merawat mobil']
+  const randomSeed = searchTerms[Math.floor(Math.random() * searchTerms.length)]
+  const acSuggestions = await fetchAutocomplete(randomSeed)
+
+  for (const s of acSuggestions) {
+    const { count } = await supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('target_keyword', s)
+    if (!count || count === 0) {
+      const { count: kwCount } = await supabase.from('keyword_research').select('*', { count: 'exact', head: true }).eq('keyword', s).in('status', ['planned', 'published'])
+      if (!kwCount || kwCount === 0) {
+        await supabase.from('keyword_research').upsert({ keyword: s, status: 'planned', source: 'autocomplete' }, { onConflict: 'keyword' }).catch(() => {})
+        return { keyword: s, intent: 'informational', content_type: 'guide' }
+      }
+    }
+  }
+
+  // 3. Try GSC (may not be configured yet)
+  let opportunities: any[] = []
+  try { opportunities = await fetchOpportunityKeywords() } catch {}
 
   if (opportunities.length > 0) {
     // Score: impressions * 0.4 + (1/position) * 0.3 + ctr_potential * 0.3
