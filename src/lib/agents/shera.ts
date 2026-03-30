@@ -65,13 +65,13 @@ Standard Wash Rp 349.000, Professional Wash Rp 649.000, Elite Wash Rp 949.000
 Interior Detail Rp 1.039.000, Exterior Detail Rp 1.039.000, Window Detail Rp 689.000
 Tire & Rims Rp 289.000, Full Detail Rp 2.799.000
 
-Langganan (3 paket + 1 perbandingan):
-sub_essentials, sub_plus, sub_elite, sub_comparison
-Essentials Rp 339.000/bulan (4x Standard)
-Plus Rp 449.000/bulan (4x Professional)
-Elite Rp 1.000.000/bulan (4x Pro + 2x Elite)
+Langganan (3 paket):
+sub_essentials, sub_plus, sub_elite
+Essentials Rp 339.000/bulan (4x Standard) — hemat Rp 1.057.000
+Plus Rp 449.000/bulan (4x Professional) — hemat Rp 2.147.000
+Elite Rp 1.000.000/bulan (4x Pro + 2x Elite) — hemat Rp 3.494.000
 
-Kalau customer tanya soal langganan atau subscription: WAJIB panggil tool send_service_images dengan service_type "sub_essentials,sub_plus,sub_elite,sub_comparison" dan chat_id dari WhatsApp Context.
+Kalau customer tanya soal langganan atau subscription: WAJIB panggil tool send_service_images dengan service_type "sub_essentials,sub_plus,sub_elite" dan chat_id dari WhatsApp Context.
 
 AREA: Seluruh Jabodetabek. Jakarta, Bogor, Depok, Tangerang, Bekasi dan sekitarnya. Kalau di luar Jabodetabek bilang belum bisa.
 
@@ -544,10 +544,9 @@ export async function executeSheraTool(
           window_detail: 'Window Detail - Rp 689.000',
           tire_rims: 'Tire & Rims - Rp 289.000',
           full_detail: 'Full Detail - Rp 2.799.000',
-          sub_essentials: 'Langganan Essentials - Rp 339.000/bulan',
-          sub_plus: 'Langganan Plus - Rp 449.000/bulan',
-          sub_elite: 'Langganan Elite - Rp 1.000.000/bulan',
-          sub_comparison: 'Perbandingan Paket Langganan',
+          sub_essentials: 'Langganan Essentials - Rp 339.000/bulan (Hemat Rp 1.057.000)',
+          sub_plus: 'Langganan Plus - Rp 449.000/bulan (Hemat Rp 2.147.000)',
+          sub_elite: 'Langganan Elite - Rp 1.000.000/bulan (Hemat Rp 3.494.000)',
         }
 
         let sent = 0

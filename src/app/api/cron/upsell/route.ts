@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
-import { sendText } from '@/lib/agents/waha'
+import { sendText, sendImage } from '@/lib/agents/waha'
 
 export const dynamic = 'force-dynamic'
 
@@ -81,10 +81,35 @@ export async function GET(req: Request) {
         if (msgs.some((m: any) => m.context === 'subscription-upsell')) continue
       }
 
-      const message = `Hai ${firstName}! Karena udah beberapa kali cuci sama Castudio, mau ga coba paket langganan? Jadi lebih hemat per cucinya. Essentials 339rb/bulan dapet 4x Standard Wash, atau Plus 449rb/bulan dapet 4x Professional. Mau tau lebih lanjut?`
+      const message = `Hai ${firstName}! Karena udah beberapa kali cuci sama Castudio, mau ga coba paket langganan? Jadi lebih hemat lho. Cek ini ya:`
 
       try {
         await sendText(chatId, message)
+
+        // Send subscription images with savings captions
+        const SUB_CAPTIONS: Record<string, string> = {
+          sub_essentials: 'Langganan Essentials - Rp 339.000/bulan (Hemat Rp 1.057.000)',
+          sub_plus: 'Langganan Plus - Rp 449.000/bulan (Hemat Rp 2.147.000)',
+          sub_elite: 'Langganan Elite - Rp 1.000.000/bulan (Hemat Rp 3.494.000)',
+        }
+
+        const { data: subImages } = await supabase
+          .from('agent_knowledge')
+          .select('file_name, content')
+          .eq('agent_name', 'shera')
+          .in('file_name', ['service_image_sub_essentials', 'service_image_sub_plus', 'service_image_sub_elite'])
+
+        if (subImages && subImages.length > 0) {
+          for (const img of subImages) {
+            const key = img.file_name.replace('service_image_', '')
+            const caption = SUB_CAPTIONS[key] || key
+            try {
+              await sendImage(chatId, img.content, caption)
+              await new Promise(r => setTimeout(r, 1000))
+            } catch {}
+          }
+        }
+
         sent++
 
         const msgs = convo?.messages && Array.isArray(convo.messages) ? convo.messages : []
