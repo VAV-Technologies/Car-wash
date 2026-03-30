@@ -406,6 +406,50 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true })
       }
 
+      case 'upload-service-image': {
+        const supabase = getSupabaseAdmin()
+        const formData = await req.formData()
+        const file = formData.get('file') as File | null
+        const serviceKey = formData.get('service_key') as string | null
+        if (!file || !serviceKey) return NextResponse.json({ error: 'file and service_key required' }, { status: 400 })
+
+        const path = `services/${serviceKey}.jpg`
+        const buffer = Buffer.from(await file.arrayBuffer())
+
+        // Upload to storage (upsert)
+        const { error: uploadErr } = await supabase.storage
+          .from('castudio-photos')
+          .upload(path, buffer, { contentType: file.type || 'image/jpeg', upsert: true })
+
+        if (uploadErr) return NextResponse.json({ error: uploadErr.message }, { status: 500 })
+
+        const { data: urlData } = supabase.storage.from('castudio-photos').getPublicUrl(path)
+        const publicUrl = urlData.publicUrl
+
+        // Upsert into agent_knowledge
+        await supabase.from('agent_knowledge').upsert(
+          { agent_name: 'shera', file_name: `service_image_${serviceKey}`, content: publicUrl, file_type: 'image' },
+          { onConflict: 'id' }
+        )
+        // If upsert by id doesn't work, try delete+insert
+        await supabase.from('agent_knowledge').delete().eq('agent_name', 'shera').eq('file_name', `service_image_${serviceKey}`)
+        await supabase.from('agent_knowledge').insert({ agent_name: 'shera', file_name: `service_image_${serviceKey}`, content: publicUrl, file_type: 'image' })
+
+        return NextResponse.json({ url: publicUrl })
+      }
+
+      case 'delete-service-image': {
+        const supabase = getSupabaseAdmin()
+        const body = await req.json()
+        const { service_key } = body
+        if (!service_key) return NextResponse.json({ error: 'service_key required' }, { status: 400 })
+
+        await supabase.storage.from('castudio-photos').remove([`services/${service_key}.jpg`])
+        await supabase.from('agent_knowledge').delete().eq('agent_name', 'shera').eq('file_name', `service_image_${service_key}`)
+
+        return NextResponse.json({ ok: true })
+      }
+
       case 'upload-knowledge': {
         const supabase = getSupabaseAdmin()
         const formData = await req.formData()

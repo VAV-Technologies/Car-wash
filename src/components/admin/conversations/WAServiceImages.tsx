@@ -46,37 +46,22 @@ export default function WAServiceImages() {
   async function handleUpload(serviceKey: string, file: File) {
     setLoading((prev) => ({ ...prev, [serviceKey]: true }))
     try {
-      const path = `services/${serviceKey}.jpg`
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('service_key', serviceKey)
 
-      // Upload to storage (upsert to overwrite existing)
-      const { error: uploadError } = await supabase.storage
-        .from('castudio-photos')
-        .upload(path, file, { upsert: true })
+      const res = await fetch('/api/admin/whatsapp?action=upload-service-image', {
+        method: 'POST',
+        body: formData,
+      })
 
-      if (uploadError) throw uploadError
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Upload failed')
+      }
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('castudio-photos')
-        .getPublicUrl(path)
-
-      const publicUrl = urlData.publicUrl
-
-      // Upsert into agent_knowledge
-      const { error: dbError } = await supabase
-        .from('agent_knowledge')
-        .upsert(
-          {
-            agent_name: 'shera',
-            file_name: `service_image_${serviceKey}`,
-            content: publicUrl,
-          },
-          { onConflict: 'agent_name,file_name' }
-        )
-
-      if (dbError) throw dbError
-
-      setImages((prev) => ({ ...prev, [serviceKey]: publicUrl }))
+      const { url } = await res.json()
+      setImages((prev) => ({ ...prev, [serviceKey]: url }))
     } catch (err) {
       console.error('Upload failed:', err)
       alert('Upload failed. Check console for details.')
@@ -88,17 +73,11 @@ export default function WAServiceImages() {
   async function handleDelete(serviceKey: string) {
     setLoading((prev) => ({ ...prev, [serviceKey]: true }))
     try {
-      const path = `services/${serviceKey}.jpg`
-
-      // Remove from storage
-      await supabase.storage.from('castudio-photos').remove([path])
-
-      // Remove from DB
-      await supabase
-        .from('agent_knowledge')
-        .delete()
-        .eq('agent_name', 'shera')
-        .eq('file_name', `service_image_${serviceKey}`)
+      await fetch('/api/admin/whatsapp?action=delete-service-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service_key: serviceKey }),
+      })
 
       setImages((prev) => {
         const next = { ...prev }
