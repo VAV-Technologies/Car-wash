@@ -338,20 +338,42 @@ export async function processEmailReply(payload: any) {
     // Save phone
     await supabase.from('email_leads').update({ phone_number: phone, current_status: 'handed_off_to_whatsapp', handed_off_to_whatsapp: true }).eq('id', lead.id)
 
-    // Trigger WhatsApp FIRST (most important)
-    await triggerWhatsAppAgent(
-      { first_name: lead.first_name || '', lead_email: lead.lead_email, company_name: lead.company_name || '', job_title: lead.job_title || '', campaign_name: lead.campaign_name || '' },
-      phone,
-      classification.summary || 'Lead replied to email campaign with phone number'
-    )
-
-    // Then try email confirmation (non-critical, can fail)
+    // Send email confirmation FIRST (lead sees this immediately)
     try {
       const confirmReply = `<p>Got it, ${lead.first_name || 'there'}! You'll hear from us on WhatsApp shortly.</p>`
       await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, confirmReply)
     } catch {
-      // Email reply failed — that's fine, WhatsApp handoff already done
+      // Email reply failed — continue to WhatsApp anyway
     }
+
+    // Schedule WhatsApp handoff after a delay (fire-and-forget to a delayed endpoint)
+    // Can't wait 60s in this function (Vercel timeout), so we save the handoff
+    // data and let the follow-up cron or a separate call handle it.
+    // For now: store the handoff intent, and trigger via a background fetch.
+    const handoffData = {
+      first_name: lead.first_name || '',
+      lead_email: lead.lead_email,
+      company_name: lead.company_name || '',
+      job_title: lead.job_title || '',
+      campaign_name: lead.campaign_name || '',
+      phone,
+      summary: classification.summary || 'Lead replied to email campaign with phone number',
+    }
+
+    // Store handoff for delayed processing
+    await supabase.from('email_leads').update({
+      washer_notes: JSON.stringify({ pending_wa_handoff: true, handoff_data: handoffData, handoff_at: new Date(Date.now() + 90000).toISOString() }),
+    }).eq('id', lead.id)
+
+    // Trigger WhatsApp after 30s delay (best we can do within function timeout)
+    const delay = 25000 + Math.random() * 10000 // 25-35 seconds
+    await new Promise(resolve => setTimeout(resolve, delay))
+
+    await triggerWhatsAppAgent(
+      { first_name: handoffData.first_name, lead_email: handoffData.lead_email, company_name: handoffData.company_name, job_title: handoffData.job_title, campaign_name: handoffData.campaign_name },
+      phone,
+      handoffData.summary
+    )
 
     return { action: 'handed_off', classification: cat, phone }
   }
