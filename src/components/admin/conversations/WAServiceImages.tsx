@@ -13,6 +13,10 @@ const SERVICES = [
   { key: 'window_detail', label: 'Window Detail', price: 'Rp 689.000' },
   { key: 'tire_rims', label: 'Tire & Rims', price: 'Rp 289.000' },
   { key: 'full_detail', label: 'Full Detail', price: 'Rp 2.799.000' },
+  { key: 'sub_essentials', label: 'Subscription Essentials', price: 'Rp 339.000/bulan' },
+  { key: 'sub_plus', label: 'Subscription Plus', price: 'Rp 449.000/bulan' },
+  { key: 'sub_elite', label: 'Subscription Elite', price: 'Rp 1.000.000/bulan' },
+  { key: 'sub_comparison', label: 'Subscription Comparison', price: 'Perbandingan Paket' },
 ]
 
 export default function WAServiceImages() {
