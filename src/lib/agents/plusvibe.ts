@@ -92,6 +92,8 @@ function extractPhoneNumber(text: string): string | null {
     if (match) {
       let num = match[0].replace(/[\s\-.()\+]/g, '')
       if (num.startsWith('0')) num = '62' + num.slice(1)
+      // Must be at least 8 digits to be a real phone number
+      if (num.length < 8) continue
       if (!num.startsWith('62') && num.length >= 10) return '+' + num
       return '+' + num
     }
@@ -284,6 +286,16 @@ export async function processEmailReply(payload: any) {
 
   if (!lead) throw new Error('Failed to create lead record')
 
+  // Skip if already handed off to WhatsApp (prevents duplicate processing from webhook retries)
+  if (lead.handed_off_to_whatsapp) {
+    return { action: 'skipped', reason: 'already handed off to WhatsApp' }
+  }
+
+  // Skip if already closed (NOT_INTERESTED)
+  if (lead.current_status === 'closed') {
+    return { action: 'skipped', reason: 'lead already closed' }
+  }
+
   // Update last_email_id
   await supabase.from('email_leads').update({ last_email_id: payload.last_email_id, updated_at: new Date().toISOString() }).eq('id', lead.id)
 
@@ -333,6 +345,18 @@ export async function processEmailReply(payload: any) {
   if (cat === 'PHONE_NUMBER_FOUND') {
     const phone = classification.phone_number || directPhone
     if (!phone) return { action: 'error', reason: 'classification said phone found but extraction failed' }
+
+    // Validate phone: must be at least 8 digits (reject things like "911", "123", etc.)
+    const digitsOnly = phone.replace(/\D/g, '')
+    if (digitsOnly.length < 8) {
+      // Not a real phone number — treat as INTERESTED_NO_NUMBER instead
+      const reply = await generateReply(
+        { first_name: lead.first_name || '', company_name: lead.company_name || '', job_title: lead.job_title || '', reply_count: lead.reply_count || 0, objections_raised: objections, classification_history: history },
+        'INTERESTED_NO_NUMBER', replyText, whatsappNumber
+      )
+      await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
+      return { action: 'replied', classification: 'INTERESTED_NO_NUMBER', reply, note: 'phone too short, treated as interested' }
+    }
 
     // Save phone
     await supabase.from('email_leads').update({ phone_number: phone, current_status: 'handed_off_to_whatsapp', handed_off_to_whatsapp: true }).eq('id', lead.id)
