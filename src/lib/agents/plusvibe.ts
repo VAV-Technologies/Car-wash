@@ -184,7 +184,7 @@ export async function triggerWhatsAppAgent(
 
   const chatId = cleanPhone + '@c.us'
   const firstName = lead.first_name || 'there'
-  const openingMessage = `Hai ${firstName}! Aku Shera dari Castudio. Lo sempet bales email kita soal cuci mobil, jadi aku follow up disini aja ya biar gampang. Mau tau lebih lanjut soal layanan kita?`
+  const openingMessage = `Hai ${firstName}! Aku Shera dari Castudio. Makasih udah share nomornya di email. Kita ada layanan cuci mobil dan detailing yang datang langsung ke lokasi kamu. Mau yang Standard Wash, Professional, atau tertarik sama detailing? Kabarin aja ya`
 
   await fetch(`${WAHA_API_URL}/api/sendText`, {
     method: 'POST',
@@ -195,9 +195,9 @@ export async function triggerWhatsAppAgent(
   // Create conversation record with context for Shera
   const { data: convo } = await supabase
     .from('whatsapp_conversations')
-    .select('id')
+    .select('id, messages')
     .eq('chat_id', chatId)
-    .single()
+    .maybeSingle()
 
   const sheraContext = `LEAD FROM EMAIL CAMPAIGN (Ryan agent handoff). Name: ${lead.first_name || 'unknown'}. Email: ${lead.lead_email}. Company: ${lead.company_name || 'unknown'}. Title: ${lead.job_title || 'unknown'}. Campaign: ${lead.campaign_name || 'unknown'}. Email thread summary: ${threadSummary}. This person already knows about Castudio from email. Do NOT ask for their name again. Go straight to understanding what they need and booking.`
 
