@@ -8,10 +8,12 @@ import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 import WASettings from '@/components/admin/conversations/WASettings'
 import WARules from '@/components/admin/conversations/WARules'
+import WAServiceImages from '@/components/admin/conversations/WAServiceImages'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'rules', label: 'Rules' },
+  { key: 'images', label: 'Service Images' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
   { key: 'settings', label: 'Settings' },
@@ -61,6 +63,7 @@ export default function SheraAgentPage() {
       {/* Tab Content */}
       {activeTab === 'dashboard' && <WADashboard />}
       {activeTab === 'rules' && <WARules />}
+      {activeTab === 'images' && <WAServiceImages />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}
       {activeTab === 'settings' && <WASettings />}

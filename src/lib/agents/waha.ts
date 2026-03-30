@@ -35,6 +35,14 @@ export async function sendText(chatId: string, text: string, session = 'default'
   })
 }
 
+/** Send an image with optional caption */
+export async function sendImage(chatId: string, imageUrl: string, caption?: string, session = 'default'): Promise<void> {
+  await wahaFetch('/api/sendImage', {
+    method: 'POST',
+    body: JSON.stringify({ session, chatId, file: { url: imageUrl }, caption: caption || '' }),
+  })
+}
+
 /** Send "typing" / seen indicator */
 export async function sendSeen(chatId: string, session = 'default'): Promise<void> {
   await wahaFetch('/api/sendSeen', {

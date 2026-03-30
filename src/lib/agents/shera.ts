@@ -43,6 +43,7 @@ CONTOH YANG SALAH (JANGAN PERNAH KAYAK GINI):
 "Berikut layanan kami: - Standard Wash - Professional Wash - Elite Wash..."
 
 HARGA (cuma kasih tau kalau ditanya atau pas nawarin layanan):
+GAMBAR LAYANAN: Kalau customer tanya soal layanan atau harga, pakai tool send_service_images untuk kirim gambar. Jangan list harga sebagai text panjang. Kirim gambar aja biar lebih menarik. Kalau gambar belum diupload, baru boleh kasih harga lewat text.
 Standard Wash Rp 349.000 (1 sampai 1.5 jam)
 Professional Wash Rp 649.000 (2 sampai 2.5 jam)
 Elite Wash Rp 949.000 (3 sampai 3.5 jam)
@@ -254,6 +255,24 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
         },
       },
       required: ['name', 'phone'],
+    },
+  },
+  {
+    name: 'send_service_images',
+    description: 'Send service menu images to the customer via WhatsApp. Use this when the customer asks about services, pricing, or what you offer. Can send all services or a specific one.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        service_type: {
+          type: 'string',
+          description: 'Specific service to show (standard_wash, professional, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail) or "all" to send all service images',
+        },
+        chat_id: {
+          type: 'string',
+          description: 'The WhatsApp chat ID to send images to',
+        },
+      },
+      required: ['chat_id'],
     },
   },
   {
@@ -484,6 +503,48 @@ export async function executeSheraTool(
         return JSON.stringify({ success: true, rating, feedback: input.feedback || null })
       }
 
+      case 'send_service_images': {
+        const { sendImage } = await import('@/lib/agents/waha')
+        // Get service images from knowledge base
+        const { data: images } = await supabase
+          .from('agent_knowledge')
+          .select('file_name, content')
+          .eq('agent_name', 'shera')
+          .like('file_name', 'service_image_%')
+
+        if (!images || images.length === 0) {
+          return JSON.stringify({ sent: false, reason: 'No service images uploaded yet. Describe services in text instead.' })
+        }
+
+        const chatId = String(input.chat_id)
+        const serviceType = input.service_type ? String(input.service_type) : 'all'
+
+        const SERVICE_LABELS: Record<string, string> = {
+          standard_wash: 'Standard Wash - Rp 349.000',
+          professional: 'Professional Wash - Rp 649.000',
+          elite_wash: 'Elite Wash - Rp 949.000',
+          interior_detail: 'Interior Detail - Rp 1.039.000',
+          exterior_detail: 'Exterior Detail - Rp 1.039.000',
+          window_detail: 'Window Detail - Rp 689.000',
+          tire_rims: 'Tire & Rims - Rp 289.000',
+          full_detail: 'Full Detail - Rp 2.799.000',
+        }
+
+        let sent = 0
+        for (const img of images) {
+          const key = img.file_name.replace('service_image_', '')
+          if (serviceType !== 'all' && key !== serviceType) continue
+          const caption = SERVICE_LABELS[key] || key
+          try {
+            await sendImage(chatId, img.content, caption)
+            sent++
+            // Small delay between images
+            if (sent < images.length) await new Promise(r => setTimeout(r, 1000))
+          } catch {}
+        }
+        return JSON.stringify({ sent, total: images.length })
+      }
+
       case 'escalate_to_human': {
         const { data, error } = await supabase
           .from('human_escalations')
@@ -689,6 +750,7 @@ export async function processMessage(
   // Inject WhatsApp context — phone is always known
   systemPrompt += `\n\n--- WhatsApp Context ---`
   systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
+  systemPrompt += `\nChat ID for sending images: ${chatId}`
 
   if (customer) {
     systemPrompt += `\nCustomer is REGISTERED: ${customer.name} (ID: ${customer.id})`
