@@ -42,16 +42,27 @@ CONTOH YANG SALAH (JANGAN PERNAH KAYAK GINI):
 "Boleh saya tahu nama, model mobil, plat nomor, dan alamat Anda?"
 "Berikut layanan kami: - Standard Wash - Professional Wash - Elite Wash..."
 
-HARGA (cuma kasih tau kalau ditanya atau pas nawarin layanan):
-GAMBAR LAYANAN: Kalau customer tanya soal layanan atau harga, pakai tool send_service_images untuk kirim gambar. Jangan list harga sebagai text panjang. Kirim gambar aja biar lebih menarik. Kalau gambar belum diupload, baru boleh kasih harga lewat text.
-Standard Wash Rp 349.000 (1 sampai 1.5 jam)
-Professional Wash Rp 649.000 (2 sampai 2.5 jam)
-Elite Wash Rp 949.000 (3 sampai 3.5 jam)
-Interior Detail Rp 1.039.000 (4 jam)
-Exterior Detail Rp 1.039.000 (5 jam)
-Window Detail Rp 689.000 (2 jam)
-Tire & Rims Rp 289.000 (1.5 jam)
-Full Detail Rp 2.799.000 (8 jam)
+LAYANAN:
+Kita punya 2 kategori: Cuci Mobil dan Detailing.
+
+Cuci Mobil (3 paket):
+standard_wash, professional, elite_wash
+
+Detailing (5 paket):
+interior_detail, exterior_detail, window_detail, tire_rims, full_detail
+
+CARA NAWARIN LAYANAN:
+1. Tanya dulu: "Mau cuci mobil atau detailing nih?"
+2. Kalau cuci mobil: kirim 3 gambar paket cuci pakai send_service_images dengan service_type "standard_wash,professional,elite_wash"
+3. Kalau detailing: kirim 5 gambar paket detailing pakai send_service_images dengan service_type "interior_detail,exterior_detail,window_detail,tire_rims,full_detail"
+4. JANGAN list harga sebagai text. Kirim gambar aja, gambarnya sudah ada caption harga.
+5. JANGAN kirim semua 8 gambar sekaligus. Tanya dulu mau cuci atau detail.
+6. Kalau gambar belum diupload, baru boleh kasih harga lewat text.
+
+Harga (backup kalau gambar ga ada):
+Standard Wash Rp 349.000, Professional Wash Rp 649.000, Elite Wash Rp 949.000
+Interior Detail Rp 1.039.000, Exterior Detail Rp 1.039.000, Window Detail Rp 689.000
+Tire & Rims Rp 289.000, Full Detail Rp 2.799.000
 
 Langganan:
 Essentials Rp 339.000/bulan (4x Standard)
@@ -259,13 +270,13 @@ export const SHERA_TOOLS: Anthropic.Tool[] = [
   },
   {
     name: 'send_service_images',
-    description: 'Send service menu images to the customer via WhatsApp. Use this when the customer asks about services, pricing, or what you offer. Can send all services or a specific one.',
+    description: 'Send service menu images to the customer via WhatsApp. Use this when showing available services. Send comma-separated types for multiple.',
     input_schema: {
       type: 'object' as const,
       properties: {
         service_type: {
           type: 'string',
-          description: 'Specific service to show (standard_wash, professional, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail) or "all" to send all service images',
+          description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.',
         },
         chat_id: {
           type: 'string',
@@ -517,7 +528,8 @@ export async function executeSheraTool(
         }
 
         const chatId = String(input.chat_id)
-        const serviceType = input.service_type ? String(input.service_type) : 'all'
+        const serviceTypeStr = input.service_type ? String(input.service_type) : 'all'
+        const requestedTypes = serviceTypeStr === 'all' ? null : serviceTypeStr.split(',').map(s => s.trim())
 
         const SERVICE_LABELS: Record<string, string> = {
           standard_wash: 'Standard Wash - Rp 349.000',
@@ -533,7 +545,7 @@ export async function executeSheraTool(
         let sent = 0
         for (const img of images) {
           const key = img.file_name.replace('service_image_', '')
-          if (serviceType !== 'all' && key !== serviceType) continue
+          if (requestedTypes && !requestedTypes.includes(key)) continue
           const caption = SERVICE_LABELS[key] || key
           try {
             await sendImage(chatId, img.content, caption)
