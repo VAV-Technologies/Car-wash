@@ -107,6 +107,16 @@ export async function POST(req: NextRequest) {
     const messageText: string | undefined = message.body
     const mediaType: string | undefined = message.type // chat, image, video, sticker, document, audio, ptt
 
+    // Extract quoted/reply context from WAHA payload
+    const contextInfo = message._data?.contextInfo
+    let quotedContext: string | null = null
+    if (contextInfo?.quotedMessage) {
+      const imgCaption = contextInfo.quotedMessage.imageMessage?.caption
+      const textBody = contextInfo.quotedMessage.conversation
+        || contextInfo.quotedMessage.extendedTextMessage?.text
+      quotedContext = imgCaption || textBody || null
+    }
+
     // Stickers: silently ignore (like an emoji, no response needed)
     if (mediaType === 'sticker') {
       return NextResponse.json({ ok: true, skipped: 'sticker' })
@@ -132,9 +142,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, handled: 'media-escalated' })
     }
 
-    // Empty / undefined body
-    if (!messageText) {
+    // Empty / undefined body (allow through if replying to a message)
+    if (!messageText && !quotedContext) {
       return NextResponse.json({ ok: true, skipped: 'empty body' })
+    }
+
+    // Prepend quoted context so Claude understands what the customer is replying to
+    let enrichedText = messageText || ''
+    if (quotedContext) {
+      enrichedText = `[Customer replied to: "${quotedContext}"]\n${enrichedText}`.trim()
     }
 
     // ── Extract identifiers ────────────────────────────────────────
@@ -236,8 +252,8 @@ export async function POST(req: NextRequest) {
     // If no pending messages found in history, use the current message
     // (it hasn't been saved to conversation yet by processMessage)
     const combinedMessage = pendingTexts.length > 0
-      ? [...pendingTexts, messageText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
-      : messageText
+      ? [...pendingTexts, enrichedText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
+      : enrichedText
 
     // ── Process combined message with Shera ─────────────────────────
     let reply: string
