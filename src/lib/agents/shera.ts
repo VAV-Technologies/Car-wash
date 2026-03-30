@@ -1,4 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
 // ---------------------------------------------------------------------------
@@ -136,225 +137,18 @@ JANGAN escalate untuk: booking biasa, tanya harga, reschedule, cancel, customer 
 // B. Tool Definitions
 // ---------------------------------------------------------------------------
 
-export const SHERA_TOOLS: Anthropic.Tool[] = [
-  {
-    name: 'search_customer',
-    description:
-      'Search for a customer by phone number or name. Use this when the customer wants to check their profile, existing bookings, or when you need to find their customer ID.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        query: {
-          type: 'string',
-          description: 'Phone number or name to search for',
-        },
-      },
-      required: ['query'],
-    },
-  },
-  {
-    name: 'get_customer_bookings',
-    description:
-      'Get bookings for a specific customer. Use this to check upcoming, past, or cancelled bookings.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        customer_id: {
-          type: 'string',
-          description: 'The customer UUID',
-        },
-        status: {
-          type: 'string',
-          description:
-            'Optional filter by status: confirmed, completed, cancelled, no_show',
-        },
-      },
-      required: ['customer_id'],
-    },
-  },
-  {
-    name: 'check_date_availability',
-    description:
-      'Check how many booking slots are available on a given date. Use this before creating a booking to see if the date is open.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        date: {
-          type: 'string',
-          description: 'Date to check in YYYY-MM-DD format',
-        },
-      },
-      required: ['date'],
-    },
-  },
-  {
-    name: 'create_booking',
-    description:
-      'Create a new booking for a customer. Only use this after confirming all details with the customer.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        customer_id: {
-          type: 'string',
-          description: 'The customer UUID',
-        },
-        service_type: {
-          type: 'string',
-          description:
-            'Service type: standard_wash, professional_wash, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail',
-        },
-        scheduled_date: {
-          type: 'string',
-          description: 'Date in YYYY-MM-DD format',
-        },
-        scheduled_time: {
-          type: 'string',
-          description: 'Time in HH:MM format (24h)',
-        },
-        location_address: {
-          type: 'string',
-          description: 'Full street address for the service location, e.g. "Jalan Kemang Raya No. 15, Kemang, Jakarta Selatan"',
-        },
-        notes: {
-          type: 'string',
-          description: 'Location notes and special instructions, e.g. "rumah warna kuning, masuk gang kedua sebelah kiri" or "Apartemen Tower B lantai 2, parkir basement"',
-        },
-      },
-      required: ['customer_id', 'service_type', 'scheduled_date', 'scheduled_time'],
-    },
-  },
-  {
-    name: 'update_booking',
-    description:
-      'Update an existing booking. Use this to reschedule (change date/time) or change the service type.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        booking_id: {
-          type: 'string',
-          description: 'The booking UUID',
-        },
-        scheduled_date: {
-          type: 'string',
-          description: 'New date in YYYY-MM-DD format',
-        },
-        scheduled_time: {
-          type: 'string',
-          description: 'New time in HH:MM format (24h)',
-        },
-        service_type: {
-          type: 'string',
-          description: 'New service type',
-        },
-      },
-      required: ['booking_id'],
-    },
-  },
-  {
-    name: 'cancel_booking',
-    description:
-      'Cancel an existing booking. Use this when the customer wants to cancel their appointment.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        booking_id: {
-          type: 'string',
-          description: 'The booking UUID to cancel',
-        },
-      },
-      required: ['booking_id'],
-    },
-  },
-  {
-    name: 'create_customer',
-    description:
-      'Register a new customer. Use this when a customer is booking for the first time and is not found in the system.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        name: {
-          type: 'string',
-          description: "Customer's full name",
-        },
-        phone: {
-          type: 'string',
-          description: 'Phone number (e.g. 628123456789)',
-        },
-        car_model: {
-          type: 'string',
-          description: 'Car make and model (e.g. Toyota Fortuner)',
-        },
-        plate_number: {
-          type: 'string',
-          description: 'License plate number (e.g. B 1234 ABC)',
-        },
-        address: {
-          type: 'string',
-          description: 'Full street address, e.g. "Jalan Kemang Raya No. 15, Kemang, Jakarta Selatan"',
-        },
-        neighborhood: {
-          type: 'string',
-          description: 'Area or neighborhood for routing, e.g. kemang, pondok_indah, bintaro, tangerang, bekasi, bogor, depok',
-        },
-      },
-      required: ['name', 'phone'],
-    },
-  },
-  {
-    name: 'send_service_images',
-    description: 'Send service menu images to the customer via WhatsApp. Use this when showing available services. Send comma-separated types for multiple.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        service_type: {
-          type: 'string',
-          description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.',
-        },
-        chat_id: {
-          type: 'string',
-          description: 'The WhatsApp chat ID to send images to',
-        },
-      },
-      required: ['chat_id'],
-    },
-  },
-  {
-    name: 'escalate_to_human',
-    description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them. Use for: bulk orders (10+ cars), apartment access, complaints, custom pricing, partnerships, out-of-area requests.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        reason: { type: 'string', description: 'Brief reason why this needs human attention' },
-        category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' },
-        customer_message: { type: 'string', description: 'The customer message that triggered escalation' },
-      },
-      required: ['reason', 'category'],
-    },
-  },
-  {
-    name: 'get_completed_jobs',
-    description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        customer_id: { type: 'string', description: 'The customer UUID' },
-      },
-      required: ['customer_id'],
-    },
-  },
-  {
-    name: 'submit_job_rating',
-    description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        job_id: { type: 'string', description: 'The job UUID to rate' },
-        rating: { type: 'number', description: 'Rating from 1 to 5' },
-        feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' },
-      },
-      required: ['job_id', 'rating'],
-    },
-  },
+export const SHERA_TOOLS: ChatCompletionTool[] = [
+  { type: 'function', function: { name: 'search_customer', description: 'Search for a customer by phone number or name. Use this when the customer wants to check their profile, existing bookings, or when you need to find their customer ID.', parameters: { type: 'object', properties: { query: { type: 'string', description: 'Phone number or name to search for' } }, required: ['query'] } } },
+  { type: 'function', function: { name: 'get_customer_bookings', description: 'Get bookings for a specific customer. Use this to check upcoming, past, or cancelled bookings.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' }, status: { type: 'string', description: 'Optional filter by status: confirmed, completed, cancelled, no_show' } }, required: ['customer_id'] } } },
+  { type: 'function', function: { name: 'check_date_availability', description: 'Check how many booking slots are available on a given date. Use this before creating a booking to see if the date is open.', parameters: { type: 'object', properties: { date: { type: 'string', description: 'Date to check in YYYY-MM-DD format' } }, required: ['date'] } } },
+  { type: 'function', function: { name: 'create_booking', description: 'Create a new booking for a customer. Only use this after confirming all details with the customer.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' }, service_type: { type: 'string', description: 'Service type: standard_wash, professional_wash, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail' }, scheduled_date: { type: 'string', description: 'Date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'Time in HH:MM format (24h)' }, location_address: { type: 'string', description: 'Full street address for the service location' }, notes: { type: 'string', description: 'Location notes and special instructions' } }, required: ['customer_id', 'service_type', 'scheduled_date', 'scheduled_time'] } } },
+  { type: 'function', function: { name: 'update_booking', description: 'Update an existing booking. Use this to reschedule (change date/time) or change the service type.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID' }, scheduled_date: { type: 'string', description: 'New date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'New time in HH:MM format (24h)' }, service_type: { type: 'string', description: 'New service type' } }, required: ['booking_id'] } } },
+  { type: 'function', function: { name: 'cancel_booking', description: 'Cancel an existing booking. Use this when the customer wants to cancel their appointment.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID to cancel' } }, required: ['booking_id'] } } },
+  { type: 'function', function: { name: 'create_customer', description: 'Register a new customer. Use this when a customer is booking for the first time and is not found in the system.', parameters: { type: 'object', properties: { name: { type: 'string', description: "Customer's full name" }, phone: { type: 'string', description: 'Phone number (e.g. 628123456789)' }, car_model: { type: 'string', description: 'Car make and model (e.g. Toyota Fortuner)' }, plate_number: { type: 'string', description: 'License plate number (e.g. B 1234 ABC)' }, address: { type: 'string', description: 'Full street address' }, neighborhood: { type: 'string', description: 'Area or neighborhood for routing' } }, required: ['name', 'phone'] } } },
+  { type: 'function', function: { name: 'send_service_images', description: 'Send service menu images to the customer via WhatsApp. Use this when showing available services. Send comma-separated types for multiple.', parameters: { type: 'object', properties: { service_type: { type: 'string', description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.' }, chat_id: { type: 'string', description: 'The WhatsApp chat ID to send images to' } }, required: ['chat_id'] } } },
+  { type: 'function', function: { name: 'escalate_to_human', description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'Brief reason why this needs human attention' }, category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' }, customer_message: { type: 'string', description: 'The customer message that triggered escalation' } }, required: ['reason', 'category'] } } },
+  { type: 'function', function: { name: 'get_completed_jobs', description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' } }, required: ['customer_id'] } } },
+  { type: 'function', function: { name: 'submit_job_rating', description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.', parameters: { type: 'object', properties: { job_id: { type: 'string', description: 'The job UUID to rate' }, rating: { type: 'number', description: 'Rating from 1 to 5' }, feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' } }, required: ['job_id', 'rating'] } } },
 ]
 
 // ---------------------------------------------------------------------------
@@ -642,17 +436,17 @@ export async function getSheraSettings(): Promise<{ apiKey: string | null; model
 
   return {
     apiKey,
-    model: data?.model || 'claude-sonnet-4-20250514',
+    model: data?.model || GPT_MODEL,
     maxTokens: data?.max_tokens || 1024,
     systemPrompt: data?.system_prompt || null,
   }
 }
 
-async function getAnthropicClient(): Promise<Anthropic> {
+async function getOpenAIClient() {
   // 1. Check agent_settings table first (dedicated Shera key)
   const settings = await getSheraSettings()
   if (settings.apiKey) {
-    return new Anthropic({ apiKey: settings.apiKey })
+    return createOpenAIClient(settings.apiKey)
   }
 
   // 2. Fall back to connectors base model (shared key)
@@ -668,11 +462,8 @@ async function getAnthropicClient(): Promise<Anthropic> {
     try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
   }
 
-  // 3. Fall back to env var
-  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) throw new Error('No Claude API key configured.')
-
-  return new Anthropic({ apiKey })
+  // 3. Fall back to env var (AZURE_OPENAI_KEY is used by createOpenAIClient default)
+  return createOpenAIClient(apiKey)
 }
 
 export async function processMessage(
@@ -737,14 +528,14 @@ export async function processMessage(
   const existingMessages: Array<{ role: string; content: string }> =
     Array.isArray(conversation.messages) ? conversation.messages.slice(-20) : []
 
-  // 4. Build Claude messages array from conversation history
-  const claudeMessages: Anthropic.MessageParam[] = existingMessages.map((m) => ({
+  // 4. Build OpenAI messages array from conversation history
+  const chatMessages: ChatCompletionMessageParam[] = existingMessages.map((m) => ({
     role: m.role as 'user' | 'assistant',
     content: m.content,
   }))
 
   // 5. Add new user message
-  claudeMessages.push({ role: 'user', content: messageText })
+  chatMessages.push({ role: 'user', content: messageText })
 
   // Use DB prompt if configured, otherwise default
   const settings = await getSheraSettings()
@@ -806,56 +597,54 @@ export async function processMessage(
     systemPrompt += `\nCustomer is NEW (not yet in the database). You need to ask for: name, car model, plate number, and neighborhood. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
   }
 
-  // 6. Call Claude
-  const anthropic = await getAnthropicClient()
+  // 6. Call OpenAI
+  const openai = await getOpenAIClient()
 
-  let response = await anthropic.messages.create({
+  const allMessages: ChatCompletionMessageParam[] = [
+    { role: 'system', content: systemPrompt },
+    ...chatMessages,
+  ]
+
+  let response = await openai.chat.completions.create({
     model: modelToUse,
     max_tokens: maxTokensToUse,
-    system: systemPrompt,
     tools: SHERA_TOOLS,
-    messages: claudeMessages,
+    messages: allMessages,
   })
 
   // 7. Handle tool use loop (max 5 iterations)
   let iterations = 0
-  while (response.stop_reason === 'tool_use' && iterations < 5) {
+  while (response.choices[0]?.finish_reason === 'tool_calls' && iterations < 5) {
     iterations++
 
-    const toolUseBlocks = response.content.filter(b => b.type === 'tool_use')
+    const assistantMsg = response.choices[0].message
+    allMessages.push(assistantMsg)
 
+    const toolCalls = assistantMsg.tool_calls || []
     const toolResults = await Promise.all(
-      toolUseBlocks.map(async (block) => {
-        if (block.type !== 'tool_use') return { type: 'text' as const, text: '' }
-        const result = await executeSheraTool(
-          block.name,
-          block.input as Record<string, unknown>
-        )
+      toolCalls.map(async (tc: any) => {
+        const input = JSON.parse(tc.function.arguments || '{}')
+        const result = await executeSheraTool(tc.function.name, input)
         return {
-          type: 'tool_result' as const,
-          tool_use_id: block.id,
+          role: 'tool' as const,
+          tool_call_id: tc.id,
           content: result,
         }
       })
     )
 
-    claudeMessages.push({ role: 'assistant', content: response.content })
-    claudeMessages.push({ role: 'user', content: toolResults as Anthropic.ToolResultBlockParam[] })
+    allMessages.push(...toolResults)
 
-    response = await anthropic.messages.create({
+    response = await openai.chat.completions.create({
       model: modelToUse,
       max_tokens: maxTokensToUse,
-      system: systemPrompt,
       tools: SHERA_TOOLS,
-      messages: claudeMessages,
+      messages: allMessages,
     })
   }
 
   // 8. Extract text response
-  const textBlock = response.content.find(
-    (b): b is Anthropic.TextBlock => b.type === 'text'
-  )
-  const reply = textBlock?.text ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
+  const reply = response.choices[0]?.message?.content ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
 
   // Update any pending escalations with correct chat_id and phone
   await supabase

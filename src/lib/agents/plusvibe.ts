@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { replyToEmail } from './plusvibe-client'
 
@@ -106,14 +106,16 @@ export async function classifyReply(replyText: string): Promise<{
   sentiment: string
   summary: string
 }> {
-  const anthropic = await getAnthropicClient()
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const openai = await getOpenAIClient()
+  const response = await openai.chat.completions.create({
+    model: GPT_MODEL,
     max_tokens: 512,
-    system: CLASSIFICATION_PROMPT,
-    messages: [{ role: 'user', content: `Classify this email reply:\n\n${replyText}` }],
+    messages: [
+      { role: 'system', content: CLASSIFICATION_PROMPT },
+      { role: 'user', content: `Classify this email reply:\n\n${replyText}` },
+    ],
   })
-  const text = response.content.find(b => b.type === 'text')?.text || '{}'
+  const text = response.choices[0]?.message?.content || '{}'
   // Extract JSON from response (might have text before/after)
   const jsonMatch = text.match(/\{[\s\S]*\}/)
   if (!jsonMatch) throw new Error('No JSON in classification response')
@@ -126,7 +128,7 @@ export async function generateReply(
   replyText: string,
   whatsappNumber: string
 ): Promise<string> {
-  const anthropic = await getAnthropicClient()
+  const openai = await getOpenAIClient()
 
   let context = `Lead: ${lead.first_name} from ${lead.company_name} (${lead.job_title})\n`
   context += `Reply #${lead.reply_count + 1}\n`
@@ -135,13 +137,15 @@ export async function generateReply(
   if (lead.classification_history.length > 0) context += `Previous classifications: ${lead.classification_history.join(' \u2192 ')}\n`
   if (lead.reply_count >= 4) context += `\nIMPORTANT: This is reply #${lead.reply_count + 1}. We've been going back and forth. Time to share our WhatsApp number (${whatsappNumber}) as the final CTA instead of asking for theirs.\n`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await openai.chat.completions.create({
+    model: GPT_MODEL,
     max_tokens: 512,
-    system: REPLY_GENERATION_PROMPT,
-    messages: [{ role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` }],
+    messages: [
+      { role: 'system', content: REPLY_GENERATION_PROMPT },
+      { role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` },
+    ],
   })
-  return response.content.find(b => b.type === 'text')?.text || '<p>Thanks for getting back to us.</p>'
+  return response.choices[0]?.message?.content || '<p>Thanks for getting back to us.</p>'
 }
 
 export async function triggerWhatsAppAgent(
@@ -217,31 +221,26 @@ export async function triggerWhatsAppAgent(
   }
 }
 
-async function getAnthropicClient(): Promise<Anthropic> {
+async function getOpenAIClient() {
   const supabase = getSupabaseAdmin()
-  // Check agent_settings first
   const { data: settings } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'plusvibe').single()
   let apiKey: string | undefined
   if (settings?.api_key) {
     try { apiKey = Buffer.from(settings.api_key, 'base64').toString('utf-8') } catch {}
   }
-  // Fall back to shera's key
   if (!apiKey) {
     const { data: sheraSettings } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'shera').single()
     if (sheraSettings?.api_key) {
       try { apiKey = Buffer.from(sheraSettings.api_key, 'base64').toString('utf-8') } catch {}
     }
   }
-  // Fall back to connectors
   if (!apiKey) {
     const { data } = await supabase.from('connectors').select('encrypted_key').eq('is_base_model', true).single()
     if (data?.encrypted_key) {
       try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
     }
   }
-  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) throw new Error('No Claude API key configured')
-  return new Anthropic({ apiKey })
+  return createOpenAIClient(apiKey)
 }
 
 export async function processEmailReply(payload: any) {

@@ -185,18 +185,19 @@ export async function GET(req: NextRequest) {
               try { apiKey = Buffer.from(connector.encrypted_key, 'base64').toString('utf-8') } catch {}
             }
           }
-          if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
+          if (!apiKey) apiKey = process.env.AZURE_OPENAI_KEY
 
           if (!apiKey) {
-            results.push({ name: 'Claude API Key', status: 'fail', error: 'No API key configured' })
+            results.push({ name: 'AI API Key', status: 'fail', error: 'No API key configured' })
           } else {
-            // Try a minimal API call
-            const anthropic = new (await import('@anthropic-ai/sdk')).default({ apiKey })
-            await anthropic.messages.create({ model: 'claude-haiku-4-5-20251001', max_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
-            results.push({ name: 'Claude API Key', status: 'pass' })
+            // Try a minimal API call via Azure OpenAI
+            const { createOpenAIClient, GPT_MODEL } = await import('@/lib/agents/openai-client')
+            const openai = createOpenAIClient(apiKey)
+            await openai.chat.completions.create({ model: GPT_MODEL, max_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
+            results.push({ name: 'AI API Key', status: 'pass' })
           }
         } catch (err: any) {
-          results.push({ name: 'Claude API Key', status: 'fail', error: err?.message || 'API call failed' })
+          results.push({ name: 'AI API Key', status: 'fail', error: err?.message || 'API call failed' })
         }
 
         // 2. Check Castudio Database

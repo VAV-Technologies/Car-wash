@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import Anthropic from '@anthropic-ai/sdk'
+import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
 async function isAuthorized(req: NextRequest): Promise<boolean> {
-  // Check Bearer token (for external API access)
   const key = process.env.CASTUDIO_API_KEY
   if (key && req.headers.get('authorization') === `Bearer ${key}`) return true
 
-  // Check Supabase session (for admin panel browser access)
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient(
@@ -24,8 +23,7 @@ async function isAuthorized(req: NextRequest): Promise<boolean> {
   }
 }
 
-async function getAnthropicClient(): Promise<Anthropic> {
-  // Try to get key from connectors table (base model) first
+async function getOpenAIClient() {
   const admin = getSupabaseAdmin()
   const { data } = await admin
     .from('connectors')
@@ -35,12 +33,9 @@ async function getAnthropicClient(): Promise<Anthropic> {
 
   let apiKey: string | undefined
   if (data?.encrypted_key) {
-    try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch { /* fall through */ }
+    try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
   }
-  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) throw new Error('No Claude API key configured. Add it in Settings.')
-
-  return new Anthropic({ apiKey })
+  return createOpenAIClient(apiKey)
 }
 
 const SYSTEM_PROMPT = `You are the Castudio AI business assistant. Castudio is a premium mobile car wash and detailing company in Jakarta, Indonesia. You have access to the business database and can answer questions about operations, finances, customers, and strategy.
@@ -156,18 +151,8 @@ async function queryDatabase(query: string): Promise<string> {
   }
 }
 
-const tools: Anthropic.Tool[] = [
-  {
-    name: 'query_database',
-    description: 'Query the Castudio business database. Available queries: services_this_month, revenue_this_month, customer_count, active_subscriptions, pending_payments, inventory_low, top_customers, service_mix, expenses_this_month, avg_rating, upsell_stats',
-    input_schema: {
-      type: 'object' as const,
-      properties: {
-        query: { type: 'string', description: 'The query identifier to run' }
-      },
-      required: ['query']
-    }
-  }
+const tools: ChatCompletionTool[] = [
+  { type: 'function', function: { name: 'query_database', description: 'Query the Castudio business database. Available queries: services_this_month, revenue_this_month, customer_count, active_subscriptions, pending_payments, inventory_low, top_customers, service_mix, expenses_this_month, avg_rating, upsell_stats', parameters: { type: 'object', properties: { query: { type: 'string', description: 'The query identifier to run' } }, required: ['query'] } } }
 ]
 
 export async function POST(request: NextRequest) {
@@ -185,54 +170,46 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const anthropic = await getAnthropicClient()
+    const openai = await getOpenAIClient()
 
-    const messages: Anthropic.MessageParam[] = body.messages.map(m => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content
-    }))
+    const allMessages: ChatCompletionMessageParam[] = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...body.messages.map(m => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      })),
+    ]
 
-    let response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+    let response = await openai.chat.completions.create({
+      model: GPT_MODEL,
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
       tools,
-      messages,
+      messages: allMessages,
     })
 
     // Handle tool use loops (max 3 iterations)
     let iterations = 0
-    while (response.stop_reason === 'tool_use' && iterations < 3) {
+    while (response.choices[0]?.finish_reason === 'tool_calls' && iterations < 3) {
       iterations++
-      const toolUseBlocks = response.content.filter(b => b.type === 'tool_use')
-      const toolResults: Anthropic.MessageParam = {
-        role: 'user',
-        content: await Promise.all(toolUseBlocks.map(async (block) => {
-          if (block.type !== 'tool_use') return { type: 'text' as const, text: '' }
-          const result = await queryDatabase((block.input as { query: string }).query)
-          return {
-            type: 'tool_result' as const,
-            tool_use_id: block.id,
-            content: result
-          }
-        }))
+      const assistantMsg = response.choices[0].message
+      allMessages.push(assistantMsg)
+
+      const toolCalls = assistantMsg.tool_calls || []
+      for (const tc of toolCalls as any[]) {
+        const input = JSON.parse(tc.function.arguments || '{}')
+        const result = await queryDatabase(input.query)
+        allMessages.push({ role: 'tool', tool_call_id: tc.id, content: result })
       }
 
-      messages.push({ role: 'assistant', content: response.content })
-      messages.push(toolResults)
-
-      response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+      response = await openai.chat.completions.create({
+        model: GPT_MODEL,
         max_tokens: 1024,
-        system: SYSTEM_PROMPT,
         tools,
-        messages,
+        messages: allMessages,
       })
     }
 
-    const textBlock = response.content.find(b => b.type === 'text')
-    const reply = textBlock?.type === 'text' ? textBlock.text : 'I could not generate a response.'
-
+    const reply = response.choices[0]?.message?.content ?? 'I could not generate a response.'
     return NextResponse.json({ reply })
   } catch (err) {
     console.error('Chat error:', err)

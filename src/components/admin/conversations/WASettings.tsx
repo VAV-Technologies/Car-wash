@@ -114,23 +114,15 @@ const DATA_ACCESS = [
 
 const MODEL_OPTIONS = [
   {
-    value: 'claude-sonnet-4-20250514',
-    label: 'Claude Sonnet 4 (Recommended \u2014 balanced speed & quality)',
-  },
-  {
-    value: 'claude-haiku-4-5-20251001',
-    label: 'Claude Haiku 4.5 (Fastest, cheapest)',
-  },
-  {
-    value: 'claude-opus-4-6-20250610',
-    label: 'Claude Opus 4.6 (Most capable, most expensive)',
+    value: 'gpt-5.4-mini',
+    label: 'GPT-5.4 Mini (Recommended)',
   },
 ];
 
 export default function WASettings() {
   const [settings, setSettings] = useState<Settings>({
     api_key: '',
-    model: 'claude-sonnet-4-20250514',
+    model: 'gpt-5.4-mini',
     max_tokens: 1024,
     system_prompt: '',
     has_key: false,
@@ -142,7 +134,7 @@ export default function WASettings() {
   const [keySaved, setKeySaved] = useState(false);
   const [modelSaving, setModelSaving] = useState(false);
   const [modelSaved, setModelSaved] = useState(false);
-  const [localModel, setLocalModel] = useState('claude-sonnet-4-20250514');
+  const [localModel, setLocalModel] = useState('gpt-5.4-mini');
   const [localMaxTokens, setLocalMaxTokens] = useState(1024);
   const [runningHealth, setRunningHealth] = useState(false);
   const [healthResults, setHealthResults] = useState<HealthResult[]>([
@@ -175,7 +167,7 @@ export default function WASettings() {
       if (res.ok) {
         const data = await res.json();
         setSettings(data);
-        setLocalModel(data.model || 'claude-sonnet-4-20250514');
+        setLocalModel(data.model || 'gpt-5.4-mini');
         setLocalMaxTokens(data.max_tokens || 1024);
         setLocalPrompt(data.system_prompt || DEFAULT_PROMPT);
       }

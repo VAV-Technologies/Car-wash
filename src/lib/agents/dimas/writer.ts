@@ -1,4 +1,5 @@
-import { getAnthropicClient } from './researcher'
+import { getOpenAIClient } from './researcher'
+import { GPT_MODEL } from '@/lib/agents/openai-client'
 import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
 
 interface GeneratedPost {
@@ -129,11 +130,10 @@ function generateSlug(title: string): string {
 }
 
 export async function generatePost(keyword: { keyword: string; intent: string; content_type: string; category?: string }): Promise<GeneratedPost> {
-  const client = await getAnthropicClient()
+  const client = await getOpenAIClient()
   const supabase = getSupabaseClient()
   const category = keyword.category || 'tips'
 
-  // Category-specific writing instructions
   const categoryInstructions: Record<string, string> = {
     'tips': 'This is a TIPS article. Write practical, actionable advice. Use numbered steps or clear takeaways. Reader should be able to apply these tips immediately. Keep it concise and hands-on.',
     'guides': 'This is a GUIDE article. Write a comprehensive, in-depth walkthrough. Cover the topic thoroughly from start to finish. Include detailed explanations, prerequisites, and step-by-step instructions. Longer and more thorough than a tips article.',
@@ -141,7 +141,6 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
   }
   const categoryInstruction = categoryInstructions[category] || categoryInstructions['tips']
 
-  // Get existing posts for internal linking
   const { data: existingPosts } = await supabase
     .from('blog_posts')
     .select('title, slug')
@@ -150,14 +149,12 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
 
   const existingLinks = (existingPosts || []).map((p: any) => `"${p.title}" (/tips/${p.slug})`).join('\n')
 
-  // Single Claude call: generate title, meta, and full content together
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await client.chat.completions.create({
+    model: GPT_MODEL,
     max_tokens: 4096,
-    system: `You are an expert SEO content writer for Castudio's Indonesian automotive lifestyle blog. Write in Bahasa Indonesia. Never use em dashes. Write like a car enthusiast, not a corporate brand. Direct, conversational, knowledgeable.\n\n${DIMAS_BRAND_CONTEXT}`,
-    messages: [{
-      role: 'user',
-      content: `Write a complete SEO blog post targeting: "${keyword.keyword}"
+    messages: [
+      { role: 'system', content: `You are an expert SEO content writer for Castudio's Indonesian automotive lifestyle blog. Write in Bahasa Indonesia. Never use em dashes. Write like a car enthusiast, not a corporate brand. Direct, conversational, knowledgeable.\n\n${DIMAS_BRAND_CONTEXT}` },
+      { role: 'user', content: `Write a complete SEO blog post targeting: "${keyword.keyword}"
 Category: ${category.toUpperCase()}
 ${categoryInstruction}
 Search intent: ${keyword.intent}
@@ -194,11 +191,11 @@ Official manufacturer sites (toyota.co.id, honda-indonesia.com, etc.) for car sp
 Kompas Otomotif, Oto.com, or GridOto for Indonesian automotive news
 Formula1.com for F1 content
 Government sites (dephub.go.id) for traffic regulations
-DO NOT force external links. Only include them when they genuinely add value. Some posts won't need any external links. That's fine.`
-    }],
+DO NOT force external links. Only include them when they genuinely add value. Some posts won't need any external links. That's fine.` },
+    ],
   })
 
-  const fullText = response.content.find(b => b.type === 'text')?.text || ''
+  const fullText = response.choices[0]?.message?.content || ''
 
   // Parse the structured output
   const metaSection = fullText.split('---CONTENT---')[0] || ''

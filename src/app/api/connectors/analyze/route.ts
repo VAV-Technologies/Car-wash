@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import Anthropic from '@anthropic-ai/sdk'
+import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
 async function isAuthorized(req: NextRequest): Promise<boolean> {
@@ -67,43 +67,31 @@ export async function POST(request: NextRequest) {
     .eq('is_base_model', true)
     .single()
 
-  if (!baseModel?.encrypted_key) {
-    // Fallback to env var
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: 'No Claude API key configured. Please add your Claude key in Connectors first.' },
-        { status: 503 }
-      )
-    }
-  }
-
-  let apiKey: string
-  try {
-    apiKey = baseModel?.encrypted_key
-      ? Buffer.from(baseModel.encrypted_key, 'base64').toString('utf-8')
-      : process.env.ANTHROPIC_API_KEY!
-  } catch {
-    apiKey = process.env.ANTHROPIC_API_KEY!
+  let apiKey: string | undefined
+  if (baseModel?.encrypted_key) {
+    try { apiKey = Buffer.from(baseModel.encrypted_key, 'base64').toString('utf-8') } catch {}
   }
 
   try {
-    const anthropic = new Anthropic({ apiKey })
+    const openai = createOpenAIClient(apiKey)
 
     const userMessage = `Service: ${body.serviceName}\n\nDescription from user:\n${body.description || 'No description provided. Analyze based on the service name.'}`
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+    const response = await openai.chat.completions.create({
+      model: GPT_MODEL,
       max_tokens: 2048,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userMessage }],
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userMessage },
+      ],
     })
 
-    const textBlock = response.content.find(b => b.type === 'text')
-    if (!textBlock || textBlock.type !== 'text') {
+    const text = response.choices[0]?.message?.content
+    if (!text) {
       return NextResponse.json({ error: 'No response from AI' }, { status: 500 })
     }
 
-    let jsonStr = textBlock.text.trim()
+    let jsonStr = text.trim()
     if (jsonStr.startsWith('```')) {
       jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
     }

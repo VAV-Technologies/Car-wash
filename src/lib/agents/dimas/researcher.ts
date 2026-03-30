@@ -1,21 +1,19 @@
 import { querySearchAnalytics } from './gsc'
 import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
-import Anthropic from '@anthropic-ai/sdk'
+import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 
 function getDateString(daysAgo: number): string {
   const d = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
   return d.toISOString().split('T')[0]
 }
 
-async function getAnthropicClient(): Promise<Anthropic> {
+async function getOpenAIClient() {
   const supabase = getSupabaseClient()
-  // Try agent_settings first
   const { data: settings } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'dimas').single()
   let apiKey: string | undefined
   if (settings?.api_key) {
     try { apiKey = Buffer.from(settings.api_key, 'base64').toString('utf-8') } catch {}
   }
-  // Fallback to shera's key, then connectors, then env
   if (!apiKey) {
     const { data: shera } = await supabase.from('agent_settings').select('api_key').eq('agent_name', 'shera').single()
     if (shera?.api_key) try { apiKey = Buffer.from(shera.api_key, 'base64').toString('utf-8') } catch {}
@@ -24,9 +22,7 @@ async function getAnthropicClient(): Promise<Anthropic> {
     const { data } = await supabase.from('connectors').select('encrypted_key').eq('is_base_model', true).single()
     if (data?.encrypted_key) try { apiKey = Buffer.from(data.encrypted_key, 'base64').toString('utf-8') } catch {}
   }
-  if (!apiKey) apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) throw new Error('No Claude API key configured for Dimas')
-  return new Anthropic({ apiKey })
+  return createOpenAIClient(apiKey)
 }
 
 export async function fetchOpportunityKeywords(): Promise<any[]> {
@@ -60,10 +56,9 @@ export async function fetchAutocomplete(seed: string): Promise<string[]> {
 }
 
 export async function brainstormTopics(): Promise<Array<{ keyword: string; intent: string; content_type: string }>> {
-  const client = await getAnthropicClient()
+  const client = await getOpenAIClient()
   const supabase = getSupabaseClient()
 
-  // Load existing posts for semantic dedup
   const { data: existingPosts } = await supabase
     .from('blog_posts')
     .select('title, target_keyword')
@@ -74,11 +69,12 @@ export async function brainstormTopics(): Promise<Array<{ keyword: string; inten
     .filter(Boolean)
     .join('\n')
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await client.chat.completions.create({
+    model: GPT_MODEL,
     max_tokens: 2048,
-    system: DIMAS_BRAND_CONTEXT,
-    messages: [{
+    messages: [
+      { role: 'system', content: DIMAS_BRAND_CONTEXT },
+      {
       role: 'user',
       content: `Generate 10 blog post topics for our Indonesian automotive lifestyle blog. Mix across these categories:
 
@@ -101,10 +97,11 @@ For each topic, return a JSON object with:
 - content_type: how-to, listicle, guide, comparison, explainer, review, news
 
 Return as a JSON array.`
-    }],
+      },
+    ],
   })
 
-  const text = response.content.find(b => b.type === 'text')?.text || '[]'
+  const text = response.choices[0]?.message?.content || '[]'
   const jsonMatch = text.match(/\[[\s\S]*\]/)
   return jsonMatch ? JSON.parse(jsonMatch[0]) : []
 }
@@ -263,5 +260,5 @@ export async function scoreAndPickKeyword(): Promise<{ keyword: string; intent: 
   return null
 }
 
-// Export getAnthropicClient for use by writer
-export { getAnthropicClient }
+// Export getOpenAIClient for use by writer
+export { getOpenAIClient }
