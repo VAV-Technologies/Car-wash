@@ -161,6 +161,20 @@ export async function triggerWhatsAppAgent(
   let cleanPhone = phone.replace(/[\s\-.()\+]/g, '')
   if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1)
 
+  const chatId = cleanPhone + '@c.us'
+
+  // DEDUP: If conversation already exists for this chatId, skip (prevents duplicate messages from webhook retries)
+  const { data: existingConvo } = await supabase
+    .from('whatsapp_conversations')
+    .select('id')
+    .eq('chat_id', chatId)
+    .maybeSingle()
+
+  if (existingConvo) {
+    console.log(`[plusvibe] Skipping triggerWhatsAppAgent — conversation already exists for ${chatId}`)
+    return
+  }
+
   // Create customer in Castudio DB
   const { data: existingCustomer } = await supabase
     .from('customers')
@@ -188,7 +202,6 @@ export async function triggerWhatsAppAgent(
     return
   }
 
-  const chatId = cleanPhone + '@c.us'
   const firstName = lead.first_name || 'there'
   const openingMessage = `Hai ${firstName}! Makasih udah share nomornya lewat email. Aku Shera dari Castudio. Boleh tau mobilnya apa dan lokasinya di daerah mana?`
 
