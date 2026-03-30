@@ -373,13 +373,10 @@ export async function processEmailReply(payload: any) {
     // Validate phone: must be at least 8 digits (reject things like "911", "123", etc.)
     const digitsOnly = phone.replace(/\D/g, '')
     if (digitsOnly.length < 8) {
-      // Not a real phone number — treat as INTERESTED_NO_NUMBER instead
-      const reply = await generateReply(
-        { first_name: lead.first_name || '', company_name: lead.company_name || '', job_title: lead.job_title || '', reply_count: lead.reply_count || 0, objections_raised: objections, classification_history: history },
-        'INTERESTED_NO_NUMBER', replyText, whatsappNumber
-      )
+      const firstName = lead.first_name || 'there'
+      const reply = `<p>Hey ${firstName}, that number doesn't look quite right. Could you double check and share your full WhatsApp number? We just need it so we can send you our service menu and get things rolling.</p>`
       await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
-      return { action: 'replied', classification: 'INTERESTED_NO_NUMBER', reply, note: 'phone too short, treated as interested' }
+      return { action: 'replied', classification: 'PHONE_NUMBER_FOUND', reply, note: 'phone too short, asked to reshare' }
     }
 
     // Save phone
