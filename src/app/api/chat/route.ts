@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
 
     let response = await openai.chat.completions.create({
       model: GPT_MODEL,
-      max_tokens: 1024,
+      max_completion_tokens: 1024,
       tools,
       messages: allMessages,
     })
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
 
       response = await openai.chat.completions.create({
         model: GPT_MODEL,
-        max_tokens: 1024,
+        max_completion_tokens: 1024,
         tools,
         messages: allMessages,
       })

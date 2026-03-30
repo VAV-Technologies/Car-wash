@@ -151,7 +151,7 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
 
   const response = await client.chat.completions.create({
     model: GPT_MODEL,
-    max_tokens: 4096,
+    max_completion_tokens: 4096,
     messages: [
       { role: 'system', content: `You are an expert SEO content writer for Castudio's Indonesian automotive lifestyle blog. Write in Bahasa Indonesia. Never use em dashes. Write like a car enthusiast, not a corporate brand. Direct, conversational, knowledgeable.\n\n${DIMAS_BRAND_CONTEXT}` },
       { role: 'user', content: `Write a complete SEO blog post targeting: "${keyword.keyword}"

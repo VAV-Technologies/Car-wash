@@ -134,7 +134,7 @@ export async function GET(req: NextRequest) {
           return NextResponse.json({
             api_key: null,
             has_key: false,
-            model: 'claude-sonnet-4-20250514',
+            model: 'gpt-5.4-mini',
             max_tokens: 1024,
             system_prompt: null,
           })
@@ -193,7 +193,7 @@ export async function GET(req: NextRequest) {
             // Try a minimal API call via Azure OpenAI
             const { createOpenAIClient, GPT_MODEL } = await import('@/lib/agents/openai-client')
             const openai = createOpenAIClient(apiKey)
-            await openai.chat.completions.create({ model: GPT_MODEL, max_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
+            await openai.chat.completions.create({ model: GPT_MODEL, max_completion_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
             results.push({ name: 'AI API Key', status: 'pass' })
           }
         } catch (err: any) {

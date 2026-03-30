@@ -607,7 +607,7 @@ export async function processMessage(
 
   let response = await openai.chat.completions.create({
     model: modelToUse,
-    max_tokens: maxTokensToUse,
+    max_completion_tokens: maxTokensToUse,
     tools: SHERA_TOOLS,
     messages: allMessages,
   })
@@ -637,7 +637,7 @@ export async function processMessage(
 
     response = await openai.chat.completions.create({
       model: modelToUse,
-      max_tokens: maxTokensToUse,
+      max_completion_tokens: maxTokensToUse,
       tools: SHERA_TOOLS,
       messages: allMessages,
     })

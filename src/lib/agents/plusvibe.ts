@@ -109,7 +109,7 @@ export async function classifyReply(replyText: string): Promise<{
   const openai = await getOpenAIClient()
   const response = await openai.chat.completions.create({
     model: GPT_MODEL,
-    max_tokens: 512,
+    max_completion_tokens: 512,
     messages: [
       { role: 'system', content: CLASSIFICATION_PROMPT },
       { role: 'user', content: `Classify this email reply:\n\n${replyText}` },
@@ -139,7 +139,7 @@ export async function generateReply(
 
   const response = await openai.chat.completions.create({
     model: GPT_MODEL,
-    max_tokens: 512,
+    max_completion_tokens: 512,
     messages: [
       { role: 'system', content: REPLY_GENERATION_PROMPT },
       { role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` },

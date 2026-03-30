@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     const response = await openai.chat.completions.create({
       model: GPT_MODEL,
-      max_tokens: 2048,
+      max_completion_tokens: 2048,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userMessage },

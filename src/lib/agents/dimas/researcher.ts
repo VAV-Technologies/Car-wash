@@ -71,7 +71,7 @@ export async function brainstormTopics(): Promise<Array<{ keyword: string; inten
 
   const response = await client.chat.completions.create({
     model: GPT_MODEL,
-    max_tokens: 2048,
+    max_completion_tokens: 2048,
     messages: [
       { role: 'system', content: DIMAS_BRAND_CONTEXT },
       {
