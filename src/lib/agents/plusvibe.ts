@@ -184,7 +184,7 @@ export async function triggerWhatsAppAgent(
 
   const chatId = cleanPhone + '@c.us'
   const firstName = lead.first_name || 'there'
-  const openingMessage = `Hai ${firstName}! Aku Shera dari Castudio. Makasih udah share nomornya di email. Kita ada layanan cuci mobil dan detailing yang datang langsung ke lokasi kamu. Mau yang Standard Wash, Professional, atau tertarik sama detailing? Kabarin aja ya`
+  const openingMessage = `Hai ${firstName}! Makasih udah share nomornya lewat email. Aku Shera dari Castudio. Boleh tau mobilnya apa dan lokasinya di daerah mana?`
 
   await fetch(`${WAHA_API_URL}/api/sendText`, {
     method: 'POST',
@@ -199,7 +199,7 @@ export async function triggerWhatsAppAgent(
     .eq('chat_id', chatId)
     .maybeSingle()
 
-  const sheraContext = `LEAD FROM EMAIL CAMPAIGN (Ryan agent handoff). Name: ${lead.first_name || 'unknown'}. Email: ${lead.lead_email}. Company: ${lead.company_name || 'unknown'}. Title: ${lead.job_title || 'unknown'}. Campaign: ${lead.campaign_name || 'unknown'}. Email thread summary: ${threadSummary}. This person already knows about Castudio from email. Do NOT ask for their name again. Go straight to understanding what they need and booking.`
+  const sheraContext = `LEAD FROM EMAIL CAMPAIGN (Ryan agent handoff). Name: ${lead.first_name || 'unknown'}. Email: ${lead.lead_email}. Company: ${lead.company_name || 'unknown'}. Title: ${lead.job_title || 'unknown'}. Campaign: ${lead.campaign_name || 'unknown'}. Email thread summary: ${threadSummary}. This person already knows about Castudio from email. Do NOT ask for their name again. You already asked for their car and location. When they respond with car and location, continue: ask for plate number, then ask which service they want, then schedule. Flow: car+location → plate → service → date → book.`
 
   if (!convo) {
     await supabase.from('whatsapp_conversations').insert({
