@@ -299,20 +299,33 @@ export async function processEmailReply(payload: any) {
 
   if (!lead) throw new Error('Failed to create lead record')
 
-  // Skip if already handed off to WhatsApp (prevents duplicate processing from webhook retries)
+  // ── DEDUP: Prevent duplicate processing from Plusvibe webhook retries ──
+  // Three layers of protection:
+
+  // Layer 1: Already handed off or closed
   if (lead.handed_off_to_whatsapp) {
     return { action: 'skipped', reason: 'already handed off to WhatsApp' }
   }
-
-  // Skip if already closed (NOT_INTERESTED)
   if (lead.current_status === 'closed') {
     return { action: 'skipped', reason: 'lead already closed' }
   }
 
-  // Update last_email_id
-  await supabase.from('email_leads').update({ last_email_id: payload.last_email_id, updated_at: new Date().toISOString() }).eq('id', lead.id)
+  // Layer 2: Same email already processed (retry detection)
+  // If lead has the same last_email_id AND reply_count > 0, this is a retry
+  if (lead.last_email_id === payload.last_email_id && (lead.reply_count || 0) > 0) {
+    return { action: 'skipped', reason: 'duplicate webhook (same email already processed)' }
+  }
 
-  // Classify the reply
+  // Layer 3: Atomic claim — increment reply_count IMMEDIATELY before any processing
+  // This narrows the race window to milliseconds (between SELECT and this UPDATE)
+  const newReplyCount = (lead.reply_count || 0) + 1
+  await supabase.from('email_leads').update({
+    reply_count: newReplyCount,
+    last_email_id: payload.last_email_id,
+    updated_at: new Date().toISOString(),
+  }).eq('id', lead.id)
+
+  // ── Classify the reply ──
   const classification = await classifyReply(replyText)
 
   // Also check phone extraction directly (LLM might miss it)
@@ -322,7 +335,7 @@ export async function processEmailReply(payload: any) {
     classification.phone_number = directPhone
   }
 
-  // Update lead history
+  // Update lead history (reply_count already incremented above)
   const history = Array.isArray(lead.classification_history) ? lead.classification_history : []
   history.push(classification.classification)
   const objections = Array.isArray(lead.objections_raised) ? lead.objections_raised : []
@@ -333,8 +346,6 @@ export async function processEmailReply(payload: any) {
   await supabase.from('email_leads').update({
     classification_history: history,
     objections_raised: objections,
-    reply_count: (lead.reply_count || 0) + 1,
-    updated_at: new Date().toISOString(),
   }).eq('id', lead.id)
 
   // Route based on classification

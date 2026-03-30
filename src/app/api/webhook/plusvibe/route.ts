@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { after } from 'next/server'
 import { processEmailReply } from '@/lib/agents/plusvibe'
 
 export async function POST(req: NextRequest) {
@@ -21,10 +22,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'bounce' })
     }
 
-    // Process the reply
-    const result = await processEmailReply(payload)
+    // Return 200 immediately to prevent Plusvibe from retrying
+    // Process in background using Next.js after() API
+    after(async () => {
+      try {
+        await processEmailReply(payload)
+      } catch (err) {
+        console.error('[plusvibe-webhook] Background processing error:', err)
+      }
+    })
 
-    return NextResponse.json({ ok: true, ...result })
+    return NextResponse.json({ ok: true, accepted: true })
   } catch (error: any) {
     console.error('[plusvibe-webhook] Error:', error)
     return NextResponse.json({ ok: false, error: error.message }, { status: 200 })
