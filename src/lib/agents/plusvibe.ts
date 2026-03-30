@@ -161,7 +161,7 @@ export async function triggerWhatsAppAgent(
     .select('id')
     .ilike('phone', `%${cleanPhone}%`)
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (!existingCustomer) {
     await supabase.from('customers').insert({
