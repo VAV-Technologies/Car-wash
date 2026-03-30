@@ -335,18 +335,23 @@ export async function processEmailReply(payload: any) {
     const phone = classification.phone_number || directPhone
     if (!phone) return { action: 'error', reason: 'classification said phone found but extraction failed' }
 
-    // Save phone and send confirmation
+    // Save phone
     await supabase.from('email_leads').update({ phone_number: phone, current_status: 'handed_off_to_whatsapp', handed_off_to_whatsapp: true }).eq('id', lead.id)
 
-    const confirmReply = `<p>Got it, ${lead.first_name || 'there'}! You'll hear from us on WhatsApp shortly.</p>`
-    await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, confirmReply)
-
-    // Trigger WhatsApp agent
+    // Trigger WhatsApp FIRST (most important)
     await triggerWhatsAppAgent(
       { first_name: lead.first_name || '', lead_email: lead.lead_email, company_name: lead.company_name || '', job_title: lead.job_title || '', campaign_name: lead.campaign_name || '' },
       phone,
       classification.summary || 'Lead replied to email campaign with phone number'
     )
+
+    // Then try email confirmation (non-critical, can fail)
+    try {
+      const confirmReply = `<p>Got it, ${lead.first_name || 'there'}! You'll hear from us on WhatsApp shortly.</p>`
+      await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, confirmReply)
+    } catch {
+      // Email reply failed — that's fine, WhatsApp handoff already done
+    }
 
     return { action: 'handed_off', classification: cat, phone }
   }
