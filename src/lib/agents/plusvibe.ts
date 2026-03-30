@@ -173,7 +173,7 @@ export async function triggerWhatsAppAgent(
       phone: cleanPhone,
       email: lead.lead_email,
       segment: 'new',
-      acquisition_source: 'email_campaign',
+      acquisition_source: 'website',
       notes: `From campaign: ${lead.campaign_name}. Company: ${lead.company_name}. Title: ${lead.job_title}`,
     })
   }
