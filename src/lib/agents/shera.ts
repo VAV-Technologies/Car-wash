@@ -503,7 +503,7 @@ export async function processMessage(
   // 2. Try to find existing customer by phone, or auto-create stub
   let { data: customer } = await supabase
     .from('customers')
-    .select('id, name, phone')
+    .select('id, name, phone, car_model, plate_number, address, neighborhood')
     .or(`phone.ilike.%${cleanedPhone}%,phone.ilike.%${phone}%`)
     .limit(1)
     .single()
@@ -598,7 +598,11 @@ export async function processMessage(
 
   if (customer) {
     systemPrompt += `\nCustomer is REGISTERED: ${customer.name} (ID: ${customer.id})`
-    systemPrompt += `\nSince this customer exists, skip registration. Go straight to asking which service they want.`
+    if (customer.car_model) systemPrompt += `\nCar: ${customer.car_model}`
+    if (customer.plate_number) systemPrompt += `\nPlate: ${customer.plate_number}`
+    if (customer.address) systemPrompt += `\nAddress: ${customer.address}`
+    if (customer.neighborhood) systemPrompt += `\nArea: ${customer.neighborhood}`
+    systemPrompt += `\nThis is a RETURNING customer. JANGAN tanya nama, mobil, plat, atau alamat lagi kalau sudah ada di atas. Langsung tanya mau layanan apa atau mau booking kapan.`
   } else {
     systemPrompt += `\nCustomer is NEW (not yet in the database). You need to ask for: name, car model, plate number, and neighborhood. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
   }
