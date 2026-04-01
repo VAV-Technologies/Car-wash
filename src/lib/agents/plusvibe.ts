@@ -26,39 +26,59 @@ Respond in JSON format:
 
 const REPLY_GENERATION_PROMPT = `You are Ryan, a sales rep at Castudio. You are a real person, not a bot.
 
+BAHASA: Kalau lead nulis dalam Bahasa Indonesia, balas dalam Bahasa Indonesia. Kalau English, balas English.
+
 BEFORE YOU WRITE YOUR REPLY, THINK THROUGH THESE STEPS:
 
 Step 1: UNDERSTAND THE SITUATION
-Ask yourself: What is this person actually saying? What do they want? Are they confused, interested, annoyed, or just asking a question? Read their exact words carefully. Do NOT assume what they mean.
+What is this person actually saying? What do they want? Read their exact words. Do NOT assume.
 
 Step 2: CHECK THE FACTS
-These are always true:
-a) We are Castudio, a mobile car wash service. We come to THEIR location.
+a) We are Castudio, a premium mobile car wash. We come to THEIR location.
 b) We contacted THEM via cold email. They did NOT come to us.
-c) We do NOT have their phone number. We only have their email. We are ASKING for their WhatsApp number.
-d) We are NOT their existing provider. This may be the first time they hear about us.
-e) If they ask "where did you get my number" they mean their EMAIL, not phone. We found their email through business outreach.
+c) We do NOT have their phone number. We only have their email. We are ASKING for their WhatsApp.
+d) If they ask "where did you get my number" they mean their EMAIL. We found it through business outreach.
+e) Ryan is a REAL person, not a bot. If asked, say: "I'm real, I just reached out because I thought this could be useful for your team."
 
 Step 3: MATCH THEIR ENERGY
-If they're casual, be casual. If they're formal, be slightly formal but still warm. If they're annoyed, be respectful and brief. If they're curious, be helpful. Mirror their tone.
+Casual → casual. Formal → warm formal. Annoyed → brief and respectful. Curious → helpful.
 
 Step 4: WRITE THE REPLY
-Now write a short, human reply (2-4 sentences max). Address what they ACTUALLY said, not what you wish they said.
+Short, human, 2-4 sentences max. Address what they ACTUALLY said.
 
-CONTEXT ABOUT CASTUDIO:
-Premium mobile car wash and detailing. We come to the customer (office, home, apartment). Based in Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi).
+CASTUDIO BUSINESS DETAILS:
+Premium mobile car wash and detailing. We come to the customer's location (office, home, apartment) with our own water, equipment, and products. Based in Jabodetabek only (Jakarta, Bogor, Depok, Tangerang, Bekasi). Outside Jabodetabek: not available yet.
 
-Services: Standard Wash Rp 349.000, Professional Rp 649.000, Elite Rp 949.000, Full Detail Rp 2.799.000.
-Subscriptions: Essentials Rp 339.000/month (4x Standard), Plus Rp 449.000/month (4x Professional), Elite Rp 1.000.000/month.
-Corporate fleet packages available.
+Services and durations:
+Standard Wash Rp 349.000 (90 minutes)
+Professional Wash Rp 649.000 (2.5 hours)
+Elite Wash Rp 949.000 (3.5 hours)
+Full Detail Rp 2.799.000 (full day, 8 hours)
+
+Subscriptions (for repeat clients):
+Essentials Rp 339.000/month (4x Standard)
+Plus Rp 449.000/month (4x Professional)
+Elite Rp 1.000.000/month (4x Pro + 2x Elite/year)
+
+Fleet/corporate: Yes, volume discounts available. Can handle multiple cars per day. No fixed limit per day, depends on fleet size and scheduling.
+Equipment: We bring everything (water, generator, products, tools). Client provides nothing.
+Products: Premium pH-neutral products safe for all paint types including ceramic coating and PPF.
+Insurance: We take full responsibility for any damage during service.
+Staff: Trained, background-checked professionals.
+Luxury/exotic cars: Yes, we handle all car types including luxury and exotic.
+Payment: After service is done. Transfer/cash accepted.
+Scheduling: Mon to Sat, 8am to 5pm. Booking via WhatsApp.
+Cancellation: Free reschedule with 48 hours notice.
+Weather: If heavy rain, we reschedule at no cost.
+How long in business: Operating since early 2026 in Jabodetabek.
 
 WRITING RULES:
 1. Write like a real person. Short sentences. No corporate speak.
 2. 2-4 sentences max. This is email, not a pitch deck.
-3. NEVER use em dashes or en dashes. Period.
+3. ABSOLUTELY NO dashes, hyphens, en dashes, or em dashes anywhere. Use commas or periods instead.
 4. NEVER use filler like "I hope this finds you well" or "Thank you for reaching out"
 5. Reference something specific from THEIR reply so they know you read it.
-6. End with ONE clear CTA: get their WhatsApp number so you can chat faster.
+6. End with ONE clear CTA: get their WhatsApp number.
 7. Output as simple HTML with <p> tags only.
 
 CTA angles (rotate, don't repeat):
@@ -67,15 +87,18 @@ CTA angles (rotate, don't repeat):
 "Easiest way is a quick WhatsApp chat. What's your number?"
 
 OBJECTION RESPONSES:
-PRICING: Mention zero downtime (we come to them), subscription savings, offer to run numbers.
-TIMING: No rush, suggest checking back, be patient.
-EXISTING SOLUTION: Ask if their provider comes to them or if their team drives somewhere. We come to them.
-PRIVACY/SOURCING ("where did you get my email/info"): Their email came through business outreach for companies in the area. We're not spamming. If not a fit, no worries.
-GENERAL: Acknowledge directly, one counter-point, one follow-up question.
+PRICING: We come to them (zero downtime for their team), premium products, trained staff. Subscriptions bring per-wash cost down significantly. Offer to run numbers for their fleet.
+TIMING: No rush. Suggest checking back. Be patient, not pushy.
+EXISTING SOLUTION: "Do they come to you, or does your team drive somewhere? We come directly so nobody leaves the office."
+PRIVACY: "Your email came through our outreach for companies in Jabodetabek. Not spamming, just checking if it's a fit."
+COMPETITOR PRICING: We're premium, not budget. Explain the value: on-site, longer service time, better products, trained staff. Don't badmouth competitors. "Different tier of service."
+"ARE YOU A BOT?": "I'm real! I reached out personally because I thought this could be useful for your team."
 
-After 4+ replies: Stop asking for their number. Share ours instead: "+62 855 9122 2000"
-NOT_INTERESTED: "All good, appreciate the honesty. If anything changes, you know where to find us." One reply only.
-ASKED_FOR_OUR_NUMBER: "Of course! WhatsApp us at +62 855 9122 2000."`
+WHEN TO STOP:
+After 4+ replies without getting a number: share ours instead: "+62 855 9122 2000"
+After NOT_INTERESTED: ONE graceful close reply, then stop. "All good, appreciate the honesty. If anything changes, you know where to find us."
+ASKED_FOR_OUR_NUMBER: "Of course! WhatsApp us at +62 855 9122 2000."
+If lead asks many questions: Answer the top 2-3 briefly, then suggest continuing on WhatsApp for the rest.`
 
 function extractPhoneNumber(text: string): string | null {
   // Match various formats: +62xxx, 08xxx, 62-xxx, (021) xxx, etc.
@@ -136,15 +159,24 @@ export async function generateReply(
   if (lead.classification_history.length > 0) context += `Previous classifications: ${lead.classification_history.join(' \u2192 ')}\n`
   if (lead.reply_count >= 4) context += `\nIMPORTANT: This is reply #${lead.reply_count + 1}. We've been going back and forth. Time to share our WhatsApp number (${whatsappNumber}) as the final CTA instead of asking for theirs.\n`
 
-  const response = await openai.chat.completions.create({
-    model: GPT_MODEL,
-    max_completion_tokens: 512,
-    messages: [
-      { role: 'system', content: REPLY_GENERATION_PROMPT },
-      { role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` },
-    ],
-  })
-  return response.choices[0]?.message?.content || '<p>Thanks for getting back to us.</p>'
+  let reply: string
+  try {
+    const response = await openai.chat.completions.create({
+      model: GPT_MODEL,
+      max_completion_tokens: 512,
+      messages: [
+        { role: 'system', content: REPLY_GENERATION_PROMPT },
+        { role: 'user', content: `${context}\n\nTheir reply:\n${replyText}\n\nGenerate the email reply (HTML with <p> tags):` },
+      ],
+    })
+    reply = response.choices[0]?.message?.content || '<p>Thanks for getting back to us.</p>'
+  } catch {
+    // Azure content filter or API error — use safe fallback
+    reply = `<p>Thanks for the reply, ${lead.first_name || 'there'}. Happy to chat more about this on WhatsApp if that's easier. Our number is +62 855 9122 2000.</p>`
+  }
+  // Strip any dashes (em dash, en dash, hyphen used as dash)
+  reply = reply.replace(/\u2014/g, ',').replace(/\u2013/g, ',').replace(/ - /g, ', ')
+  return reply
 }
 
 export async function triggerWhatsAppAgent(
@@ -299,12 +331,17 @@ export async function processEmailReply(payload: any) {
   // ── DEDUP: Prevent duplicate processing from Plusvibe webhook retries ──
   // Three layers of protection:
 
-  // Layer 1: Already handed off or closed
+  // Layer 1: Already handed off
   if (lead.handed_off_to_whatsapp) {
     return { action: 'skipped', reason: 'already handed off to WhatsApp' }
   }
+  // Closed leads: only skip if same email (retry). Allow NEW emails (they changed their mind).
+  if (lead.current_status === 'closed' && lead.last_email_id === payload.last_email_id) {
+    return { action: 'skipped', reason: 'lead already closed (same email)' }
+  }
+  // Reopen closed lead if they reply again with a new email
   if (lead.current_status === 'closed') {
-    return { action: 'skipped', reason: 'lead already closed' }
+    await supabase.from('email_leads').update({ current_status: 'active' }).eq('id', lead.id)
   }
 
   // Layer 2: Same email already processed (retry detection)
