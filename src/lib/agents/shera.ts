@@ -401,6 +401,11 @@ export async function executeSheraTool(
           sub_elite: 'Langganan Elite',
         }
 
+        // Prevent duplicate sends in same conversation turn
+        if ((globalThis as any).__serviceImagesSent) {
+          return JSON.stringify({ sent: 0, already_sent: true, message: 'Images were already sent in this conversation turn. Do NOT call this tool again. Just ask the customer which package they prefer.' })
+        }
+
         let sent = 0
         for (const img of images) {
           const key = img.file_name.replace('service_image_', '')
@@ -413,7 +418,8 @@ export async function executeSheraTool(
             if (sent < images.length) await new Promise(r => setTimeout(r, 1000))
           } catch {}
         }
-        return JSON.stringify({ sent, total: images.length })
+        if (sent > 0) (globalThis as any).__serviceImagesSent = true
+        return JSON.stringify({ sent, total: images.length, message: sent > 0 ? 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' : 'No images sent. Use text fallback.' })
       }
 
       case 'escalate_to_human': {
@@ -501,6 +507,8 @@ export async function processMessage(
   phone: string,
   messageText: string
 ): Promise<string> {
+  // Reset per-turn flags
+  (globalThis as any).__serviceImagesSent = false
   const supabase = getSupabaseAdmin()
   const cleanedPhone = cleanPhone(phone)
 
