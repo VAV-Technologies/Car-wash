@@ -154,38 +154,44 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Extract identifiers ────────────────────────────────────────
-    const chatId = from // e.g. "6281234567890@c.us" or "116015774097507@lid"
+    let chatId = from // e.g. "6281234567890@c.us" or "116015774097507@lid"
     let phone: string
 
     if (from.includes('@lid')) {
-      // @lid format doesn't contain real phone number — resolve via WAHA contacts API
+      // @lid format doesn't contain real phone — resolve via WAHA contacts API
+      let resolvedPhone = ''
       try {
         const WAHA_API_URL = process.env.WAHA_API_URL!
         const WAHA_API_KEY = process.env.WAHA_API_KEY!
         const controller = new AbortController()
-        setTimeout(() => controller.abort(), 5000) // 5 second timeout
+        setTimeout(() => controller.abort(), 5000)
         const contactRes = await fetch(`${WAHA_API_URL}/api/contacts?session=default&contactId=${from}`, {
           headers: { 'X-Api-Key': WAHA_API_KEY },
           signal: controller.signal,
         })
         if (contactRes.ok) {
           const contact = await contactRes.json()
-          // Contact may have a phone in 'number' or nested 'id' with @c.us
-          const realNumber = contact?.number || contact?.id?.user || from.replace('@lid', '')
-          phone = realNumber.startsWith('+') ? realNumber : '+' + realNumber
-        } else {
-          phone = from.replace('@lid', '') // fallback: use lid number as-is
+          resolvedPhone = contact?.number || contact?.id?.user || ''
         }
-      } catch {
-        phone = from.replace('@lid', '')
+      } catch {}
+
+      // Clean resolved phone
+      resolvedPhone = resolvedPhone.replace(/[\s+\-()]/g, '')
+      if (!resolvedPhone || resolvedPhone.length < 8) {
+        resolvedPhone = from.replace('@lid', '')
       }
+
+      phone = '+' + resolvedPhone
+      // Normalize chat_id to @c.us format so conversations are consistent
+      // regardless of @lid changes between sessions
+      chatId = resolvedPhone + '@c.us'
     } else {
       phone = '+' + from.replace('@c.us', '')
     }
 
     // ── Mark as seen after a brief pause ─────────────────────────
     const seenDelay = 2000 + Math.random() * 2000
-    setTimeout(() => { sendSeen(chatId).catch(() => {}) }, seenDelay)
+    setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay) // sendSeen uses original from (works with both @lid and @c.us)
 
     // ── Message buffering ──────────────────────────────────────────
     // When people send multiple messages quickly (e.g. splitting one
