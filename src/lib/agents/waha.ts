@@ -35,13 +35,16 @@ export async function sendText(chatId: string, text: string, session = 'default'
   })
 }
 
-/** Send an image with optional caption. Uses sendText with URL (WAHA Core compatible). */
+/** Send an image with optional caption */
 export async function sendImage(chatId: string, imageUrl: string, caption?: string, session = 'default'): Promise<void> {
-  // WAHA Core doesn't support sendImage (Plus only). Send as text with URL instead.
-  const text = caption ? `${caption}\n${imageUrl}` : imageUrl
-  await wahaFetch('/api/sendText', {
+  await wahaFetch('/api/sendImage', {
     method: 'POST',
-    body: JSON.stringify({ session, chatId, text }),
+    body: JSON.stringify({
+      session,
+      chatId,
+      file: { url: imageUrl, mimetype: 'image/jpeg' },
+      caption: caption || '',
+    }),
   })
 }
 
