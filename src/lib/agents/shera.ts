@@ -406,8 +406,20 @@ export async function executeSheraTool(
           return JSON.stringify({ sent: 0, already_sent: true, message: 'Images were already sent in this conversation turn. Do NOT call this tool again. Just ask the customer which package they prefer.' })
         }
 
+        // Sort order: full_detail first for detailing, then rest alphabetically
+        const SEND_ORDER: Record<string, number> = {
+          standard_wash: 1, professional: 2, elite_wash: 3,
+          full_detail: 1, interior_detail: 2, exterior_detail: 3, tire_rims: 4, window_detail: 5,
+          sub_essentials: 1, sub_plus: 2, sub_elite: 3,
+        }
+        const sortedImages = [...images].sort((a, b) => {
+          const ka = a.file_name.replace('service_image_', '')
+          const kb = b.file_name.replace('service_image_', '')
+          return (SEND_ORDER[ka] || 99) - (SEND_ORDER[kb] || 99)
+        })
+
         let sent = 0
-        for (const img of images) {
+        for (const img of sortedImages) {
           const key = img.file_name.replace('service_image_', '')
           if (requestedTypes && !requestedTypes.includes(key)) continue
           const caption = SERVICE_LABELS[key] || key
