@@ -711,8 +711,11 @@ export async function processMessage(
     })
   }
 
-  // 8. Extract text response
-  const reply = response.choices[0]?.message?.content ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
+  // 8. Extract text response and sanitize
+  let reply = response.choices[0]?.message?.content ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
+  // GPT sometimes leaks raw tool call JSON in the text — strip it
+  reply = reply.replace(/\{["\s]*(?:service_type|chat_id|customer_id|booking_id|query|job_id|reason)["\s]*:[\s\S]*?\}\n?/g, '').trim()
+  if (!reply) reply = 'Ada yang bisa aku bantu?'
 
   // Update any pending escalations with correct chat_id and phone
   await supabase
