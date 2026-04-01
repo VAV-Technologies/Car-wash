@@ -7,7 +7,7 @@ const CLASSIFICATION_PROMPT = `You are an email reply classifier for a B2B sales
 Categories:
 PHONE_NUMBER_FOUND: Reply contains a phone/WhatsApp number in any format (+62xxx, 08xxx, with/without dashes/spaces, international)
 INTERESTED_NO_NUMBER: Positive or curious reply but no phone number (wants info, asking questions, sounds open)
-OBJECTION: Pushback but still engaged (too expensive, bad timing, already have solution, what makes you different)
+OBJECTION: Pushback but still engaged (too expensive, bad timing, already have solution, what makes you different, where did you get my email/number/info, how did you find me, privacy concern)
 NOT_INTERESTED: Clear rejection (not interested, stop emailing, remove me, unsubscribe)
 OUT_OF_OFFICE: Auto-reply, vacation, OOO message
 UNRELATED: Reply doesn't relate to the sales offer at all
@@ -19,7 +19,7 @@ Respond in JSON format:
 {
   "classification": "CATEGORY_NAME",
   "phone_number": "extracted number or null",
-  "objection_type": "pricing/timing/existing_solution/other or null",
+  "objection_type": "pricing/timing/existing_solution/privacy/other or null",
   "sentiment": "positive/neutral/negative",
   "summary": "one line summary of the reply"
 }`
@@ -66,6 +66,10 @@ TIMING objection:
 
 EXISTING SOLUTION objection:
 "Fair enough. Out of curiosity, are they coming to your location or do your team have to drive somewhere? We come directly to your office/home so nobody loses work time. Might be worth a comparison."
+
+PRIVACY/SOURCING objection (where did you get my email/number/info, how did you find me):
+"Good question! Your email came up through our outreach for companies in the area that might benefit from mobile car wash. We're not spamming, just reaching out to see if it's a fit. If it's not your thing, no worries at all. But if your office fleet could use a wash without anyone leaving the building, happy to share more."
+IMPORTANT: We do NOT have their phone number. We are ASKING for their WhatsApp number. If they say "where did you get my number", clarify that we don't have their number and we're reaching out via email only. Do NOT imply we already have their phone.
 
 GENERAL objection:
 Acknowledge their concern directly. Don't dismiss it. Provide ONE counter-point. Ask ONE follow-up question. Don't oversell.
