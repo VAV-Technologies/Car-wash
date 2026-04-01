@@ -388,17 +388,17 @@ export async function executeSheraTool(
         const requestedTypes = serviceTypeStr === 'all' ? null : serviceTypeStr.split(',').map(s => s.trim())
 
         const SERVICE_LABELS: Record<string, string> = {
-          standard_wash: 'Standard Wash - Rp 349.000',
-          professional: 'Professional Wash - Rp 649.000',
-          elite_wash: 'Elite Wash - Rp 949.000',
-          interior_detail: 'Interior Detail - Rp 1.039.000',
-          exterior_detail: 'Exterior Detail - Rp 1.039.000',
-          window_detail: 'Window Detail - Rp 689.000',
-          tire_rims: 'Tire & Rims - Rp 289.000',
-          full_detail: 'Full Detail - Rp 2.799.000',
-          sub_essentials: 'Langganan Essentials - Rp 339.000/bulan (Hemat Rp 1.057.000)',
-          sub_plus: 'Langganan Plus - Rp 449.000/bulan (Hemat Rp 2.147.000)',
-          sub_elite: 'Langganan Elite - Rp 1.000.000/bulan (Hemat Rp 3.494.000)',
+          standard_wash: 'Standard Wash',
+          professional: 'Professional Wash',
+          elite_wash: 'Elite Wash',
+          interior_detail: 'Interior Detail',
+          exterior_detail: 'Exterior Detail',
+          window_detail: 'Window Detail',
+          tire_rims: 'Tire & Rims',
+          full_detail: 'Full Detail',
+          sub_essentials: 'Langganan Essentials',
+          sub_plus: 'Langganan Plus',
+          sub_elite: 'Langganan Elite',
         }
 
         let sent = 0

@@ -88,9 +88,9 @@ export async function GET(req: Request) {
 
         // Send subscription images with savings captions
         const SUB_CAPTIONS: Record<string, string> = {
-          sub_essentials: 'Langganan Essentials - Rp 339.000/bulan (Hemat Rp 1.057.000)',
-          sub_plus: 'Langganan Plus - Rp 449.000/bulan (Hemat Rp 2.147.000)',
-          sub_elite: 'Langganan Elite - Rp 1.000.000/bulan (Hemat Rp 3.494.000)',
+          sub_essentials: 'Langganan Essentials',
+          sub_plus: 'Langganan Plus',
+          sub_elite: 'Langganan Elite',
         }
 
         const { data: subImages } = await supabase
