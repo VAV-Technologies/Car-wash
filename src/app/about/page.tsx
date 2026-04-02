@@ -317,7 +317,7 @@ export default function AboutPage() {
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Link
-                      href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil."
+                      href="https://wa.me/6285591222000?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-none text-sm font-medium bg-brand-orange text-black hover:bg-brand-orange/90 h-11 py-3 px-12 text-base transition-colors"

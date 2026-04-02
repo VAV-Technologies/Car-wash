@@ -167,7 +167,7 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.%20Lokasi%20saya%20di%20[area]."
+                  href="https://wa.me/6285591222000?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.%20Lokasi%20saya%20di%20[area]."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
@@ -205,7 +205,7 @@ export default function ContactPage() {
                 </div>
 
                 <a
-                  href="https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20sesi%20detailing."
+                  href="https://wa.me/6285591222000?text=Halo%2C%20saya%20ingin%20booking%20sesi%20detailing."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center w-full px-8 py-3 text-sm font-medium text-black bg-brand-orange hover:bg-brand-orange/90 rounded-none transition-colors"
@@ -349,7 +349,7 @@ export default function ContactPage() {
                       <div>
                         <p className="text-sm text-white/60 mb-1">WhatsApp</p>
                         <a
-                          href="https://wa.me/62816104334"
+                          href="https://wa.me/6285591222000"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-white hover:text-brand-orange transition-colors font-medium"

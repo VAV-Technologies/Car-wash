@@ -63,7 +63,7 @@ export function Footer() {
                 {t('common.footer.connect')}
               </p>
               <div className="flex flex-col space-y-2">
-                <a href="https://wa.me/62816104334" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                <a href="https://wa.me/6285591222000" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> WhatsApp
                 </a>
                 <a href="mailto:hi@castudio.id" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">

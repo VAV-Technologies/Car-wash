@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Check, ArrowRight, ShieldCheck, Sparkles, Paintbrush, Eye } from "lucide-react";
 import { useTranslation } from '@/i18n';
 
-const WA_BASE = "https://wa.me/62816104334";
+const WA_BASE = "https://wa.me/6285591222000";
 
 export default function DetailingPage() {
   const { t } = useTranslation();

@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { MessageCircle, Mail, Phone, Globe } from 'lucide-react';
 import { useTranslation } from '@/i18n';
 
-const WA_NUMBER = '62816104334';
+const WA_NUMBER = '6285591222000';
 
 export function WhatsAppButton() {
   const pathname = usePathname();
@@ -54,7 +54,7 @@ export function WhatsAppButton() {
           </a>
           <div className="w-px bg-white/10" />
           <a
-            href="tel:+62816104334"
+            href="tel:+6285591222000"
             className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           >
             <Phone className="h-4 w-4" strokeWidth={1.5} />

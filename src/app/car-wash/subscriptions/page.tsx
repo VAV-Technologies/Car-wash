@@ -12,7 +12,7 @@ import { useTranslation } from '@/i18n';
 /*  PAGE                                                               */
 /* ------------------------------------------------------------------ */
 
-const WA_BASE = "https://wa.me/62816104334";
+const WA_BASE = "https://wa.me/6285591222000";
 
 export default function SubscriptionsPage() {
   const { t } = useTranslation();

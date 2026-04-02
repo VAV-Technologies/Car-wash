@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { FadeIn } from '@/components/ui/fade-in';
 import { useTranslation } from '@/i18n';
 
-const WA_LINK = "https://wa.me/62816104334?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.";
+const WA_LINK = "https://wa.me/6285591222000?text=Halo%2C%20saya%20ingin%20booking%20cuci%20mobil.";
 
 export default function HomePage() {
   const { t } = useTranslation();
