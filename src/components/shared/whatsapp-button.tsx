@@ -46,7 +46,7 @@ export function WhatsAppButton() {
           </a>
           <div className="w-px bg-white/10" />
           <a
-            href="mailto:hello@castudio.co"
+            href="mailto:hi@castudio.id"
             className="flex items-center gap-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           >
             <Mail className="h-4 w-4" strokeWidth={1.5} />

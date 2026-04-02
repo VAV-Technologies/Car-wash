@@ -53,7 +53,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-3 bg-[#171717] border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-orange-500 transition"
-              placeholder="washer@castudio.com"
+              placeholder="washer@castudio.id"
             />
           </div>
 

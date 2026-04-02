@@ -66,8 +66,8 @@ export function Footer() {
                 <a href="https://wa.me/62816104334" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> WhatsApp
                 </a>
-                <a href="mailto:hello@castudio.co" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
-                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> hello@castudio.co
+                <a href="mailto:hi@castudio.id" className="flex items-center gap-2 hover:text-brand-white transition-colors duration-300">
+                  <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> hi@castudio.id
                 </a>
                 <span className="flex items-center gap-2 text-white/60">
                   <span className="text-white/40 text-[5px] shrink-0">&#x25CF;</span> {t('common.footer.monToSat')}

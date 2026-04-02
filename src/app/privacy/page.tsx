@@ -50,7 +50,7 @@ export default function PrivacyPage() {
             </ul>
 
             <p className="text-white/50 text-sm italic">
-              Full privacy policy available upon request at hello@castudio.co
+              Full privacy policy available upon request at hi@castudio.id
             </p>
 
           </div>

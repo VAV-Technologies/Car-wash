@@ -71,7 +71,7 @@ export default function TermsPage() {
             </ul>
 
             <p className="text-white/50 text-sm italic">
-              Full legal terms available upon request at hello@castudio.co
+              Full legal terms available upon request at hi@castudio.id
             </p>
 
           </div>

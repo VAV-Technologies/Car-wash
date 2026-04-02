@@ -88,7 +88,7 @@ export default function ContactPage() {
     const body = encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
     );
-    window.location.href = `mailto:hello@castudio.co?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:hi@castudio.id?subject=${subject}&body=${body}`;
 
     toast({
       title: t('contact.form.openingEmail'),
@@ -364,10 +364,10 @@ export default function ContactPage() {
                       <div>
                         <p className="text-sm text-white/60 mb-1">Email</p>
                         <a
-                          href="mailto:hello@castudio.co"
+                          href="mailto:hi@castudio.id"
                           className="text-white hover:text-brand-orange transition-colors font-medium"
                         >
-                          hello@castudio.co
+                          hi@castudio.id
                         </a>
                       </div>
                     </div>
