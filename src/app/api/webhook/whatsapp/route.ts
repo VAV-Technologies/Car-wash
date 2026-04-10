@@ -303,8 +303,11 @@ export async function POST(req: NextRequest) {
     try {
       reply = await processMessage(chatId, phone, processedMessage)
     } catch (err) {
+      // On error, silently fail. Never expose internal errors to the customer.
+      // The message stays in the conversation history so it won't be lost —
+      // the next message from the customer will re-trigger processing.
       console.error('[shera-error]', err)
-      reply = 'Maaf nih, ada gangguan bentar. Coba kirim lagi pesannya ya'
+      return NextResponse.json({ ok: false, error: 'processing failed — no reply sent' }, { status: 200 })
     }
 
     // ── Human-like typing delay ──────────────────────────────────────

@@ -48,6 +48,12 @@ Cuci mobil: service_type "standard_wash,professional,elite_wash"
 Detailing: service_type "interior_detail,exterior_detail,window_detail,tire_rims,full_detail"
 HANYA kirim gambar SEKALI. Kalau customer sudah pilih paket, JANGAN kirim gambar lagi.
 Setelah kirim, tanya: "Kira kira yang mana yang cocok pak/kak?" atau "Which one catches your eye?"
+
+ATURAN PALING PENTING SOAL GAMBAR:
+DILARANG KERAS kirim gambar paket (send_service_images) SEBELUM customer bilang mau apa (cuci atau detailing).
+Kalau customer HANYA kasih nama dan belum bilang mau layanan apa → TANYA DULU. JANGAN kirim gambar.
+Urutan WAJIB: nama → tanya mau apa → customer jawab → baru kirim gambar.
+Kalau kamu langsung kirim gambar tanpa customer bilang mau apa, itu SALAH BESAR.
 Sopan dan hangat. Pakai pak/kak/bu + nama. JANGAN pakai "kamu".
 
 PERTANYAAN YANG TIDAK BISA DIJAWAB (produk, teknis, dll):
@@ -91,6 +97,7 @@ Balas Indonesian kalau customer nulis English.
 Skip perkenalan diri di chat pertama.
 Tanya "cuci atau detailing?" kalau customer SUDAH bilang mau yang mana.
 Kirim gambar lagi setelah customer sudah pilih paket.
+Kirim gambar paket langsung setelah dapat nama tanpa tanya mau cuci atau detailing.
 Pakai "kamu" — selalu pakai pak/kak/bu + nama.
 Borong semua pertanyaan dalam 1 pesan.
 
@@ -99,7 +106,7 @@ Kalau pesan customer diawali dengan [SYSTEM HINTS: ...], itu info yang sudah di-
 SERVICE_DETECTED: X → Customer sudah pilih paket X. JANGAN kirim gambar, JANGAN tanya paket lagi. Langsung lanjut ke pertanyaan berikutnya (mobil/plat/alamat/jadwal).
 CATEGORY_DETECTED: wash → Customer mau cuci mobil. Langsung kirim gambar paket cuci.
 CATEGORY_DETECTED: detailing → Customer mau detailing. Langsung kirim gambar paket detailing.
-NAME_DETECTED: X → Nama customer adalah X. JANGAN tanya nama lagi. Langsung sapa pakai nama itu.
+NAME_DETECTED: X → Nama customer adalah X. JANGAN tanya nama lagi. Sapa pakai nama itu, lalu IKUTI FLOW NORMAL. Kalau customer belum bilang mau apa, WAJIB tanya dulu: "Mau cuci mobil atau detailing nih?" JANGAN langsung kirim gambar.
 
 LAYANAN:
 2 kategori: Cuci Mobil dan Detailing.
@@ -157,7 +164,23 @@ NOMOR HP: Sudah punya dari WhatsApp. JANGAN PERNAH tanya nomor HP.
 
 ALAMAT: Minta alamat lengkap termasuk nama jalan dan nomor. Kalau ada petunjuk khusus (rumah warna kuning, masuk gang kedua, dll) simpan di notes booking.
 
-MULTI MOBIL: Tanya mau cuci berapa mobil. Kalau lebih dari 1, tanya detail tiap mobil satu per satu. Jadwalkan berurutan otomatis. Durasi: Standard 90 menit, Professional 150 menit, Elite 210 menit, Interior 240, Exterior 300, Window 120, Tire 90, Full Detail 480.
+MULTI MOBIL / MULTI LAYANAN:
+Kalau customer mau lebih dari 1 mobil ATAU campuran cuci + detailing, ikuti langkah ini:
+
+1. KONFIRMASI DAFTAR LENGKAP dulu. Ulangi semua yang customer mau dalam 1 pesan. Contoh:
+   "Oke jadi 3 mobil cuci + 1 detailing ya kak? Biar aku catat satu satu ya."
+   JANGAN langsung mulai tanya detail sebelum daftar lengkap dikonfirmasi.
+
+2. PROSES SATU PER SATU. Tandai progress: "Mobil 1 dari 4:" dst.
+   Untuk tiap mobil tanya: layanan apa (kalau belum disebut), mobil apa, plat nomor.
+   Alamat dan jadwal cukup tanya SEKALI karena biasanya sama untuk semua mobil.
+
+3. JANGAN PERNAH lupakan item yang sudah disebut customer. Kalau customer bilang "3 cuci + 1 detailing", setelah selesai 3 cuci kamu WAJIB lanjut ke detailing. Jangan berhenti di tengah.
+
+4. Setelah semua info terkumpul, KONFIRMASI ULANG semua booking sebelum buat.
+
+5. Buat 1 booking per mobil pakai create_booking. Jadwalkan berurutan otomatis berdasarkan durasi:
+   Standard 90 menit, Professional 150 menit, Elite 210 menit, Interior 240, Exterior 300, Window 120, Tire 90, Full Detail 480.
 
 BOOKING: Buat pakai create_booking. Satu booking per mobil. Konfirmasi dulu sebelum buat.
 
@@ -197,8 +220,8 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
   { type: 'function', function: { name: 'create_booking', description: 'Create a new booking for a customer. Only use this after confirming all details with the customer.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' }, service_type: { type: 'string', description: 'Service type: standard_wash, professional, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail' }, scheduled_date: { type: 'string', description: 'Date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'Time in HH:MM format (24h)' }, location_address: { type: 'string', description: 'Full street address for the service location' }, notes: { type: 'string', description: 'Location notes and special instructions' } }, required: ['customer_id', 'service_type', 'scheduled_date', 'scheduled_time'] } } },
   { type: 'function', function: { name: 'update_booking', description: 'Update an existing booking. Use this to reschedule (change date/time) or change the service type.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID' }, scheduled_date: { type: 'string', description: 'New date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'New time in HH:MM format (24h)' }, service_type: { type: 'string', description: 'New service type' } }, required: ['booking_id'] } } },
   { type: 'function', function: { name: 'cancel_booking', description: 'Cancel an existing booking. Use this when the customer wants to cancel their appointment.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID to cancel' } }, required: ['booking_id'] } } },
-  { type: 'function', function: { name: 'create_customer', description: 'Register a new customer. Use this when a customer is booking for the first time and is not found in the system.', parameters: { type: 'object', properties: { name: { type: 'string', description: "Customer's full name" }, phone: { type: 'string', description: 'Phone number (e.g. 628123456789)' }, car_model: { type: 'string', description: 'Car make and model (e.g. Toyota Fortuner)' }, plate_number: { type: 'string', description: 'License plate number (e.g. B 1234 ABC)' }, address: { type: 'string', description: 'Full street address' }, neighborhood: { type: 'string', description: 'Area or neighborhood for routing' } }, required: ['name', 'phone'] } } },
-  { type: 'function', function: { name: 'send_service_images', description: 'Send service menu images to the customer via WhatsApp. Use this when showing available services. Send comma-separated types for multiple.', parameters: { type: 'object', properties: { service_type: { type: 'string', description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.' }, chat_id: { type: 'string', description: 'The WhatsApp chat ID to send images to' } }, required: ['chat_id'] } } },
+  { type: 'function', function: { name: 'create_customer', description: 'Register a new customer OR update an existing customer record. Call this whenever you learn new customer details (name, car, plate, address) to save them to the database. If a customer with this phone already exists, their record will be updated with the new info.', parameters: { type: 'object', properties: { name: { type: 'string', description: "Customer's full name" }, phone: { type: 'string', description: 'Phone number (e.g. 628123456789)' }, car_model: { type: 'string', description: 'Car make and model (e.g. Toyota Fortuner)' }, plate_number: { type: 'string', description: 'License plate number (e.g. B 1234 ABC)' }, address: { type: 'string', description: 'Full street address' }, neighborhood: { type: 'string', description: 'Area or neighborhood for routing' } }, required: ['name', 'phone'] } } },
+  { type: 'function', function: { name: 'send_service_images', description: 'Send service menu images to the customer via WhatsApp. ONLY call this AFTER the customer has explicitly said they want either "cuci mobil/wash" or "detailing". NEVER call this just because you learned the customer\'s name. The customer MUST have stated what service category they want first.', parameters: { type: 'object', properties: { service_type: { type: 'string', description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.' }, chat_id: { type: 'string', description: 'The WhatsApp chat ID to send images to' } }, required: ['service_type', 'chat_id'] } } },
   { type: 'function', function: { name: 'escalate_to_human', description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'Brief reason why this needs human attention' }, category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' }, customer_message: { type: 'string', description: 'The customer message that triggered escalation' } }, required: ['reason', 'category'] } } },
   { type: 'function', function: { name: 'get_completed_jobs', description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' } }, required: ['customer_id'] } } },
   { type: 'function', function: { name: 'submit_job_rating', description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.', parameters: { type: 'object', properties: { job_id: { type: 'string', description: 'The job UUID to rate' }, rating: { type: 'number', description: 'Rating from 1 to 5' }, feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' } }, required: ['job_id', 'rating'] } } },
@@ -663,7 +686,9 @@ export async function processMessage(
   systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
   systemPrompt += `\nChat ID for sending images: ${chatId}`
 
-  if (customer) {
+  const isStubCustomer = customer && (customer.name === 'WhatsApp User' || customer.name === 'Unknown')
+
+  if (customer && !isStubCustomer) {
     systemPrompt += `\nCustomer is REGISTERED: ${customer.name} (ID: ${customer.id})`
     if (customer.car_model) systemPrompt += `\nCar: ${customer.car_model}`
     if (customer.plate_number) systemPrompt += `\nPlate: ${customer.plate_number}`
@@ -673,8 +698,14 @@ export async function processMessage(
     systemPrompt += `\nUntuk cek booking, reschedule, atau cancel: pakai customer_id "${customer.id}" saat panggil tool get_customer_bookings, update_booking, atau cancel_booking.`
     systemPrompt += `\nKalau customer mau reschedule: panggil get_customer_bookings dulu dengan customer_id di atas untuk cari booking_id, lalu panggil update_booking.`
     systemPrompt += `\nKalau customer mau booking baru: langsung tanya mau cuci atau detailing.`
+  } else if (isStubCustomer) {
+    systemPrompt += `\nCustomer record exists but is INCOMPLETE (ID: ${customer!.id}). Name is still placeholder "${customer!.name}".`
+    systemPrompt += `\nThis is a NEW customer. Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal.`
+    systemPrompt += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk UPDATE record customer ini. Pakai phone ${phone}. Ini SANGAT PENTING agar data customer tersimpan dengan benar.`
+    systemPrompt += `\nDo NOT ask for phone — you already have it.`
   } else {
     systemPrompt += `\nCustomer is NEW (not yet in the database). Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
+    systemPrompt += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk simpan data customer. Ini SANGAT PENTING.`
   }
 
   // 6. Call OpenAI
