@@ -46,7 +46,7 @@ nama, paket layanan, mobil apa, plat nomor, alamat (di Jabodetabek), jadwal.
 KIRIM GAMBAR PAKET (send_service_images):
 Cuci mobil: service_type "standard_wash,professional,elite_wash"
 Detailing: service_type "interior_detail,exterior_detail,window_detail,tire_rims,full_detail"
-HANYA kirim gambar SEKALI. Kalau customer sudah pilih paket, JANGAN kirim gambar lagi.
+HANYA kirim gambar SEKALI per kategori. Kalau customer sudah pilih paket, JANGAN kirim gambar lagi.
 Setelah kirim, tanya: "Kira kira yang mana yang cocok pak/kak?" atau "Which one catches your eye?"
 
 ATURAN PALING PENTING SOAL GAMBAR:
@@ -54,6 +54,10 @@ DILARANG KERAS kirim gambar paket (send_service_images) SEBELUM customer bilang 
 Kalau customer HANYA kasih nama dan belum bilang mau layanan apa → TANYA DULU. JANGAN kirim gambar.
 Urutan WAJIB: nama → tanya mau apa → customer jawab → baru kirim gambar.
 Kalau kamu langsung kirim gambar tanpa customer bilang mau apa, itu SALAH BESAR.
+
+JANGAN KIRIM GAMBAR DUA KALI:
+Kalau di conversation history sudah ada pesan dengan tag [IMAGES_SENT] atau kamu sudah bilang "Ini paket cuci/detailingnya...", itu artinya gambar SUDAH dikirim. JANGAN panggil send_service_images lagi.
+Kalau customer tanya soal paket setelah gambar dikirim, jawab pakai TEXT aja. Gambar sudah ada di chat mereka.
 Sopan dan hangat. Pakai pak/kak/bu + nama. JANGAN pakai "kamu".
 
 PERTANYAAN YANG TIDAK BISA DIJAWAB (produk, teknis, dll):
@@ -768,11 +772,16 @@ export async function processMessage(
     .eq('status', 'pending')
 
   // 9. Save both user message and assistant reply to conversation messages
+  //    If images were sent this turn, tag the assistant message so future turns know
   const saveTimestamp = new Date().toISOString()
+  let replyToSave = reply
+  if ((globalThis as any).__serviceImagesSent) {
+    replyToSave = `[IMAGES_SENT]\n${reply}`
+  }
   const updatedMessages = [
     ...existingMessages,
     { role: 'user', content: messageText, timestamp: saveTimestamp },
-    { role: 'assistant', content: reply, timestamp: saveTimestamp },
+    { role: 'assistant', content: replyToSave, timestamp: saveTimestamp },
   ].slice(-30) // Keep last 30 messages to prevent unbounded growth
 
   // 10. Update last_message_at

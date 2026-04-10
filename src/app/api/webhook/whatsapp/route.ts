@@ -265,15 +265,21 @@ export async function POST(req: NextRequest) {
     const hints: string[] = []
     const msgLower = combinedMessage.toLowerCase()
 
-    // Detect specific service package
-    if (/\bstandard\s*wash\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: standard_wash')
-    else if (/\bprofessional\s*wash\b|\bprofessional\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: professional')
-    else if (/\belite\s*wash\b|\belite\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: elite_wash')
-    else if (/\bfull\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: full_detail')
-    else if (/\binterior\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: interior_detail')
-    else if (/\bexterior\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: exterior_detail')
-    else if (/\bwindow\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: window_detail')
-    else if (/\btire|rims/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: tire_rims')
+    // Skip SERVICE_DETECTED when the message is a question about a service (not a selection)
+    const isQuestion = /[?]/.test(combinedMessage) ||
+      /\b(kalau|apa|apakah|ga\s*dapet|nggak\s*dapet|gadapet|termasuk|include|bedanya|beda|does it|is it|what about|can i|boleh|bisa)\b/i.test(combinedMessage)
+
+    // Detect specific service package (only when customer is selecting, not asking)
+    if (!isQuestion) {
+      if (/\bstandard\s*wash\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: standard_wash')
+      else if (/\bprofessional\s*wash\b|\bprofessional\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: professional')
+      else if (/\belite\s*wash\b|\belite\b/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: elite_wash')
+      else if (/\bfull\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: full_detail')
+      else if (/\binterior\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: interior_detail')
+      else if (/\bexterior\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: exterior_detail')
+      else if (/\bwindow\s*detail/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: window_detail')
+      else if (/\btire|rims/i.test(combinedMessage)) hints.push('SERVICE_DETECTED: tire_rims')
+    }
 
     // Detect wash vs detailing category (only if no specific package found)
     if (!hints.some(h => h.includes('SERVICE_DETECTED'))) {
