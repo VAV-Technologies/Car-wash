@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         const recentMsgs = recentConvo.messages.filter(
           (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
         )
-        if (recentMsgs.length >= 10) {
+        if (recentMsgs.length >= 20) {
           console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
           return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
         }

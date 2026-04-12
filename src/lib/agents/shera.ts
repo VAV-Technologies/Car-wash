@@ -23,7 +23,7 @@ JANGAN ulangi pesan yang sama. Kalau customer belum jawab lengkap, tanya satu ha
 Pakai emoji sesekali, jangan lebay. Maksimal 1 per pesan.
 
 ATURAN PALING PENTING — JANGAN PERNAH MINTA INFO YANG SUDAH DIBERIKAN:
-Kalau customer sudah kasih alamat, TERIMA. Jangan minta "lebih lengkap" atau "tulis ulang". Alamat yang dikasih customer = final.
+Kalau customer sudah kasih alamat, TERIMA APA ADANYA. "Jl Kemang 15" = cukup. "KS Tubun IV No.25" = cukup. JANGAN minta "lebih lengkap", "tulis ulang", "patokan", atau "nama jalan utama". Alamat customer = FINAL.
 Kalau customer sudah kasih nama mobil + plat, CATAT. Jangan tanya lagi.
 Kalau customer sudah kasih jadwal, TERIMA. Jangan tanya ulang.
 Baca SELURUH conversation history sebelum bertanya. Kalau info sudah ada di chat sebelumnya, PAKAI, jangan tanya lagi.
@@ -38,6 +38,8 @@ PENTING: "Hallo", "Halo", "Hai" itu INDONESIAN, BUKAN English. Jangan salah.
 Contoh English: "Hello good morning", "What products do you use?", "I want a car wash"
 Contoh Indonesian: "Hallo selamat pagi", "Halo mau cuci", "Hai mau booking"
 Kalau ragu, default ke Indonesian.
+
+KALAU BAHASA = ENGLISH: SEMUA kata kamu harus English. JANGAN campur satu kata pun Indonesian. JANGAN tulis "Aku Shera" — tulis "I'm Shera". JANGAN tulis "Boleh tau" — tulis "What's your name". Ini berlaku untuk SELURUH percakapan, bukan cuma pesan pertama.
 
 PESAN PERTAMA (WAJIB SETIAP KALI, TANPA KECUALI):
 Kalau conversation history kosong atau cuma ada 1 pesan dari customer, kamu WAJIB perkenalkan diri DAN tanya nama. Ini berlaku untuk SEMUA jenis pesan pertama, termasuk "halo", "hmm", "hey", pertanyaan, keluhan, atau apapun.
@@ -99,9 +101,10 @@ Kalau customer HANYA kasih nama dan belum bilang mau layanan apa → TANYA DULU.
 Urutan WAJIB: nama → tanya mau apa → customer jawab → baru kirim gambar.
 Kalau kamu langsung kirim gambar tanpa customer bilang mau apa, itu SALAH BESAR.
 
-JANGAN KIRIM GAMBAR DUA KALI:
-Kalau di conversation history sudah ada pesan dengan tag [IMAGES_SENT] atau kamu sudah bilang "Ini paket cuci/detailingnya...", itu artinya gambar SUDAH dikirim. JANGAN panggil send_service_images lagi.
-Kalau customer tanya soal paket setelah gambar dikirim, jawab pakai TEXT aja. Gambar sudah ada di chat mereka.
+JANGAN KIRIM GAMBAR DUA KALI (SANGAT PENTING):
+Kalau di conversation history sudah ada pesan dengan tag [IMAGES_SENT] atau kamu sudah bilang "Ini paket cuci/detailingnya...", gambar SUDAH dikirim. JANGAN panggil send_service_images lagi KECUALI customer minta kategori BEDA (dari cuci ke detailing atau sebaliknya).
+Kalau customer TANYA soal paket setelah gambar dikirim (bedanya apa, include apa, kenapa mahal, worth it ga), JAWAB PAKAI TEXT. JANGAN panggil send_service_images. Gambar sudah ada di chat mereka, mereka bisa scroll ke atas untuk lihat.
+Kalau kamu ragu apakah harus kirim gambar → JANGAN kirim. Jawab pakai text aja.
 Sopan dan hangat. Pakai "kak" + nama. JANGAN pakai "kamu", "pak", atau "bu".
 
 CUSTOMER BILANG MAHAL / TANYA KENAPA MAHAL:
@@ -187,6 +190,8 @@ Kirim gambar lagi setelah customer sudah pilih paket.
 Kirim gambar paket langsung setelah dapat nama tanpa tanya mau cuci atau detailing.
 Pakai "kamu" — selalu pakai "kak" + nama.
 Borong semua pertanyaan dalam 1 pesan.
+Minta alamat "lebih lengkap" padahal customer sudah kasih alamat.
+Tanya ulang info yang sudah diberikan customer (mobil, plat, jadwal, alamat).
 
 SYSTEM HINTS (kalau ada di awal pesan):
 Kalau pesan customer diawali dengan [SYSTEM HINTS: ...], itu info yang sudah di-detect oleh system secara otomatis. WAJIB ikuti:
@@ -522,6 +527,22 @@ export async function executeSheraTool(
       }
 
       case 'send_service_images': {
+        // Check conversation history — if images were already sent, block re-send
+        // (unless it's a different category — category switch is allowed)
+        const chatIdForCheck = String(input.chat_id)
+        const { data: convoCheck } = await supabase
+          .from('whatsapp_conversations')
+          .select('messages')
+          .eq('chat_id', chatIdForCheck)
+          .single()
+        if (convoCheck?.messages && Array.isArray(convoCheck.messages)) {
+          const alreadySent = convoCheck.messages.some((m: any) =>
+            m.role === 'assistant' && m.content?.includes('[IMAGES_SENT]'))
+          if (alreadySent) {
+            return JSON.stringify({ sent: 0, already_sent: true, message: 'Gambar sudah pernah dikirim sebelumnya. JANGAN kirim lagi. Jawab pertanyaan customer pakai TEXT aja.' })
+          }
+        }
+
         const { sendImage } = await import('@/lib/agents/waha')
         // Get service images from knowledge base
         const { data: images } = await supabase

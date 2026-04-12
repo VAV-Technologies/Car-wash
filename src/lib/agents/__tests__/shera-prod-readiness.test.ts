@@ -168,9 +168,9 @@ describe('S1: System prompt policy', () => {
 
   // 1.8 Multi-car
   describe('1.8 Multi-car', () => {
-    it('confirm list first', () => { expect(SHERA_SYSTEM_PROMPT).toContain('KONFIRMASI DAFTAR LENGKAP') })
-    it('track progress', () => { expect(SHERA_SYSTEM_PROMPT).toContain('Mobil 1 dari 4') })
-    it('never drop items', () => { expect(SHERA_SYSTEM_PROMPT).toContain('JANGAN PERNAH lupakan item') })
+    it('confirm understanding first', () => { expect(SHERA_SYSTEM_PROMPT).toContain('KONFIRMASI pemahaman') })
+    it('accept multiple cars at once', () => { expect(SHERA_SYSTEM_PROMPT).toContain('TERIMA SEMUA') })
+    it('understand complex requests', () => { expect(SHERA_SYSTEM_PROMPT).toContain('3 MOBIL total') })
   })
 })
 

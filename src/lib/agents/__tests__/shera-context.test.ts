@@ -238,11 +238,11 @@ describe('SHERA_SYSTEM_PROMPT', () => {
   // Multi-car flow
   it('has multi-car instructions', () => {
     expect(SHERA_SYSTEM_PROMPT).toContain('MULTI MOBIL')
-    expect(SHERA_SYSTEM_PROMPT).toContain('KONFIRMASI DAFTAR LENGKAP')
+    expect(SHERA_SYSTEM_PROMPT).toContain('KONFIRMASI pemahaman')
   })
 
-  it('instructs not to drop items in multi-car', () => {
-    expect(SHERA_SYSTEM_PROMPT).toContain('JANGAN PERNAH lupakan item')
+  it('instructs to accept multiple cars at once', () => {
+    expect(SHERA_SYSTEM_PROMPT).toContain('TERIMA SEMUA')
   })
 
   // Escalation rules
