@@ -271,25 +271,60 @@ export async function POST(req: NextRequest) {
       processedMessage = `[SYSTEM HINTS: ${hints.join(', ')}]\n${combinedMessage}`
     }
 
-    // ── Process combined message with Shera (with retry + fallback) ──
+    // ── Process combined message with Shera (2 retries + fallback + background retry queue) ──
     let reply: string
-    try {
-      reply = await processMessage(chatId, phone, processedMessage)
-    } catch (firstErr) {
-      console.error('[shera-error] First attempt failed:', firstErr)
-      // Retry once
+    let attempt = 0
+    const MAX_INLINE_RETRIES = 2 // 3 total attempts (1 initial + 2 retries)
+    let lastErr: unknown = null
+
+    while (attempt <= MAX_INLINE_RETRIES) {
       try {
         reply = await processMessage(chatId, phone, processedMessage)
-      } catch (retryErr) {
-        // Both attempts failed — send a canned fallback so customer isn't left hanging
-        console.error('[shera-error] Retry also failed:', retryErr)
-        const fallbackDelay = 3000 + Math.random() * 3000
-        await new Promise(r => setTimeout(r, fallbackDelay))
-        try {
-          await sendText(chatId, 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏')
-        } catch { /* WAHA itself might be down — nothing we can do */ }
-        return NextResponse.json({ ok: false, error: 'LLM failed — fallback sent' }, { status: 200 })
+        break
+      } catch (err) {
+        lastErr = err
+        attempt++
+        console.error(`[shera-error] Attempt ${attempt} failed:`, err)
+        if (attempt <= MAX_INLINE_RETRIES) {
+          // Brief pause before retry
+          await new Promise(r => setTimeout(r, 1000))
+        }
       }
+    }
+
+    if (attempt > MAX_INLINE_RETRIES) {
+      // All 3 attempts failed — send fallback and queue for background retries
+      console.error('[shera-error] All inline attempts exhausted, queuing background retry')
+      const fallbackDelay = 3000 + Math.random() * 3000
+      await new Promise(r => setTimeout(r, fallbackDelay))
+      try {
+        await sendText(chatId, 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏')
+      } catch { /* WAHA down — nothing we can do */ }
+
+      // Queue background retry (cron will pick it up every 20 min, max 5 total retries)
+      try {
+        const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
+        const db = getAdmin()
+        const retryAt = new Date(Date.now() + 20 * 60 * 1000).toISOString() // 20 min from now
+        await db
+          .from('whatsapp_conversations')
+          .update({
+            retry_queue: {
+              message: processedMessage,
+              chat_id: chatId,
+              phone,
+              attempts: 0,
+              max_attempts: 5,
+              next_retry_at: retryAt,
+              created_at: new Date().toISOString(),
+            },
+          })
+          .eq('chat_id', chatId)
+      } catch (queueErr) {
+        console.error('[shera-error] Failed to queue retry:', queueErr)
+      }
+
+      return NextResponse.json({ ok: false, error: 'LLM failed — fallback sent, retry queued' }, { status: 200 })
     }
 
     // ── Human-like typing delay ──────────────────────────────────────

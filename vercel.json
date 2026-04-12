@@ -29,6 +29,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/cron/shera-retry",
+      "schedule": "*/20 * * * *"
+    },
+    {
       "path": "/api/cron/nudge",
       "schedule": "0 */2 * * *"
     }
