@@ -687,7 +687,7 @@ describe('Real production bug scenarios', () => {
   })
 
   it('Image sending blocked in showing_packages prevents double-send', () => {
-    expect(isToolAllowed('send_service_images', 'showing_packages')).toBe(false)
+    expect(isToolAllowed('send_service_images', 'showing_packages')).toBe(true)
   })
 
   it('Image sending blocked in collecting_info prevents re-send during booking flow', () => {

@@ -190,8 +190,8 @@ describe('Cat 2: Mid-flow breaks (after images)', () => {
     expect(isQuestionMessage(msg)).toBe(true)
     expect(detectHints(msg)).toEqual([]) // question suppresses all
 
-    // send_service_images should be BLOCKED (already sent)
-    expect(isToolAllowed('send_service_images', state)).toBe(false)
+    // send_service_images allowed in showing_packages (for category switches)
+    expect(isToolAllowed('send_service_images', state)).toBe(true)
 
     // State stays
     const next = getNextState(state, {})
@@ -205,9 +205,8 @@ describe('Cat 2: Mid-flow breaks (after images)', () => {
 
     expect(hints).toContain('CATEGORY_DETECTED: detailing')
 
-    // BUG: send_service_images is BLOCKED in showing_packages
-    // Customer can't switch categories — detailing images can't be sent
-    expect(isToolAllowed('send_service_images', state)).toBe(false)
+    // send_service_images allowed in showing_packages for category switches
+    expect(isToolAllowed('send_service_images', state)).toBe(true)
     // This is a known limitation — customer has to be handled via text fallback
   })
 
@@ -216,8 +215,8 @@ describe('Cat 2: Mid-flow breaks (after images)', () => {
     const msg = 'ada langganan ga?'
 
     expect(isQuestionMessage(msg)).toBe(true)
-    // send_service_images blocked — can't send subscription images
-    expect(isToolAllowed('send_service_images', state)).toBe(false)
+    // send_service_images allowed in showing_packages
+    expect(isToolAllowed('send_service_images', state)).toBe(true)
     // State stays
     expect(getNextState(state, {})).toBe('showing_packages')
   })
@@ -236,14 +235,14 @@ describe('Cat 2: Mid-flow breaks (after images)', () => {
     // 3 consecutive questions
     state = getNextState(state, {})
     expect(state).toBe('showing_packages')
-    expect(isToolAllowed('send_service_images', state)).toBe(false)
+    // send_service_images allowed (for category switches) but per-request duplicate prevention stops same-category re-sends
+    expect(isToolAllowed('send_service_images', state)).toBe(true)
 
     state = getNextState(state, {})
     expect(state).toBe('showing_packages')
 
     state = getNextState(state, {})
     expect(state).toBe('showing_packages')
-    // Never leaves, never re-sends — good
   })
 })
 

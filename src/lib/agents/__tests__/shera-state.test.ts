@@ -23,8 +23,8 @@ describe('isToolAllowed', () => {
     expect(isToolAllowed('send_service_images', 'awaiting_intent')).toBe(true)
   })
 
-  it('blocks send_service_images in showing_packages (already sent)', () => {
-    expect(isToolAllowed('send_service_images', 'showing_packages')).toBe(false)
+  it('allows send_service_images in showing_packages (category switch)', () => {
+    expect(isToolAllowed('send_service_images', 'showing_packages')).toBe(true)
   })
 
   it('blocks send_service_images in collecting_info (already chosen)', () => {
@@ -105,8 +105,8 @@ describe('getToolBlockReason', () => {
   })
 
   it('explains why images blocked in showing_packages', () => {
-    const reason = getToolBlockReason('send_service_images', 'showing_packages')
-    expect(reason).toContain('sudah dikirim')
+    const reason = getToolBlockReason('send_service_images', 'collecting_info')
+    expect(reason).toContain('sudah pilih')
   })
 
   it('explains why booking blocked early', () => {

@@ -284,7 +284,7 @@ describe('Cat 12: State machine integrity', () => {
 
   it('12.2 All gated tools blocked in wrong states', () => {
     const gatedTools = [
-      { tool: 'send_service_images', blockedIn: ['greeting', 'awaiting_name', 'showing_packages', 'collecting_info', 'confirming_booking', 'booking_complete'] },
+      { tool: 'send_service_images', blockedIn: ['greeting', 'awaiting_name', 'collecting_info', 'confirming_booking', 'booking_complete'] },
       { tool: 'create_booking', blockedIn: ['greeting', 'awaiting_name', 'awaiting_intent', 'showing_packages'] },
       { tool: 'create_customer', blockedIn: ['greeting'] },
       { tool: 'update_booking', blockedIn: ['greeting', 'awaiting_name', 'awaiting_intent', 'showing_packages', 'collecting_info', 'confirming_booking'] },

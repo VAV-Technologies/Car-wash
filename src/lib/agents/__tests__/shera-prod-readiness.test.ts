@@ -285,7 +285,7 @@ describe('S3: State machine', () => {
 
   describe('3.2 Tool gating matrix', () => {
     const GATED: Record<string, SheraState[]> = {
-      send_service_images: ['awaiting_intent', 'general_chat'],
+      send_service_images: ['awaiting_intent', 'showing_packages', 'general_chat'],
       create_booking: ['collecting_info', 'confirming_booking', 'general_chat'],
       create_customer: ['awaiting_name', 'awaiting_intent', 'showing_packages', 'collecting_info', 'confirming_booking', 'general_chat'],
       update_booking: ['booking_complete', 'general_chat'],

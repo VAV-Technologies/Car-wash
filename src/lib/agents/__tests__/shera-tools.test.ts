@@ -707,13 +707,14 @@ describe('State gating', () => {
     expect(mockCreateBooking).not.toHaveBeenCalled()
   })
 
-  it('blocks send_service_images in showing_packages (already sent)', async () => {
+  it('allows send_service_images in showing_packages (category switch)', async () => {
     const result = JSON.parse(await executeSheraTool('send_service_images', {
       service_type: 'standard_wash',
       chat_id: '628123@c.us',
     }, 'showing_packages'))
 
-    expect(result.blocked_by_state).toBe(true)
+    // Not blocked — allowed for category switches
+    expect(result.blocked_by_state).toBeUndefined()
   })
 
   it('allows search_customer in any state (ungated)', async () => {

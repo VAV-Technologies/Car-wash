@@ -14,7 +14,7 @@ export type SheraState =
 
 /** Tools that are gated by state */
 const TOOL_STATE_GATES: Record<string, SheraState[]> = {
-  send_service_images: ['awaiting_intent', 'general_chat'],
+  send_service_images: ['awaiting_intent', 'showing_packages', 'general_chat'],
   create_booking: ['collecting_info', 'confirming_booking', 'general_chat'],
   create_customer: ['awaiting_name', 'awaiting_intent', 'showing_packages', 'collecting_info', 'confirming_booking', 'general_chat'],
   update_booking: ['booking_complete', 'general_chat'],
@@ -34,8 +34,7 @@ export function getToolBlockReason(toolName: string, state: SheraState): string 
     case 'send_service_images':
       if (state === 'greeting' || state === 'awaiting_name')
         return 'Kamu belum tau nama customer. Tanya nama dulu sebelum kirim gambar.'
-      if (state === 'showing_packages')
-        return 'Gambar sudah dikirim sebelumnya. JANGAN kirim lagi. Tanya customer mau pilih yang mana.'
+      // showing_packages is now allowed (for category switches)
       if (state === 'collecting_info' || state === 'confirming_booking')
         return 'Customer sudah pilih paket. JANGAN kirim gambar lagi. Lanjut kumpulkan info yang kurang.'
       if (state === 'booking_complete')
