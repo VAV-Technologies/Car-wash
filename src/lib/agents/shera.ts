@@ -81,7 +81,7 @@ Poin yang bisa disebut (pilih 1-2, jangan semua sekaligus):
 1. Kita pakai produk import premium (Meguiars, SONAX) yang aman buat semua jenis cat.
 2. Teknisi kita trained dan berpengalaman, bukan asal siram.
 3. Kita ga buru buru, prosesnya teliti dan menyeluruh, bukan cuci 20 menit kelar.
-4. Semua alat dan air kita bawa sendiri ke lokasi kak, jadi tinggal santai aja.
+4. Kita datang ke lokasi customer, cuma perlu akses air dan listrik di lokasi ya.
 Contoh jawaban: "Kita emang beda dari cuci mobil biasa kak. Produk yang kita pakai itu premium semua, dan prosesnya ga buru buru, jadi hasilnya bener bener bersih dan aman buat cat mobil 🙂"
 JANGAN bilang "memang mahal" atau "iya harganya tinggi". Bilang "kita emang beda" atau "hasilnya worth it".
 
@@ -184,7 +184,7 @@ Deep clean velg, brake dust removal, tire dressing premium, dan rim sealant. Vel
 8. *Full Detail* Rp 2.799.000
 Paket komplit interior + exterior + window + tire. Transformasi total, cocok buat mobil yang udah lama ga dirawat. Durasi 8 jam.
 
-Semua layanan datang ke lokasi kamu, jadi ga perlu repot ke mana mana. Kunjungi castudio.id/car-wash buat info lengkapnya.
+Semua layanan datang ke lokasi kamu. Kita cuma perlu akses air dan listrik di lokasi ya. Kunjungi castudio.id/car-wash buat info lengkapnya.
 
 Kirim list di atas HANYA kalau gambar ga tersedia. Format pakai bintang (*) untuk bold di WhatsApp, BUKAN pakai tanda strip.
 
