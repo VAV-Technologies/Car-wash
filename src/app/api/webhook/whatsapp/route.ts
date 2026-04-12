@@ -225,12 +225,11 @@ export async function POST(req: NextRequest) {
 
     const msgTimestamp = Date.now()
 
-    // Wait 10 seconds to collect more messages
-    const BUFFER_WAIT = 10000
+    // ── Phase 1: Initial buffer (5s) — catch burst messages ──────
+    const BUFFER_WAIT = 5000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
-    // After waiting, check if newer messages arrived during the buffer period
-    // by re-reading the conversation and checking for messages added after our timestamp
+    // ── Phase 2: Dedup — check if we're the latest message ───────
     const { data: freshConvo } = await supabase
       .from('whatsapp_conversations')
       .select('messages')
@@ -241,85 +240,124 @@ export async function POST(req: NextRequest) {
       const recentUserMsgs = freshConvo.messages.filter(
         (m: any) => m.role === 'user' && m.timestamp && new Date(m.timestamp).getTime() > msgTimestamp
       )
-      // If newer messages exist, this is an older message in a burst — skip it
-      // The newest message's webhook call will process the combined batch
       if (recentUserMsgs.length > 0) {
         return NextResponse.json({ ok: true, skipped: 'buffered — newer message will process' })
       }
     }
 
-    // We're the latest message — collect any unprocessed user messages
-    // Look for consecutive user messages at the end of the conversation (no assistant reply between them)
-    const allMsgs = Array.isArray(freshConvo?.messages) ? freshConvo.messages : (Array.isArray(convo?.messages) ? convo.messages : [])
-    const pendingTexts: string[] = []
-
-    // Walk backwards from the end, collecting consecutive user messages
-    for (let i = allMsgs.length - 1; i >= 0; i--) {
-      if (allMsgs[i].role === 'user') {
-        pendingTexts.unshift(allMsgs[i].content)
-      } else {
-        break // Hit an assistant message — stop collecting
+    // ── Phase 3: Collect pending messages ─────────────────────────
+    function collectPending(): string {
+      const allMsgs = Array.isArray(freshConvo?.messages) ? freshConvo.messages : (Array.isArray(convo?.messages) ? convo.messages : [])
+      const pendingTexts: string[] = []
+      for (let i = allMsgs.length - 1; i >= 0; i--) {
+        if (allMsgs[i].role === 'user') pendingTexts.unshift(allMsgs[i].content)
+        else break
       }
+      const combined = pendingTexts.length > 0
+        ? [...pendingTexts, enrichedText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
+        : enrichedText
+      const hints = detectHints(combined)
+      return hints.length > 0 ? `[SYSTEM HINTS: ${hints.join(', ')}]\n${combined}` : combined
     }
 
-    // If no pending messages found in history, use the current message
-    // (it hasn't been saved to conversation yet by processMessage)
-    const combinedMessage = pendingTexts.length > 0
-      ? [...pendingTexts, enrichedText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
-      : enrichedText
-
-    // ── Pre-process: detect structured data before GPT sees it ──────
-    const hints = detectHints(combinedMessage)
-
-    // Inject hints into the message for GPT
-    let processedMessage = combinedMessage
-    if (hints.length > 0) {
-      processedMessage = `[SYSTEM HINTS: ${hints.join(', ')}]\n${combinedMessage}`
-    }
-
-    // ── Process combined message with Shera (2 retries + fallback + background retry queue) ──
-    let reply: string
-    let attempt = 0
-    const MAX_INLINE_RETRIES = 2 // 3 total attempts (1 initial + 2 retries)
+    // ── Phase 4: LLM processing with interrupt monitoring ────────
+    // Start LLM immediately. In parallel, poll for new messages.
+    // If a new message arrives during processing, abort LLM, merge, restart.
+    const MAX_INTERRUPTS = 2
+    let interrupts = 0
+    let reply!: string
     let lastErr: unknown = null
+    let succeeded = false
 
-    while (attempt <= MAX_INLINE_RETRIES) {
-      try {
-        reply = await processMessage(chatId, phone, processedMessage)
-        break
-      } catch (err) {
-        lastErr = err
-        attempt++
-        console.error(`[shera-error] Attempt ${attempt} failed:`, err)
-        if (attempt <= MAX_INLINE_RETRIES) {
-          // Brief pause before retry
-          await new Promise(r => setTimeout(r, 1000))
+    while (interrupts <= MAX_INTERRUPTS && !succeeded) {
+      const processedMessage = collectPending()
+      const abortController = new AbortController()
+
+      // LLM promise (with retries)
+      const llmPromise = (async (): Promise<{ type: 'reply'; reply: string }> => {
+        let attempt = 0
+        const MAX_RETRIES = 2
+        while (attempt <= MAX_RETRIES) {
+          try {
+            const r = await processMessage(chatId, phone, processedMessage, abortController.signal)
+            return { type: 'reply', reply: r }
+          } catch (err) {
+            if (abortController.signal.aborted) throw new Error('aborted')
+            lastErr = err
+            attempt++
+            console.error(`[shera-error] Attempt ${attempt} failed:`, err)
+            if (attempt <= MAX_RETRIES) await new Promise(r => setTimeout(r, 1000))
+          }
         }
+        throw new Error('all retries failed')
+      })()
+
+      // Interrupt detector — polls DB every 2s for new messages
+      const interruptPromise = (async (): Promise<{ type: 'interrupted' }> => {
+        const checkStart = Date.now()
+        while (!abortController.signal.aborted) {
+          await new Promise(r => setTimeout(r, 2000))
+          if (abortController.signal.aborted) break
+          try {
+            const { data } = await supabase
+              .from('whatsapp_conversations')
+              .select('messages')
+              .eq('chat_id', chatId)
+              .single()
+            const msgs = Array.isArray(data?.messages) ? data.messages : []
+            const hasNew = msgs.some(
+              (m: any) => m.role === 'user' && m.timestamp && new Date(m.timestamp).getTime() > checkStart
+            )
+            if (hasNew) return { type: 'interrupted' as const }
+          } catch { /* DB check failed — continue */ }
+        }
+        // If aborted (LLM finished first), hang forever so LLM wins the race
+        return new Promise<never>(() => {})
+      })()
+
+      try {
+        const result = await Promise.race([llmPromise, interruptPromise])
+
+        if (result.type === 'interrupted') {
+          interrupts++
+          abortController.abort()
+          console.log(`[shera] Interrupt ${interrupts}/${MAX_INTERRUPTS} — new message during processing`)
+          await new Promise(r => setTimeout(r, 3000)) // let new message settle
+          continue
+        }
+
+        // LLM completed — stop the interrupt poller and use the reply
+        abortController.abort()
+        reply = result.reply
+        succeeded = true
+      } catch (err: any) {
+        abortController.abort()
+        if (err.message === 'aborted') {
+          // Was interrupted — loop will restart
+          continue
+        }
+        // All retries failed
+        break
       }
     }
 
-    if (attempt > MAX_INLINE_RETRIES) {
-      // All 3 attempts failed — send fallback and queue for background retries
-      console.error('[shera-error] All inline attempts exhausted, queuing background retry')
+    if (!succeeded) {
+      // All attempts + interrupts exhausted — send fallback
+      console.error('[shera-error] All attempts exhausted, queuing background retry')
       alertLLMFailure(chatId, phone, String(lastErr)).catch(() => {})
       trackMetric(chatId, 'llm_failure', { phone, error: String(lastErr).slice(0, 200) }).catch(() => {})
       trackMetric(chatId, 'llm_fallback_sent', { phone }).catch(() => {})
-      const fallbackDelay = 3000 + Math.random() * 3000
-      await new Promise(r => setTimeout(r, fallbackDelay))
       try {
         await sendText(chatId, 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏')
-      } catch { /* WAHA down — nothing we can do */ }
+      } catch { /* WAHA down */ }
 
-      // Queue background retry (cron will pick it up every 20 min, max 5 total retries)
       try {
-        const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
-        const db = getAdmin()
-        const retryAt = new Date(Date.now() + 20 * 60 * 1000).toISOString() // 20 min from now
-        await db
+        const retryAt = new Date(Date.now() + 20 * 60 * 1000).toISOString()
+        await supabase
           .from('whatsapp_conversations')
           .update({
             retry_queue: {
-              message: processedMessage,
+              message: collectPending(),
               chat_id: chatId,
               phone,
               attempts: 0,

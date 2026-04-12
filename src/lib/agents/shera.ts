@@ -670,7 +670,8 @@ async function getOpenAIClient() {
 export async function processMessage(
   chatId: string,
   phone: string,
-  messageText: string
+  messageText: string,
+  signal?: AbortSignal
 ): Promise<string> {
   // Request-scoped context (safe for concurrent requests, unlike globalThis)
   const reqCtx: SheraRequestContext = { serviceImagesSent: false }
@@ -826,7 +827,7 @@ export async function processMessage(
     max_completion_tokens: maxTokensToUse,
     tools: SHERA_TOOLS,
     messages: allMessages,
-  }, { timeout: LLM_TIMEOUT })
+  }, { timeout: LLM_TIMEOUT, signal: signal as any })
 
   // 7. Handle tool use loop (max 5 iterations) — with state gating
   let iterations = 0
@@ -858,7 +859,7 @@ export async function processMessage(
       max_completion_tokens: maxTokensToUse,
       tools: SHERA_TOOLS,
       messages: allMessages,
-    }, { timeout: LLM_TIMEOUT })
+    }, { timeout: LLM_TIMEOUT, signal: signal as any })
   }
 
   // 8. Extract text response and sanitize
