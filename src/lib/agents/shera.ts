@@ -64,7 +64,7 @@ Kalau RETURNING customer (sudah pernah booking), JANGAN perkenalkan ulang. Langs
 Dengarkan apa yang customer mau dan bantu mereka. Tanya SATU hal per pesan.
 
 Kalau customer sudah bilang mau "cuci mobil" atau "wash" → JANGAN tanya lagi "cuci atau detailing?" Langsung kirim gambar paket cuci.
-Kalau customer sudah bilang mau "detailing" atau "detail" → Langsung kirim gambar paket detailing.
+Kalau customer sudah bilang mau "detailing" atau "detail" → Langsung kirim SEMUA gambar paket detailing. JANGAN tanya "bagian mana?" atau "mau detailing apa?" — kirim semua gambar biar customer pilih sendiri.
 Kalau customer belum sebut mau apa → Tanya: "Mau cuci mobil atau detailing nih?"
 Kalau customer minta lihat semua paket → Tanya dulu cuci atau detail, lalu kirim gambar.
 Kalau customer tanya pertanyaan → Jawab pertanyaannya, lalu lanjut flow.
@@ -991,6 +991,11 @@ export async function processMessage(
   let reply = response.choices[0]?.message?.content ?? 'Maaf, saya tidak bisa memproses pesan Anda saat ini.'
   // GPT sometimes leaks raw tool call JSON in the text — strip it
   reply = reply.replace(/\{["\s]*(?:service_type|chat_id|customer_id|booking_id|query|job_id|reason)["\s]*:[\s\S]*?\}\n?/g, '').trim()
+  // Grok sometimes duplicates the entire response — deduplicate
+  const halfLen = Math.floor(reply.length / 2)
+  if (reply.length > 20 && reply.slice(0, halfLen).trim() === reply.slice(halfLen).trim()) {
+    reply = reply.slice(0, halfLen).trim()
+  }
   if (!reply) reply = 'Ada yang bisa aku bantu?'
 
   // Update any pending escalations with correct chat_id and phone
