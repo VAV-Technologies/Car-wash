@@ -119,10 +119,11 @@ describe('Adversarial preprocessor inputs', () => {
       expect(isQ).toBe(true) // Correct behavior — it IS a question
     })
 
-    it('"mau cuci mobil, bisa ga?" triggers question — suppresses CATEGORY', () => {
+    it('"mau cuci mobil, bisa ga?" — comma separates intent from question → CATEGORY detected', () => {
       const hints = detectHints('mau cuci mobil, bisa ga?')
-      // Has both "cuci" and "?" — question wins, no CATEGORY_DETECTED
-      expect(hints.some(h => h.includes('CATEGORY_DETECTED'))).toBe(false)
+      // "cuci mobil" is before comma, "bisa ga?" is after — separate clauses
+      // Customer wants wash AND is asking if available — both are true
+      expect(hints.some(h => h.includes('CATEGORY_DETECTED: wash'))).toBe(true)
     })
   })
 

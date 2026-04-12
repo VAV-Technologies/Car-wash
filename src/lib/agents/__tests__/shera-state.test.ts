@@ -193,12 +193,22 @@ describe('deriveStateFromHistory', () => {
     expect(deriveStateFromHistory(msgs, false)).toBe('awaiting_intent')
   })
 
-  it('images sent → collecting_info', () => {
+  it('images sent but no service picked yet → showing_packages', () => {
     const msgs = [
       { role: 'user', content: 'halo' },
       { role: 'assistant', content: 'Boleh tau namanya siapa ya?' },
       { role: 'user', content: 'Andi' },
       { role: 'assistant', content: '[IMAGES_SENT]\nIni paket cuci mobilnya' },
+    ]
+    expect(deriveStateFromHistory(msgs, false)).toBe('showing_packages')
+  })
+
+  it('images sent + Shera asks for car → collecting_info', () => {
+    const msgs = [
+      { role: 'user', content: 'Andi' },
+      { role: 'assistant', content: '[IMAGES_SENT]\nIni paket cuci mobilnya' },
+      { role: 'user', content: 'mau elite wash' },
+      { role: 'assistant', content: 'Siap pak, mobilnya apa ya?' },
     ]
     expect(deriveStateFromHistory(msgs, false)).toBe('collecting_info')
   })

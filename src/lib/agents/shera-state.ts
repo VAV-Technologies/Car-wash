@@ -132,25 +132,52 @@ export function deriveStateFromHistory(
 ): SheraState {
   if (!messages || messages.length === 0) return 'greeting'
 
-  const hasImagesSent = messages.some(m => m.role === 'assistant' && m.content.includes('[IMAGES_SENT]'))
-  const hasBookingConfirm = messages.some(m => m.role === 'assistant' && /booking.*sudah.*buat|booking.*created|bookingnya.*buat/i.test(m.content))
-  const hasAskedName = messages.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
-  const hasAskedIntent = messages.some(m => m.role === 'assistant' && /cuci mobil atau detailing|wash or detailing/i.test(m.content))
-  const hasNameResponse = messages.some(m => m.role === 'user' && messages.indexOf(m) > 0)
-  // Detect when Shera already moved past name (asking about services, prices, etc.)
-  const hasSheraMovedPastName = messages.some(m => m.role === 'assistant' &&
-    /standard wash|professional|elite|mau cuci|which package|paket cuci|paket detail|harga/i.test(m.content))
+  const all = messages
+  const recent = messages.slice(-4) // last 2 turns for current context
 
+  // ── Milestones (check full history — these don't un-happen) ──
+  const hasBookingConfirm = all.some(m => m.role === 'assistant' && /booking.*sudah.*buat|booking.*created|bookingnya.*buat/i.test(m.content))
+  const hasImagesSent = all.some(m => m.role === 'assistant' && m.content.includes('[IMAGES_SENT]'))
+
+  // 1. Booking confirmed → done
   if (hasBookingConfirm) return 'booking_complete'
-  if (hasImagesSent && hasNameResponse) return 'collecting_info'
-  if (hasImagesSent) return 'showing_packages'
-  if (hasSheraMovedPastName) return 'awaiting_intent'
-  if (hasAskedIntent) return 'awaiting_intent'
+
+  // 2. Images were sent — check if the conversation advanced past package selection
+  if (hasImagesSent) {
+    const imgIdx = findLastIndex(all, m => m.role === 'assistant' && m.content.includes('[IMAGES_SENT]'))
+    const afterImages = all.slice(imgIdx + 1)
+    // Only advance to collecting_info if Shera's response AFTER images asks for booking details
+    // (car, plate, address, schedule) — not just any response (could be answering a question)
+    const sheraAdvancedBookingFlow = afterImages.some(m => m.role === 'assistant' &&
+      /mobilnya|plat|alamat|jadwal|dijadwal|kapan|lokasi/i.test(m.content))
+
+    if (sheraAdvancedBookingFlow) return 'collecting_info'
+    return 'showing_packages'
+  }
+
+  // ── Current context (check recent messages — where are we NOW?) ──
+  const recentSheraMovedPastName = recent.some(m => m.role === 'assistant' &&
+    /standard wash|professional|elite|mau cuci|which package|paket cuci|paket detail|harga/i.test(m.content))
+  const recentAskedIntent = recent.some(m => m.role === 'assistant' &&
+    /cuci mobil atau detailing|wash or detailing/i.test(m.content))
+  const hasAskedName = all.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
+  const hasNameResponse = all.some(m => m.role === 'user' && all.indexOf(m) > 0)
+
+  if (recentSheraMovedPastName) return 'awaiting_intent'
+  if (recentAskedIntent) return 'awaiting_intent'
   if (hasAskedName && hasNameResponse) return 'awaiting_intent'
   if (hasAskedName) return 'awaiting_name'
-  if (isReturningCustomer) return 'general_chat'
+  if (isReturningCustomer && messages.length > 0) return 'general_chat'
 
   return 'greeting'
+}
+
+/** Array.findLastIndex polyfill */
+function findLastIndex<T>(arr: T[], predicate: (item: T) => boolean): number {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (predicate(arr[i])) return i
+  }
+  return -1
 }
 
 /** Format state info for injection into the system prompt */
