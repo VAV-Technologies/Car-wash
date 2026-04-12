@@ -43,6 +43,14 @@ Kalau customer belum sebut mau apa → Tanya: "Mau cuci mobil atau detailing nih
 Kalau customer minta lihat semua paket → Tanya dulu cuci atau detail, lalu kirim gambar.
 Kalau customer tanya pertanyaan → Jawab pertanyaannya, lalu lanjut flow.
 
+RETURNING CUSTOMER FLOW:
+Kalau customer RETURNING dan ada info "Last booking" di WhatsApp Context:
+Tawarkan paket terakhir mereka dulu: "Mau yang sama kayak terakhir, [paket], atau mau coba yang lain kak?"
+Kalau jawab "sama aja" / "yang kemarin" / "yang biasa" → langsung lanjut ke jadwal. JANGAN kirim gambar, JANGAN tanya paket.
+Kalau jawab mau paket lain TAPI masih kategori sama (misal terakhir Standard, mau ganti Professional) → JANGAN kirim gambar, langsung konfirmasi paket baru.
+Kalau jawab mau kategori BEDA (misal terakhir cuci, sekarang mau detailing) → baru kirim gambar kategori baru.
+Intinya: returning customer ga perlu lihat gambar lagi kalau masih di kategori yang sama.
+
 INFO UNTUK BOOKING (kumpulkan satu per satu sepanjang percakapan):
 nama, paket layanan, mobil apa, plat nomor, alamat (di Jabodetabek), jadwal.
 
@@ -586,7 +594,11 @@ export function classifyCustomer(customer: CustomerRecord | null): 'new' | 'stub
 }
 
 /** Build the customer context block for the system prompt */
-export function buildCustomerContext(customer: CustomerRecord | null, phone: string): string {
+export function buildCustomerContext(
+  customer: CustomerRecord | null,
+  phone: string,
+  lastBooking?: { service_type: string; scheduled_date: string } | null
+): string {
   const type = classifyCustomer(customer)
   let ctx = ''
 
@@ -597,9 +609,21 @@ export function buildCustomerContext(customer: CustomerRecord | null, phone: str
     if (customer!.address) ctx += `\nAddress: ${customer!.address}`
     if (customer!.neighborhood) ctx += `\nArea: ${customer!.neighborhood}`
     ctx += `\nThis is a RETURNING customer. JANGAN tanya info yang sudah ada di atas.`
+    if (lastBooking) {
+      const SERVICE_NAMES: Record<string, string> = {
+        standard_wash: 'Standard Wash', professional: 'Professional Wash', elite_wash: 'Elite Wash',
+        interior_detail: 'Interior Detail', exterior_detail: 'Exterior Detail', window_detail: 'Window Detail',
+        tire_rims: 'Tire & Rims', full_detail: 'Full Detail',
+      }
+      const lastServiceName = SERVICE_NAMES[lastBooking.service_type] || lastBooking.service_type
+      ctx += `\nLast booking: ${lastServiceName} on ${lastBooking.scheduled_date}`
+      ctx += `\nKalau customer mau booking lagi dan pilih KATEGORI YANG SAMA (cuci/detailing), tawarkan: "Mau yang sama kayak terakhir, ${lastServiceName}, atau mau coba yang lain kak?" JANGAN langsung kirim gambar — tanya dulu.`
+      ctx += `\nKalau customer bilang "sama aja" atau "yang kemarin" → langsung lanjut ke jadwal, ga perlu kirim gambar atau tanya paket lagi.`
+      ctx += `\nKalau customer mau KATEGORI BEDA dari terakhir (misal terakhir cuci, sekarang mau detailing) → baru kirim gambar kategori baru.`
+    }
     ctx += `\nUntuk cek booking, reschedule, atau cancel: pakai customer_id "${customer!.id}" saat panggil tool get_customer_bookings, update_booking, atau cancel_booking.`
     ctx += `\nKalau customer mau reschedule: panggil get_customer_bookings dulu dengan customer_id di atas untuk cari booking_id, lalu panggil update_booking.`
-    ctx += `\nKalau customer mau booking baru: langsung tanya mau cuci atau detailing.`
+    ctx += `\nKalau customer mau booking baru dan TIDAK ada last booking di atas: tanya mau cuci atau detailing.`
   } else if (type === 'stub') {
     ctx += `\nCustomer record exists but is INCOMPLETE (ID: ${customer!.id}). Name is still placeholder "${customer!.name}".`
     ctx += `\nThis is a NEW customer. Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal.`
@@ -728,6 +752,19 @@ export async function processMessage(
     }
   }
 
+  // 2b. For returning customers, fetch their last booking for context
+  let lastBooking: { service_type: string; scheduled_date: string } | null = null
+  if (customer && classifyCustomer(customer) === 'returning') {
+    const { data: recentBooking } = await supabase
+      .from('bookings')
+      .select('service_type, scheduled_date')
+      .eq('customer_id', customer.id)
+      .order('scheduled_date', { ascending: false })
+      .limit(1)
+      .single()
+    if (recentBooking) lastBooking = recentBooking
+  }
+
   // 3. Load last 20 messages from conversation for context
   const existingMessages: Array<{ role: string; content: string }> =
     Array.isArray(conversation.messages) ? conversation.messages.slice(-20) : []
@@ -794,7 +831,7 @@ export async function processMessage(
   systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
   systemPrompt += `\nChat ID for sending images: ${chatId}`
 
-  systemPrompt += buildCustomerContext(customer, phone)
+  systemPrompt += buildCustomerContext(customer, phone, lastBooking)
 
   // 5b. Load and inject conversation state
   const customerType = classifyCustomer(customer)
