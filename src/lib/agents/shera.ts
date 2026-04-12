@@ -117,10 +117,11 @@ LAYANAN:
 Cuci Mobil (3 paket): standard_wash, professional, elite_wash
 Detailing (5 paket): interior_detail, exterior_detail, window_detail, tire_rims, full_detail
 
-PENTING SOAL HARGA:
-Kamu HARUS panggil tool send_service_images dulu. JANGAN PERNAH tulis harga sebagai text sebelum panggil tool. Kalau kamu mau nulis angka harga, BERHENTI dan panggil send_service_images dulu.
-Kalau tool send_service_images return sent=0 (artinya gambar belum diupload), BARU boleh kasih harga lewat text pakai format backup di bawah.
+PENTING SOAL HARGA DAN GAMBAR:
+Kamu HARUS panggil tool send_service_images dulu. JANGAN PERNAH tulis "Ini paket cuci/detailingnya" atau text apapun yang mengimplisikan gambar sudah dikirim TANPA panggil tool dulu.
+Kalau tool send_service_images return sent=0 atau GAGAL, kamu WAJIB kasih harga lewat text pakai format backup di bawah. JANGAN bilang "Ini paketnya" seolah gambar sudah terkirim padahal belum.
 Kalau tool return sent > 0, JANGAN tulis harga lagi. Gambar sudah ada caption harganya.
+JANGAN PERNAH tulis harga sebagai text sebelum panggil tool. Kalau mau nulis angka harga, BERHENTI dan panggil send_service_images dulu.
 
 BACKUP HARGA (HANYA kalau send_service_images return sent=0):
 
@@ -469,6 +470,7 @@ export async function executeSheraTool(
         })
 
         let sent = 0
+        let failed = 0
         for (const img of sortedImages) {
           const key = img.file_name.replace('service_image_', '')
           if (requestedTypes && !requestedTypes.includes(key)) continue
@@ -478,10 +480,43 @@ export async function executeSheraTool(
             sent++
             // Small delay between images
             if (sent < images.length) await new Promise(r => setTimeout(r, 1000))
-          } catch {}
+          } catch (err) {
+            failed++
+            console.error(`[send_service_images] Failed to send ${key}:`, err)
+          }
         }
+
+        // Verify images were actually delivered (WAHA can return 2xx but not deliver)
+        if (sent > 0) {
+          try {
+            await new Promise(r => setTimeout(r, 2000))
+            const WAHA_API_URL = process.env.WAHA_API_URL!
+            const WAHA_API_KEY = process.env.WAHA_API_KEY!
+            // Check recent outgoing messages for image type
+            const verifyRes = await fetch(`${WAHA_API_URL}/api/default/chats/${chatId}/messages?limit=10&downloadMedia=false`, {
+              headers: { 'X-Api-Key': WAHA_API_KEY },
+            })
+            if (verifyRes.ok) {
+              const recentMsgs = await verifyRes.json()
+              const recentImages = Array.isArray(recentMsgs)
+                ? recentMsgs.filter((m: any) => m.fromMe && m.hasMedia).length
+                : 0
+              if (recentImages === 0) {
+                console.error(`[send_service_images] Verification failed: WAHA accepted ${sent} images but 0 delivered to ${chatId}`)
+                sent = 0
+              }
+            }
+          } catch (verifyErr) {
+            console.error('[send_service_images] Verification check failed:', verifyErr)
+            // Can't verify — trust the original send result
+          }
+        }
+
         if (sent > 0) (globalThis as any).__serviceImagesSent = true
-        return JSON.stringify({ sent, total: images.length, message: sent > 0 ? 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' : 'No images sent. Use text fallback.' })
+        if (sent === 0) {
+          return JSON.stringify({ sent: 0, failed, message: 'GAGAL kirim gambar. Kamu WAJIB kirim daftar harga pakai TEXT sebagai pengganti. Pakai format backup harga yang ada di system prompt.' })
+        }
+        return JSON.stringify({ sent, failed, message: 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' })
       }
 
       case 'escalate_to_human': {
@@ -511,7 +546,56 @@ export async function executeSheraTool(
 }
 
 // ---------------------------------------------------------------------------
-// D. Process Message
+// D. Customer Context Helpers (exported for testing)
+// ---------------------------------------------------------------------------
+
+export interface CustomerRecord {
+  id: string
+  name: string
+  phone?: string
+  car_model?: string | null
+  plate_number?: string | null
+  address?: string | null
+  neighborhood?: string | null
+}
+
+/** Classify a customer as new, stub, or returning */
+export function classifyCustomer(customer: CustomerRecord | null): 'new' | 'stub' | 'returning' {
+  if (!customer) return 'new'
+  if (customer.name === 'WhatsApp User' || customer.name === 'Unknown') return 'stub'
+  return 'returning'
+}
+
+/** Build the customer context block for the system prompt */
+export function buildCustomerContext(customer: CustomerRecord | null, phone: string): string {
+  const type = classifyCustomer(customer)
+  let ctx = ''
+
+  if (type === 'returning') {
+    ctx += `\nCustomer is REGISTERED: ${customer!.name} (ID: ${customer!.id})`
+    if (customer!.car_model) ctx += `\nCar: ${customer!.car_model}`
+    if (customer!.plate_number) ctx += `\nPlate: ${customer!.plate_number}`
+    if (customer!.address) ctx += `\nAddress: ${customer!.address}`
+    if (customer!.neighborhood) ctx += `\nArea: ${customer!.neighborhood}`
+    ctx += `\nThis is a RETURNING customer. JANGAN tanya info yang sudah ada di atas.`
+    ctx += `\nUntuk cek booking, reschedule, atau cancel: pakai customer_id "${customer!.id}" saat panggil tool get_customer_bookings, update_booking, atau cancel_booking.`
+    ctx += `\nKalau customer mau reschedule: panggil get_customer_bookings dulu dengan customer_id di atas untuk cari booking_id, lalu panggil update_booking.`
+    ctx += `\nKalau customer mau booking baru: langsung tanya mau cuci atau detailing.`
+  } else if (type === 'stub') {
+    ctx += `\nCustomer record exists but is INCOMPLETE (ID: ${customer!.id}). Name is still placeholder "${customer!.name}".`
+    ctx += `\nThis is a NEW customer. Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal.`
+    ctx += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk UPDATE record customer ini. Pakai phone ${phone}. Ini SANGAT PENTING agar data customer tersimpan dengan benar.`
+    ctx += `\nDo NOT ask for phone — you already have it.`
+  } else {
+    ctx += `\nCustomer is NEW (not yet in the database). Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
+    ctx += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk simpan data customer. Ini SANGAT PENTING.`
+  }
+
+  return ctx
+}
+
+// ---------------------------------------------------------------------------
+// E. Process Message
 // ---------------------------------------------------------------------------
 
 /** Clean a phone number: remove +, spaces, dashes */
@@ -690,27 +774,7 @@ export async function processMessage(
   systemPrompt += `\nCustomer's phone number: ${phone} (from WhatsApp — do NOT ask for it, you already have it)`
   systemPrompt += `\nChat ID for sending images: ${chatId}`
 
-  const isStubCustomer = customer && (customer.name === 'WhatsApp User' || customer.name === 'Unknown')
-
-  if (customer && !isStubCustomer) {
-    systemPrompt += `\nCustomer is REGISTERED: ${customer.name} (ID: ${customer.id})`
-    if (customer.car_model) systemPrompt += `\nCar: ${customer.car_model}`
-    if (customer.plate_number) systemPrompt += `\nPlate: ${customer.plate_number}`
-    if (customer.address) systemPrompt += `\nAddress: ${customer.address}`
-    if (customer.neighborhood) systemPrompt += `\nArea: ${customer.neighborhood}`
-    systemPrompt += `\nThis is a RETURNING customer. JANGAN tanya info yang sudah ada di atas.`
-    systemPrompt += `\nUntuk cek booking, reschedule, atau cancel: pakai customer_id "${customer.id}" saat panggil tool get_customer_bookings, update_booking, atau cancel_booking.`
-    systemPrompt += `\nKalau customer mau reschedule: panggil get_customer_bookings dulu dengan customer_id di atas untuk cari booking_id, lalu panggil update_booking.`
-    systemPrompt += `\nKalau customer mau booking baru: langsung tanya mau cuci atau detailing.`
-  } else if (isStubCustomer) {
-    systemPrompt += `\nCustomer record exists but is INCOMPLETE (ID: ${customer!.id}). Name is still placeholder "${customer!.name}".`
-    systemPrompt += `\nThis is a NEW customer. Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal.`
-    systemPrompt += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk UPDATE record customer ini. Pakai phone ${phone}. Ini SANGAT PENTING agar data customer tersimpan dengan benar.`
-    systemPrompt += `\nDo NOT ask for phone — you already have it.`
-  } else {
-    systemPrompt += `\nCustomer is NEW (not yet in the database). Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
-    systemPrompt += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk simpan data customer. Ini SANGAT PENTING.`
-  }
+  systemPrompt += buildCustomerContext(customer, phone)
 
   // 6. Call OpenAI
   const openai = await getOpenAIClient()
