@@ -155,18 +155,24 @@ export function deriveStateFromHistory(
     return 'showing_packages'
   }
 
-  // ── Current context (check recent messages — where are we NOW?) ──
-  const recentSheraMovedPastName = recent.some(m => m.role === 'assistant' &&
+  // ── Current context ──
+  // Find the most recent greeting/introduction — everything before it is stale
+  const lastIntroIdx = findLastIndex(all, m => m.role === 'assistant' &&
+    /Shera dari Castudio|I'm Shera from/i.test(m.content))
+  const currentSession = lastIntroIdx >= 0 ? all.slice(lastIntroIdx) : all
+  const recentSession = currentSession.slice(-4) // last 2 turns within current session
+
+  const recentSheraMovedPastName = recentSession.some(m => m.role === 'assistant' &&
     /standard wash|professional|elite|mau cuci|which package|paket cuci|paket detail|harga/i.test(m.content))
-  const recentAskedIntent = recent.some(m => m.role === 'assistant' &&
+  const recentAskedIntent = recentSession.some(m => m.role === 'assistant' &&
     /cuci mobil atau detailing|wash or detailing/i.test(m.content))
-  const hasAskedName = all.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
-  const hasNameResponse = all.some(m => m.role === 'user' && all.indexOf(m) > 0)
+  const sessionAskedName = currentSession.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
+  const sessionNameResponse = currentSession.some(m => m.role === 'user' && currentSession.indexOf(m) > 0)
 
   if (recentSheraMovedPastName) return 'awaiting_intent'
   if (recentAskedIntent) return 'awaiting_intent'
-  if (hasAskedName && hasNameResponse) return 'awaiting_intent'
-  if (hasAskedName) return 'awaiting_name'
+  if (sessionAskedName && sessionNameResponse) return 'awaiting_intent'
+  if (sessionAskedName) return 'awaiting_name'
   if (isReturningCustomer && messages.length > 0) return 'general_chat'
 
   return 'greeting'
