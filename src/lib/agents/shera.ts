@@ -2,6 +2,8 @@ import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { isToolAllowed, getToolBlockReason, getNextState, deriveStateFromHistory, statePromptBlock, type SheraState } from './shera-state'
+import { alertImageDeliveryFailure } from './shera-alerts'
+import { trackMetric } from './shera-metrics'
 
 // ---------------------------------------------------------------------------
 // A. System Prompt
@@ -237,10 +239,16 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
 // C. Tool Execution
 // ---------------------------------------------------------------------------
 
+/** Request-scoped context to avoid globalThis pollution across concurrent requests */
+export interface SheraRequestContext {
+  serviceImagesSent: boolean
+}
+
 export async function executeSheraTool(
   toolName: string,
   input: Record<string, unknown>,
-  state?: SheraState
+  state?: SheraState,
+  ctx?: SheraRequestContext
 ): Promise<string> {
   // State gate: block tools that shouldn't be called in the current state
   if (state && !isToolAllowed(toolName, state)) {
@@ -309,6 +317,10 @@ export async function executeSheraTool(
         }
         if (input.location_address) bookingData.location_address = String(input.location_address)
         const booking = await createBooking(bookingData as any)
+        trackMetric(String(input.customer_id), 'booking_created', {
+          service_type: String(input.service_type),
+          scheduled_date: String(input.scheduled_date),
+        }).catch(() => {})
         return JSON.stringify(booking)
       }
 
@@ -457,7 +469,7 @@ export async function executeSheraTool(
         }
 
         // Prevent duplicate sends in same conversation turn
-        if ((globalThis as any).__serviceImagesSent) {
+        if (ctx?.serviceImagesSent) {
           return JSON.stringify({ sent: 0, already_sent: true, message: 'Images were already sent in this conversation turn. Do NOT call this tool again. Just ask the customer which package they prefer.' })
         }
 
@@ -516,10 +528,13 @@ export async function executeSheraTool(
           }
         }
 
-        if (sent > 0) (globalThis as any).__serviceImagesSent = true
+        if (sent > 0 && ctx) ctx.serviceImagesSent = true
         if (sent === 0) {
+          alertImageDeliveryFailure(chatId, failed).catch(() => {})
+          trackMetric(chatId, 'image_delivery_failure', { images_sent: 0, images_failed: failed }).catch(() => {})
           return JSON.stringify({ sent: 0, failed, message: 'GAGAL kirim gambar. Kamu WAJIB kirim daftar harga pakai TEXT sebagai pengganti. Pakai format backup harga yang ada di system prompt.' })
         }
+        trackMetric(chatId, 'image_delivery_success', { images_sent: sent, images_failed: failed }).catch(() => {})
         return JSON.stringify({ sent, failed, message: 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' })
       }
 
@@ -657,8 +672,8 @@ export async function processMessage(
   phone: string,
   messageText: string
 ): Promise<string> {
-  // Reset per-turn flags
-  (globalThis as any).__serviceImagesSent = false
+  // Request-scoped context (safe for concurrent requests, unlike globalThis)
+  const reqCtx: SheraRequestContext = { serviceImagesSent: false }
   const supabase = getSupabaseAdmin()
   const cleanedPhone = cleanPhone(phone)
 
@@ -802,12 +817,16 @@ export async function processMessage(
     ...chatMessages,
   ]
 
+  // Timeout: Vercel has 60s max. Budget: 15s buffer + 5-10s delay already spent.
+  // Leave max 25s for all LLM calls combined.
+  const LLM_TIMEOUT = 25000
+
   let response = await openai.chat.completions.create({
     model: modelToUse,
     max_completion_tokens: maxTokensToUse,
     tools: SHERA_TOOLS,
     messages: allMessages,
-  })
+  }, { timeout: LLM_TIMEOUT })
 
   // 7. Handle tool use loop (max 5 iterations) — with state gating
   let iterations = 0
@@ -822,7 +841,7 @@ export async function processMessage(
     const toolResults = await Promise.all(
       toolCalls.map(async (tc: any) => {
         const input = JSON.parse(tc.function.arguments || '{}')
-        const result = await executeSheraTool(tc.function.name, input, currentState)
+        const result = await executeSheraTool(tc.function.name, input, currentState, reqCtx)
         toolsCalled.push(tc.function.name)
         return {
           role: 'tool' as const,
@@ -839,7 +858,7 @@ export async function processMessage(
       max_completion_tokens: maxTokensToUse,
       tools: SHERA_TOOLS,
       messages: allMessages,
-    })
+    }, { timeout: LLM_TIMEOUT })
   }
 
   // 8. Extract text response and sanitize
@@ -859,7 +878,7 @@ export async function processMessage(
   //    If images were sent this turn, tag the assistant message so future turns know
   const saveTimestamp = new Date().toISOString()
   let replyToSave = reply
-  if ((globalThis as any).__serviceImagesSent) {
+  if (reqCtx.serviceImagesSent) {
     replyToSave = `[IMAGES_SENT]\n${reply}`
   }
   const updatedMessages = [
@@ -876,7 +895,7 @@ export async function processMessage(
     toolsCalled,
     nameKnown: hasNameHint || (customerType === 'returning'),
     serviceChosen: hasServiceHint,
-    imagesAlreadySent: (globalThis as any).__serviceImagesSent,
+    imagesAlreadySent: reqCtx.serviceImagesSent,
     bookingCreated: toolsCalled.includes('create_booking'),
     isReturningCustomer: customerType === 'returning',
   })

@@ -249,6 +249,13 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(data ?? [])
       }
 
+      case 'shera-metrics': {
+        const { getMetricsSummary } = await import('@/lib/agents/shera-metrics')
+        const days = Number(searchParams.get('days')) || 30
+        const metrics = await getMetricsSummary(days)
+        return NextResponse.json(metrics)
+      }
+
       case 'list-live-chats': {
         const supabase = getSupabaseAdmin()
         const { data, error } = await supabase

@@ -52,9 +52,12 @@ function mockFromSequence(...chains: any[]) {
   mockFrom.mockImplementation(() => chains[i++] || chains[chains.length - 1])
 }
 
+// Request-scoped context for tests
+let ctx: { serviceImagesSent: boolean }
+
 beforeEach(() => {
   vi.clearAllMocks()
-  ;(globalThis as any).__serviceImagesSent = false
+  ctx = { serviceImagesSent: false }
 })
 
 // =====================================================================
@@ -593,12 +596,12 @@ describe('send_service_images', () => {
   })
 
   it('blocks duplicate sends in same turn', async () => {
-    ;(globalThis as any).__serviceImagesSent = true
+    ctx.serviceImagesSent = true
 
     const result = JSON.parse(await executeSheraTool('send_service_images', {
       service_type: 'standard_wash',
       chat_id: '628123@c.us',
-    }))
+    }, undefined, ctx))
 
     expect(result.already_sent).toBe(true)
     expect(mockSendImage).not.toHaveBeenCalled()

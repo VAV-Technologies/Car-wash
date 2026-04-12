@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { processMessage } from '@/lib/agents/shera'
 import { sendText, sendSeen } from '@/lib/agents/waha'
 import { detectHints } from '@/lib/agents/shera-preprocessor'
+import { alertLLMFailure } from '@/lib/agents/shera-alerts'
+import { trackMetric } from '@/lib/agents/shera-metrics'
 import crypto from 'crypto'
 
 // ─── HMAC signature validation (optional) ────────────────────────────
@@ -217,6 +219,10 @@ export async function POST(req: NextRequest) {
 
     const isFirstMessage = !convo || !convo.messages || (Array.isArray(convo.messages) && convo.messages.length === 0)
 
+    if (isFirstMessage) {
+      trackMetric(chatId, 'conversation_started', { phone }).catch(() => {})
+    }
+
     const msgTimestamp = Date.now()
 
     // Wait 15 seconds to collect more messages
@@ -295,6 +301,9 @@ export async function POST(req: NextRequest) {
     if (attempt > MAX_INLINE_RETRIES) {
       // All 3 attempts failed — send fallback and queue for background retries
       console.error('[shera-error] All inline attempts exhausted, queuing background retry')
+      alertLLMFailure(chatId, phone, String(lastErr)).catch(() => {})
+      trackMetric(chatId, 'llm_failure', { phone, error: String(lastErr).slice(0, 200) }).catch(() => {})
+      trackMetric(chatId, 'llm_fallback_sent', { phone }).catch(() => {})
       const fallbackDelay = 3000 + Math.random() * 3000
       await new Promise(r => setTimeout(r, fallbackDelay))
       try {

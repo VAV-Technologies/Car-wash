@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { processMessage } from '@/lib/agents/shera'
 import { sendText } from '@/lib/agents/waha'
+import { alertRetryExhausted } from '@/lib/agents/shera-alerts'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,7 +61,7 @@ export async function GET(req: Request) {
     // Check if max retries exceeded
     if (queue.attempts >= queue.max_attempts) {
       console.warn(`[shera-retry] Max retries (${queue.max_attempts}) exceeded for ${queue.chat_id} — giving up`)
-      // Clear the queue — we've given up
+      alertRetryExhausted(queue.chat_id, queue.phone, queue.attempts).catch(() => {})
       await supabase.from('whatsapp_conversations').update({ retry_queue: null }).eq('id', convo.id)
       exhausted++
       continue
