@@ -223,13 +223,31 @@ export async function POST(req: NextRequest) {
       trackMetric(chatId, 'conversation_started', { phone }).catch(() => {})
     }
 
+    // ── SAVE INCOMING MESSAGE IMMEDIATELY ─────────────────────────
+    // This ensures concurrent webhook calls can see each other during dedup.
     const msgTimestamp = Date.now()
+    const existingMsgs = Array.isArray(convo?.messages) ? convo.messages : []
+    const msgsWithNew = [
+      ...existingMsgs,
+      { role: 'user', content: enrichedText, timestamp: new Date(msgTimestamp).toISOString() },
+    ]
+    if (convo) {
+      await supabase
+        .from('whatsapp_conversations')
+        .update({ messages: msgsWithNew, last_message_at: new Date().toISOString() })
+        .eq('chat_id', chatId)
+    } else {
+      await supabase
+        .from('whatsapp_conversations')
+        .insert({ chat_id: chatId, phone: chatId.replace('@c.us', ''), messages: msgsWithNew, last_message_at: new Date().toISOString() })
+    }
 
-    // ── Phase 1: Initial buffer (3s) — catch burst messages (reduced for reasoning model latency)
+    // ── Phase 1: Initial buffer (3s) — catch burst messages ──────
     const BUFFER_WAIT = 3000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
     // ── Phase 2: Dedup — check if we're the latest message ───────
+    // Now this works because ALL concurrent messages are saved before the buffer
     const { data: freshConvo } = await supabase
       .from('whatsapp_conversations')
       .select('messages')
