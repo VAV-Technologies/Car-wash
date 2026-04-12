@@ -225,8 +225,8 @@ export async function POST(req: NextRequest) {
 
     const msgTimestamp = Date.now()
 
-    // Wait 15 seconds to collect more messages
-    const BUFFER_WAIT = 15000
+    // Wait 10 seconds to collect more messages
+    const BUFFER_WAIT = 10000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
     // After waiting, check if newer messages arrived during the buffer period
