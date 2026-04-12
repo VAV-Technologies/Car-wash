@@ -527,22 +527,6 @@ export async function executeSheraTool(
       }
 
       case 'send_service_images': {
-        // Check conversation history — if images were already sent, block re-send
-        // (unless it's a different category — category switch is allowed)
-        const chatIdForCheck = String(input.chat_id)
-        const { data: convoCheck } = await supabase
-          .from('whatsapp_conversations')
-          .select('messages')
-          .eq('chat_id', chatIdForCheck)
-          .single()
-        if (convoCheck?.messages && Array.isArray(convoCheck.messages)) {
-          const alreadySent = convoCheck.messages.some((m: any) =>
-            m.role === 'assistant' && m.content?.includes('[IMAGES_SENT]'))
-          if (alreadySent) {
-            return JSON.stringify({ sent: 0, already_sent: true, message: 'Gambar sudah pernah dikirim sebelumnya. JANGAN kirim lagi. Jawab pertanyaan customer pakai TEXT aja.' })
-          }
-        }
-
         const { sendImage } = await import('@/lib/agents/waha')
         // Get service images from knowledge base
         const { data: images } = await supabase
@@ -960,7 +944,8 @@ export async function processMessage(
 
   // Timeout: Vercel has 60s max. Budget: 15s buffer + 5-10s delay already spent.
   // Leave max 25s for all LLM calls combined.
-  const LLM_TIMEOUT = 25000
+  // Reasoning models need more time to think (Grok 4 reasoning, o3, etc.)
+  const LLM_TIMEOUT = 55000
 
   let response = await openai.chat.completions.create({
     model: modelToUse,

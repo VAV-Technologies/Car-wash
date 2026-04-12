@@ -225,8 +225,8 @@ export async function POST(req: NextRequest) {
 
     const msgTimestamp = Date.now()
 
-    // ── Phase 1: Initial buffer (5s) — catch burst messages ──────
-    const BUFFER_WAIT = 5000
+    // ── Phase 1: Initial buffer (3s) — catch burst messages (reduced for reasoning model latency)
+    const BUFFER_WAIT = 3000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
     // ── Phase 2: Dedup — check if we're the latest message ───────
