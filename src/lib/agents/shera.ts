@@ -365,12 +365,12 @@ export async function executeSheraTool(
           if (error) throw error
           return JSON.stringify(data)
         } else {
-          // No stub exists — create new
+          // No stub exists — create new (use cleaned phone to avoid duplicates)
           const { data, error } = await supabase
             .from('customers')
             .insert({
               name: String(input.name),
-              phone: String(input.phone),
+              phone: phoneClean,
               car_model: input.car_model ? String(input.car_model) : null,
               plate_number: input.plate_number ? String(input.plate_number) : null,
               address: input.address ? String(input.address) : null,
@@ -386,37 +386,32 @@ export async function executeSheraTool(
       }
 
       case 'get_completed_jobs': {
-        const { data, error } = await supabase
+        // Look up customer's bookings first, then find completed jobs for those bookings
+        const { data: bookings } = await supabase
+          .from('bookings')
+          .select('id')
+          .eq('customer_id', String(input.customer_id))
+        const bookingIds = (bookings || []).map(b => b.id)
+        if (bookingIds.length === 0) {
+          return JSON.stringify([])
+        }
+        const { data: jobs, error } = await supabase
           .from('jobs')
-          .select('id, service_type, completed_at, customer_rating, customer_feedback, booking_id')
-          .eq('booking_id', String(input.customer_id))
+          .select('id, service_type, completed_at, customer_rating, customer_feedback')
+          .in('booking_id', bookingIds)
           .not('completed_at', 'is', null)
           .order('completed_at', { ascending: false })
           .limit(5)
-        // Also try via bookings → customer_id
-        if (!data || data.length === 0) {
-          const { data: bookings } = await supabase
-            .from('bookings')
-            .select('id')
-            .eq('customer_id', String(input.customer_id))
-          const bookingIds = (bookings || []).map(b => b.id)
-          if (bookingIds.length > 0) {
-            const { data: jobs } = await supabase
-              .from('jobs')
-              .select('id, service_type, completed_at, customer_rating, customer_feedback')
-              .in('booking_id', bookingIds)
-              .not('completed_at', 'is', null)
-              .order('completed_at', { ascending: false })
-              .limit(5)
-            return JSON.stringify(jobs || [])
-          }
-        }
         if (error) throw error
-        return JSON.stringify(data || [])
+        return JSON.stringify(jobs || [])
       }
 
       case 'submit_job_rating': {
-        const rating = Math.min(5, Math.max(1, Number(input.rating) || 0))
+        const rawRating = Number(input.rating)
+        if (!Number.isFinite(rawRating) || rawRating < 1 || rawRating > 5) {
+          return JSON.stringify({ error: 'Rating harus angka 1 sampai 5.', invalid_rating: input.rating })
+        }
+        const rating = Math.round(rawRating)
         const { data, error } = await supabase
           .from('jobs')
           .update({
