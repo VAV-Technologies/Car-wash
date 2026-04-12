@@ -808,6 +808,12 @@ export async function processMessage(
     currentState = 'general_chat'
   }
 
+  // Stuck-state recovery: if we've been in awaiting_name for 2+ turns,
+  // the customer doesn't want to give their name — advance to awaiting_intent
+  if (currentState === 'awaiting_name' && existingMessages.length >= 4) {
+    currentState = 'awaiting_intent'
+  }
+
   systemPrompt += statePromptBlock(currentState)
 
   // 6. Call OpenAI
