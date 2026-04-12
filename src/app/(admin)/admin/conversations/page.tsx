@@ -3,16 +3,18 @@
 import { useState } from 'react'
 import ConversationLog from '@/components/admin/conversations/ConversationLog'
 import WAEscalations from '@/components/admin/conversations/WAEscalations'
+import WALiveChats from '@/components/admin/conversations/WALiveChats'
 
 const TABS = [
-  { key: 'conversations', label: 'Conversations' },
+  { key: 'live', label: 'Live Chats' },
   { key: 'attention', label: 'Needs Attention' },
+  { key: 'conversations', label: 'Log' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
 
 export default function ConversationsPage() {
-  const [activeTab, setActiveTab] = useState<TabKey>('conversations')
+  const [activeTab, setActiveTab] = useState<TabKey>('live')
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -35,8 +37,9 @@ export default function ConversationsPage() {
         ))}
       </div>
 
-      {activeTab === 'conversations' && <ConversationLog />}
+      {activeTab === 'live' && <WALiveChats />}
       {activeTab === 'attention' && <WAEscalations />}
+      {activeTab === 'conversations' && <ConversationLog />}
     </div>
   )
 }

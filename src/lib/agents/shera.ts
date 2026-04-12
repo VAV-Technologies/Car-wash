@@ -1,6 +1,7 @@
 import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
+import { isToolAllowed, getToolBlockReason, getNextState, deriveStateFromHistory, statePromptBlock, type SheraState } from './shera-state'
 
 // ---------------------------------------------------------------------------
 // A. System Prompt
@@ -238,8 +239,16 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
 
 export async function executeSheraTool(
   toolName: string,
-  input: Record<string, unknown>
+  input: Record<string, unknown>,
+  state?: SheraState
 ): Promise<string> {
+  // State gate: block tools that shouldn't be called in the current state
+  if (state && !isToolAllowed(toolName, state)) {
+    const reason = getToolBlockReason(toolName, state)
+    console.warn(`[shera-state] Tool ${toolName} BLOCKED in state ${state}`)
+    return JSON.stringify({ error: reason, blocked_by_state: true, current_state: state })
+  }
+
   const supabase = getSupabaseAdmin()
 
   try {
@@ -776,6 +785,20 @@ export async function processMessage(
 
   systemPrompt += buildCustomerContext(customer, phone)
 
+  // 5b. Load and inject conversation state
+  const customerType = classifyCustomer(customer)
+  let currentState: SheraState = (conversation.state as SheraState) || 'greeting'
+  // Derive state for existing conversations that don't have one yet
+  if (conversation.state === 'greeting' && existingMessages.length > 0) {
+    currentState = deriveStateFromHistory(existingMessages, customerType === 'returning')
+  }
+  // Returning customers with a real profile start in general_chat
+  if (currentState === 'greeting' && customerType === 'returning') {
+    currentState = 'general_chat'
+  }
+
+  systemPrompt += statePromptBlock(currentState)
+
   // 6. Call OpenAI
   const openai = await getOpenAIClient()
 
@@ -791,8 +814,9 @@ export async function processMessage(
     messages: allMessages,
   })
 
-  // 7. Handle tool use loop (max 5 iterations)
+  // 7. Handle tool use loop (max 5 iterations) — with state gating
   let iterations = 0
+  const toolsCalled: string[] = []
   while (response.choices[0]?.finish_reason === 'tool_calls' && iterations < 5) {
     iterations++
 
@@ -803,7 +827,8 @@ export async function processMessage(
     const toolResults = await Promise.all(
       toolCalls.map(async (tc: any) => {
         const input = JSON.parse(tc.function.arguments || '{}')
-        const result = await executeSheraTool(tc.function.name, input)
+        const result = await executeSheraTool(tc.function.name, input, currentState)
+        toolsCalled.push(tc.function.name)
         return {
           role: 'tool' as const,
           tool_call_id: tc.id,
@@ -848,16 +873,30 @@ export async function processMessage(
     { role: 'assistant', content: replyToSave, timestamp: saveTimestamp },
   ].slice(-30) // Keep last 30 messages to prevent unbounded growth
 
-  // 10. Update last_message_at
+  // 10. Advance state machine
+  const hasNameHint = messageText.includes('NAME_DETECTED:')
+  const hasServiceHint = messageText.includes('SERVICE_DETECTED:')
+  const hasCategoryHint = messageText.includes('CATEGORY_DETECTED:')
+  const nextState = getNextState(currentState, {
+    toolsCalled,
+    nameKnown: hasNameHint || (customerType === 'returning'),
+    serviceChosen: hasServiceHint,
+    imagesAlreadySent: (globalThis as any).__serviceImagesSent,
+    bookingCreated: toolsCalled.includes('create_booking'),
+    isReturningCustomer: customerType === 'returning',
+  })
+
+  // 11. Update conversation + state
   await supabase
     .from('whatsapp_conversations')
     .update({
       messages: updatedMessages,
       last_message_at: new Date().toISOString(),
+      state: nextState,
       ...(customer ? { customer_id: customer.id } : {}),
     })
     .eq('chat_id', chatId)
 
-  // 11. Return the text reply
+  // 12. Return the text reply
   return reply
 }

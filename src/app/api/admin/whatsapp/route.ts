@@ -249,6 +249,50 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(data ?? [])
       }
 
+      case 'list-live-chats': {
+        const supabase = getSupabaseAdmin()
+        const { data, error } = await supabase
+          .from('whatsapp_conversations')
+          .select('id, chat_id, phone, customer_id, state, last_message_at, messages, created_at')
+          .order('last_message_at', { ascending: false })
+          .limit(50)
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+        // Enrich with customer names
+        const customerIds = (data ?? []).map(c => c.customer_id).filter(Boolean)
+        let customerMap: Record<string, string> = {}
+        if (customerIds.length > 0) {
+          const { data: customers } = await supabase
+            .from('customers')
+            .select('id, name')
+            .in('id', customerIds)
+          if (customers) {
+            customerMap = Object.fromEntries(customers.map(c => [c.id, c.name]))
+          }
+        }
+
+        const enriched = (data ?? []).map(convo => {
+          const msgs = Array.isArray(convo.messages) ? convo.messages : []
+          const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null
+          return {
+            id: convo.id,
+            chat_id: convo.chat_id,
+            phone: convo.phone,
+            customer_name: convo.customer_id ? (customerMap[convo.customer_id] || 'Unknown') : 'Unknown',
+            state: convo.state || 'greeting',
+            message_count: msgs.length,
+            last_message_at: convo.last_message_at,
+            last_message_preview: lastMsg ? (lastMsg.content || '').slice(0, 100) : '',
+            last_message_role: lastMsg?.role || null,
+            has_images_sent: msgs.some((m: any) => m.role === 'assistant' && m.content?.includes('[IMAGES_SENT]')),
+            has_booking: msgs.some((m: any) => m.role === 'assistant' && /booking.*buat|booking.*created/i.test(m.content || '')),
+            created_at: convo.created_at,
+          }
+        })
+
+        return NextResponse.json(enriched)
+      }
+
       case 'list-escalations': {
         const supabase = getSupabaseAdmin()
         const { data, error } = await supabase

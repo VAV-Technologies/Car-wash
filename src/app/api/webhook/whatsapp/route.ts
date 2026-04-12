@@ -271,16 +271,25 @@ export async function POST(req: NextRequest) {
       processedMessage = `[SYSTEM HINTS: ${hints.join(', ')}]\n${combinedMessage}`
     }
 
-    // ── Process combined message with Shera ─────────────────────────
+    // ── Process combined message with Shera (with retry + fallback) ──
     let reply: string
     try {
       reply = await processMessage(chatId, phone, processedMessage)
-    } catch (err) {
-      // On error, silently fail. Never expose internal errors to the customer.
-      // The message stays in the conversation history so it won't be lost —
-      // the next message from the customer will re-trigger processing.
-      console.error('[shera-error]', err)
-      return NextResponse.json({ ok: false, error: 'processing failed — no reply sent' }, { status: 200 })
+    } catch (firstErr) {
+      console.error('[shera-error] First attempt failed:', firstErr)
+      // Retry once
+      try {
+        reply = await processMessage(chatId, phone, processedMessage)
+      } catch (retryErr) {
+        // Both attempts failed — send a canned fallback so customer isn't left hanging
+        console.error('[shera-error] Retry also failed:', retryErr)
+        const fallbackDelay = 3000 + Math.random() * 3000
+        await new Promise(r => setTimeout(r, fallbackDelay))
+        try {
+          await sendText(chatId, 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏')
+        } catch { /* WAHA itself might be down — nothing we can do */ }
+        return NextResponse.json({ ok: false, error: 'LLM failed — fallback sent' }, { status: 200 })
+      }
     }
 
     // ── Human-like typing delay ──────────────────────────────────────
