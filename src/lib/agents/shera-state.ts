@@ -195,7 +195,7 @@ export function statePromptBlock(state: SheraState): string {
       block += `\nAksi: Perkenalkan diri dan tanya nama.`
       break
     case 'awaiting_name':
-      block += `\nAksi: Tunggu customer kasih nama. Kalau sudah dapat, sapa dan tanya mau cuci atau detailing. Kalau customer TIDAK MAU kasih nama (bilang "tidak", langsung tanya harga, atau skip), JANGAN tanya nama lagi. Lanjut aja ke layanan, panggil mereka "kak".`
+      block += `\nAksi: Tunggu customer kasih nama. Kalau sudah dapat, sapa dan tanya mau cuci atau detailing. Kalau customer TIDAK MAU kasih nama (bilang "tidak", langsung tanya harga, langsung bilang mau apa, atau skip), JANGAN tanya nama lagi. Lanjut aja ke layanan, panggil mereka "kak". PENTING: Kamu SUDAH perkenalkan diri. JANGAN PERNAH perkenalkan diri lagi di state ini.`
       break
     case 'awaiting_intent':
       block += `\nAksi: Tanya customer mau cuci mobil atau detailing. JANGAN kirim gambar sebelum customer jawab.`

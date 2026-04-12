@@ -29,11 +29,14 @@ export function detectServiceType(message: string): string | null {
 
 /**
  * Detect wash vs detailing category from the message text.
- * Returns 'wash', 'detailing', or null.
+ * Returns 'wash', 'detailing', 'both', or null.
  */
 export function detectCategory(message: string): string | null {
-  if (/\bcuci\s*mobil\b|\bcar\s*wash\b|\bcuci\b|\bwash\b/i.test(message)) return 'wash'
-  if (/\bdetailing\b|\bdetail\b/i.test(message)) return 'detailing'
+  const hasWash = /\bcuci\s*mobil\b|\bcar\s*wash\b|\bcuci\b|\bwash\b/i.test(message)
+  const hasDetail = /\bdetailing\b|\bdetail\b/i.test(message)
+  if (hasWash && hasDetail) return 'both'
+  if (hasWash) return 'wash'
+  if (hasDetail) return 'detailing'
   return null
 }
 
@@ -117,7 +120,7 @@ export function detectHints(message: string): string[] {
   if (!hints.some(h => h.includes('SERVICE_DETECTED'))) {
     const category = detectCategory(message)
     if (category) {
-      const categoryKeyword = category === 'wash' ? 'cuci' : 'detail'
+      const categoryKeyword = category === 'both' ? 'cuci' : category === 'wash' ? 'cuci' : 'detail'
       if (!question || isSelectionSeparateFromQuestion(message, categoryKeyword)) {
         hints.push(`CATEGORY_DETECTED: ${category}`)
       }

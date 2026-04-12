@@ -36,18 +36,12 @@ describe('Cat 7: WhatsApp-specific behaviors', () => {
     expect(hints.some(h => h.includes('CATEGORY_DETECTED'))).toBe(false) // suppressed
   })
 
-  it('7.3 Rapid-fire contradictory messages — wash then detailing', () => {
+  it('7.3 Rapid-fire contradictory messages — wash then detailing → detects both', () => {
     const combined = 'cuci\neh ga jadi\ndetailing aja'
     const hints = detectHints(combined)
 
-    // Both "cuci" and "detailing" present — wash checked first
-    // BUG: customer corrected to detailing but wash wins
-    const hasCategoryWash = hints.includes('CATEGORY_DETECTED: wash')
-    const hasCategoryDetail = hints.includes('CATEGORY_DETECTED: detailing')
-    // Current behavior: wash wins because it's checked first
-    expect(hasCategoryWash).toBe(true)
-    expect(hasCategoryDetail).toBe(false)
-    // IDEAL: last intent ("detailing") should win — documenting this as known limitation
+    // Both "cuci" and "detailing" present → detects as "both"
+    expect(hints).toContain('CATEGORY_DETECTED: both')
   })
 
   it('7.4 Location pin (no text) does not crash preprocessor', () => {
@@ -154,14 +148,13 @@ describe('Cat 9: Multi-intent messages', () => {
     expect(hints.some(h => h.includes('SERVICE_DETECTED: standard_wash'))).toBe(true)
   })
 
-  it('9.4 Contradictory message — first intent wins', () => {
+  it('9.4 Contradictory message — both detected', () => {
     const msg = 'mau cuci... eh ga deng, detailing aja'
     const hints = detectHints(msg)
 
-    // "cuci" is checked before "detailing" — wash wins
-    expect(hints).toContain('CATEGORY_DETECTED: wash')
-    // Customer's actual intent was "detailing aja" (correction)
-    // Known limitation: regex order determines winner, not message semantics
+    // Both "cuci" and "detailing" present → detects as "both"
+    // LLM handles the correction ("ga deng, detailing aja") from context
+    expect(hints).toContain('CATEGORY_DETECTED: both')
   })
 
   it('9.5 Customer says "ok" to a service suggestion — no hints', () => {

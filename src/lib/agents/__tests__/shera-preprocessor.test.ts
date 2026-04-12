@@ -200,9 +200,8 @@ describe('detectCategory', () => {
     expect(detectCategory('')).toBeNull()
   })
 
-  // "cuci" should win over "detail" when both present
-  it('prefers wash when message contains both "cuci" and "detail"', () => {
-    expect(detectCategory('cuci detail')).toBe('wash')
+  it('detects "both" when message contains "cuci" and "detail"', () => {
+    expect(detectCategory('cuci detail')).toBe('both')
   })
 })
 
