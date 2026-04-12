@@ -91,10 +91,10 @@ describe('S1: System prompt policy', () => {
     it('English for English input', () => {
       expect(SHERA_SYSTEM_PROMPT).toContain('balas FULL English')
     })
-    it('English detection words listed', () => {
-      for (const w of ['hello', 'hi', 'good', 'morning', 'what', 'how']) {
-        expect(SHERA_SYSTEM_PROMPT.toLowerCase()).toContain(w)
-      }
+    it('English examples provided', () => {
+      // Prompt has example English sentences for detection
+      expect(SHERA_SYSTEM_PROMPT).toContain('Hello good morning')
+      expect(SHERA_SYSTEM_PROMPT).toContain('I want a car wash')
     })
     it('English example exists', () => {
       expect(SHERA_SYSTEM_PROMPT).toContain('Hello good morning')
