@@ -137,10 +137,14 @@ export function deriveStateFromHistory(
   const hasAskedName = messages.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
   const hasAskedIntent = messages.some(m => m.role === 'assistant' && /cuci mobil atau detailing|wash or detailing/i.test(m.content))
   const hasNameResponse = messages.some(m => m.role === 'user' && messages.indexOf(m) > 0)
+  // Detect when Shera already moved past name (asking about services, prices, etc.)
+  const hasSheraMovedPastName = messages.some(m => m.role === 'assistant' &&
+    /standard wash|professional|elite|mau cuci|which package|paket cuci|paket detail|harga/i.test(m.content))
 
   if (hasBookingConfirm) return 'booking_complete'
   if (hasImagesSent && hasNameResponse) return 'collecting_info'
   if (hasImagesSent) return 'showing_packages'
+  if (hasSheraMovedPastName) return 'awaiting_intent'
   if (hasAskedIntent) return 'awaiting_intent'
   if (hasAskedName && hasNameResponse) return 'awaiting_intent'
   if (hasAskedName) return 'awaiting_name'

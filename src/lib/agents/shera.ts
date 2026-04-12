@@ -895,10 +895,12 @@ export async function processMessage(
   ].slice(-30) // Keep last 30 messages to prevent unbounded growth
 
   // 10. Advance state machine
+  //     Use hint-based transition first, then validate against actual conversation history.
+  //     History-derived state wins if it's further along — this handles customers who
+  //     go off-track, skip steps, or provide info in unexpected order.
   const hasNameHint = messageText.includes('NAME_DETECTED:')
   const hasServiceHint = messageText.includes('SERVICE_DETECTED:')
-  const hasCategoryHint = messageText.includes('CATEGORY_DETECTED:')
-  const nextState = getNextState(currentState, {
+  const hintState = getNextState(currentState, {
     toolsCalled,
     nameKnown: hasNameHint || (customerType === 'returning'),
     serviceChosen: hasServiceHint,
@@ -906,6 +908,18 @@ export async function processMessage(
     bookingCreated: toolsCalled.includes('create_booking'),
     isReturningCustomer: customerType === 'returning',
   })
+
+  // Derive state from what actually happened in the conversation
+  const derivedState = deriveStateFromHistory(updatedMessages, customerType === 'returning')
+
+  // Use whichever state is further along — never go backwards
+  const STATE_ORDER: Record<string, number> = {
+    greeting: 0, awaiting_name: 1, awaiting_intent: 2, showing_packages: 3,
+    collecting_info: 4, confirming_booking: 5, booking_complete: 6, general_chat: 3,
+  }
+  const nextState = (STATE_ORDER[derivedState] || 0) >= (STATE_ORDER[hintState] || 0)
+    ? derivedState
+    : hintState
 
   // 11. Update conversation + state
   await supabase
