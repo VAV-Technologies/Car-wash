@@ -242,8 +242,8 @@ export async function POST(req: NextRequest) {
         .insert({ chat_id: chatId, phone: chatId.replace('@c.us', ''), messages: msgsWithNew, last_message_at: new Date().toISOString() })
     }
 
-    // ── Phase 1: Initial buffer (3s) — catch burst messages ──────
-    const BUFFER_WAIT = 3000
+    // ── Phase 1: Initial buffer (5s) — catch burst/double-text messages ──
+    const BUFFER_WAIT = 5000
     await new Promise(resolve => setTimeout(resolve, BUFFER_WAIT))
 
     // ── Phase 2: Dedup — check if we're the latest message ───────
