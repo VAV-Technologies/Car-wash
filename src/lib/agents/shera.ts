@@ -288,7 +288,15 @@ export async function executeSheraTool(
         }
 
         const chatId = String(input.chat_id)
-        const serviceTypeStr = input.service_type ? String(input.service_type) : 'all'
+        // HARD RULE: Auto-expand to full category — never send just 1 image
+        const WASH_TYPES = ['standard_wash', 'professional', 'elite_wash']
+        const DETAIL_TYPES = ['interior_detail', 'exterior_detail', 'window_detail', 'tire_rims', 'full_detail']
+        const SUB_TYPES = ['sub_essentials', 'sub_plus', 'sub_elite']
+        let serviceTypeStr = input.service_type ? String(input.service_type) : 'all'
+        const rawRequested = serviceTypeStr.split(',').map(s => s.trim())
+        if (rawRequested.some(t => WASH_TYPES.includes(t))) serviceTypeStr = WASH_TYPES.join(',')
+        else if (rawRequested.some(t => DETAIL_TYPES.includes(t))) serviceTypeStr = DETAIL_TYPES.join(',')
+        else if (rawRequested.some(t => SUB_TYPES.includes(t))) serviceTypeStr = SUB_TYPES.join(',')
         const requestedTypes = serviceTypeStr === 'all' ? null : serviceTypeStr.split(',').map(s => s.trim())
 
         const SERVICE_LABELS: Record<string, string> = {

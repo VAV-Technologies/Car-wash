@@ -545,18 +545,21 @@ describe('send_service_images', () => {
     } finally { restore() }
   })
 
-  it('filters to only requested types', async () => {
+  it('auto-expands partial wash request to all wash types', { timeout: 15000 }, async () => {
+    process.env.WAHA_API_URL = 'http://localhost:3000'
+    process.env.WAHA_API_KEY = 'test'
     mockImagesInDB([...washImages, { file_name: 'service_image_interior_detail', content: 'https://example.com/int.jpg' }])
     mockSendImage.mockResolvedValue(undefined)
     const restore = mockVerification()
 
     try {
       const result = JSON.parse(await executeSheraTool('send_service_images', {
-        service_type: 'standard_wash,elite_wash',
+        service_type: 'standard_wash,elite_wash', // only 2 wash types
         chat_id: '628123@c.us',
       }))
 
-      expect(result.sent).toBe(2)
+      // Auto-expanded to all 3 wash types (not 2, not 4)
+      expect(result.sent).toBe(3)
     } finally { restore() }
   })
 

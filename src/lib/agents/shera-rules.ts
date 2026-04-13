@@ -174,10 +174,10 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     }
   }
 
-  // 3. Check for unauthorized discounts
-  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b/i.test(output)) {
+  // 3. Check for unauthorized discounts / special prices
+  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bharga spesial\b|\bharga khusus\b/i.test(output)) {
     if (!/249\.000/i.test(output)) {
-      issues.push('unauthorized discount mentioned')
+      issues.push('unauthorized discount or special price')
       shouldRegenerate = true
     }
   }
@@ -188,16 +188,29 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
   output = output.replace(/\bbu\s+([A-Z])/gi, 'kak $1')
   if (output !== beforeGender) issues.push('fixed gendering')
 
-  // 5. Deduplicate (Grok sometimes repeats)
+  // 5. Block address re-asking
+  if (ctx.address && /lebih lengkap|tulis ulang|tulis lagi|alamat.*lagi|kirim.*alamat/i.test(output)) {
+    output = output.replace(/.*(?:lebih lengkap|tulis ulang|tulis lagi|alamat.*lagi|kirim.*alamat).*[.?!]?\s*/gi, '').trim()
+    issues.push('stripped address re-ask')
+  }
+
+  // 6. Deduplicate (Grok sometimes repeats)
   const halfLen = Math.floor(output.length / 2)
   if (output.length > 40 && output.slice(0, halfLen).trim() === output.slice(halfLen).trim()) {
     output = output.slice(0, halfLen).trim()
     issues.push('deduplicated response')
   }
 
-  // 6. Ensure not empty
+  // 7. Ensure CTA at end (must end with question or call-to-action)
+  if (output.length > 10 && !output.includes('?') && !/mau lanjut|gimana kak|mau coba|boleh|siap|booking/i.test(output)) {
+    const cta = ctx.language === 'en' ? '\n\nWould you like to continue?' : '\n\nMau lanjut kak?'
+    output += cta
+    issues.push('appended CTA')
+  }
+
+  // 8. Ensure not empty
   if (!output.trim()) {
-    output = 'Ada yang bisa aku bantu kak?'
+    output = ctx.language === 'en' ? 'How can I help you?' : 'Ada yang bisa aku bantu kak?'
     issues.push('empty response replaced')
   }
 

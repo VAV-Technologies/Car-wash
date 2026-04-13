@@ -196,6 +196,19 @@ export async function POST(req: NextRequest) {
     const seenDelay = 2000 + Math.random() * 2000
     setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay) // sendSeen uses original from (works with both @lid and @c.us)
 
+    // ── HARD RULE: Business hours check (code-enforced) ────────────
+    const jakartaNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }))
+    const dayOfWeek = jakartaNow.getDay() // 0=Sun
+    const hour = jakartaNow.getHours()
+    if (dayOfWeek === 0) {
+      await sendText(chatId, 'Hai kak, hari Minggu kita libur ya. Senin-Sabtu jam 8 pagi sampai 5 sore kita ready 😊')
+      return NextResponse.json({ ok: true, handled: 'outside-hours-sunday' })
+    }
+    if (hour < 8 || hour >= 17) {
+      await sendText(chatId, `Hai kak, kita buka jam 8 pagi sampai 5 sore ya. Chat lagi besok ya 😊`)
+      return NextResponse.json({ ok: true, handled: 'outside-hours' })
+    }
+
     // ── Message buffering ──────────────────────────────────────────
     // When people send multiple messages quickly (e.g. splitting one
     // thought into 2-3 texts), we buffer them and process together.
