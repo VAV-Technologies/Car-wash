@@ -336,7 +336,78 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('appended CTA')
   }
 
-  // 8. Ensure not empty
+  // 8. AREA VALIDATION — reject non-Jabodetabek addresses
+  const NON_JABODETABEK = /\b(bandung|surabaya|medan|yogya|jogja|semarang|bali|denpasar|makassar|malang|solo|palembang|padang|manado|balikpapan|pontianak|lampung|aceh|batam|pekanbaru|samarinda|banjarmasin|mataram|kupang|jayapura|ambon|ternate)\b/i
+  if (ctx.address && NON_JABODETABEK.test(ctx.address)) {
+    output = ctx.language === 'en'
+      ? "Sorry, we currently only serve the Jabodetabek area (Jakarta, Bogor, Depok, Tangerang, Bekasi). Hopefully we can reach your area soon! 🙏"
+      : "Maaf kak, untuk saat ini kita baru bisa layani area Jabodetabek ya (Jakarta, Bogor, Depok, Tangerang, Bekasi). Semoga nanti bisa sampai ke daerah sana 🙏"
+    issues.push('rejected non-Jabodetabek address: ' + ctx.address)
+  }
+
+  // 9. BUSINESS HOURS — reject bookings outside 08:00-17:00 or Sunday
+  if (ctx.schedule) {
+    const schedLower = ctx.schedule.toLowerCase()
+    // Check for late night / early morning times
+    const timeMatch = schedLower.match(/jam\s*(\d{1,2})|(\d{1,2})\s*(?:pm|am|pagi|siang|sore|malem|malam)/)
+    if (timeMatch) {
+      const hour = parseInt(timeMatch[1] || timeMatch[2])
+      const isPM = /malem|malam|pm/i.test(schedLower)
+      const isMorning = /pagi|am/i.test(schedLower)
+      let actualHour = hour
+      if (isPM && hour < 12) actualHour = hour + 12
+      if (isMorning && hour === 12) actualHour = 0
+      if (actualHour < 8 || actualHour >= 17) {
+        // Don't replace entire output — append correction
+        if (!/jam 8.*5 sore|8 pagi.*17|08:00.*17:00/i.test(output)) {
+          output += ctx.language === 'en'
+            ? "\n\nJust a heads up — we operate from 8 AM to 5 PM, Monday to Saturday. Could you pick a time within those hours?"
+            : "\n\nOh iya kak, kita buka jam 8 pagi sampai 5 sore ya, Senin-Sabtu. Boleh pilih jam di range itu kak?"
+          issues.push('appended hours correction')
+        }
+      }
+    }
+    // Check for Sunday
+    if (/\bminggu\b|\bsunday\b/i.test(schedLower)) {
+      if (!/libur|tutup|closed/i.test(output)) {
+        output += ctx.language === 'en'
+          ? "\n\nWe're closed on Sundays! How about Monday or another day?"
+          : "\n\nHari Minggu kita libur kak. Mau hari Senin atau hari lain?"
+        issues.push('appended Sunday rejection')
+      }
+    }
+  }
+
+  // 10. Strip "Anda" and "kamu" usage
+  output = output.replace(/\bAnda\b/g, 'kak')
+  output = output.replace(/\bkamu\b/gi, 'kak')
+
+  // 11. Replace dash list items with numbered list
+  if (/^-\s/m.test(output)) {
+    let counter = 1
+    output = output.replace(/^-\s/gm, () => `${counter++}. `)
+    issues.push('replaced dashes with numbers')
+  }
+
+  // 12. Strip phone number requests
+  if (/nomor\s*(?:hp|telepon|telpon|wa|whatsapp)|phone\s*number/i.test(output)) {
+    output = output.replace(/[^.!?\n]*(?:nomor\s*(?:hp|telepon|telpon|wa|whatsapp)|phone\s*number)[^.!?\n]*[.!?]?\s*/gi, '').trim()
+    issues.push('stripped phone number request')
+  }
+
+  // 13. Wrong category — wash descriptions in detailing context
+  if (ctx.imagesSentCategories.includes('detailing') && !ctx.imagesSentCategories.includes('wash')) {
+    if (/\bStandard Wash\b.*\bProfessional Wash\b|\bProfessional\b.*\bElite\b.*\bWash\b/i.test(output)) {
+      // Model is describing wash packages when context is detailing — strip
+      output = output.replace(/[^.!?\n]*(?:Standard Wash|Professional Wash|Elite Wash)[^.!?\n]*[.!?]?\s*/gi, '').trim()
+      if (output.length < 10) {
+        output = 'Untuk detailing kak, ada Interior Detail, Exterior Detail, Window Detail, Tire & Rims, dan Full Detail.\n\nKak mau pilih yang mana?'
+      }
+      issues.push('stripped wrong category (wash in detailing context)')
+    }
+  }
+
+  // 14. Ensure not empty
   if (!output.trim()) {
     output = ctx.language === 'en' ? 'How can I help you?' : 'Ada yang bisa aku bantu kak?'
     issues.push('empty response replaced')
