@@ -80,14 +80,15 @@ Jawab pertanyaan soal paket pakai TEXT. JANGAN kirim gambar lagi KECUALI custome
 Kalau customer pilih paket → ingatkan soal wash prerequisite lalu tanya model mobilnya.`,
 
   wash_selected: `State: WASH SELECTED. Customer sudah pilih paket cuci.
-Tanya: "Model mobilnya apa kak?" (contoh: Fortuner, Civic, CRV). Lalu tanya plat nomor.`,
+Tanya model mobil DAN plat nomor dalam SATU pesan: "Model mobilnya apa dan plat nomornya berapa kak?"`,
 
   detail_selected: `State: DETAIL SELECTED. Customer sudah pilih paket detailing.
 WAJIB ingatkan: "Oh iya kak, sebelum detailing mobilnya perlu dicuci dulu ya. Kalau mau, kita bisa sekalian cuci Standard Wash dengan harga spesial Rp 249.000 (biasanya 349.000). Tapi kalau mau cuci sendiri juga boleh kok 🙂"
-Lalu tanya model mobilnya.`,
+Lalu tanya model DAN plat dalam SATU pesan: "Model mobilnya apa dan plat nomornya berapa kak?"`,
 
   collecting_car_info: `State: COLLECTING CAR INFO. Kumpulkan model mobil dan plat nomor.
-Tanya SATU per pesan. Kalau sudah lengkap, lanjut ke alamat (kalau belum ada) atau jadwal.`,
+Kalau belum ada dua-duanya, tanya BARENG: "Model mobilnya apa dan plat nomornya berapa kak?"
+Kalau sudah ada salah satu, tanya yang kurang aja. Kalau sudah lengkap, lanjut ke alamat.`,
 
   collecting_address: `State: COLLECTING ADDRESS. Tanya alamat.
 Terima APAPUN yang customer kasih. JANGAN minta "lebih lengkap". Alamat customer = FINAL.`,
