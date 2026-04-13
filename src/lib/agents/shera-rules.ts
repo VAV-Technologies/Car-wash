@@ -25,6 +25,7 @@ export interface ConvoContext {
   address: string | null
   schedule: string | null
   detailingWashOffered: boolean
+  hasServiceIntent: boolean
 }
 
 type Msg = { role: string; content: string; [key: string]: any }
@@ -44,6 +45,7 @@ export function extractContext(messages: Msg[]): ConvoContext {
     address: null,
     schedule: null,
     detailingWashOffered: false,
+    hasServiceIntent: false,
   }
 
   for (const m of messages) {
@@ -95,9 +97,11 @@ export function extractContext(messages: Msg[]): ConvoContext {
         'punya', 'ada', 'bisa', 'boleh', 'tau', 'tahu', 'pikir', 'rasa', 'kabar',
         // Negations
         'tidak', 'ga', 'gak', 'gk', 'belum', 'blm', 'ngga', 'nggak', 'enggak', 'engga', 'jangan',
-        // Filler/casual
+        // Filler/casual/laughs
         'iya', 'iyaa', 'ok', 'oke', 'okee', 'sip', 'siap', 'yah', 'yaa', 'ya',
-        'huh', 'hmm', 'hmmm', 'wkwk', 'wkwkwk', 'lol', 'haha', 'ohh', 'ooh',
+        'huh', 'hmm', 'hmmm', 'wkwk', 'wkwkwk', 'wkwkwkwk', 'wkwkwkwkwk',
+        'lol', 'haha', 'hahaha', 'hahahaha', 'kwkwk', 'xixi', 'lmao', 'lmfao', 'rofl',
+        'ohh', 'ooh', 'ohhh', 'ahhh', 'hmmmm', 'ehh', 'uhh',
         // Greetings
         'halo', 'hallo', 'hai', 'hello', 'hi', 'hey', 'selamat',
         // Adverbs/conjunctions
@@ -124,8 +128,11 @@ export function extractContext(messages: Msg[]): ConvoContext {
         if (!candidate || candidate.length < 2) return false
         if (NOT_NAMES.has(candidate.toLowerCase())) return false
         if (/^\d+$/.test(candidate)) return false // pure numbers
-        if (/^[^a-zA-Z]/.test(candidate)) return false // starts with non-letter (emoji, punctuation)
+        if (/^[^a-zA-Z]/.test(candidate)) return false // starts with non-letter
         if (/^\.+$/.test(candidate)) return false // just dots
+        if (/^(.)\1{2,}$/i.test(candidate)) return false // repeated chars (aaa, hhh)
+        if (/^(..)\1{2,}$/i.test(candidate)) return false // repeated pairs (wkwkwk, hahaha)
+        if (candidate.length > 20) return false // too long to be a name
         return true
       }
 
@@ -186,6 +193,11 @@ export function extractContext(messages: Msg[]): ConvoContext {
       }
     }
 
+    // Detect service intent from user messages
+    if (m.role === 'user' && /\bcuci\b|\bwash\b|\bdetailing\b|\bdetail\b|\bstandard\b|\bprofessional\b|\belite\b/i.test(c)) {
+      ctx.hasServiceIntent = true
+    }
+
     // Check detailing wash offer
     if (m.role === 'assistant' && /249\.000|wash.*diskon.*detailing|detailing.*cuci.*dulu/i.test(c)) {
       ctx.detailingWashOffered = true
@@ -244,8 +256,10 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
   let shouldRegenerate = false
 
   // 0. HARD RULE: Enforce intro template when in intro_pitch state
-  // BUT skip if customer already stated their intent (multi-car, specific service, etc.)
-  const hasIntent = ctx.imagesSentCategories.length > 0 || (ctx.totalCarsRequested && ctx.totalCarsRequested > 0)
+  // BUT skip if customer already stated their intent (multi-car, specific service, category, etc.)
+  const hasIntent = ctx.imagesSentCategories.length > 0
+    || (ctx.totalCarsRequested && ctx.totalCarsRequested > 0)
+    || ctx.hasServiceIntent
   if (ctx.currentState === 'intro_pitch' && ctx.customerName && !ctx.introPitchGiven && !hasIntent) {
     const name = ctx.customerName
     if (ctx.language === 'en') {
@@ -262,30 +276,32 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('stripped re-introduction')
   }
 
-  // 2. Check for hallucinated prices — catch multiple formats
-  // "Rp 349.000", "Rp349.000", "349rb", "349ribu", "349k"
-  const priceMatches = output.match(/Rp\s*[\d.,]+|[\d.]+\s*(?:rb|ribu|k)\b/gi)
+  // 2. Check for hallucinated prices — ONLY flag clearly fake prices, don't block approved ones
+  // Only check "Rp" format prices (not "349rb" which is too noisy)
+  const priceMatches = output.match(/Rp\s*[\d.]+\.000/gi)
   if (priceMatches) {
     for (const price of priceMatches) {
-      // Normalize: strip "Rp", "rb", "ribu", "k", spaces
-      let normalized = price.replace(/[Rp\s]/gi, '').replace(/rb$|ribu$|k$/i, '000')
-      // Handle "349rb" → "349000" → need to match "349.000" format
-      if (!normalized.includes('.') && normalized.length > 3) {
-        normalized = normalized.slice(0, -3) + '.' + normalized.slice(-3)
-      }
+      const normalized = price.replace(/[Rp\s]/gi, '')
       if (normalized && !APPROVED_PRICES.includes(normalized)) {
-        issues.push(`hallucinated price: ${price} (normalized: ${normalized})`)
-        shouldRegenerate = true
+        // STRIP the fake price sentence, don't block the whole response
+        output = output.replace(new RegExp('[^.!?\\n]*' + price.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[^.!?\\n]*[.!?]?\\s*', 'gi'), '').trim()
+        issues.push(`stripped hallucinated price: ${price}`)
       }
     }
   }
 
-  // 3. Check for unauthorized discounts / freebies
-  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bharga spesial\b|\bharga khusus\b|\bgratis\b|\bfree\b|\bbonus\b|\bcomplimentary\b/i.test(output)) {
-    // Only allow the 249k detailing wash discount
+  // 3. Check for unauthorized discounts — STRIP the sentence, don't block everything
+  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b/i.test(output)) {
     if (!/249\.?000/i.test(output)) {
-      issues.push('unauthorized discount, freebie, or special price')
-      shouldRegenerate = true
+      // Strip just the discount sentence
+      output = output.replace(/[^.!?\n]*(?:\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b)[^.!?\n]*[.!?]?\s*/gi, '').trim()
+      issues.push('stripped unauthorized discount mention')
+      // If stripping left the response empty or too short, use canned response
+      if (output.length < 10) {
+        output = ctx.language === 'en'
+          ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use 🙂\n\nWould you like to continue?"
+          : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti 🙂\n\nMau lanjut kak?"
+      }
     }
   }
 

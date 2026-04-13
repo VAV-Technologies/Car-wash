@@ -640,9 +640,10 @@ export async function processMessage(
   const isReturning = customerType === 'returning'
   let currentState: SheraState = deriveState(msgsForContext, convoCtx, isReturning)
 
-  // Stuck-state recovery
-  if (currentState === 'collecting_name' && existingMessages.length >= 6) {
+  // Stuck-state recovery — if stuck asking for name too long, move on
+  if ((currentState === 'collecting_name' || currentState === 'intro_pitch') && !convoCtx.customerName && existingMessages.length >= 6) {
     currentState = 'awaiting_intent'
+    convoCtx.customerName = 'kak' // default to "kak" if name never given
   }
 
   // If name was just given in THIS message and we're at greeting/collecting_name, advance
@@ -750,20 +751,11 @@ export async function processMessage(
 
   // ─── LAYER 5: Validate and fix response ────────────────────────
   const validation = validateResponse(reply, convoCtx)
-  if (validation.shouldRegenerate) {
-    // Don't regenerate (too slow for reasoning models) — use a canned safe response based on the issue
-    console.warn('[shera-validator] Blocked response due to:', validation.issues)
-    const isDiscountIssue = validation.issues.some(i => /discount|diskon|freebie|price/i.test(i))
-    if (isDiscountIssue) {
-      reply = convoCtx.language === 'en'
-        ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use. But trust us, the result is worth it 🙂\n\nWould you like to continue?"
-        : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti biar hasilnya maksimal 🙂\n\nMau lanjut kak?"
-    } else {
-      reply = validation.output // use the fixed version
-    }
-  } else {
-    reply = validation.output
+  // Validator now does surgical fixes (strip bad sentences) instead of blocking whole responses
+  if (validation.issues.length > 0) {
+    console.warn('[shera-validator] Fixed issues:', validation.issues)
   }
+  reply = validation.output
 
   // Update any pending escalations with correct chat_id and phone
   await supabase
