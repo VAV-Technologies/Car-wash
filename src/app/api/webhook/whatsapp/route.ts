@@ -199,18 +199,8 @@ export async function POST(req: NextRequest) {
     const seenDelay = 2000 + Math.random() * 2000
     setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay) // sendSeen uses original from (works with both @lid and @c.us)
 
-    // ── HARD RULE: Business hours check (code-enforced) ────────────
-    // Use Intl for reliable timezone conversion (works in Vercel serverless)
-    const jakartaHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', hour: 'numeric', hour12: false }).format(new Date()))
-    const jakartaDay = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', weekday: 'short' }).format(new Date())
-    if (jakartaDay === 'Sun') {
-      await sendText(chatId, 'Hai kak, hari Minggu kita libur ya. Senin-Sabtu jam 8 pagi sampai 5 sore kita ready 😊')
-      return NextResponse.json({ ok: true, handled: 'outside-hours-sunday' })
-    }
-    if (jakartaHour < 8 || jakartaHour >= 17) {
-      await sendText(chatId, 'Hai kak, kita buka jam 8 pagi sampai 5 sore ya. Chat lagi besok ya 😊')
-      return NextResponse.json({ ok: true, handled: 'outside-hours' })
-    }
+    // Business hours: NOT enforced at message level — customers can chat anytime.
+    // Hours are only enforced at BOOKING SCHEDULING (in the model prompt + check_date_availability tool).
 
     // ── Message buffering ──────────────────────────────────────────
     // When people send multiple messages quickly (e.g. splitting one
