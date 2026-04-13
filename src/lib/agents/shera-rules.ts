@@ -82,9 +82,14 @@ export function extractContext(messages: Msg[]): ConvoContext {
       }
     }
 
-    // Extract name from user messages ("saya X", "nama saya X", "I'm X")
+    // Extract name from user messages
     if (m.role === 'user' && !ctx.customerName) {
-      const NOT_NAMES = new Set(['mau', 'ingin', 'butuh', 'perlu', 'lagi', 'sedang', 'baru', 'sudah', 'tidak', 'ga', 'gak', 'belum', 'cuma', 'hanya', 'juga', 'dari', 'tanya', 'minta', 'cari', 'lihat', 'booking', 'book', 'want', 'need', 'pengen', 'dicuci', 'cuci', 'punya', 'ada', 'bisa', 'boleh'])
+      const NOT_NAMES = new Set(['mau', 'ingin', 'butuh', 'perlu', 'lagi', 'sedang', 'baru', 'sudah', 'tidak', 'ga', 'gak', 'belum', 'cuma', 'hanya', 'juga', 'dari', 'tanya', 'minta', 'cari', 'lihat', 'booking', 'book', 'want', 'need', 'pengen', 'dicuci', 'cuci', 'punya', 'ada', 'bisa', 'boleh', 'halo', 'hallo', 'hai', 'hello', 'hi', 'hey'])
+      const idx = messages.indexOf(m)
+      const prevMsg = idx > 0 ? messages[idx - 1] : null
+      const prevAskedName = prevMsg?.role === 'assistant' && /namanya siapa|your name/i.test(prevMsg.content || '')
+
+      // Pattern-based detection ("saya X", "nama saya X", "I'm X")
       const patterns = [
         /nama\s+(?:saya|aku|gue|gw)\s+(\w+)/i,
         /(?:I'm|my name is|i am|this is)\s+(\w+)/i,
@@ -92,11 +97,20 @@ export function extractContext(messages: Msg[]): ConvoContext {
       ]
       for (const p of patterns) {
         const match = c.match(p)
-        if (match) {
-          const candidate = match[1]
-          if (!NOT_NAMES.has(candidate.toLowerCase())) {
-            ctx.customerName = candidate
-            break
+        if (match && !NOT_NAMES.has(match[1].toLowerCase())) {
+          ctx.customerName = match[1]
+          break
+        }
+      }
+
+      // Direct name response: if previous message asked for name and this is a short reply (1-3 words)
+      if (!ctx.customerName && prevAskedName) {
+        const words = c.trim().split(/\s+/)
+        if (words.length <= 3 && words.length >= 1) {
+          const firstName = words[0]
+          // Must start with uppercase or be a reasonable name (not a common word)
+          if (firstName.length >= 2 && !NOT_NAMES.has(firstName.toLowerCase())) {
+            ctx.customerName = firstName
           }
         }
       }
