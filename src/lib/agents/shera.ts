@@ -615,19 +615,32 @@ export async function processMessage(
   // 5. Add new user message
   chatMessages.push({ role: 'user', content: messageText })
 
-  // ─── LAYER 1+4: Extract context from conversation history ────────
-  const convoCtx = extractContext(existingMessages)
+  // ─── LAYER 1+4: Extract context from conversation history + current message ──
+  // Include the current message in context extraction so first-message info dumps work
+  const msgsForContext = [
+    ...existingMessages,
+    { role: 'user', content: messageText },
+  ]
+  const convoCtx = extractContext(msgsForContext)
   const contextBlock = formatContextBlock(convoCtx)
 
   // ─── LAYER 2: Derive state from context ────────────────────────
   const customerType = classifyCustomer(customer)
   const isReturning = customerType === 'returning'
-  let currentState: SheraState = deriveState(existingMessages, convoCtx, isReturning)
+  let currentState: SheraState = deriveState(msgsForContext, convoCtx, isReturning)
 
   // Stuck-state recovery
   if (currentState === 'collecting_name' && existingMessages.length >= 6) {
     currentState = 'awaiting_intent'
   }
+
+  // If name was just given in THIS message and we're at greeting/collecting_name, advance
+  if (convoCtx.customerName && (currentState === 'greeting' || currentState === 'collecting_name')) {
+    currentState = 'intro_pitch'
+  }
+
+  // Pass state to context for validator enforcement
+  convoCtx.currentState = currentState
 
   // ─── LAYER 3: Build focused prompt (Part A + B + State + Context) ─
   const settings = await getSheraSettings()

@@ -13,6 +13,7 @@ export const APPROVED_PRICES = [
 
 // ─── Conversation Context ────────────────────────────────────────────
 export interface ConvoContext {
+  currentState?: string
   customerName: string | null
   alreadyIntroduced: boolean
   introPitchGiven: boolean
@@ -78,6 +79,26 @@ export function extractContext(messages: Msg[]): ConvoContext {
       const nameMatch = c.match(/kak\s+(\w+)/i)
       if (nameMatch && !['kak'].includes(nameMatch[1].toLowerCase())) {
         ctx.customerName = nameMatch[1]
+      }
+    }
+
+    // Extract name from user messages ("saya X", "nama saya X", "I'm X")
+    if (m.role === 'user' && !ctx.customerName) {
+      const NOT_NAMES = new Set(['mau', 'ingin', 'butuh', 'perlu', 'lagi', 'sedang', 'baru', 'sudah', 'tidak', 'ga', 'gak', 'belum', 'cuma', 'hanya', 'juga', 'dari', 'tanya', 'minta', 'cari', 'lihat', 'booking', 'book', 'want', 'need', 'pengen', 'dicuci', 'cuci', 'punya', 'ada', 'bisa', 'boleh'])
+      const patterns = [
+        /nama\s+(?:saya|aku|gue|gw)\s+(\w+)/i,
+        /(?:I'm|my name is|i am|this is)\s+(\w+)/i,
+        /(?:^|[,.!]\s*|hi\s+|halo\s+|hello\s+)(?:saya|aku|gue|gw)\s+(\w+)/i,
+      ]
+      for (const p of patterns) {
+        const match = c.match(p)
+        if (match) {
+          const candidate = match[1]
+          if (!NOT_NAMES.has(candidate.toLowerCase())) {
+            ctx.customerName = candidate
+            break
+          }
+        }
       }
     }
 
@@ -155,6 +176,17 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
   let output = response
   const issues: string[] = []
   let shouldRegenerate = false
+
+  // 0. HARD RULE: Enforce intro template when in intro_pitch state
+  if (ctx.currentState === 'intro_pitch' && ctx.customerName && !ctx.introPitchGiven) {
+    const name = ctx.customerName
+    if (ctx.language === 'en') {
+      output = `Nice to meet you ${name}! 😊\n\nSo Castudio is a premium car wash & detailing service that comes directly to your home. No delivery fee and no deposit needed, we just need access to water and electricity.\n\nWe take our work seriously — if you're not satisfied with the result, we'll come back and fix it at zero cost 🙏\n\nAre you looking to get your car washed or detailed?`
+    } else {
+      output = `Salam kenal kak ${name} 😊\n\nJadi Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah kak. Ga ada biaya antar dan ga perlu deposit, kita cuma butuh akses air sama listrik aja ya.\n\nOh iya, kita serius soal kualitas — kalau kak ga puas sama hasilnya, kita balik lagi buat benerin tanpa biaya tambahan 🙏\n\nKak ${name} lagi cari cuci mobil atau detailing nih?`
+    }
+    issues.push('enforced intro template')
+  }
 
   // 1. Strip re-introduction if already introduced
   if (ctx.alreadyIntroduced && /Halo!?\s*Aku Shera dari Castudio|Hi!?\s*I'm Shera from Castudio/i.test(output)) {
