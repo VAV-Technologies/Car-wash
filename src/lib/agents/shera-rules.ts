@@ -88,9 +88,11 @@ export function extractContext(messages: Msg[]): ConvoContext {
       const NOT_NAMES = new Set([
         // Intent words
         'mau', 'ingin', 'butuh', 'perlu', 'pengen', 'mo', 'mw',
+        // Question words
+        'apa', 'apakah', 'siapa', 'kenapa', 'mengapa', 'gimana', 'bagaimana', 'kapan', 'dimana', 'berapa', 'brp',
         // Verbs/actions
         'cuci', 'dicuci', 'booking', 'book', 'tanya', 'minta', 'cari', 'lihat', 'liat',
-        'punya', 'ada', 'bisa', 'boleh', 'tau', 'tahu', 'pikir', 'rasa',
+        'punya', 'ada', 'bisa', 'boleh', 'tau', 'tahu', 'pikir', 'rasa', 'kabar',
         // Negations
         'tidak', 'ga', 'gak', 'gk', 'belum', 'blm', 'ngga', 'nggak', 'enggak', 'engga', 'jangan',
         // Filler/casual
@@ -242,7 +244,9 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
   let shouldRegenerate = false
 
   // 0. HARD RULE: Enforce intro template when in intro_pitch state
-  if (ctx.currentState === 'intro_pitch' && ctx.customerName && !ctx.introPitchGiven) {
+  // BUT skip if customer already stated their intent (multi-car, specific service, etc.)
+  const hasIntent = ctx.imagesSentCategories.length > 0 || (ctx.totalCarsRequested && ctx.totalCarsRequested > 0)
+  if (ctx.currentState === 'intro_pitch' && ctx.customerName && !ctx.introPitchGiven && !hasIntent) {
     const name = ctx.customerName
     if (ctx.language === 'en') {
       output = `Nice to meet you ${name}! 😊\n\nSo Castudio is a premium car wash & detailing service that comes directly to your home. No delivery fee and no deposit needed, we just need access to water and electricity.\n\nWe take our work seriously — if you're not satisfied with the result, we'll come back and fix it at zero cost 🙏\n\nAre you looking to get your car washed or detailed?`

@@ -90,7 +90,8 @@ Lalu tanya model DAN plat dalam SATU pesan: "Model mobilnya apa dan plat nomorny
 Kalau belum ada dua-duanya, tanya BARENG: "Model mobilnya apa dan plat nomornya berapa kak?"
 Kalau sudah ada salah satu, tanya yang kurang aja. Kalau sudah lengkap, lanjut ke alamat.`,
 
-  collecting_address: `State: COLLECTING ADDRESS. Tanya alamat.
+  collecting_address: `State: COLLECTING ADDRESS. WAJIB tanya alamat SEKARANG.
+Tanya: "Alamatnya di mana kak?" — JANGAN tanya jadwal atau hal lain dulu. Alamat HARUS dikumpulkan sebelum jadwal.
 Terima APAPUN yang customer kasih. JANGAN minta "lebih lengkap". Alamat customer = FINAL.`,
 
   collecting_schedule: `State: COLLECTING SCHEDULE.

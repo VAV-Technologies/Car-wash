@@ -751,17 +751,16 @@ export async function processMessage(
   // ─── LAYER 5: Validate and fix response ────────────────────────
   const validation = validateResponse(reply, convoCtx)
   if (validation.shouldRegenerate) {
-    // Try one regeneration
-    console.warn('[shera-validator] Regenerating due to:', validation.issues)
-    const retryResp = await openai.chat.completions.create({
-      model: modelToUse,
-      max_completion_tokens: maxTokensToUse,
-      tools: SHERA_TOOLS,
-      messages: [...allMessages, { role: 'user', content: '[SYSTEM: Your previous response was blocked because it contained unauthorized content. Try again following the rules exactly.]' }],
-    }, { timeout: LLM_TIMEOUT, signal: signal as any })
-    const retryReply = retryResp.choices[0]?.message?.content || ''
-    const retryValidation = validateResponse(retryReply, convoCtx)
-    reply = retryValidation.output
+    // Don't regenerate (too slow for reasoning models) — use a canned safe response based on the issue
+    console.warn('[shera-validator] Blocked response due to:', validation.issues)
+    const isDiscountIssue = validation.issues.some(i => /discount|diskon|freebie|price/i.test(i))
+    if (isDiscountIssue) {
+      reply = convoCtx.language === 'en'
+        ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use. But trust us, the result is worth it 🙂\n\nWould you like to continue?"
+        : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti biar hasilnya maksimal 🙂\n\nMau lanjut kak?"
+    } else {
+      reply = validation.output // use the fixed version
+    }
   } else {
     reply = validation.output
   }
@@ -780,11 +779,14 @@ export async function processMessage(
   if (reqCtx.serviceImagesSent) {
     replyToSave = `[IMAGES_SENT]\n${reply}`
   }
+  // Don't duplicate the user message if it was already saved by the webhook's immediate-save
+  const lastExisting = existingMessages[existingMessages.length - 1]
+  const userAlreadySaved = lastExisting?.role === 'user' && lastExisting?.content === messageText
   const updatedMessages = [
     ...existingMessages,
-    { role: 'user', content: messageText, timestamp: saveTimestamp },
+    ...(userAlreadySaved ? [] : [{ role: 'user', content: messageText, timestamp: saveTimestamp }]),
     { role: 'assistant', content: replyToSave, timestamp: saveTimestamp },
-  ].slice(-30) // Keep last 30 messages to prevent unbounded growth
+  ].slice(-30)
 
   // 10. Advance state machine — derive from updated conversation reality
   const updatedCtx = extractContext(updatedMessages)
