@@ -166,14 +166,22 @@ export function extractContext(messages: Msg[]): ConvoContext {
       }
     }
 
-    // Check address given
-    if (m.role === 'user' && /jl\b|jalan|no\.\s*\d|rt\s*\d/i.test(c) && !ctx.address) {
-      ctx.address = c.trim()
+    // Check address given — require "jl"/"jalan" as standalone + some detail (number, RT, area name)
+    if (m.role === 'user' && !ctx.address) {
+      const hasStreetIndicator = /\bjl\.?\s+\w|jalan\s+\w/i.test(c)
+      const hasNumberIndicator = /no\.?\s*\d|rt\s*\d|rw\s*\d|blok\s*\w/i.test(c)
+      if (hasStreetIndicator || (hasNumberIndicator && c.length > 15)) {
+        ctx.address = c.trim()
+      }
     }
 
-    // Check schedule given
-    if (m.role === 'user' && /\b(april|mei|juni|juli|agustus|september|oktober|november|desember|january|february|march)\b.*jam|\bjam\s+\d/i.test(c) && !ctx.schedule) {
-      ctx.schedule = c.trim()
+    // Check schedule given — require both date indicator AND time indicator in same message
+    if (m.role === 'user' && !ctx.schedule) {
+      const hasDate = /\b(besok|lusa|senin|selasa|rabu|kamis|jumat|sabtu|minggu|tanggal\s*\d|april|mei|juni|juli|agustus|september|oktober|november|desember|january|february|march|monday|tuesday|wednesday|thursday|friday|saturday)\b/i.test(c)
+      const hasTime = /\bjam\s+\d|\bpagi\b|\bsiang\b|\bsore\b|\bmalem\b|\bmalam\b|\bmorning\b|\bafternoon\b/i.test(c)
+      if (hasDate || hasTime) {
+        ctx.schedule = c.trim()
+      }
     }
 
     // Check detailing wash offer
@@ -250,35 +258,46 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('stripped re-introduction')
   }
 
-  // 2. Check for hallucinated prices
-  const priceMatches = output.match(/Rp\s*[\d.]+/g)
+  // 2. Check for hallucinated prices — catch multiple formats
+  // "Rp 349.000", "Rp349.000", "349rb", "349ribu", "349k"
+  const priceMatches = output.match(/Rp\s*[\d.,]+|[\d.]+\s*(?:rb|ribu|k)\b/gi)
   if (priceMatches) {
     for (const price of priceMatches) {
-      const normalized = price.replace(/[Rp\s]/g, '')
-      if (!APPROVED_PRICES.includes(normalized)) {
-        issues.push(`hallucinated price: ${price}`)
+      // Normalize: strip "Rp", "rb", "ribu", "k", spaces
+      let normalized = price.replace(/[Rp\s]/gi, '').replace(/rb$|ribu$|k$/i, '000')
+      // Handle "349rb" → "349000" → need to match "349.000" format
+      if (!normalized.includes('.') && normalized.length > 3) {
+        normalized = normalized.slice(0, -3) + '.' + normalized.slice(-3)
+      }
+      if (normalized && !APPROVED_PRICES.includes(normalized)) {
+        issues.push(`hallucinated price: ${price} (normalized: ${normalized})`)
         shouldRegenerate = true
       }
     }
   }
 
-  // 3. Check for unauthorized discounts / special prices
-  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bharga spesial\b|\bharga khusus\b/i.test(output)) {
-    if (!/249\.000/i.test(output)) {
-      issues.push('unauthorized discount or special price')
+  // 3. Check for unauthorized discounts / freebies
+  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bharga spesial\b|\bharga khusus\b|\bgratis\b|\bfree\b|\bbonus\b|\bcomplimentary\b/i.test(output)) {
+    // Only allow the 249k detailing wash discount
+    if (!/249\.?000/i.test(output)) {
+      issues.push('unauthorized discount, freebie, or special price')
       shouldRegenerate = true
     }
   }
 
-  // 4. Fix gendering — replace pak/bu with kak
+  // 4. Fix gendering — replace standalone "pak"/"bu" before names with "kak"
   const beforeGender = output
-  output = output.replace(/\bpak\s+([A-Z])/gi, 'kak $1')
-  output = output.replace(/\bbu\s+([A-Z])/gi, 'kak $1')
+  // "pak Robert" → "kak Robert" (but NOT "paket" or "buat")
+  output = output.replace(/\bpak\s+([A-Z]\w*)/g, 'kak $1')
+  output = output.replace(/\bPak\s+([A-Z]\w*)/g, 'Kak $1')
+  // "bu Dina" → "kak Dina" (but NOT "buat", "buka", "bulan", "butuh")
+  output = output.replace(/\bbu\s+([A-Z]\w*)/g, 'kak $1')
+  output = output.replace(/\bBu\s+([A-Z]\w*)/g, 'Kak $1')
   if (output !== beforeGender) issues.push('fixed gendering')
 
   // 5. Block address re-asking
-  if (ctx.address && /lebih lengkap|tulis ulang|tulis lagi|alamat.*lagi|kirim.*alamat/i.test(output)) {
-    output = output.replace(/.*(?:lebih lengkap|tulis ulang|tulis lagi|alamat.*lagi|kirim.*alamat).*[.?!]?\s*/gi, '').trim()
+  if (ctx.address && /lebih lengkap|tulis ulang|tulis lagi|kirim.*alamat.*lagi|alamat.*sekali lagi/i.test(output)) {
+    output = output.replace(/[^.!?]*(?:lebih lengkap|tulis ulang|tulis lagi|kirim.*alamat.*lagi|alamat.*sekali lagi)[^.!?]*[.!?]?\s*/gi, '').trim()
     issues.push('stripped address re-ask')
   }
 
@@ -289,8 +308,9 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('deduplicated response')
   }
 
-  // 7. Ensure CTA at end (must end with question or call-to-action)
-  if (output.length > 10 && !output.includes('?') && !/mau lanjut|gimana kak|mau coba|boleh|siap|booking/i.test(output)) {
+  // 7. Ensure CTA at end — but NOT on booking confirmations or payment info
+  const isConfirmation = /booking.*beres|booking.*udah|sudah.*confirm|ga perlu bayar|bayarnya nanti/i.test(output)
+  if (!isConfirmation && output.length > 10 && !output.includes('?') && !/mau lanjut|gimana kak|mau coba|boleh|siap kak|booking|yang mana/i.test(output)) {
     const cta = ctx.language === 'en' ? '\n\nWould you like to continue?' : '\n\nMau lanjut kak?'
     output += cta
     issues.push('appended CTA')

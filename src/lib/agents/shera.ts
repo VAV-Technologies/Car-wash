@@ -292,11 +292,14 @@ export async function executeSheraTool(
         const WASH_TYPES = ['standard_wash', 'professional', 'elite_wash']
         const DETAIL_TYPES = ['interior_detail', 'exterior_detail', 'window_detail', 'tire_rims', 'full_detail']
         const SUB_TYPES = ['sub_essentials', 'sub_plus', 'sub_elite']
-        let serviceTypeStr = input.service_type ? String(input.service_type) : 'all'
-        const rawRequested = serviceTypeStr.split(',').map(s => s.trim())
+        let serviceTypeStr = input.service_type ? String(input.service_type).trim() : 'all'
+        if (!serviceTypeStr || serviceTypeStr === 'undefined' || serviceTypeStr === 'null') serviceTypeStr = 'all'
+        const rawRequested = serviceTypeStr.split(',').map(s => s.trim()).filter(Boolean)
+        // Auto-expand any partial category to full category
         if (rawRequested.some(t => WASH_TYPES.includes(t))) serviceTypeStr = WASH_TYPES.join(',')
         else if (rawRequested.some(t => DETAIL_TYPES.includes(t))) serviceTypeStr = DETAIL_TYPES.join(',')
         else if (rawRequested.some(t => SUB_TYPES.includes(t))) serviceTypeStr = SUB_TYPES.join(',')
+        else if (serviceTypeStr !== 'all') serviceTypeStr = 'all' // unknown types → send everything
         const requestedTypes = serviceTypeStr === 'all' ? null : serviceTypeStr.split(',').map(s => s.trim())
 
         const SERVICE_LABELS: Record<string, string> = {
@@ -688,7 +691,8 @@ export async function processMessage(
   // Timeout: Vercel has 60s max. Budget: 15s buffer + 5-10s delay already spent.
   // Leave max 25s for all LLM calls combined.
   // Reasoning models need more time to think (Grok 4 reasoning, o3, etc.)
-  const LLM_TIMEOUT = 55000
+  // Budget: 5s buffer + LLM + tool calls + validation must fit in Vercel 60s
+  const LLM_TIMEOUT = 45000
 
   let response = await openai.chat.completions.create({
     model: modelToUse,

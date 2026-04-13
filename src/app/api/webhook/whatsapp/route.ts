@@ -197,15 +197,15 @@ export async function POST(req: NextRequest) {
     setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay) // sendSeen uses original from (works with both @lid and @c.us)
 
     // ── HARD RULE: Business hours check (code-enforced) ────────────
-    const jakartaNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }))
-    const dayOfWeek = jakartaNow.getDay() // 0=Sun
-    const hour = jakartaNow.getHours()
-    if (dayOfWeek === 0) {
+    // Use Intl for reliable timezone conversion (works in Vercel serverless)
+    const jakartaHour = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', hour: 'numeric', hour12: false }).format(new Date()))
+    const jakartaDay = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jakarta', weekday: 'short' }).format(new Date())
+    if (jakartaDay === 'Sun') {
       await sendText(chatId, 'Hai kak, hari Minggu kita libur ya. Senin-Sabtu jam 8 pagi sampai 5 sore kita ready 😊')
       return NextResponse.json({ ok: true, handled: 'outside-hours-sunday' })
     }
-    if (hour < 8 || hour >= 17) {
-      await sendText(chatId, `Hai kak, kita buka jam 8 pagi sampai 5 sore ya. Chat lagi besok ya 😊`)
+    if (jakartaHour < 8 || jakartaHour >= 17) {
+      await sendText(chatId, 'Hai kak, kita buka jam 8 pagi sampai 5 sore ya. Chat lagi besok ya 😊')
       return NextResponse.json({ ok: true, handled: 'outside-hours' })
     }
 
