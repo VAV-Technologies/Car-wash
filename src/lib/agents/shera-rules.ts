@@ -84,10 +84,48 @@ export function extractContext(messages: Msg[]): ConvoContext {
 
     // Extract name from user messages
     if (m.role === 'user' && !ctx.customerName) {
-      const NOT_NAMES = new Set(['mau', 'ingin', 'butuh', 'perlu', 'lagi', 'sedang', 'baru', 'sudah', 'tidak', 'ga', 'gak', 'belum', 'cuma', 'hanya', 'juga', 'dari', 'tanya', 'minta', 'cari', 'lihat', 'booking', 'book', 'want', 'need', 'pengen', 'dicuci', 'cuci', 'punya', 'ada', 'bisa', 'boleh', 'halo', 'hallo', 'hai', 'hello', 'hi', 'hey'])
+      // Comprehensive blocklist: common Indonesian/English words that are NOT names
+      const NOT_NAMES = new Set([
+        // Intent words
+        'mau', 'ingin', 'butuh', 'perlu', 'pengen', 'mo', 'mw',
+        // Verbs/actions
+        'cuci', 'dicuci', 'booking', 'book', 'tanya', 'minta', 'cari', 'lihat', 'liat',
+        'punya', 'ada', 'bisa', 'boleh', 'tau', 'tahu', 'pikir', 'rasa',
+        // Negations
+        'tidak', 'ga', 'gak', 'gk', 'belum', 'blm', 'ngga', 'nggak', 'enggak', 'engga', 'jangan',
+        // Filler/casual
+        'iya', 'iyaa', 'ok', 'oke', 'okee', 'sip', 'siap', 'yah', 'yaa', 'ya',
+        'huh', 'hmm', 'hmmm', 'wkwk', 'wkwkwk', 'lol', 'haha', 'ohh', 'ooh',
+        // Greetings
+        'halo', 'hallo', 'hai', 'hello', 'hi', 'hey', 'selamat',
+        // Adverbs/conjunctions
+        'lagi', 'sedang', 'baru', 'sudah', 'udah', 'cuma', 'hanya', 'juga', 'dari',
+        // Service words (prevent "detailing" / "standard" etc being name)
+        'detailing', 'detail', 'standard', 'professional', 'elite', 'wash',
+        'interior', 'exterior', 'window', 'tire', 'rims', 'full',
+        'mobil', 'motor', 'motor',
+        // English common
+        'want', 'need', 'yes', 'no', 'sure', 'thanks', 'thank', 'please', 'can',
+        // Titles (handled separately below but also block as first word)
+        'mas', 'bang', 'mbak', 'kak', 'pak', 'bu', 'om', 'tante', 'mr', 'mrs', 'ms',
+      ])
+
+      // Indonesian title prefixes — if name starts with these, take the NEXT word
+      const TITLE_PREFIXES = new Set(['mas', 'bang', 'mbak', 'kak', 'pak', 'bu', 'om', 'tante', 'mr', 'mrs', 'ms', 'bro', 'sis'])
+
       const idx = messages.indexOf(m)
       const prevMsg = idx > 0 ? messages[idx - 1] : null
       const prevAskedName = prevMsg?.role === 'assistant' && /namanya siapa|your name/i.test(prevMsg.content || '')
+
+      // Helper: validate a candidate name
+      function isValidName(candidate: string): boolean {
+        if (!candidate || candidate.length < 2) return false
+        if (NOT_NAMES.has(candidate.toLowerCase())) return false
+        if (/^\d+$/.test(candidate)) return false // pure numbers
+        if (/^[^a-zA-Z]/.test(candidate)) return false // starts with non-letter (emoji, punctuation)
+        if (/^\.+$/.test(candidate)) return false // just dots
+        return true
+      }
 
       // Pattern-based detection ("saya X", "nama saya X", "I'm X")
       const patterns = [
@@ -97,20 +135,24 @@ export function extractContext(messages: Msg[]): ConvoContext {
       ]
       for (const p of patterns) {
         const match = c.match(p)
-        if (match && !NOT_NAMES.has(match[1].toLowerCase())) {
+        if (match && isValidName(match[1])) {
           ctx.customerName = match[1]
           break
         }
       }
 
-      // Direct name response: if previous message asked for name and this is a short reply (1-3 words)
+      // Direct name response: if previous message asked for name and this is a short reply
       if (!ctx.customerName && prevAskedName) {
-        const words = c.trim().split(/\s+/)
-        if (words.length <= 3 && words.length >= 1) {
-          const firstName = words[0]
-          // Must start with uppercase or be a reasonable name (not a common word)
-          if (firstName.length >= 2 && !NOT_NAMES.has(firstName.toLowerCase())) {
-            ctx.customerName = firstName
+        const cleaned = c.trim().replace(/[^\w\s]/g, '').trim() // strip punctuation/emoji
+        const words = cleaned.split(/\s+/).filter(w => w.length > 0)
+        if (words.length >= 1 && words.length <= 4) {
+          let nameWord = words[0]
+          // If first word is a title prefix, take the next word
+          if (TITLE_PREFIXES.has(nameWord.toLowerCase()) && words.length >= 2) {
+            nameWord = words[1]
+          }
+          if (isValidName(nameWord)) {
+            ctx.customerName = nameWord
           }
         }
       }
