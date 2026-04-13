@@ -648,7 +648,17 @@ export async function processMessage(
 
   // If name was just given in THIS message and we're at greeting/collecting_name, advance
   if (convoCtx.customerName && (currentState === 'greeting' || currentState === 'collecting_name')) {
-    currentState = 'intro_pitch'
+    // If customer also stated service intent, skip intro entirely
+    if (convoCtx.hasServiceIntent || (convoCtx.totalCarsRequested && convoCtx.totalCarsRequested > 0)) {
+      currentState = 'awaiting_intent' // model will process their stated intent
+    } else {
+      currentState = 'intro_pitch'
+    }
+  }
+
+  // If customer already specified everything (multi-car with specific services), skip further
+  if ((currentState === 'awaiting_intent' || currentState === 'intro_pitch') && convoCtx.hasServiceIntent && convoCtx.totalCarsRequested && convoCtx.totalCarsRequested > 1) {
+    currentState = 'collecting_car_info' // let the model acknowledge the order and start collecting
   }
 
   // Pass state to context for validator enforcement

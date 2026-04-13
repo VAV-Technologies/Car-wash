@@ -87,8 +87,10 @@ WAJIB ingatkan: "Oh iya kak, sebelum detailing mobilnya perlu dicuci dulu ya. Ka
 Lalu tanya model DAN plat dalam SATU pesan: "Model mobilnya apa dan plat nomornya berapa kak?"`,
 
   collecting_car_info: `State: COLLECTING CAR INFO. Kumpulkan model mobil dan plat nomor.
-Kalau belum ada dua-duanya, tanya BARENG: "Model mobilnya apa dan plat nomornya berapa kak?"
-Kalau sudah ada salah satu, tanya yang kurang aja. Kalau sudah lengkap, lanjut ke alamat.`,
+Kalau customer sudah kasih info multi-car (beberapa mobil + layanan), KONFIRMASI dulu: rangkum apa yang mereka minta, lalu tanya model + plat tiap mobil.
+Kalau multi-car detailing: INGATKAN bahwa mobil yang mau detailing perlu dicuci dulu (Standard Wash Rp 249.000 atau cuci sendiri).
+Tanya model DAN plat BARENG: "Model mobilnya apa dan plat nomornya berapa kak?"
+Kalau sudah lengkap, lanjut ke alamat.`,
 
   collecting_address: `State: COLLECTING ADDRESS. WAJIB tanya alamat SEKARANG.
 Tanya: "Alamatnya di mana kak?" — JANGAN tanya jadwal atau hal lain dulu. Alamat HARUS dikumpulkan sebelum jadwal.
