@@ -6,6 +6,9 @@ import { alertLLMFailure } from '@/lib/agents/shera-alerts'
 import { trackMetric } from '@/lib/agents/shera-metrics'
 import crypto from 'crypto'
 
+// Extend Vercel function timeout for Grok 4 reasoning model
+export const maxDuration = 120
+
 // ─── HMAC signature validation (optional) ────────────────────────────
 function verifyHmac(body: string, signature: string | null): boolean {
   const secret = process.env.WAHA_WEBHOOK_SECRET

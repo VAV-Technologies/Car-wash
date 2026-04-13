@@ -697,8 +697,8 @@ export async function processMessage(
   // Timeout: Vercel has 60s max. Budget: 15s buffer + 5-10s delay already spent.
   // Leave max 25s for all LLM calls combined.
   // Reasoning models need more time to think (Grok 4 reasoning, o3, etc.)
-  // Budget: 5s buffer + LLM + tool calls + validation must fit in Vercel 60s
-  const LLM_TIMEOUT = 45000
+  // Grok 4 reasoning needs more time. Vercel maxDuration set to 120s on webhook.
+  const LLM_TIMEOUT = 90000
 
   let response = await openai.chat.completions.create({
     model: modelToUse,
