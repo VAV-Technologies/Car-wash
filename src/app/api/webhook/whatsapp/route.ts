@@ -6,8 +6,8 @@ import { alertLLMFailure } from '@/lib/agents/shera-alerts'
 import { trackMetric } from '@/lib/agents/shera-metrics'
 import crypto from 'crypto'
 
-// Extend Vercel function timeout for Grok 4 reasoning model
-export const maxDuration = 120
+// Extend Vercel function timeout for Grok 4 reasoning model (Pro plan: max 300s)
+export const maxDuration = 300
 
 // ─── HMAC signature validation (optional) ────────────────────────────
 function verifyHmac(body: string, signature: string | null): boolean {
@@ -300,7 +300,7 @@ export async function POST(req: NextRequest) {
       // LLM promise (with retries)
       const llmPromise = (async (): Promise<{ type: 'reply'; reply: string }> => {
         let attempt = 0
-        const MAX_RETRIES = 2
+        const MAX_RETRIES = 0 // No inline retries for reasoning models — each attempt takes too long
         while (attempt <= MAX_RETRIES) {
           try {
             const r = await processMessage(chatId, phone, processedMessage, abortController.signal)
