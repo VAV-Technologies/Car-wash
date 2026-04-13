@@ -71,8 +71,9 @@ SELALU kirim SEMUA paket dalam kategori, jangan cuma 1.`,
 
   showing_wash_packages: `State: WASH PACKAGES SHOWN. Gambar cuci SUDAH dikirim.
 Jawab pertanyaan soal paket pakai TEXT. JANGAN kirim gambar lagi KECUALI customer minta ganti ke detailing.
-Kalau customer pilih paket → lanjut tanya model mobilnya.
-Kalau customer bilang mahal → jawab percaya diri, JANGAN kasih diskon. Harga FINAL.`,
+Kalau customer pilih paket → lanjut tanya "Model mobilnya apa kak?"
+Kalau customer bilang mahal → jawab percaya diri, JANGAN kasih diskon. Harga FINAL.
+PENTING: Kalau customer tanya soal sesuatu (misal "tree sap itu apa?"), JAWAB pertanyaannya aja. JANGAN assume mereka punya masalah itu. JANGAN langsung rekomendasiin paket based on pertanyaan mereka.`,
 
   showing_detail_packages: `State: DETAIL PACKAGES SHOWN. Gambar detailing SUDAH dikirim.
 Jawab pertanyaan soal paket pakai TEXT. JANGAN kirim gambar lagi KECUALI customer minta ganti ke cuci.
@@ -91,7 +92,8 @@ Tanya SATU per pesan. Kalau sudah lengkap, lanjut ke alamat (kalau belum ada) at
   collecting_address: `State: COLLECTING ADDRESS. Tanya alamat.
 Terima APAPUN yang customer kasih. JANGAN minta "lebih lengkap". Alamat customer = FINAL.`,
 
-  collecting_schedule: `State: COLLECTING SCHEDULE. Tanya tanggal dan jam.
+  collecting_schedule: `State: COLLECTING SCHEDULE.
+Tanya: "Kapan jadwalnya kak?" — JANGAN suggest tanggal atau jam spesifik. Biarkan customer yang tentuin.
 Jam kerja: Senin-Sabtu 08:00-17:00. Minggu libur. Cek availability pakai check_date_availability.
 BOLEH booking besok atau hari ini. Tidak ada minimum lead time.`,
 
@@ -132,19 +134,30 @@ export function deriveState(
 
   if (hasBooking) return 'booking_complete'
 
-  // Check if all info is collected → confirming
-  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && ctx.address && ctx.schedule) {
+  // Check if car info has been discussed (model asked for car/plate in recent messages)
+  const hasCarInfoCollected = messages.some(m => m.role === 'assistant' && /model mobil|plat nomor|plat nya/i.test(m.content))
+    && messages.some(m => m.role === 'user' && /[A-Z]\s*\d{1,4}|[Bb]\s*\d/i.test(m.content)) // plate pattern
+
+  // Check if all info is collected → confirming (MUST have car info too)
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && hasCarInfoCollected && ctx.address && ctx.schedule) {
     return 'confirming_booking'
   }
 
-  // Collecting schedule
-  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && ctx.address && !ctx.schedule) {
+  // Collecting schedule (MUST have car info + address already)
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && hasCarInfoCollected && ctx.address && !ctx.schedule) {
     return 'collecting_schedule'
   }
 
-  // Collecting address
-  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && !ctx.address) {
+  // Collecting address (MUST have car info first)
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && hasCarInfoCollected && !ctx.address) {
     return 'collecting_address'
+  }
+
+  // Collecting car info (images sent + package selected but no car info yet)
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && !hasCarInfoCollected) {
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+    const hasSelected = lastUserMsg && /standard|professional|elite|interior|exterior|window|tire|rims|full/i.test(lastUserMsg.content)
+    if (hasSelected) return 'collecting_car_info'
   }
 
   // Images sent — check if customer has selected a package
