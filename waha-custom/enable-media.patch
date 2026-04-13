@@ -1,0 +1,52 @@
+--- a/src/core/engines/webjs/session.webjs.core.ts
++++ b/src/core/engines/webjs/session.webjs.core.ts
+@@ -841,13 +841,35 @@
+     );
+   }
+
+-  sendImage(request: MessageImageRequest) {
+-    throw new AvailableInPlusVersion();
++  @Activity()
++  async sendImage(request: MessageImageRequest) {
++    const file = request.file as any;
++    let media: MessageMedia;
++    if (file.url) {
++      media = await MessageMedia.fromUrl(file.url, { unsafeMime: true });
++    } else {
++      media = new MessageMedia(file.mimetype, file.data, file.filename);
++    }
++    const options = this.getMessageOptions(request);
++    if (request.caption) (options as any).caption = request.caption;
++    return this.whatsapp.sendMessage(this.ensureSuffix(request.chatId), media, options);
+   }
+
+-  sendFile(request: MessageFileRequest) {
+-    throw new AvailableInPlusVersion();
++  @Activity()
++  async sendFile(request: MessageFileRequest) {
++    const file = request.file as any;
++    let media: MessageMedia;
++    if (file.url) {
++      media = await MessageMedia.fromUrl(file.url, { unsafeMime: true });
++    } else {
++      media = new MessageMedia(file.mimetype, file.data, file.filename);
++    }
++    const options = this.getMessageOptions(request);
++    if ((request as any).caption) (options as any).caption = (request as any).caption;
++    return this.whatsapp.sendMessage(this.ensureSuffix(request.chatId), media, options);
+   }
+
+-  sendVoice(request: MessageVoiceRequest) {
+-    throw new AvailableInPlusVersion();
++  @Activity()
++  async sendVoice(request: MessageVoiceRequest) {
++    const file = (request as any).file as any;
++    let media: MessageMedia;
++    if (file.url) {
++      media = await MessageMedia.fromUrl(file.url, { unsafeMime: true });
++    } else {
++      media = new MessageMedia(file.mimetype, file.data, file.filename);
++    }
++    const options = this.getMessageOptions(request);
++    return this.whatsapp.sendMessage(this.ensureSuffix(request.chatId), media, options);
+   }

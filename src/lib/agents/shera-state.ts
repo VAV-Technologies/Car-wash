@@ -1,221 +1,211 @@
-// ─── Shera Conversation State Machine ────────────────────────────────
-// Enforces conversation flow deterministically.
-// The LLM can suggest actions, but the state machine gates them.
+// ─── Shera State Machine v2 ──────────────────────────────────────────
+// Granular states with per-state prompts and strict tool gates.
+// The model receives ONLY the instructions for the current state.
 
 export type SheraState =
-  | 'greeting'           // New conversation, no messages yet
-  | 'awaiting_name'      // Asked for name, waiting for response
-  | 'awaiting_intent'    // Have name, need to ask wash or detailing
-  | 'showing_packages'   // Sent service images, waiting for selection
-  | 'collecting_info'    // Package selected, collecting car/plate/address/schedule
-  | 'confirming_booking' // All info collected, confirming before booking
-  | 'booking_complete'   // Booking created, post-booking chat
-  | 'general_chat'       // Free-form (returning customer, follow-ups)
+  | 'greeting'
+  | 'collecting_name'
+  | 'intro_pitch'
+  | 'awaiting_intent'
+  | 'showing_wash_packages'
+  | 'showing_detail_packages'
+  | 'wash_selected'
+  | 'detail_selected'
+  | 'collecting_car_info'
+  | 'collecting_address'
+  | 'collecting_schedule'
+  | 'confirming_booking'
+  | 'booking_complete'
+  | 'multi_car_next'
+  | 'general_chat'
 
-/** Tools that are gated by state */
-const TOOL_STATE_GATES: Record<string, SheraState[]> = {
-  send_service_images: ['awaiting_intent', 'showing_packages', 'general_chat'],
-  create_booking: ['collecting_info', 'confirming_booking', 'general_chat'],
-  create_customer: ['awaiting_name', 'awaiting_intent', 'showing_packages', 'collecting_info', 'confirming_booking', 'general_chat'],
+// ─── Tool Gates ──────────────────────────────────────────────────────
+
+const TOOL_GATES: Record<string, SheraState[]> = {
+  send_service_images: ['awaiting_intent', 'showing_wash_packages', 'showing_detail_packages', 'multi_car_next', 'general_chat'],
+  create_booking: ['confirming_booking', 'general_chat'],
+  create_customer: ['collecting_name', 'intro_pitch', 'awaiting_intent', 'wash_selected', 'detail_selected', 'collecting_car_info', 'collecting_address', 'collecting_schedule', 'confirming_booking', 'general_chat'],
   update_booking: ['booking_complete', 'general_chat'],
   cancel_booking: ['booking_complete', 'general_chat'],
 }
 
-/** Check if a tool is allowed in the current state */
-export function isToolAllowed(toolName: string, state: SheraState): boolean {
-  const allowed = TOOL_STATE_GATES[toolName]
-  if (!allowed) return true // ungated tools (search_customer, check_date_availability, etc.)
+export function isToolAllowed(tool: string, state: SheraState): boolean {
+  const allowed = TOOL_GATES[tool]
+  if (!allowed) return true
   return allowed.includes(state)
 }
 
-/** Get a human-readable rejection reason when a tool is blocked */
-export function getToolBlockReason(toolName: string, state: SheraState): string {
-  switch (toolName) {
-    case 'send_service_images':
-      if (state === 'greeting' || state === 'awaiting_name')
-        return 'Kamu belum tau nama customer. Tanya nama dulu sebelum kirim gambar.'
-      // showing_packages is now allowed (for category switches)
-      if (state === 'collecting_info' || state === 'confirming_booking')
-        return 'Customer sudah pilih paket. JANGAN kirim gambar lagi. Lanjut kumpulkan info yang kurang.'
-      if (state === 'booking_complete')
-        return 'Booking sudah dibuat. JANGAN kirim gambar lagi.'
-      return 'Belum waktunya kirim gambar paket.'
-    case 'create_booking':
-      if (state === 'greeting' || state === 'awaiting_name' || state === 'awaiting_intent' || state === 'showing_packages')
-        return 'Belum cukup info untuk buat booking. Kumpulkan semua detail dulu (paket, mobil, plat, alamat, jadwal).'
-      return 'Belum waktunya buat booking.'
-    default:
-      return `Tool ${toolName} tidak bisa dipanggil di state ${state}.`
-  }
+export function getToolBlockReason(tool: string, state: SheraState): string {
+  if (tool === 'send_service_images') return 'Belum waktunya kirim gambar di state ini.'
+  if (tool === 'create_booking') return 'Belum cukup info untuk buat booking.'
+  return `Tool ${tool} tidak bisa dipanggil di state ${state}.`
 }
 
-/**
- * Determine the next state based on what just happened.
- * Called after processing each message turn.
- */
-export function getNextState(
-  currentState: SheraState,
-  event: {
-    toolsCalled?: string[]
-    nameKnown?: boolean
-    serviceChosen?: boolean
-    imagesAlreadySent?: boolean
-    bookingCreated?: boolean
-    isReturningCustomer?: boolean
-  }
-): SheraState {
-  // Returning customers with full profile go straight to general_chat
-  if (event.isReturningCustomer && currentState === 'greeting') {
-    return 'general_chat'
-  }
+// ─── Per-State Prompts ───────────────────────────────────────────────
 
-  // If a booking was just created, transition to complete
-  if (event.toolsCalled?.includes('create_booking')) {
-    return 'booking_complete'
-  }
+const STATE_PROMPTS: Record<SheraState, string> = {
+  greeting: `State: GREETING. Ini pesan pertama. Perkenalkan diri dengan template:
+Indonesian: "Halo! Aku Shera dari Castudio 😊 Boleh tau namanya siapa ya?"
+English: "Hi! I'm Shera from Castudio 😊 What's your name?"
+HANYA ini. Jangan tambahkan apapun.`,
 
-  // If images were just sent, transition to showing_packages
-  if (event.toolsCalled?.includes('send_service_images')) {
-    return 'showing_packages'
-  }
+  collecting_name: `State: COLLECTING NAME. Customer belum kasih nama.
+Jawab pertanyaan mereka dengan singkat, lalu SELALU akhiri dengan "Boleh tau namanya siapa ya kak?"
+Jangan skip langkah ini.`,
 
-  switch (currentState) {
-    case 'greeting':
-      // After first exchange, we're awaiting name
-      return 'awaiting_name'
+  intro_pitch: `State: INTRO PITCH. Customer baru kasih nama. WAJIB kirim pesan ini PERSIS (ganti [NAMA]):
+"Salam kenal kak [NAMA] 😊
 
-    case 'awaiting_name':
-      // Once we have the name, ask what they want
-      if (event.nameKnown) return 'awaiting_intent'
-      return 'awaiting_name'
+Jadi Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah kak. Ga ada biaya antar dan ga perlu deposit, kita cuma butuh akses air sama listrik aja ya.
 
-    case 'awaiting_intent':
-      // If they said what they want and images sent → showing_packages
-      // If they said a specific service → collecting_info
-      if (event.serviceChosen) return 'collecting_info'
-      return 'awaiting_intent'
+Oh iya, kita serius soal kualitas — kalau kak ga puas sama hasilnya, kita balik lagi buat benerin tanpa biaya tambahan 🙏
 
-    case 'showing_packages':
-      // Customer picks a package → collecting_info
-      if (event.serviceChosen) return 'collecting_info'
-      return 'showing_packages'
+Kak [NAMA] lagi cari cuci mobil atau detailing nih?"
+JANGAN singkat. JANGAN skip.`,
 
-    case 'collecting_info':
-      // Stay here until booking is created
-      return 'collecting_info'
+  awaiting_intent: `State: AWAITING INTENT. Tanya customer mau cuci mobil atau detailing.
+Kalau customer sudah bilang → kirim gambar paket yang sesuai (pakai send_service_images).
+Cuci: service_type "standard_wash,professional,elite_wash"
+Detailing: service_type "interior_detail,exterior_detail,window_detail,tire_rims,full_detail"
+SELALU kirim SEMUA paket dalam kategori, jangan cuma 1.`,
 
-    case 'confirming_booking':
-      return 'confirming_booking'
+  showing_wash_packages: `State: WASH PACKAGES SHOWN. Gambar cuci SUDAH dikirim.
+Jawab pertanyaan soal paket pakai TEXT. JANGAN kirim gambar lagi KECUALI customer minta ganti ke detailing.
+Kalau customer pilih paket → lanjut tanya model mobilnya.
+Kalau customer bilang mahal → jawab percaya diri, JANGAN kasih diskon. Harga FINAL.`,
 
-    case 'booking_complete':
-      // Stay in complete for follow-up chat
-      return 'booking_complete'
+  showing_detail_packages: `State: DETAIL PACKAGES SHOWN. Gambar detailing SUDAH dikirim.
+Jawab pertanyaan soal paket pakai TEXT. JANGAN kirim gambar lagi KECUALI customer minta ganti ke cuci.
+Kalau customer pilih paket → ingatkan soal wash prerequisite lalu tanya model mobilnya.`,
 
-    case 'general_chat':
-      // Returning customers stay in general_chat unless a booking flow starts
-      if (event.imagesAlreadySent === false && event.serviceChosen) return 'collecting_info'
-      return 'general_chat'
+  wash_selected: `State: WASH SELECTED. Customer sudah pilih paket cuci.
+Tanya: "Model mobilnya apa kak?" (contoh: Fortuner, Civic, CRV). Lalu tanya plat nomor.`,
 
-    default:
-      return currentState
-  }
+  detail_selected: `State: DETAIL SELECTED. Customer sudah pilih paket detailing.
+WAJIB ingatkan: "Oh iya kak, sebelum detailing mobilnya perlu dicuci dulu ya. Kalau mau, kita bisa sekalian cuci Standard Wash dengan harga spesial Rp 249.000 (biasanya 349.000). Tapi kalau mau cuci sendiri juga boleh kok 🙂"
+Lalu tanya model mobilnya.`,
+
+  collecting_car_info: `State: COLLECTING CAR INFO. Kumpulkan model mobil dan plat nomor.
+Tanya SATU per pesan. Kalau sudah lengkap, lanjut ke alamat (kalau belum ada) atau jadwal.`,
+
+  collecting_address: `State: COLLECTING ADDRESS. Tanya alamat.
+Terima APAPUN yang customer kasih. JANGAN minta "lebih lengkap". Alamat customer = FINAL.`,
+
+  collecting_schedule: `State: COLLECTING SCHEDULE. Tanya tanggal dan jam.
+Jam kerja: Senin-Sabtu 08:00-17:00. Minggu libur. Cek availability pakai check_date_availability.
+BOLEH booking besok atau hari ini. Tidak ada minimum lead time.`,
+
+  confirming_booking: `State: CONFIRMING. Semua info lengkap.
+Konfirmasi semua detail dalam 1 pesan, lalu tanya "Mau aku buat bookingnya kak?"
+Pakai create_booking kalau customer setuju.`,
+
+  booking_complete: `State: BOOKING COMPLETE.
+Kalau masih ada mobil yang belum di-booking (multi-car) → LANGSUNG lanjut: "Siap kak, mobil pertama udah aku booking 😊 Sekarang mobil berikutnya, model mobilnya apa kak?"
+Kalau SEMUA mobil sudah di-booking → kasih info: "Ga perlu bayar dulu ya, bayarnya nanti setelah selesai. Kalau mau ganti jadwal, kabarin aku aja 🙂"`,
+
+  multi_car_next: `State: MULTI CAR NEXT. Mobil sebelumnya sudah di-booking.
+Tanya layanan + model untuk mobil berikutnya. Kirim gambar paket kalau belum dikirim untuk kategori ini.`,
+
+  general_chat: `State: GENERAL CHAT. Customer returning atau percakapan bebas.
+Bantu customer dengan apa yang mereka butuhkan. Kalau mau booking baru, mulai flow dari pemilihan layanan.`,
 }
 
-/**
- * Derive state from conversation history for existing conversations
- * that don't have a state yet.
- */
-export function deriveStateFromHistory(
+export function getStatePrompt(state: SheraState): string {
+  return STATE_PROMPTS[state] || STATE_PROMPTS.general_chat
+}
+
+// ─── State Derivation ────────────────────────────────────────────────
+
+export function deriveState(
   messages: Array<{ role: string; content: string }>,
+  ctx: { customerName: string | null; alreadyIntroduced: boolean; introPitchGiven: boolean; imagesSentCategories: string[]; carsBooked: number; totalCarsRequested: number | null; address: string | null; schedule: string | null },
   isReturningCustomer: boolean
 ): SheraState {
   if (!messages || messages.length === 0) return 'greeting'
 
-  const all = messages
-  const recent = messages.slice(-4) // last 2 turns for current context
+  const hasBooking = messages.some(m => m.role === 'assistant' && /booking.*beres|booking.*udah.*buat|sudah.*confirm/i.test(m.content))
 
-  // ── Milestones (check full history — these don't un-happen) ──
-  const hasBookingConfirm = all.some(m => m.role === 'assistant' && /booking.*sudah.*buat|booking.*created|bookingnya.*buat/i.test(m.content))
-  const hasImagesSent = all.some(m => m.role === 'assistant' && m.content.includes('[IMAGES_SENT]'))
-
-  // 1. Booking confirmed → done
-  if (hasBookingConfirm) return 'booking_complete'
-
-  // 2. Images were sent — check if the conversation advanced past package selection
-  if (hasImagesSent) {
-    const imgIdx = findLastIndex(all, m => m.role === 'assistant' && m.content.includes('[IMAGES_SENT]'))
-    const afterImages = all.slice(imgIdx + 1)
-    // Only advance to collecting_info if Shera's response AFTER images asks for booking details
-    // (car, plate, address, schedule) — not just any response (could be answering a question)
-    const sheraAdvancedBookingFlow = afterImages.some(m => m.role === 'assistant' &&
-      /mobilnya|plat|alamat|jadwal|dijadwal|kapan|lokasi/i.test(m.content))
-
-    if (sheraAdvancedBookingFlow) return 'collecting_info'
-    return 'showing_packages'
+  // Multi-car: if some booked but more remaining
+  if (hasBooking && ctx.totalCarsRequested && ctx.carsBooked < ctx.totalCarsRequested) {
+    return 'multi_car_next'
   }
 
-  // ── Current context ──
-  // Find the most recent greeting/introduction — everything before it is stale
-  const lastIntroIdx = findLastIndex(all, m => m.role === 'assistant' &&
-    /Shera dari Castudio|I'm Shera from/i.test(m.content))
-  const currentSession = lastIntroIdx >= 0 ? all.slice(lastIntroIdx) : all
-  const recentSession = currentSession.slice(-4) // last 2 turns within current session
+  if (hasBooking) return 'booking_complete'
 
-  const recentSheraMovedPastName = recentSession.some(m => m.role === 'assistant' &&
-    /standard wash|professional|elite|mau cuci|which package|paket cuci|paket detail|harga/i.test(m.content))
-  const recentAskedIntent = recentSession.some(m => m.role === 'assistant' &&
-    /cuci mobil atau detailing|wash or detailing/i.test(m.content))
-  const sessionAskedName = currentSession.some(m => m.role === 'assistant' && /namanya siapa|your name/i.test(m.content))
-  const sessionNameResponse = currentSession.some(m => m.role === 'user' && currentSession.indexOf(m) > 0)
+  // Check if all info is collected → confirming
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && ctx.address && ctx.schedule) {
+    return 'confirming_booking'
+  }
 
-  if (recentSheraMovedPastName) return 'awaiting_intent'
-  if (recentAskedIntent) return 'awaiting_intent'
-  if (sessionAskedName && sessionNameResponse) return 'awaiting_intent'
-  if (sessionAskedName) return 'awaiting_name'
-  if (isReturningCustomer && messages.length > 0) return 'general_chat'
+  // Collecting schedule
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && ctx.address && !ctx.schedule) {
+    return 'collecting_schedule'
+  }
+
+  // Collecting address
+  if (ctx.customerName && ctx.imagesSentCategories.length > 0 && !ctx.address) {
+    return 'collecting_address'
+  }
+
+  // Images sent — check if customer has selected a package
+  if (ctx.imagesSentCategories.includes('wash')) {
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+    const hasSelected = lastUserMsg && /standard|professional|elite/i.test(lastUserMsg.content)
+    if (hasSelected) return 'wash_selected'
+    return 'showing_wash_packages'
+  }
+
+  if (ctx.imagesSentCategories.includes('detailing')) {
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+    const hasSelected = lastUserMsg && /interior|exterior|window|tire|rims|full/i.test(lastUserMsg.content)
+    if (hasSelected) return 'detail_selected'
+    return 'showing_detail_packages'
+  }
+
+  // Intro pitch given → awaiting intent
+  if (ctx.introPitchGiven) return 'awaiting_intent'
+
+  // Name known but no pitch → give pitch
+  if (ctx.customerName && !ctx.introPitchGiven && !isReturningCustomer) return 'intro_pitch'
+
+  // Introduced but no name → collecting
+  if (ctx.alreadyIntroduced && !ctx.customerName) return 'collecting_name'
+
+  // Returning customer → general chat
+  if (isReturningCustomer) return 'general_chat'
 
   return 'greeting'
 }
 
-/** Array.findLastIndex polyfill */
-function findLastIndex<T>(arr: T[], predicate: (item: T) => boolean): number {
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (predicate(arr[i])) return i
-  }
-  return -1
-}
+// ─── State Transition (after tool call) ──────────────────────────────
 
-/** Format state info for injection into the system prompt */
-export function statePromptBlock(state: SheraState): string {
-  let block = `\n\n--- Conversation State ---`
-  block += `\nCurrent state: ${state}`
-
-  switch (state) {
-    case 'greeting':
-      block += `\nAksi: Perkenalkan diri dan tanya nama.`
-      break
-    case 'awaiting_name':
-      block += `\nAksi: Tunggu customer kasih nama. Kalau sudah dapat, sapa dan tanya mau cuci atau detailing. Kalau customer TIDAK MAU kasih nama (bilang "tidak", langsung tanya harga, langsung bilang mau apa, atau skip), JANGAN tanya nama lagi. Lanjut aja ke layanan, panggil mereka "kak". PENTING: Kamu SUDAH perkenalkan diri. JANGAN PERNAH perkenalkan diri lagi di state ini.`
-      break
-    case 'awaiting_intent':
-      block += `\nAksi: Tanya customer mau cuci mobil atau detailing. JANGAN kirim gambar sebelum customer jawab.`
-      break
-    case 'showing_packages':
-      block += `\nAksi: Gambar paket SUDAH dikirim. Tanya customer mau pilih yang mana. JANGAN kirim gambar lagi.`
-      break
-    case 'collecting_info':
-      block += `\nAksi: Customer sudah pilih paket. Kumpulkan info yang kurang: mobil, plat, alamat, jadwal. Tanya SATU per pesan.`
-      break
-    case 'confirming_booking':
-      block += `\nAksi: Semua info sudah ada. Konfirmasi detail booking sebelum buat.`
-      break
-    case 'booking_complete':
-      block += `\nAksi: Booking sudah dibuat. Kasih info pembayaran dan reschedule. Jawab pertanyaan lanjutan.`
-      break
-    case 'general_chat':
-      block += `\nAksi: Conversation bebas. Bantu customer dengan apa yang mereka butuhkan.`
-      break
+export function getNextState(
+  current: SheraState,
+  event: { toolsCalled?: string[]; nameGiven?: boolean; serviceChosen?: string; isReturning?: boolean }
+): SheraState {
+  if (event.isReturning && current === 'greeting') return 'general_chat'
+  if (event.toolsCalled?.includes('create_booking')) return 'booking_complete'
+  if (event.toolsCalled?.includes('send_service_images')) {
+    // Determine which category was sent based on tool args (handled by caller)
+    return current // Caller will use deriveState after
   }
 
-  return block
+  switch (current) {
+    case 'greeting': return 'collecting_name'
+    case 'collecting_name': return event.nameGiven ? 'intro_pitch' : 'collecting_name'
+    case 'intro_pitch': return 'awaiting_intent'
+    case 'awaiting_intent': return current
+    case 'showing_wash_packages': return event.serviceChosen ? 'wash_selected' : current
+    case 'showing_detail_packages': return event.serviceChosen ? 'detail_selected' : current
+    case 'wash_selected': return 'collecting_car_info'
+    case 'detail_selected': return 'collecting_car_info'
+    case 'collecting_car_info': return 'collecting_address'
+    case 'collecting_address': return 'collecting_schedule'
+    case 'collecting_schedule': return 'confirming_booking'
+    case 'confirming_booking': return current
+    case 'booking_complete': return current
+    case 'multi_car_next': return 'awaiting_intent'
+    case 'general_chat': return current
+    default: return current
+  }
 }

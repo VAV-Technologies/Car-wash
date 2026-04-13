@@ -711,7 +711,7 @@ describe('State gating', () => {
     const result = JSON.parse(await executeSheraTool('send_service_images', {
       service_type: 'standard_wash',
       chat_id: '628123@c.us',
-    }, 'showing_packages'))
+    }, 'showing_wash_packages'))
 
     // Not blocked — allowed for category switches
     expect(result.blocked_by_state).toBeUndefined()
@@ -727,7 +727,7 @@ describe('State gating', () => {
     // No blocked_by_state error
   })
 
-  it('allows create_booking in collecting_info state', async () => {
+  it('allows create_booking in confirming_booking state', async () => {
     mockCreateBooking.mockResolvedValue({ id: 'b1' })
 
     const result = JSON.parse(await executeSheraTool('create_booking', {
@@ -735,7 +735,7 @@ describe('State gating', () => {
       service_type: 'elite_wash',
       scheduled_date: '2026-04-15',
       scheduled_time: '10:00',
-    }, 'collecting_info'))
+    }, 'confirming_booking'))
 
     expect(result.id).toBe('b1')
     expect(mockCreateBooking).toHaveBeenCalled()
