@@ -290,20 +290,20 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     }
   }
 
-  // 3. Check for unauthorized discounts — STRIP the sentence, don't block everything
-  if (/\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b/i.test(output)) {
-    if (!/249\.?000/i.test(output)) {
-      // Strip just the discount sentence
-      output = output.replace(/[^.!?\n]*(?:\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b)[^.!?\n]*[.!?]?\s*/gi, '').trim()
-      issues.push('stripped unauthorized discount mention')
-      // If stripping left the response empty or too short, use canned response
-      if (output.length < 10) {
-        output = ctx.language === 'en'
-          ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use 🙂\n\nWould you like to continue?"
-          : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti 🙂\n\nMau lanjut kak?"
-      }
+  // 3. Check for unauthorized discounts — only strip if OFFERING a discount, not REFUSING one
+  const discountMatch = /\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b/i.test(output)
+  const isRefusingDiscount = /ga bisa.*diskon|tidak bisa.*diskon|can't.*discount|no discount|harga.*fixed|harga.*final/i.test(output)
+  if (discountMatch && !isRefusingDiscount && !/249\.?000/i.test(output)) {
+    // Model is OFFERING a discount — strip that sentence
+    output = output.replace(/[^.!?\n]*(?:\bdiskon\b|\bpotongan\b|\bdiscount\b|\bgratis\b|\bfree\b|\bbonus\b)[^.!?\n]*[.!?]?\s*/gi, '').trim()
+    issues.push('stripped unauthorized discount offer')
+    if (output.length < 10) {
+      output = ctx.language === 'en'
+        ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use 🙂\n\nWould you like to continue?"
+        : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti 🙂\n\nMau lanjut kak?"
     }
   }
+  // If refusing a discount → that's CORRECT behavior, leave it alone
 
   // 4. Fix gendering — replace standalone "pak"/"bu" before names with "kak"
   const beforeGender = output
