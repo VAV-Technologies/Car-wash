@@ -343,7 +343,10 @@ export async function POST(req: NextRequest) {
     // ── Phase 4: LLM processing with interrupt monitoring ────────
     // Start LLM immediately. In parallel, poll for new messages.
     // If a new message arrives during processing, abort LLM, merge, restart.
-    const MAX_INTERRUPTS = 2
+    // High MAX_INTERRUPTS + long post-interrupt wait so the customer can type
+    // as many bursts as they want; we wait until they stop, THEN respond.
+    const MAX_INTERRUPTS = 10
+    const POST_INTERRUPT_WAIT_MS = 6000
     let interrupts = 0
     let reply!: string
     let lastErr: unknown = null
@@ -353,30 +356,18 @@ export async function POST(req: NextRequest) {
       const processedMessage = collectPending()
       const abortController = new AbortController()
 
-      // LLM promise with HARD wall-clock guard (independent of processMessage's
-      // own timeouts). Protects us from any pathology where processMessage
-      // blocks beyond our budget, even if MAX_RETRIES=0.
-      const WALL_CLOCK_BUDGET = 75_000
+      // LLM promise — no wall-clock guard. Customer prefers silence over
+      // a "still processing" fallback message. If it takes long, it takes long.
       const llmPromise = (async (): Promise<{ type: 'reply'; reply: string }> => {
-        let attempt = 0
-        const MAX_RETRIES = 0 // No inline retries for reasoning models — each attempt takes too long
-        while (attempt <= MAX_RETRIES) {
-          try {
-            const processPromise = processMessage(chatId, phone, processedMessage, abortController.signal)
-            const wallClockTimeout = new Promise<never>((_, reject) => {
-              setTimeout(() => reject(new Error('wall-clock timeout')), WALL_CLOCK_BUDGET)
-            })
-            const r = await Promise.race([processPromise, wallClockTimeout])
-            return { type: 'reply', reply: r }
-          } catch (err) {
-            if (abortController.signal.aborted) throw new Error('aborted')
-            lastErr = err
-            attempt++
-            console.error(`[shera-error] Attempt ${attempt} failed:`, err)
-            if (attempt <= MAX_RETRIES) await new Promise(r => setTimeout(r, 1000))
-          }
+        try {
+          const r = await processMessage(chatId, phone, processedMessage, abortController.signal)
+          return { type: 'reply', reply: r }
+        } catch (err) {
+          if (abortController.signal.aborted) throw new Error('aborted')
+          lastErr = err
+          console.error(`[shera-error] processMessage failed:`, err)
+          throw err
         }
-        throw new Error('all retries failed')
       })()
 
       // Interrupt detector — polls DB every 2s for new messages. Baseline is
@@ -418,8 +409,8 @@ export async function POST(req: NextRequest) {
         if (result.type === 'interrupted') {
           interrupts++
           abortController.abort()
-          console.log(`[shera] Interrupt ${interrupts}/${MAX_INTERRUPTS} — new message during processing`)
-          await new Promise(r => setTimeout(r, 3000)) // let new message settle
+          console.log(`[shera] Interrupt ${interrupts}/${MAX_INTERRUPTS} — new message during processing, waiting ${POST_INTERRUPT_WAIT_MS}ms for more`)
+          await new Promise(r => setTimeout(r, POST_INTERRUPT_WAIT_MS)) // wait for customer to finish typing
           continue
         }
 
@@ -439,31 +430,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (!succeeded) {
-      // All attempts + interrupts exhausted — send fallback.
-      // Use resilient send: one retry with explicit logging and delivery metric
-      // so silent WAHA failures become visible in Vercel logs.
-      console.error('[shera-error] All attempts exhausted, queuing background retry. lastErr:', String(lastErr).slice(0, 500))
+      // LLM failed. DO NOT send a fallback message to the customer — silence
+      // is preferred over a "still processing" apology. Log + queue for the
+      // shera-retry cron to pick up later.
+      console.error('[shera-error] All attempts exhausted (silent). lastErr:', String(lastErr).slice(0, 500))
       alertLLMFailure(chatId, phone, String(lastErr)).catch(() => {})
       trackMetric(chatId, 'llm_failure', { phone, error: String(lastErr).slice(0, 200) }).catch(() => {})
-      trackMetric(chatId, 'llm_fallback_sent', { phone }).catch(() => {})
-
-      const fallbackText = 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏'
-      let fallbackDelivered = false
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        try {
-          const sendWithTimeout = Promise.race([
-            sendText(chatId, fallbackText),
-            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('waha sendText timeout')), 5000)),
-          ])
-          await sendWithTimeout
-          fallbackDelivered = true
-          break
-        } catch (sendErr) {
-          console.error(`[shera-error] Fallback sendText attempt ${attempt}/2 failed:`, sendErr)
-          if (attempt < 2) await new Promise(r => setTimeout(r, 1500))
-        }
-      }
-      trackMetric(chatId, 'llm_fallback_delivery', { phone, delivered: fallbackDelivered }).catch(() => {})
 
       try {
         const retryAt = new Date(Date.now() + 20 * 60 * 1000).toISOString()
@@ -485,7 +457,7 @@ export async function POST(req: NextRequest) {
         console.error('[shera-error] Failed to queue retry:', queueErr)
       }
 
-      return NextResponse.json({ ok: false, error: 'LLM failed — fallback sent, retry queued' }, { status: 200 })
+      return NextResponse.json({ ok: false, error: 'LLM failed — silent retry queued' }, { status: 200 })
     }
 
     // ── Final checkpoint: did NEW messages arrive while we were processing? ──

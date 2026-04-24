@@ -254,6 +254,28 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('fixed 349k → 249k (detailing wash prereq)')
   }
 
+  // 9b. Strip unsolicited package-explanation offers.
+  // Shera kept adding "aku bisa bantu jelasin bedanya Standard / Professional / Elite"
+  // which violates the v2 flow (customer picks in form, not in chat).
+  const offerPatterns = [
+    /\b(aku|ak|gue?|gw)\s+(bisa|boleh|mau)\s+(bantu\s+)?(jelasin|kasih[\s-]tau|bandingin|nerangin)[^.!?\n]*/gi,
+    /\bmau\s+(aku|ak)\s+(jelasin|kasih[\s-]tau|bandingin|nerangin)[^.!?\n]*/gi,
+    /\bbeda(nya)?\s+(Standard|Professional|Pro|Elite|paket)[^.!?\n]*/gi,
+    /\bkirim\s+nama\s+mobilnya[^.!?\n]*(?:rekomendasi|cocok|arahin|arahkan)[^.!?\n]*/gi,
+  ]
+  let strippedOffer = false
+  for (const pat of offerPatterns) {
+    if (pat.test(output)) {
+      output = output.replace(pat, '').trim()
+      strippedOffer = true
+    }
+  }
+  // Clean up trailing/leading dangling punctuation after strip
+  if (strippedOffer) {
+    output = output.replace(/[,.!?]\s*[,.!?]/g, '.').replace(/\s{2,}/g, ' ').replace(/^\s*[,.!?]\s*/, '').trim()
+    issues.push('stripped package-explanation offer')
+  }
+
   // 10. Ensure not empty — use context-aware fallback
   if (!output.trim()) {
     if (ctx.currentState === 'intro' && !ctx.alreadyIntroduced) {
