@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, Car, Loader2 } from 'lucide-react'
 import {
   WASH_SERVICES, DETAIL_SERVICES, ALL_SERVICES, DETAILING_VALUES,
-  WASH_PREREQ_PRICE, TIME_SLOTS, formatRupiah, isSunday,
+  WASH_PREREQ_PRICE, TIME_SLOTS, formatRupiah, isClosedDay,
 } from '@/lib/booking-form-constants'
 
 export default function BookingPage() {
@@ -292,13 +292,13 @@ function BookingForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Pilih Tanggal * <span className="text-xs text-slate-400">(Senin - Sabtu)</span></Label>
+              <Label>Pilih Tanggal * <span className="text-xs text-slate-400">(kecuali Senin & libur nasional)</span></Label>
               <div className="flex justify-center mt-2">
                 <Calendar
                   mode="single"
                   selected={form.date}
                   onSelect={(d) => setForm(f => ({ ...f, date: d || undefined }))}
-                  disabled={(date) => isSunday(date) || date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  disabled={(date) => isClosedDay(date) || date < new Date(new Date().setHours(0, 0, 0, 0))}
                   className="rounded-md border"
                 />
               </div>

@@ -30,19 +30,19 @@ export async function POST(req: NextRequest) {
     if (!date) errors.date = 'Pilih tanggal'
     if (!time) errors.time = 'Pilih jam'
 
-    // Validate date is Mon-Sat and not in the past
+    // Validate date is not Monday (closed) and not in the past
     if (date) {
       const d = new Date(date + 'T00:00:00+07:00')
-      if (d.getDay() === 0) errors.date = 'Minggu libur, pilih hari lain'
+      if (d.getDay() === 1) errors.date = 'Senin libur, pilih hari lain'
       const today = new Date()
       today.setHours(0, 0, 0, 0)
       if (d < today) errors.date = 'Tidak bisa booking tanggal yang sudah lewat'
     }
 
-    // Validate time is within business hours
+    // Validate time is within business hours (10:00-18:00)
     if (time) {
       const hour = parseInt(time.split(':')[0])
-      if (hour < 8 || hour > 16) errors.time = 'Jam kerja 08:00-16:00'
+      if (hour < 10 || hour > 17) errors.time = 'Jam kerja 10:00-18:00'
     }
 
     if (Object.keys(errors).length > 0) {

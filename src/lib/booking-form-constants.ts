@@ -86,10 +86,12 @@ export const ALL_SERVICES = [...WASH_SERVICES, ...DETAIL_SERVICES]
 export const DETAILING_VALUES = DETAIL_SERVICES.map(s => s.value)
 export const WASH_PREREQ_PRICE = 249000
 
+// Working hours: 10:00 — 18:00. Last booking slot starts at 17:00.
 export const TIME_SLOTS = [
-  '08:00', '09:00', '10:00', '11:00', '12:00',
-  '13:00', '14:00', '15:00', '16:00',
+  '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
 ]
+// Day off: 1 = Monday (Sunday is 0)
+export const DAY_OFF_INDEX = 1
 
 // Booking window:
 //   - Lead time: today + BOOKING_LEAD_TIME_DAYS days are closed (too soon).
@@ -118,6 +120,12 @@ export function formatRupiah(n: number): string {
   return 'Rp ' + n.toLocaleString('id-ID')
 }
 
+export function isClosedDay(date: Date): boolean {
+  return date.getDay() === DAY_OFF_INDEX
+}
+
+// Deprecated: kept for backwards-compatibility with older callers.
+// Prefer isClosedDay (operational closure, currently Mondays).
 export function isSunday(date: Date): boolean {
   return date.getDay() === 0
 }

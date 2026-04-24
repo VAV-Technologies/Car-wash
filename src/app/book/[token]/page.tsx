@@ -853,9 +853,9 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
     else setViewMonth(m => m + 1)
   }
 
-  // Hard-disabled: past dates + Sundays. These can't be clicked.
+  // Hard-disabled: past dates + closed days (Mondays). These can't be clicked.
   function isDisabled(d: Date): boolean {
-    return d.getDay() === 0 || d < todayStart
+    return d.getDay() === 1 || d < todayStart
   }
 
   // Soft-disabled: inside lead-time buffer OR beyond the open window.
@@ -884,7 +884,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full max-w-2xl space-y-4">
         <div className="text-center">
           <h2 className="text-2xl sm:text-3xl font-bold">Kapan jadwalnya?</h2>
-          <p className="text-white/40 text-sm mt-1">Senin — Sabtu, 08:00 — 16:00</p>
+          <p className="text-white/40 text-sm mt-1">Buka setiap hari kecuali hari libur nasional, 10:00 — 18:00</p>
         </div>
 
         {/* Cal.com-style: side-by-side on desktop, stacked on mobile */}
@@ -916,7 +916,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
               <div className="grid grid-cols-7 mb-1">
                 {WEEKDAYS.map(d => (
                   <div key={d} className="h-8 flex items-center justify-center">
-                    <span className={`text-[11px] font-medium ${d === 'Min' ? 'text-white/20' : 'text-white/40'}`}>{d}</span>
+                    <span className={`text-[11px] font-medium ${d === 'Sen' ? 'text-white/20' : 'text-white/40'}`}>{d}</span>
                   </div>
                 ))}
               </div>
