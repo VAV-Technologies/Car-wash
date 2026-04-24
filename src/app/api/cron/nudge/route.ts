@@ -45,6 +45,17 @@ export async function GET(req: Request) {
       const lastContent = (lastMsg.content || '').toLowerCase()
       if (lastContent.includes('booking udah masuk') || lastContent.includes('done') || lastContent.includes('selesai')) continue
 
+      // Don't nudge if the customer already filled out the form
+      // (status transitions 'active' → 'submitted' when submitBookingLink runs)
+      const { data: link } = await supabase
+        .from('booking_links')
+        .select('status')
+        .eq('phone', convo.phone)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if ((link as any)?.status === 'submitted') continue
+
       const firstName = msgs.find((m: any) => m.role === 'assistant' && m.content?.includes('Hai '))?.content?.match(/Hai (\w+)/)?.[1] || 'kak'
 
       const nudges = [
