@@ -25,7 +25,7 @@ export async function GET(
     const supabase = getSupabaseAdmin()
     const { data: customer } = await supabase
       .from('customers')
-      .select('name, phone, car_model, plate_number, address')
+      .select('name, phone, car_model, plate_number, address, neighborhood')
       .eq('id', link.customer_id)
       .single()
 
@@ -36,6 +36,7 @@ export async function GET(
         car_model: customer.car_model || '',
         plate_number: customer.plate_number || '',
         address: customer.address || '',
+        area: (customer as any).neighborhood || '',
       }
     }
   }

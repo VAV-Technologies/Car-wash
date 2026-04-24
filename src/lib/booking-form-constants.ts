@@ -91,6 +91,20 @@ export const TIME_SLOTS = [
   '13:00', '14:00', '15:00', '16:00',
 ]
 
+export const AREAS = [
+  'Jakarta Pusat',
+  'Jakarta Selatan',
+  'Jakarta Utara',
+  'Jakarta Timur',
+  'Jakarta Barat',
+  'Bogor',
+  'Depok',
+  'Tangerang',
+  'Tangerang Selatan',
+  'Bekasi',
+] as const
+export type Area = typeof AREAS[number]
+
 export function formatRupiah(n: number): string {
   return 'Rp ' + n.toLocaleString('id-ID')
 }
@@ -99,4 +113,4 @@ export function isSunday(date: Date): boolean {
   return date.getDay() === 0
 }
 
-export const REQUIRED_BOOKING_FIELDS = ['name', 'phone', 'service_type', 'car_model', 'plate_number', 'address', 'date', 'time'] as const
+export const REQUIRED_BOOKING_FIELDS = ['name', 'phone', 'service_type', 'car_model', 'plate_number', 'area', 'address', 'date', 'time'] as const

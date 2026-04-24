@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import {
   WASH_SERVICES, DETAIL_SERVICES, ALL_SERVICES, DETAILING_VALUES,
-  WASH_PREREQ_PRICE, TIME_SLOTS, formatRupiah,
+  WASH_PREREQ_PRICE, TIME_SLOTS, AREAS, formatRupiah,
 } from '@/lib/booking-form-constants'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -23,6 +23,7 @@ interface FormState {
   service_type: string
   car_model: string
   plate_number: string
+  area: string
   address: string
   date: Date | undefined
   time: string
@@ -31,7 +32,7 @@ interface FormState {
 
 const EMPTY_FORM: FormState = {
   category: '', name: '', phone: '', service_type: '', car_model: '',
-  plate_number: '', address: '', date: undefined, time: '', add_wash: false,
+  plate_number: '', area: '', address: '', date: undefined, time: '', add_wash: false,
 }
 
 const TOTAL_STEPS = 7
@@ -78,6 +79,7 @@ export default function TokenBookingPage() {
           service_type: fd.service_type || '',
           car_model: fd.car_model || '',
           plate_number: fd.plate_number || '',
+          area: fd.area || fd.neighborhood || '',
           address: fd.address || '',
           date: fd.date ? new Date(fd.date + 'T00:00:00') : undefined,
           time: fd.time || '',
@@ -109,7 +111,7 @@ export default function TokenBookingPage() {
           body: JSON.stringify({
             category: f.category, name: f.name, phone: f.phone,
             service_type: f.service_type, car_model: f.car_model,
-            plate_number: f.plate_number, address: f.address,
+            plate_number: f.plate_number, area: f.area, address: f.address,
             date: f.date?.toISOString().split('T')[0] || '',
             time: f.time, add_wash: f.add_wash,
           }),
@@ -160,7 +162,8 @@ export default function TokenBookingPage() {
         body: JSON.stringify({
           name: form.name.trim(), phone: form.phone.trim(),
           service_type: form.service_type, car_model: form.car_model.trim(),
-          plate_number: form.plate_number.trim(), address: form.address.trim(),
+          plate_number: form.plate_number.trim(),
+          area: form.area, address: form.address.trim(),
           date: form.date!.toISOString().split('T')[0], time: form.time,
           add_wash: isDetailing && form.add_wash,
         }),
@@ -657,9 +660,12 @@ function StepCar({ form, update, goNext, errors, editingFromReview, returnToRevi
 
 function StepAddress({ form, update, goNext, errors, editingFromReview, returnToReview }: { form: FormState; update: (p: Partial<FormState>) => void; goNext: () => void; errors: Record<string, string>; editingFromReview?: boolean; returnToReview?: () => void }) {
   const addrRef = useRef<HTMLTextAreaElement>(null)
-  useEffect(() => { addrRef.current?.focus() }, [])
+  useEffect(() => {
+    // Focus the textarea only once area is picked, otherwise let the user pick area first
+    if (form.area) addrRef.current?.focus()
+  }, [form.area])
 
-  const canAdvance = form.address.trim().length >= 5
+  const canAdvance = form.area.trim().length > 0 && form.address.trim().length >= 5
 
   return (
     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full max-w-md space-y-8">
@@ -670,12 +676,33 @@ function StepAddress({ form, update, goNext, errors, editingFromReview, returnTo
         </div>
 
         <div className="space-y-2">
+          <label className="text-xs text-white/50 font-medium uppercase tracking-wide">Area</label>
+          <div className="grid grid-cols-2 gap-2">
+            {AREAS.map(a => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => update({ area: a })}
+                className={`py-3 px-3 rounded-xl text-sm font-semibold transition-all text-left ${
+                  form.area === a
+                    ? 'bg-orange-500 text-white'
+                    : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
+                }`}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+          {errors.area && <p className="text-red-400 text-xs">{errors.area}</p>}
+        </div>
+
+        <div className="space-y-2">
           <label className="text-xs text-white/50 font-medium uppercase tracking-wide">Alamat Lengkap</label>
           <textarea
             ref={addrRef}
             value={form.address}
             onChange={e => update({ address: e.target.value })}
-            placeholder="Jl. Sudirman No. 1, Jakarta Selatan"
+            placeholder="Jl. Sudirman No. 1, RT/RW, Kelurahan"
             rows={3}
             className="w-full bg-transparent border-2 border-white/20 focus:border-orange-500 outline-none text-lg text-white p-4 rounded-xl placeholder:text-white/20 transition-colors resize-none"
           />
@@ -991,6 +1018,7 @@ function StepReview({ form, goTo, onSubmit, submitting, errors, totalPrice, sele
 
         {/* Address */}
         <ReviewRow label="Alamat" onEdit={() => goTo(4)}>
+          {form.area && <p className="text-orange-400 text-xs font-semibold mb-1">{form.area}</p>}
           <p className="text-white text-sm">{form.address}</p>
         </ReviewRow>
 

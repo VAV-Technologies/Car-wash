@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { createBooking } from '@/lib/admin/bookings'
-import { REQUIRED_BOOKING_FIELDS, ALL_SERVICES, DETAILING_VALUES } from '@/lib/booking-form-constants'
+import { REQUIRED_BOOKING_FIELDS, ALL_SERVICES, DETAILING_VALUES, AREAS } from '@/lib/booking-form-constants'
 import type { ServiceType } from '@/lib/admin/types'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ export async function getOrCreateBookingLink(
       if (cid) {
         const { data: customer } = await supabase
           .from('customers')
-          .select('name, phone, car_model, plate_number, address')
+          .select('name, phone, car_model, plate_number, address, neighborhood')
           .eq('id', cid)
           .single()
         if (customer) {
@@ -72,6 +72,7 @@ export async function getOrCreateBookingLink(
             car_model: customer.car_model || '',
             plate_number: customer.plate_number || '',
             address: customer.address || '',
+            area: (customer as any).neighborhood || '',
           }
         }
       }
@@ -231,7 +232,7 @@ export async function submitBookingLink(
     return { ok: false, errors: { _form: 'Link tidak valid atau sudah digunakan' } }
   }
 
-  const { name, phone, service_type, car_model, plate_number, address, date, time, add_wash } = formData
+  const { name, phone, service_type, car_model, plate_number, area, address, date, time, add_wash } = formData
 
   // Validate
   const errors: Record<string, string> = {}
@@ -240,6 +241,7 @@ export async function submitBookingLink(
   if (!service_type || !VALID_SERVICES.includes(String(service_type))) errors.service_type = 'Pilih layanan'
   if (!car_model || String(car_model).trim().length < 2) errors.car_model = 'Model mobil wajib diisi'
   if (!plate_number || String(plate_number).trim().length < 3) errors.plate_number = 'Plat nomor wajib diisi'
+  if (!area || !(AREAS as readonly string[]).includes(String(area))) errors.area = 'Pilih area'
   if (!address || String(address).trim().length < 5) errors.address = 'Alamat wajib diisi (min 5 karakter)'
   if (!date) errors.date = 'Pilih tanggal'
   if (!time) errors.time = 'Pilih jam'
@@ -278,6 +280,7 @@ export async function submitBookingLink(
         car_model: String(car_model).trim(),
         plate_number: String(plate_number).trim().toUpperCase(),
         address: String(address).trim(),
+        neighborhood: String(area),
       })
       .eq('id', customer.id)
   } else {
@@ -289,6 +292,7 @@ export async function submitBookingLink(
         car_model: String(car_model).trim(),
         plate_number: String(plate_number).trim().toUpperCase(),
         address: String(address).trim(),
+        neighborhood: String(area),
         segment: 'new',
         acquisition_source: 'whatsapp_form',
       })
