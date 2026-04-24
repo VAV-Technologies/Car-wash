@@ -347,12 +347,13 @@ export async function submitBookingLink(
         address: String(address).trim(),
         neighborhood: String(area),
         segment: 'new',
-        acquisition_source: 'whatsapp_form',
+        acquisition_source: 'whatsapp',
       })
       .select('id')
       .single()
 
     if (error) {
+      console.error('[submitBookingLink] Customer insert failed:', error)
       return { ok: false, errors: { _form: 'Gagal membuat data customer' } }
     }
     customer = newCustomer
