@@ -81,7 +81,13 @@ export default function TokenBookingPage() {
           plate_number: fd.plate_number || '',
           area: fd.area || fd.neighborhood || '',
           address: fd.address || '',
-          date: fd.date ? new Date(fd.date + 'T00:00:00') : undefined,
+          date: (() => {
+            if (!fd.date) return undefined
+            const d = new Date(fd.date + 'T00:00:00')
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            return d < today ? undefined : d
+          })(),
           time: fd.time || '',
           add_wash: fd.add_wash === true,
         }
@@ -1026,6 +1032,29 @@ function StepReview({ form, goTo, onSubmit, submitting, errors, totalPrice, sele
 
         {errors._form && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">{errors._form}</div>
+        )}
+
+        {Object.entries(errors).filter(([k]) => k !== '_form').length > 0 && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 space-y-2">
+            <p className="text-red-400 text-sm font-semibold">Ada yang perlu diperbaiki:</p>
+            <ul className="space-y-1.5">
+              {Object.entries(errors).filter(([k]) => k !== '_form').map(([field, msg]) => {
+                const stepMap: Record<string, number> = {
+                  service_type: 1, name: 2, phone: 2, car_model: 3, plate_number: 3,
+                  area: 4, address: 4, date: 5, time: 5,
+                }
+                const step = stepMap[field] ?? 0
+                return (
+                  <li key={field} className="flex items-start justify-between gap-2 text-xs">
+                    <span className="text-red-300">{msg}</span>
+                    <button onClick={() => goTo(step)} className="text-orange-400 hover:text-orange-300 underline underline-offset-2 whitespace-nowrap">
+                      Edit
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         )}
 
         {/* Service */}
