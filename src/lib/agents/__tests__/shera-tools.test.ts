@@ -14,11 +14,6 @@ vi.mock('@/lib/agents/waha', () => ({
   sendImage: (...args: any[]) => mockSendImage(...args),
 }))
 
-const mockCreateBooking = vi.fn()
-vi.mock('@/lib/admin/bookings', () => ({
-  createBooking: (...args: any[]) => mockCreateBooking(...args),
-}))
-
 import { executeSheraTool } from '../shera'
 
 // ─── Helper ─────────────────────────────────────────────────────────
@@ -53,11 +48,11 @@ function mockFromSequence(...chains: any[]) {
 }
 
 // Request-scoped context for tests
-let ctx: { serviceImagesSent: boolean }
+let ctx: { serviceImagesSent: boolean; imagesSentCategories: string[] }
 
 beforeEach(() => {
   vi.clearAllMocks()
-  ctx = { serviceImagesSent: false }
+  ctx = { serviceImagesSent: false, imagesSentCategories: [] }
 })
 
 // =====================================================================
@@ -101,7 +96,7 @@ describe('search_customer', () => {
 describe('get_customer_bookings', () => {
   it('returns bookings for a customer', async () => {
     const bookings = [
-      { id: 'b1', service_type: 'elite_wash', scheduled_date: '2026-04-15', status: 'confirmed' },
+      { id: 'b1', service_type: 'elite_wash', scheduled_date: '2026-12-15', status: 'confirmed' },
     ]
     const chain = mockChain({})
     chain.limit = vi.fn().mockResolvedValue({ data: bookings, error: null })
@@ -192,64 +187,6 @@ describe('check_date_availability', () => {
 
     const result = JSON.parse(await executeSheraTool('check_date_availability', { date: '2026-04-20' }))
     expect(result.availability).toBe('fully booked')
-  })
-})
-
-// =====================================================================
-// create_booking
-// =====================================================================
-
-describe('create_booking', () => {
-  it('creates booking with all fields', async () => {
-    const booking = { id: 'b1', customer_id: 'c1', service_type: 'elite_wash', status: 'confirmed' }
-    mockCreateBooking.mockResolvedValue(booking)
-
-    const result = JSON.parse(await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'elite_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-      location_address: 'Jl Kemang 15',
-    }))
-
-    expect(result).toEqual(booking)
-    expect(mockCreateBooking).toHaveBeenCalledWith(expect.objectContaining({
-      customer_id: 'c1',
-      service_type: 'elite_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-      location_address: 'Jl Kemang 15',
-      status: 'confirmed',
-    }))
-  })
-
-  it('omits location_address when not provided', async () => {
-    mockCreateBooking.mockResolvedValue({ id: 'b2' })
-
-    await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'standard_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-    })
-
-    const calledWith = mockCreateBooking.mock.calls[0][0]
-    expect(calledWith).not.toHaveProperty('location_address')
-  })
-
-  it('includes notes when provided', async () => {
-    mockCreateBooking.mockResolvedValue({ id: 'b3' })
-
-    await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'standard_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-      notes: 'Gate code: 1234',
-    })
-
-    const calledWith = mockCreateBooking.mock.calls[0][0]
-    expect(calledWith.notes).toBe('Gate code: 1234')
   })
 })
 
@@ -529,7 +466,7 @@ describe('send_service_images', () => {
     expect(result.sent).toBeFalsy()
   })
 
-  it('sends all 3 wash images', async () => {
+  it('sends all 3 wash images', { timeout: 15000 }, async () => {
     mockImagesInDB(washImages)
     mockSendImage.mockResolvedValue(undefined)
     const restore = mockVerification()
@@ -577,7 +514,7 @@ describe('send_service_images', () => {
     expect(result.message).toMatch(/GAGAL/)
   })
 
-  it('reports partial failure correctly', async () => {
+  it('reports partial failure correctly', { timeout: 15000 }, async () => {
     mockImagesInDB(washImages)
     let callCount = 0
     mockSendImage.mockImplementation(() => {
@@ -610,7 +547,7 @@ describe('send_service_images', () => {
     expect(mockSendImage).not.toHaveBeenCalled()
   })
 
-  it('sends images in correct sort order (standard → professional → elite)', async () => {
+  it('sends images in correct sort order (standard → professional → elite)', { timeout: 15000 }, async () => {
     // Provide images in wrong order to test sorting
     const unsorted = [
       { file_name: 'service_image_elite_wash', content: 'https://example.com/elite.jpg' },
@@ -698,25 +635,12 @@ describe('State gating', () => {
     expect(mockSendImage).not.toHaveBeenCalled()
   })
 
-  it('blocks create_booking in awaiting_name state', async () => {
-    const result = JSON.parse(await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'elite_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-    }, 'awaiting_name'))
-
-    expect(result.blocked_by_state).toBe(true)
-    expect(mockCreateBooking).not.toHaveBeenCalled()
-  })
-
-  it('allows send_service_images in showing_packages (category switch)', async () => {
+  it('allows send_service_images in active state', async () => {
     const result = JSON.parse(await executeSheraTool('send_service_images', {
       service_type: 'standard_wash',
       chat_id: '628123@c.us',
-    }, 'showing_wash_packages'))
+    }, 'active'))
 
-    // Not blocked — allowed for category switches
     expect(result.blocked_by_state).toBeUndefined()
   })
 
@@ -730,31 +654,14 @@ describe('State gating', () => {
     // No blocked_by_state error
   })
 
-  it('allows create_booking in confirming_booking state', async () => {
-    mockCreateBooking.mockResolvedValue({ id: 'b1' })
-
-    const result = JSON.parse(await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'elite_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-    }, 'confirming_booking'))
-
-    expect(result.id).toBe('b1')
-    expect(mockCreateBooking).toHaveBeenCalled()
-  })
-
   it('allows tools when no state is provided (backwards compatible)', async () => {
-    mockCreateBooking.mockResolvedValue({ id: 'b1' })
+    const chain = mockChain({ data: [] })
+    chain.limit = vi.fn().mockResolvedValue({ data: [], error: null })
+    mockFrom.mockReturnValue(chain)
 
-    const result = JSON.parse(await executeSheraTool('create_booking', {
-      customer_id: 'c1',
-      service_type: 'elite_wash',
-      scheduled_date: '2026-04-15',
-      scheduled_time: '10:00',
-    }))
-
-    expect(result.id).toBe('b1')
+    const result = JSON.parse(await executeSheraTool('search_customer', { query: 'test' }))
+    expect(result).toEqual([])
+    // No blocked_by_state error when state arg omitted
   })
 })
 

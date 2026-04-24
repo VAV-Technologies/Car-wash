@@ -260,7 +260,7 @@ export async function GET(req: NextRequest) {
         const supabase = getSupabaseAdmin()
         const { data, error } = await supabase
           .from('whatsapp_conversations')
-          .select('id, chat_id, phone, customer_id, state, last_message_at, messages, created_at')
+          .select('id, chat_id, phone, customer_id, state, last_message_at, messages, created_at, booking_link_token')
           .order('last_message_at', { ascending: false })
           .limit(50)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -278,9 +278,28 @@ export async function GET(req: NextRequest) {
           }
         }
 
+        // Fetch booking link statuses for conversations that have tokens
+        const tokens = (data ?? []).map(c => c.booking_link_token).filter(Boolean)
+        let linkMap: Record<string, { status: string; filled: number; total: number }> = {}
+        if (tokens.length > 0) {
+          const { data: links } = await supabase
+            .from('booking_links')
+            .select('token, status, form_data, last_opened_at')
+            .in('token', tokens)
+          if (links) {
+            const REQUIRED = ['name', 'phone', 'service_type', 'car_model', 'plate_number', 'address', 'date', 'time']
+            linkMap = Object.fromEntries(links.map(l => {
+              const fd = (l.form_data || {}) as Record<string, unknown>
+              const filled = REQUIRED.filter(f => fd[f] && String(fd[f]).trim().length > 0).length
+              return [l.token, { status: l.status, filled, total: REQUIRED.length }]
+            }))
+          }
+        }
+
         const enriched = (data ?? []).map(convo => {
           const msgs = Array.isArray(convo.messages) ? convo.messages : []
           const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null
+          const linkInfo = convo.booking_link_token ? linkMap[convo.booking_link_token] : null
           return {
             id: convo.id,
             chat_id: convo.chat_id,
@@ -294,6 +313,9 @@ export async function GET(req: NextRequest) {
             has_images_sent: msgs.some((m: any) => m.role === 'assistant' && m.content?.includes('[IMAGES_SENT]')),
             has_booking: msgs.some((m: any) => m.role === 'assistant' && /booking.*buat|booking.*created/i.test(m.content || '')),
             created_at: convo.created_at,
+            form_status: linkInfo ? linkInfo.status : null,
+            form_filled: linkInfo ? linkInfo.filled : 0,
+            form_total: linkInfo ? linkInfo.total : 8,
           }
         })
 

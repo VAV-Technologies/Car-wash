@@ -1,7 +1,7 @@
 import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
-import { isToolAllowed, getToolBlockReason, getNextState, deriveState, getStatePrompt, type SheraState } from './shera-state'
+import { isToolAllowed, getToolBlockReason, deriveState, getStatePrompt, type SheraState } from './shera-state'
 import { extractContext, formatContextBlock, validateResponse, type ConvoContext } from './shera-rules'
 import { alertImageDeliveryFailure } from './shera-alerts'
 import { trackMetric } from './shera-metrics'
@@ -13,19 +13,16 @@ import { trackMetric } from './shera-metrics'
 // ─── Part A: Identity & Personality (always included) ─────────────
 export const PROMPT_IDENTITY = `Kamu Shera dari Castudio. Cuci mobil & detailing premium yang datang ke lokasi customer.
 
-GAYA: Casual WhatsApp chat. Bukan bot, bukan CS formal. Pesan pendek, maks 2 kalimat. 1 emoji maks per pesan.
-BAHASA: Ikuti bahasa customer. "Hallo/Halo/Hai" = Indonesian. Kalau English, SEMUA harus English tanpa campur.
-PANGGILAN: Selalu "kak" + nama. JANGAN PERNAH "pak", "bu", "Anda", "kamu".
-SETIAP PESAN harus AKHIRI dengan pertanyaan atau ajakan ke langkah berikutnya. Jangan pernah jawab lalu diam.
-FORMAT: Kalau pesanmu ada 2 bagian (jawaban + CTA), PISAHKAN dengan satu baris kosong. Contoh:
-"Standard cocok buat perawatan rutin, Professional lebih lengkap buat mobil yang udah lama ga dicuci.
-
-Kak mau pilih yang mana?"
-JANGAN gabung jawaban + CTA jadi 1 paragraf. Selalu ada gap sebelum CTA.
+GAYA: Casual WhatsApp chat kayak temen. Bukan bot, bukan CS formal. Jawab dengan natural — ga terlalu pendek (jangan cuma 1 kalimat kering), ga terlalu panjang (jangan 5 paragraf). Sweet spot 2-4 kalimat, kayak chat orang beneran. Boleh 1 emoji per pesan, jangan lebih.
+BAHASA: Ikuti bahasa customer. "Hallo/Halo/Hai" = Indonesian. Kalau customer pakai English, SELURUH respons kamu HARUS dalam English. JANGAN campur Indonesian. JANGAN pakai "Siap kak" kalau customer English — pakai "Sure" / "Got it".
+PANGGILAN: JANGAN PERNAH "pak", "bu", "Anda", "kamu". Pakai "kak [nama]" CUMA 1x di awal pesan, sisanya variasi natural. JANGAN mulai kalimat dengan "Kak mau..." — itu aneh, kedengerannya kayak manggil orang bernama "Kak Mau". Contoh BAGUS: "Mau pilih yang mana nih?", "Boleh share model mobilnya?", "Jadwalnya kapan?". Contoh JELEK: "Kak mau pilih yang mana?", "Kak mau lanjut?", "Kak mau booking?".
+TIAP PESAN akhiri dengan pertanyaan atau next step. KECUALI setelah booking selesai — kalau booking udah dibuat, tutup percakapan dengan natural: kasih info pembayaran, bilang kabarin 48 jam sebelumnya kalau mau reschedule, dan selesai. JANGAN terus-terusan tanya "ada yang bisa dibantu lagi?" — itu bikin loop.
+FORMAT: SELALU pisahkan bagian-bagian pesan dengan 1 baris kosong. Jawaban di atas, CTA/next step di bawah. Kalau pesannya panjang (jelaskan sesuatu + emoji + lanjut ke topik lain), PISAHKAN tiap bagian dengan baris kosong biar ga numpuk jadi 1 blok teks. Pesanmu harus enak dibaca di layar HP.
 JANGAN pakai tanda strip (-). Pakai angka (1. 2. 3.) kalau mau list.
-JANGAN PERNAH ASSUME kondisi mobil customer. Kalau mereka tanya "X itu apa?", jawab pertanyaannya saja. JANGAN assume mereka punya masalah itu. JANGAN rekomendasiin paket berdasarkan pertanyaan mereka kecuali mereka MINTA rekomendasi.
+JANGAN PERNAH ASSUME kondisi mobil customer. Kalau mereka tanya "X itu apa?", jawab pertanyaannya saja. JANGAN assume mereka punya masalah itu.
 JANGAN pernah bilang kamu AI atau bot. Kamu Shera, orang biasa.
-JANGAN PERNAH minta info yang sudah diberikan. Alamat, mobil, plat, jadwal yang customer kasih = FINAL.`
+JANGAN PERNAH minta info yang sudah diberikan. Info yang customer kasih = FINAL.
+JUALAN: Kamu sales yang percaya diri sama produk. Kalau customer bilang mahal, jangan cuma bilang "kita beda". Jelasin VALUE-nya — produk import, detailer terlatih, garansi kepuasan, datang ke rumah (ga perlu kemana-mana). Buat mereka ngerasa worth it.`
 
 // ─── Part B: Business Knowledge (always included) ─────────────────
 export const PROMPT_BUSINESS = `
@@ -42,7 +39,7 @@ Satu-satunya harga spesial: Standard Wash Rp 249.000 untuk customer yang booking
 DETAILING BUTUH CUCI DULU: Setelah customer pilih paket detailing, info: "Sebelum detailing mobilnya perlu dicuci dulu ya kak. Kalau mau, kita cuci Standard Wash harga spesial Rp 249.000. Atau cuci sendiri juga boleh 🙂"
 
 AREA: Jabodetabek only. Luar area → "Maaf kak, baru bisa layani Jabodetabek."
-JAM KERJA: Senin-Sabtu 08:00-17:00. Minggu libur. Booking besok/hari ini BOLEH.
+JAM KERJA: Senin-Sabtu 08:00-17:00. Minggu libur. Booking MINIMAL 48 jam dari sekarang (H+2). Kalau customer minta besok/hari ini → "Maaf kak, booking minimal 2 hari sebelumnya ya."
 GARANSI: Ga puas → kita balik buat benerin tanpa biaya.
 BAYAR: Ga perlu deposit. Bayar setelah selesai.
 
@@ -51,10 +48,15 @@ Standard → perawatan rutin, mobil ga terlalu kotor
 Professional → lama ga dicuci, noda interior, bercak hujan, kontaminan (brake dust, iron, tree sap)
 Elite → paling lengkap, ceramic coating, engine bay, interior deep clean
 
-MAHAL? → "Kita emang beda kak, produk premium import, prosesnya teliti, hasilnya aman buat cat 🙂"
+MAHAL? vs MINTA DISKON — INI BEDA:
+Kalau customer bilang MAHAL/KEMAHALAN → JUAL VALUE: produk premium import Korea/Jepang, detailer terlatih, datang ke rumah, garansi puas. Buat mereka ngerasa worth it. JANGAN bilang "ga bisa diskon" karena mereka BUKAN minta diskon — mereka cuma komentar soal harga.
+Kalau customer EKSPLISIT minta DISKON/POTONGAN/PROMO → baru tolak: "Sayangnya harga kita ga bisa di-diskon kak..."
 
-ESCALATE hanya: >8 mobil, akses apartemen, komplain Castudio, harga korporat, partnership.
-JANGAN escalate: competitor complaint (itu peluang!), pertanyaan umum, booking biasa.`
+BOOKING: Semua booking via form link yang dikirim otomatis di awal percakapan. Kamu TIDAK kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat. Kamu jawab pertanyaan harga/paket/area dan arahkan customer ke form.
+
+ESCALATE hanya: >8 mobil, komplain Castudio, harga korporat, partnership.
+Apartemen BOLEH di-booking langsung — JANGAN escalate hanya karena alamatnya apartemen. Escalate HANYA kalau customer bilang ada masalah akses (security, parkir, izin gedung).
+JANGAN escalate: competitor complaint (itu peluang!), pertanyaan umum, booking biasa, alamat apartemen/gedung.`
 
 // Legacy export for backward compatibility with tests
 export const SHERA_SYSTEM_PROMPT = PROMPT_IDENTITY + '\n' + PROMPT_BUSINESS
@@ -70,7 +72,6 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
   { type: 'function', function: { name: 'search_customer', description: 'Search for a customer by phone number or name. Use this when the customer wants to check their profile, existing bookings, or when you need to find their customer ID.', parameters: { type: 'object', properties: { query: { type: 'string', description: 'Phone number or name to search for' } }, required: ['query'] } } },
   { type: 'function', function: { name: 'get_customer_bookings', description: 'Get bookings for a specific customer. Use this to check upcoming, past, or cancelled bookings.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' }, status: { type: 'string', description: 'Optional filter by status: confirmed, completed, cancelled, no_show' } }, required: ['customer_id'] } } },
   { type: 'function', function: { name: 'check_date_availability', description: 'Check how many booking slots are available on a given date. Use this before creating a booking to see if the date is open.', parameters: { type: 'object', properties: { date: { type: 'string', description: 'Date to check in YYYY-MM-DD format' } }, required: ['date'] } } },
-  { type: 'function', function: { name: 'create_booking', description: 'Create a new booking for a customer. Only use this after confirming all details with the customer.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' }, service_type: { type: 'string', description: 'Service type: standard_wash, professional, elite_wash, interior_detail, exterior_detail, window_detail, tire_rims, full_detail' }, scheduled_date: { type: 'string', description: 'Date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'Time in HH:MM format (24h)' }, location_address: { type: 'string', description: 'Full street address for the service location' }, notes: { type: 'string', description: 'Location notes and special instructions' } }, required: ['customer_id', 'service_type', 'scheduled_date', 'scheduled_time'] } } },
   { type: 'function', function: { name: 'update_booking', description: 'Update an existing booking. Use this to reschedule (change date/time) or change the service type.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID' }, scheduled_date: { type: 'string', description: 'New date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'New time in HH:MM format (24h)' }, service_type: { type: 'string', description: 'New service type' } }, required: ['booking_id'] } } },
   { type: 'function', function: { name: 'cancel_booking', description: 'Cancel an existing booking. Use this when the customer wants to cancel their appointment.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID to cancel' } }, required: ['booking_id'] } } },
   { type: 'function', function: { name: 'create_customer', description: 'Register a new customer OR update an existing customer record. Call this whenever you learn new customer details (name, car, plate, address) to save them to the database. If a customer with this phone already exists, their record will be updated with the new info.', parameters: { type: 'object', properties: { name: { type: 'string', description: "Customer's full name" }, phone: { type: 'string', description: 'Phone number (e.g. 628123456789)' }, car_model: { type: 'string', description: 'Car make and model (e.g. Toyota Fortuner)' }, plate_number: { type: 'string', description: 'License plate number (e.g. B 1234 ABC)' }, address: { type: 'string', description: 'Full street address' }, neighborhood: { type: 'string', description: 'Area or neighborhood for routing' } }, required: ['name', 'phone'] } } },
@@ -78,6 +79,7 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
   { type: 'function', function: { name: 'escalate_to_human', description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'Brief reason why this needs human attention' }, category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' }, customer_message: { type: 'string', description: 'The customer message that triggered escalation' } }, required: ['reason', 'category'] } } },
   { type: 'function', function: { name: 'get_completed_jobs', description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' } }, required: ['customer_id'] } } },
   { type: 'function', function: { name: 'submit_job_rating', description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.', parameters: { type: 'object', properties: { job_id: { type: 'string', description: 'The job UUID to rate' }, rating: { type: 'number', description: 'Rating from 1 to 5' }, feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' } }, required: ['job_id', 'rating'] } } },
+  { type: 'function', function: { name: 'get_booking_link_status', description: 'Check the status of the customer\'s booking form link. Shows what fields are filled and what is still missing. Use this to check if the customer has started or completed the booking form.', parameters: { type: 'object', properties: { phone: { type: 'string', description: 'Customer phone number' } }, required: ['phone'] } } },
 ]
 
 // ---------------------------------------------------------------------------
@@ -87,6 +89,7 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
 /** Request-scoped context to avoid globalThis pollution across concurrent requests */
 export interface SheraRequestContext {
   serviceImagesSent: boolean
+  imagesSentCategories: string[]  // from conversation history — blocks re-sends across turns
 }
 
 export async function executeSheraTool(
@@ -147,26 +150,6 @@ export async function executeSheraTool(
         else if (n <= 12) availability = 'limited slots'
         else availability = 'fully booked'
         return JSON.stringify({ date, booked: n, availability })
-      }
-
-      case 'create_booking': {
-        // Use the createBooking function so auto-assign kicks in
-        const { createBooking } = await import('@/lib/admin/bookings')
-        const bookingData: Record<string, unknown> = {
-          customer_id: String(input.customer_id),
-          service_type: String(input.service_type),
-          scheduled_date: String(input.scheduled_date),
-          scheduled_time: String(input.scheduled_time),
-          notes: input.notes ? String(input.notes) : null,
-          status: 'confirmed',
-        }
-        if (input.location_address) bookingData.location_address = String(input.location_address)
-        const booking = await createBooking(bookingData as any)
-        trackMetric(String(input.customer_id), 'booking_created', {
-          service_type: String(input.service_type),
-          scheduled_date: String(input.scheduled_date),
-        }).catch(() => {})
-        return JSON.stringify(booking)
       }
 
       case 'update_booking': {
@@ -324,9 +307,18 @@ export async function executeSheraTool(
           sub_elite: 'Langganan Elite',
         }
 
-        // Prevent duplicate sends in same conversation turn
+        // Prevent duplicate sends — same turn OR previous turns
         if (ctx?.serviceImagesSent) {
-          return JSON.stringify({ sent: 0, already_sent: true, message: 'Images were already sent in this conversation turn. Do NOT call this tool again. Just ask the customer which package they prefer.' })
+          return JSON.stringify({ sent: 0, already_sent: true, message: 'Images already sent this turn. Do NOT re-send. Just refer to packages already shown.' })
+        }
+        // Block re-sends across turns: if this category was already sent in conversation history
+        const isWashReq = rawRequested.some((t: string) => WASH_TYPES.includes(t))
+        const isDetailReq = rawRequested.some((t: string) => DETAIL_TYPES.includes(t))
+        if (isWashReq && ctx?.imagesSentCategories?.includes('wash')) {
+          return JSON.stringify({ sent: 0, already_sent: true, message: 'Wash images already sent earlier in this conversation. Do NOT re-send. Refer to packages already shown and continue the booking flow.' })
+        }
+        if (isDetailReq && ctx?.imagesSentCategories?.includes('detailing')) {
+          return JSON.stringify({ sent: 0, already_sent: true, message: 'Detailing images already sent earlier in this conversation. Do NOT re-send. Refer to packages already shown and continue the booking flow.' })
         }
 
         // Sort order: full_detail first for detailing, then rest alphabetically
@@ -350,8 +342,8 @@ export async function executeSheraTool(
           try {
             await sendImage(chatId, img.content, caption)
             sent++
-            // Small delay between images
-            if (sent < images.length) await new Promise(r => setTimeout(r, 1000))
+            // Delay between images — WAHA needs time to process each send
+            if (sent < images.length) await new Promise(r => setTimeout(r, 2000))
           } catch (err) {
             failed++
             console.error(`[send_service_images] Failed to send ${key}:`, err)
@@ -392,6 +384,12 @@ export async function executeSheraTool(
         }
         trackMetric(chatId, 'image_delivery_success', { images_sent: sent, images_failed: failed }).catch(() => {})
         return JSON.stringify({ sent, failed, message: 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' })
+      }
+
+      case 'get_booking_link_status': {
+        const { getFormCompletionStatus } = await import('@/lib/booking-links')
+        const result = await getFormCompletionStatus(cleanPhone(String(input.phone)))
+        return JSON.stringify(result)
       }
 
       case 'escalate_to_human': {
@@ -445,7 +443,8 @@ export function classifyCustomer(customer: CustomerRecord | null): 'new' | 'stub
 export function buildCustomerContext(
   customer: CustomerRecord | null,
   phone: string,
-  lastBooking?: { service_type: string; scheduled_date: string } | null
+  lastBooking?: { service_type: string; scheduled_date: string } | null,
+  bookingLinkToken?: string | null,
 ): string {
   const type = classifyCustomer(customer)
   let ctx = ''
@@ -474,12 +473,23 @@ export function buildCustomerContext(
     ctx += `\nKalau customer mau booking baru dan TIDAK ada last booking di atas: tanya mau cuci atau detailing.`
   } else if (type === 'stub') {
     ctx += `\nCustomer record exists but is INCOMPLETE (ID: ${customer!.id}). Name is still placeholder "${customer!.name}".`
-    ctx += `\nThis is a NEW customer. Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal.`
-    ctx += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk UPDATE record customer ini. Pakai phone ${phone}. Ini SANGAT PENTING agar data customer tersimpan dengan benar.`
+    ctx += `\nTanya nama dulu supaya bisa panggil mereka dengan benar.`
+    ctx += `\nKalau customer kasih info baru (nama, mobil, plat, alamat) di chat, panggil create_customer untuk UPDATE record ini. Pakai phone ${phone}.`
     ctx += `\nDo NOT ask for phone — you already have it.`
   } else {
-    ctx += `\nCustomer is NEW (not yet in the database). Ikuti FLOW BOOKING dari awal: nama dulu, lalu layanan, paket, mobil, plat, alamat, jadwal. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
-    ctx += `\nSETIAP KALI kamu dapat info baru (nama, mobil, plat, alamat), WAJIB panggil create_customer untuk simpan data customer. Ini SANGAT PENTING.`
+    ctx += `\nCustomer is NEW (not yet in the database). Tanya nama dulu supaya bisa panggil mereka dengan benar. Do NOT ask for phone — you already have it. Use the phone ${phone} when creating the customer.`
+    ctx += `\nKalau customer kasih info baru (nama, mobil, plat, alamat) di chat, panggil create_customer untuk simpan record customer.`
+  }
+
+  // Booking form directive — redirect all booking to the form link
+  if (bookingLinkToken) {
+    ctx += `\n\n--- BOOKING VIA FORM ---`
+    ctx += `\nForm link: https://castudio.id/book/${bookingLinkToken}`
+    ctx += `\nJANGAN kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.`
+    ctx += `\nKalau customer mau booking atau tanya cara booking → arahkan ke form: "Langsung isi form yang tadi aku kirim ya kak, gampang banget kok cuma 30 detik 🙂"`
+    ctx += `\nKalau customer SUDAH bilang mau booking tapi belum isi form → kirim link lagi: "Ini link-nya kak: https://castudio.id/book/${bookingLinkToken}"`
+    ctx += `\nKamu TETAP boleh jawab pertanyaan soal layanan, harga, perbedaan paket, dsb. Tapi untuk BOOKING, selalu arahkan ke form.`
+    ctx += `\nGunakan get_booking_link_status untuk cek progress form customer kalau mereka tanya soal booking mereka.`
   }
 
   return ctx
@@ -546,7 +556,7 @@ export async function processMessage(
   signal?: AbortSignal
 ): Promise<string> {
   // Request-scoped context (safe for concurrent requests, unlike globalThis)
-  const reqCtx: SheraRequestContext = { serviceImagesSent: false }
+  const reqCtx: SheraRequestContext = { serviceImagesSent: false, imagesSentCategories: [] }
   const supabase = getSupabaseAdmin()
   const cleanedPhone = cleanPhone(phone)
 
@@ -633,35 +643,23 @@ export async function processMessage(
     { role: 'user', content: messageText },
   ]
   const convoCtx = extractContext(msgsForContext)
+  reqCtx.imagesSentCategories = convoCtx.imagesSentCategories
   const contextBlock = formatContextBlock(convoCtx)
 
-  // ─── LAYER 2: Derive state from context ────────────────────────
+  // ─── LAYER 2: Derive phase from context ─────────────────────────
   const customerType = classifyCustomer(customer)
   const isReturning = customerType === 'returning'
   let currentState: SheraState = deriveState(msgsForContext, convoCtx, isReturning)
 
-  // Stuck-state recovery — if stuck asking for name too long, move on
-  if ((currentState === 'collecting_name' || currentState === 'intro_pitch') && !convoCtx.customerName && existingMessages.length >= 6) {
-    currentState = 'awaiting_intent'
-    convoCtx.customerName = 'kak' // default to "kak" if name never given
+  // Stuck in intro too long? Move to active so the AI can help
+  if (currentState === 'intro' && !convoCtx.customerName && existingMessages.length >= 6) {
+    currentState = 'active'
+    convoCtx.customerName = 'kak'
   }
 
-  // If name was just given in THIS message and we're at greeting/collecting_name, advance
-  if (convoCtx.customerName && (currentState === 'greeting' || currentState === 'collecting_name')) {
-    // If customer also stated service intent, skip intro entirely
-    if (convoCtx.hasServiceIntent || (convoCtx.totalCarsRequested && convoCtx.totalCarsRequested > 0)) {
-      currentState = 'awaiting_intent' // model will process their stated intent
-    } else {
-      currentState = 'intro_pitch'
-    }
-  }
+  // Intro template ALWAYS fires when name is known but pitch not given — no skipping
 
-  // If customer already specified everything (multi-car with specific services), skip further
-  if ((currentState === 'awaiting_intent' || currentState === 'intro_pitch') && convoCtx.hasServiceIntent && convoCtx.totalCarsRequested && convoCtx.totalCarsRequested > 1) {
-    currentState = 'collecting_car_info' // let the model acknowledge the order and start collecting
-  }
-
-  // Pass state to context for validator enforcement
+  // Pass state to context for validator
   convoCtx.currentState = currentState
 
   // ─── LAYER 3: Build focused prompt (Part A + B + State + Context) ─
@@ -693,8 +691,9 @@ export async function processMessage(
   systemPrompt += `\nPhone: ${phone} (SUDAH punya, JANGAN tanya)`
   systemPrompt += `\nChat ID: ${chatId}`
 
-  // Customer context
-  systemPrompt += buildCustomerContext(customer, phone, lastBooking)
+  // Customer context (with booking form link if available)
+  const bookingLinkToken: string | null = (conversation as any)?.booking_link_token || null
+  systemPrompt += buildCustomerContext(customer, phone, lastBooking, bookingLinkToken)
 
   // Safety net for reasoning model
   systemPrompt += `\n\nKalau bingung: rangkum apa yang sudah kamu tau, list apa yang kurang, dan tanya langkah berikutnya.`

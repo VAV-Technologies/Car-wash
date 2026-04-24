@@ -100,15 +100,15 @@ const DEFAULT_TOOLS = [
   { name: 'search_customer', description: 'Find customer by phone number or name' },
   { name: 'get_customer_bookings', description: "Get a customer's booking history" },
   { name: 'check_date_availability', description: 'Check if a date has available slots' },
-  { name: 'create_booking', description: 'Create a new booking for a customer' },
   { name: 'update_booking', description: 'Reschedule a booking (change date/time)' },
   { name: 'cancel_booking', description: 'Cancel an existing booking' },
   { name: 'create_customer', description: 'Register a new customer' },
+  { name: 'get_booking_link_status', description: "Check the customer's booking form progress" },
 ];
 
 const DATA_ACCESS = [
   { label: 'Customers', description: 'search, create, lookup by phone' },
-  { label: 'Bookings', description: 'create, update, cancel, check availability' },
+  { label: 'Bookings', description: 'update, cancel, check availability (creation via form)' },
   { label: 'Services', description: 'pricing and duration info (built into prompt)' },
 ];
 

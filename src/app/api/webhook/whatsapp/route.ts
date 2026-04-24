@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processMessage } from '@/lib/agents/shera'
 import { sendText, sendSeen } from '@/lib/agents/waha'
-import { detectHints } from '@/lib/agents/shera-preprocessor'
+// Hints removed — hybrid architecture lets AI read conversation directly
 import { alertLLMFailure } from '@/lib/agents/shera-alerts'
 import { trackMetric } from '@/lib/agents/shera-metrics'
 import crypto from 'crypto'
@@ -219,14 +219,38 @@ export async function POST(req: NextRequest) {
     // Get or create conversation
     let { data: convo } = await supabase
       .from('whatsapp_conversations')
-      .select('messages')
+      .select('messages, booking_link_token')
       .eq('chat_id', chatId)
       .single()
 
-    const isFirstMessage = !convo || !convo.messages || (Array.isArray(convo.messages) && convo.messages.length === 0)
+    const isFirstMessage = !convo || !(convo as any).messages || (Array.isArray((convo as any).messages) && (convo as any).messages.length === 0)
+    const needsBookingToken = isFirstMessage || !(convo as any)?.booking_link_token
 
     if (isFirstMessage) {
       trackMetric(chatId, 'conversation_started', { phone }).catch(() => {})
+    }
+
+    if (needsBookingToken) {
+      // Generate unique booking link for this customer.
+      // Fires on first message OR when a pre-existing conversation has no token yet
+      // (backfill for customers whose conversation predates this feature).
+      try {
+        const { getOrCreateBookingLink } = await import('@/lib/booking-links')
+        const cleanedPhoneForLink = chatId.replace('@c.us', '')
+        const { data: cust } = await supabase
+          .from('customers')
+          .select('id')
+          .or(`phone.ilike.%${cleanedPhoneForLink}%`)
+          .limit(1)
+          .maybeSingle()
+        const { token } = await getOrCreateBookingLink(cleanedPhoneForLink, chatId, (cust as any)?.id)
+        await supabase
+          .from('whatsapp_conversations')
+          .update({ booking_link_token: token } as any)
+          .eq('chat_id', chatId)
+      } catch (linkErr) {
+        console.error('[whatsapp-webhook] Failed to generate booking link:', linkErr)
+      }
     }
 
     // ── SAVE INCOMING MESSAGE IMMEDIATELY ─────────────────────────
@@ -270,6 +294,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Phase 3: Collect pending messages ─────────────────────────
+    // Strip metadata prefixes so dedup works even if the same text was enriched differently
+    function stripMeta(s: string): string {
+      return s.replace(/^\[Customer replied to: "[^"]*"\]\s*/i, '').replace(/^\[SYSTEM HINTS:[^\]]*\]\s*/i, '').trim()
+    }
     function collectPending(): string {
       const allMsgs = Array.isArray(freshConvo?.messages) ? freshConvo.messages : (Array.isArray(convo?.messages) ? convo.messages : [])
       const pendingTexts: string[] = []
@@ -277,12 +305,21 @@ export async function POST(req: NextRequest) {
         if (allMsgs[i].role === 'user') pendingTexts.unshift(allMsgs[i].content)
         else break
       }
-      const combined = pendingTexts.length > 0
-        ? [...pendingTexts, enrichedText].filter((v, i, a) => a.indexOf(v) === i).join('\n')
-        : enrichedText
-      const hints = detectHints(combined)
-      return hints.length > 0 ? `[SYSTEM HINTS: ${hints.join(', ')}]\n${combined}` : combined
+      // Dedup by stripped content so quoted-context variants don't duplicate
+      const seen = new Set<string>()
+      const deduped = [...pendingTexts, enrichedText].filter(t => {
+        const key = stripMeta(t)
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      const combined = deduped.join('\n')
+      return combined
     }
+
+    // ── Snapshot user message count before processing (for final checkpoint) ──
+    const preProcessMsgs = Array.isArray(freshConvo?.messages) ? freshConvo.messages : (Array.isArray(convo?.messages) ? convo.messages : [])
+    const userMsgCountBeforeProcessing = preProcessMsgs.filter((m: any) => m.role === 'user').length
 
     // ── Phase 4: LLM processing with interrupt monitoring ────────
     // Start LLM immediately. In parallel, poll for new messages.
@@ -398,8 +435,51 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'LLM failed — fallback sent, retry queued' }, { status: 200 })
     }
 
+    // ── Final checkpoint: did NEW messages arrive while we were processing? ──
+    // Compare user message COUNT — simple and immune to content/timestamp mismatches
+    const { data: finalConvo } = await supabase
+      .from('whatsapp_conversations')
+      .select('messages')
+      .eq('chat_id', chatId)
+      .single()
+    const finalMsgs = Array.isArray(finalConvo?.messages) ? finalConvo.messages : []
+    const userMsgCountNow = finalMsgs.filter((m: any) => m.role === 'user').length
+    // We processed N user messages (the ones that existed before + the current batch).
+    // If there are MORE now, genuinely new messages arrived during LLM processing.
+    // Add 1 to account for processMessage possibly re-saving the combined message
+    if (userMsgCountNow > userMsgCountBeforeProcessing + 1) {
+      const newMsgs = finalMsgs.filter((m: any) => m.role === 'user').slice(userMsgCountBeforeProcessing + 1)
+      const combinedText = [enrichedText, ...newMsgs.map((m: any) => m.content)].join('\n')
+      console.log(`[shera] Final checkpoint: ${newMsgs.length} new msg(s) — re-processing`)
+      try {
+        const freshReply = await processMessage(chatId, phone, combinedText)
+        await sendText(chatId, freshReply)
+      } catch (reprocessErr) {
+        console.error('[shera] Re-process failed, sending original:', reprocessErr)
+        await sendText(chatId, reply)
+      }
+      return NextResponse.json({ ok: true, reprocessed: true })
+    }
+
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
+
+    // Send booking form link as a second message on first contact
+    if (isFirstMessage) {
+      try {
+        const { data: convoForLink } = await supabase
+          .from('whatsapp_conversations')
+          .select('booking_link_token')
+          .eq('chat_id', chatId)
+          .single()
+        if (convoForLink?.booking_link_token) {
+          await new Promise(r => setTimeout(r, 1500))
+          await sendText(chatId, `Biar lebih gampang, boleh isi form booking di sini ya kak (cuma 30 detik): https://castudio.id/book/${convoForLink.booking_link_token}`)
+        }
+      } catch {
+        // Non-critical — don't break the flow if link send fails
+      }
+    }
 
     return NextResponse.json({ ok: true })
   } catch (error: any) {

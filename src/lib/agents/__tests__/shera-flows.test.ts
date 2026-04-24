@@ -24,7 +24,7 @@ describe('Normal booking flow', () => {
 
     const ctx = buildCustomerContext(null, '+628123456789')
     expect(ctx).toContain('Customer is NEW')
-    expect(ctx).toContain('Ikuti FLOW BOOKING')
+    expect(ctx).toContain('Tanya nama dulu')
   })
 
   it('Step 2: name given "nama saya Andi" → NAME_DETECTED, stub customer context', () => {
@@ -34,7 +34,7 @@ describe('Normal booking flow', () => {
     // At this point customer is still a stub in DB
     const ctx = buildCustomerContext({ id: 'c1', name: 'WhatsApp User' }, '+628123456789')
     expect(ctx).toContain('INCOMPLETE')
-    expect(ctx).toContain('WAJIB panggil create_customer')
+    expect(ctx).toContain('panggil create_customer')
     expect(ctx).not.toContain('REGISTERED')
   })
 
@@ -82,6 +82,39 @@ describe('Normal booking flow', () => {
     expect(ctx).toContain('Car: Honda Civic')
     expect(ctx).toContain('Plate: B 2100 STA')
     expect(ctx).toContain('JANGAN tanya info yang sudah ada')
+  })
+})
+
+// ─── Booking Form Link Injection ────────────────────────────────────
+
+describe('Booking form link injection', () => {
+  it('injects BOOKING VIA FORM block with the per-customer token', () => {
+    const ctx = buildCustomerContext(null, '+628123456789', null, 'abc12345')
+    expect(ctx).toContain('--- BOOKING VIA FORM ---')
+    expect(ctx).toContain('https://castudio.id/book/abc12345')
+    expect(ctx).toContain('JANGAN kumpulkan detail booking')
+  })
+
+  it('uses different tokens for different customers', () => {
+    const ctxA = buildCustomerContext(null, '+6281111', null, 'tokenAAA')
+    const ctxB = buildCustomerContext(null, '+6282222', null, 'tokenBBB')
+    expect(ctxA).toContain('https://castudio.id/book/tokenAAA')
+    expect(ctxA).not.toContain('tokenBBB')
+    expect(ctxB).toContain('https://castudio.id/book/tokenBBB')
+    expect(ctxB).not.toContain('tokenAAA')
+  })
+
+  it('omits the form block when no token provided', () => {
+    const ctx = buildCustomerContext(null, '+628123456789')
+    expect(ctx).not.toContain('BOOKING VIA FORM')
+    expect(ctx).not.toContain('castudio.id/book/')
+  })
+
+  it('injects form link for returning customers too', () => {
+    const customer: CustomerRecord = { id: 'c1', name: 'Andi' }
+    const ctx = buildCustomerContext(customer, '+628123456789', null, 'xyz99999')
+    expect(ctx).toContain('REGISTERED: Andi')
+    expect(ctx).toContain('https://castudio.id/book/xyz99999')
   })
 })
 
@@ -220,11 +253,6 @@ describe('SHERA_TOOLS validation', () => {
     const tool = SHERA_TOOLS.find(t => t.function.name === 'create_customer')
     expect(tool).toBeDefined()
     expect(tool!.function.description).toMatch(/update/i)
-  })
-
-  it('has create_booking tool', () => {
-    const tool = SHERA_TOOLS.find(t => t.function.name === 'create_booking')
-    expect(tool).toBeDefined()
   })
 
   it('has escalate_to_human tool', () => {
