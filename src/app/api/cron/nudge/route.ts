@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     // Find conversations where last message was 2-6 hours ago
     const { data: convos } = await supabase
       .from('whatsapp_conversations')
-      .select('chat_id, phone, messages, last_message_at')
+      .select('chat_id, phone, customer_id, messages, last_message_at')
       .lte('last_message_at', twoHoursAgo)
       .gte('last_message_at', sixHoursAgo)
 
@@ -45,23 +45,57 @@ export async function GET(req: Request) {
       const lastContent = (lastMsg.content || '').toLowerCase()
       if (lastContent.includes('booking udah masuk') || lastContent.includes('done') || lastContent.includes('selesai')) continue
 
-      // Don't nudge if the customer already filled out the form
-      // (status transitions 'active' → 'submitted' when submitBookingLink runs)
+      // Skip chats that were silenced by a bulk_order escalation. Admin is
+      // handling those manually — a nudge from Shera would contradict the
+      // "I'll get back to you" message we sent earlier.
+      const { data: muteEsc } = await supabase
+        .from('human_escalations')
+        .select('id')
+        .eq('chat_id', (convo as any).chat_id)
+        .eq('category', 'bulk_order')
+        .limit(1)
+        .maybeSingle()
+      if (muteEsc) continue
+
+      // Fetch the booking link for this chat. Only nudge when:
+      // (a) a link was sent, AND
+      // (b) it's still active (not yet submitted).
+      // If there's no link at all, the customer was likely still mid-intro when
+      // they ghosted — no point nudging about a form they never saw.
       const { data: link } = await supabase
         .from('booking_links')
         .select('status')
-        .eq('phone', convo.phone)
+        .eq('phone', (convo as any).phone)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle()
-      if ((link as any)?.status === 'submitted') continue
+      if (!link) continue
+      if ((link as any).status === 'submitted') continue
 
-      const firstName = msgs.find((m: any) => m.role === 'assistant' && m.content?.includes('Hai '))?.content?.match(/Hai (\w+)/)?.[1] || 'kak'
+      // Resolve customer name — prefer DB record (authoritative) over regex on
+      // assistant messages (Shera doesn't say "Hai [name]", so the old regex
+      // almost always fell back to "kak").
+      let firstName = 'kak'
+      const customerId = (convo as any).customer_id
+      if (customerId) {
+        const { data: customer } = await supabase
+          .from('customers')
+          .select('name')
+          .eq('id', customerId)
+          .maybeSingle()
+        const name = (customer as any)?.name
+        if (name && name !== 'WhatsApp User' && name !== 'Unknown') {
+          firstName = String(name).trim().split(/\s+/)[0] // first token only
+        }
+      }
 
+      // Nudge message references the booking form explicitly and invites a
+      // reply by asking about issues — opens the door for the customer to
+      // either come back with a question or complete the form.
       const nudges = [
-        `Hai ${firstName}! Ga ada rush ya, kalau nanti mau lanjut tinggal chat aja`,
-        `${firstName}, kalau ada pertanyaan lagi nanti kabarin aja ya. Aku standby kok`,
-        `No worries ${firstName}, kapan aja mau lanjut aku disini ya`,
+        `Hai ${firstName}, ga ada rush ya — aku lihat form booking-nya belum masuk ke sistem nih. Ada kendala pas ngisi?`,
+        `${firstName}, cek-in aja — form booking-nya belum ada yang masuk. Ada yang bingung atau mau ditanyain? Kabarin aku ya`,
+        `Hai ${firstName}, no rush kak 🙂 Form booking-nya belum aku terima nih. Ada kendala ga?`,
       ]
       const nudge = nudges[Math.floor(Math.random() * nudges.length)]
 
