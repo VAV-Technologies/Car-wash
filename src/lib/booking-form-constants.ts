@@ -91,6 +91,10 @@ export const TIME_SLOTS = [
   '13:00', '14:00', '15:00', '16:00',
 ]
 
+// Earliest bookable date = today + BOOKING_LEAD_TIME_DAYS.
+// Days within this window are shown as "Fully Booked" in the UI.
+export const BOOKING_LEAD_TIME_DAYS = 14
+
 export const AREAS = [
   'Jakarta Pusat',
   'Jakarta Selatan',

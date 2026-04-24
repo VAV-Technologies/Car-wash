@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { createBooking } from '@/lib/admin/bookings'
-import { REQUIRED_BOOKING_FIELDS, ALL_SERVICES, DETAILING_VALUES, AREAS } from '@/lib/booking-form-constants'
+import { REQUIRED_BOOKING_FIELDS, ALL_SERVICES, DETAILING_VALUES, AREAS, BOOKING_LEAD_TIME_DAYS } from '@/lib/booking-form-constants'
 import type { ServiceType } from '@/lib/admin/types'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -318,6 +318,12 @@ export async function submitBookingLink(
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     if (d < today) errors.date = 'Tidak bisa booking tanggal yang sudah lewat'
+    // Booking lead time: must be at least BOOKING_LEAD_TIME_DAYS out
+    const firstBookable = new Date(today)
+    firstBookable.setDate(firstBookable.getDate() + BOOKING_LEAD_TIME_DAYS)
+    if (!errors.date && d < firstBookable) {
+      errors.date = `Tanggal ini fully booked. Pilih mulai ${firstBookable.toISOString().split('T')[0]} atau setelahnya.`
+    }
   }
 
   if (time) {

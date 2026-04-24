@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import {
   WASH_SERVICES, DETAIL_SERVICES, ALL_SERVICES, DETAILING_VALUES,
-  WASH_PREREQ_PRICE, TIME_SLOTS, AREAS, formatRupiah,
+  WASH_PREREQ_PRICE, TIME_SLOTS, AREAS, BOOKING_LEAD_TIME_DAYS, formatRupiah,
 } from '@/lib/booking-form-constants'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -86,7 +86,10 @@ export default function TokenBookingPage() {
             const d = new Date(fd.date + 'T00:00:00')
             const today = new Date()
             today.setHours(0, 0, 0, 0)
-            return d < today ? undefined : d
+            // Drop dates that are past OR inside the new buffer window
+            const firstBookable = new Date(today)
+            firstBookable.setDate(firstBookable.getDate() + BOOKING_LEAD_TIME_DAYS)
+            return d < firstBookable ? undefined : d
           })(),
           time: fd.time || '',
           add_wash: fd.add_wash === true,
@@ -827,6 +830,11 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
   const calendarDays = useMemo(() => getCalendarDays(viewYear, viewMonth), [viewYear, viewMonth])
 
   const todayStart = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d }, [])
+  const firstBookableDate = useMemo(() => {
+    const d = new Date(todayStart)
+    d.setDate(d.getDate() + BOOKING_LEAD_TIME_DAYS)
+    return d
+  }, [todayStart])
 
   function prevMonth() {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
@@ -837,14 +845,22 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
     else setViewMonth(m => m + 1)
   }
 
+  // Hard-disabled: past dates + Sundays. These can't be clicked.
   function isDisabled(d: Date): boolean {
     return d.getDay() === 0 || d < todayStart
+  }
+
+  // Soft-disabled: today + next 13 days. Clickable, but time panel shows "Fully Booked".
+  function isInBufferWindow(d: Date): boolean {
+    return d >= todayStart && d < firstBookableDate
   }
 
   function selectDate(d: Date) {
     if (isDisabled(d)) return
     update({ date: d, time: '' })
   }
+
+  const selectedInBuffer = form.date ? isInBufferWindow(form.date) : false
 
   function pickTime(t: string) {
     update({ time: t })
@@ -902,6 +918,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                   const disabled = !isCurrentMonth || isDisabled(d)
                   const selected = isSameDay(form.date, d)
                   const today = isToday(d)
+                  const inBuffer = !disabled && isInBufferWindow(d)
 
                   return (
                     <div key={i} className="flex items-center justify-center">
@@ -912,16 +929,17 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                           relative w-10 h-10 sm:w-11 sm:h-11 rounded-full text-sm font-medium transition-all duration-150 flex items-center justify-center
                           ${selected
                             ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
-                            : disabled
-                              ? 'text-white/15 cursor-not-allowed'
-                              : 'text-white/80 hover:bg-white/10 cursor-pointer'
+                            : today
+                              ? 'text-white bg-white/5 ring-2 ring-white/80 cursor-pointer hover:bg-white/10'
+                              : inBuffer
+                                ? 'text-white/40 bg-white/5 cursor-pointer hover:bg-white/10'
+                                : disabled
+                                  ? 'text-white/15 cursor-not-allowed'
+                                  : 'text-white/80 hover:bg-white/10 cursor-pointer'
                           }
                         `}
                       >
                         {d.getDate()}
-                        {today && !selected && (
-                          <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-500" />
-                        )}
                       </button>
                     </div>
                   )
@@ -947,21 +965,28 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                     <p className="text-sm font-bold text-white mb-4">
                       {form.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
                     </p>
-                    <div className="flex-1 overflow-y-auto space-y-1.5 -mr-2 pr-2">
-                      {TIME_SLOTS.map(t => (
-                        <button
-                          key={t}
-                          onClick={() => pickTime(t)}
-                          className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
-                            form.time === t
-                              ? 'bg-orange-500 text-white'
-                              : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
-                          }`}
-                        >
-                          {t}
-                        </button>
-                      ))}
-                    </div>
+                    {selectedInBuffer ? (
+                      <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
+                        <p className="text-white/80 text-sm font-semibold mb-1">Fully Booked</p>
+                        <p className="text-white/40 text-xs leading-relaxed">Pilih tanggal lain ya kak 🙏</p>
+                      </div>
+                    ) : (
+                      <div className="flex-1 overflow-y-auto space-y-1.5 -mr-2 pr-2">
+                        {TIME_SLOTS.map(t => (
+                          <button
+                            key={t}
+                            onClick={() => pickTime(t)}
+                            className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
+                              form.time === t
+                                ? 'bg-orange-500 text-white'
+                                : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
+                            }`}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     {errors.time && <p className="text-red-400 text-xs mt-2">{errors.time}</p>}
                   </div>
                 </motion.div>
@@ -983,21 +1008,28 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                   <p className="text-sm font-bold text-white">
                     {form.date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {TIME_SLOTS.map(t => (
-                      <button
-                        key={t}
-                        onClick={() => pickTime(t)}
-                        className={`py-3 rounded-xl text-sm font-semibold transition-all ${
-                          form.time === t
-                            ? 'bg-orange-500 text-white'
-                            : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
+                  {selectedInBuffer ? (
+                    <div className="flex flex-col items-center justify-center text-center py-6">
+                      <p className="text-white/80 text-sm font-semibold mb-1">Fully Booked</p>
+                      <p className="text-white/40 text-xs leading-relaxed">Pilih tanggal lain ya kak 🙏</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {TIME_SLOTS.map(t => (
+                        <button
+                          key={t}
+                          onClick={() => pickTime(t)}
+                          className={`py-3 rounded-xl text-sm font-semibold transition-all ${
+                            form.time === t
+                              ? 'bg-orange-500 text-white'
+                              : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {errors.time && <p className="text-red-400 text-xs">{errors.time}</p>}
                 </div>
               </motion.div>
