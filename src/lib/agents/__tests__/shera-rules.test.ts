@@ -167,12 +167,13 @@ describe('validateResponse — detailing prereq price', () => {
 })
 
 describe('validateResponse — intro template', () => {
-  it('enforces intro pitch for Indonesian', () => {
+  it('enforces intro pitch for Indonesian (with offerings + car count CTA)', () => {
     const ctx = baseCtx({ currentState: 'intro', introPitchGiven: false })
     const result = validateResponse('Hai kak Budi!', ctx)
     expect(result.output).toContain('Salam kenal kak Budi')
     expect(result.output).toContain('Jabodetabek')
-    expect(result.output).toContain('cuci mobil atau detailing')
+    expect(result.output).toContain('2 layanan: cuci mobil dan detailing')
+    expect(result.output).toContain('berapa mobil')
   })
 
   it('enforces intro pitch for English', () => {

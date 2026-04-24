@@ -278,7 +278,8 @@ describe('SHERA_TOOLS after v2 strip', () => {
 describe('Car count gate prompt', () => {
   it('active phase prompt asks 1-or-more cars', async () => {
     const { getStatePrompt } = await import('../shera-state')
-    expect(getStatePrompt('active')).toMatch(/1 mobil.*lebih/)
+    expect(getStatePrompt('active')).toMatch(/2 layanan.*cuci mobil dan detailing/)
+    expect(getStatePrompt('active')).toMatch(/berapa mobil/)
   })
 
   it('active phase prompt describes 4+ routing via escalate_to_human with bulk_order', async () => {

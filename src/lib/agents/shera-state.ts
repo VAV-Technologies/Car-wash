@@ -36,8 +36,8 @@ Kalau sudah tau nama tapi belum kasih intro pitch: tunggu — intro pitch akan d
 Kalau customer langsung bilang mau cuci/detailing tanpa kasih nama: jawab singkat tapi tetap tanya nama.`,
 
   active: `Phase: ACTIVE. Customer sudah kasih nama.
-CTA UTAMA: tanya "1 mobil aja atau lebih kak?"
-Kalau customer nanya harga/paket/area dulu, jawab singkat dari LAYANAN/HARGA di prompt utama, LALU tutup dengan pertanyaan count di pesan yang sama.
+CTA UTAMA: sebutkan dulu 2 layanan ("Kita punya 2 layanan: cuci mobil dan detailing") lalu tanya "Mau booking berapa mobil kak?"
+Kalau customer nanya harga/paket/area dulu, jawab singkat dari LAYANAN/HARGA di prompt utama, LALU tutup dengan offerings + pertanyaan count di pesan yang sama.
 
 Routing berdasarkan jumlah mobil:
 - 1 mobil: "Oke kak, langsung isi form yang tadi aku kirim ya 🙂"

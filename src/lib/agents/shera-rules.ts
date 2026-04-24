@@ -179,9 +179,9 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
   if (ctx.currentState === 'intro' && ctx.customerName && !ctx.introPitchGiven) {
     const name = ctx.customerName
     if (ctx.language === 'en') {
-      output = `Nice to meet you ${name}! 😊\n\nSo Castudio is a premium car wash & detailing service that comes directly to your home. No delivery fee and no deposit needed, we just need access to water and electricity.\n\nWe take our work seriously — if you're not satisfied with the result, we'll come back and fix it at zero cost 🙏\n\nFor now we only serve the Jabodetabek area (Jakarta, Bogor, Depok, Tangerang, Bekasi) ya.\n\nAre you looking to get your car washed or detailed?`
+      output = `Nice to meet you ${name}! 😊\n\nSo Castudio is a premium car wash & detailing service that comes directly to your home. No delivery fee and no deposit needed, we just need access to water and electricity.\n\nWe take our work seriously — if you're not satisfied with the result, we'll come back and fix it at zero cost 🙏\n\nFor now we only serve the Jabodetabek area (Jakarta, Bogor, Depok, Tangerang, Bekasi) ya.\n\nWe have 2 offerings: car wash and detailing. How many cars would you like to book?`
     } else {
-      output = `Salam kenal kak ${name} 😊\n\nJadi Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah kak. Ga ada biaya antar dan ga perlu deposit, kita cuma butuh akses air sama listrik aja ya.\n\nOh iya, kita serius soal kualitas — kalau kak ga puas sama hasilnya, kita balik lagi buat benerin tanpa biaya tambahan 🙏\n\nUntuk saat ini kita baru bisa layani area Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi) ya kak.\n\nKak ${name} lagi cari cuci mobil atau detailing nih?`
+      output = `Salam kenal kak ${name} 😊\n\nJadi Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah kak. Ga ada biaya antar dan ga perlu deposit, kita cuma butuh akses air sama listrik aja ya.\n\nOh iya, kita serius soal kualitas — kalau kak ga puas sama hasilnya, kita balik lagi buat benerin tanpa biaya tambahan 🙏\n\nUntuk saat ini kita baru bisa layani area Jabodetabek (Jakarta, Bogor, Depok, Tangerang, Bekasi) ya kak.\n\nKita punya 2 layanan: cuci mobil dan detailing. Mau booking berapa mobil kak?`
     }
     issues.push('enforced intro template')
   }
@@ -265,8 +265,8 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
       // Name known but no pitch: use the template
       const name = ctx.customerName
       output = ctx.language === 'en'
-        ? `Nice to meet you ${name}! 😊 So Castudio is a premium car wash & detailing service that comes directly to your home. Are you looking to get your car washed or detailed?`
-        : `Salam kenal kak ${name} 😊 Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah. Lagi cari cuci mobil atau detailing nih?`
+        ? `Nice to meet you ${name}! 😊 So Castudio is a premium car wash & detailing service that comes directly to your home. We have 2 offerings: car wash and detailing. How many cars would you like to book?`
+        : `Salam kenal kak ${name} 😊 Castudio itu layanan cuci mobil & detailing premium yang datang langsung ke rumah. Kita punya 2 layanan: cuci mobil dan detailing. Mau booking berapa mobil kak?`
     } else {
       output = ctx.language === 'en' ? 'How can I help you?' : 'Ada yang bisa aku bantu?'
     }

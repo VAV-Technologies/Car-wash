@@ -353,13 +353,20 @@ export async function POST(req: NextRequest) {
       const processedMessage = collectPending()
       const abortController = new AbortController()
 
-      // LLM promise (with retries)
+      // LLM promise with HARD wall-clock guard (independent of processMessage's
+      // own timeouts). Protects us from any pathology where processMessage
+      // blocks beyond our budget, even if MAX_RETRIES=0.
+      const WALL_CLOCK_BUDGET = 75_000
       const llmPromise = (async (): Promise<{ type: 'reply'; reply: string }> => {
         let attempt = 0
         const MAX_RETRIES = 0 // No inline retries for reasoning models — each attempt takes too long
         while (attempt <= MAX_RETRIES) {
           try {
-            const r = await processMessage(chatId, phone, processedMessage, abortController.signal)
+            const processPromise = processMessage(chatId, phone, processedMessage, abortController.signal)
+            const wallClockTimeout = new Promise<never>((_, reject) => {
+              setTimeout(() => reject(new Error('wall-clock timeout')), WALL_CLOCK_BUDGET)
+            })
+            const r = await Promise.race([processPromise, wallClockTimeout])
             return { type: 'reply', reply: r }
           } catch (err) {
             if (abortController.signal.aborted) throw new Error('aborted')
@@ -372,9 +379,14 @@ export async function POST(req: NextRequest) {
         throw new Error('all retries failed')
       })()
 
-      // Interrupt detector — polls DB every 2s for new messages
+      // Interrupt detector — polls DB every 2s for new messages. Baseline is
+      // the webhook-entry timestamp (msgTimestamp) rather than the poller's
+      // Date.now(): closes the race where processMessage re-saves the combined
+      // user message and the poller mistakes that for a new interruption.
+      const stripMetaForPoller = (s: string): string =>
+        s.replace(/^\[Customer replied to: "[^"]*"\]\s*/i, '').replace(/^\[SYSTEM HINTS:[^\]]*\]\s*/i, '').trim()
+      const processedMessageStripped = stripMetaForPoller(processedMessage)
       const interruptPromise = (async (): Promise<{ type: 'interrupted' }> => {
-        const checkStart = Date.now()
         while (!abortController.signal.aborted) {
           await new Promise(r => setTimeout(r, 2000))
           if (abortController.signal.aborted) break
@@ -386,7 +398,12 @@ export async function POST(req: NextRequest) {
               .single()
             const msgs = Array.isArray(data?.messages) ? data.messages : []
             const hasNew = msgs.some(
-              (m: any) => m.role === 'user' && m.timestamp && new Date(m.timestamp).getTime() > checkStart
+              (m: any) =>
+                m.role === 'user' &&
+                m.timestamp &&
+                new Date(m.timestamp).getTime() > msgTimestamp &&
+                // Dedup against our own processed message (processMessage re-saves)
+                stripMetaForPoller(String(m.content || '')) !== processedMessageStripped
             )
             if (hasNew) return { type: 'interrupted' as const }
           } catch { /* DB check failed — continue */ }
@@ -422,14 +439,31 @@ export async function POST(req: NextRequest) {
     }
 
     if (!succeeded) {
-      // All attempts + interrupts exhausted — send fallback
-      console.error('[shera-error] All attempts exhausted, queuing background retry')
+      // All attempts + interrupts exhausted — send fallback.
+      // Use resilient send: one retry with explicit logging and delivery metric
+      // so silent WAHA failures become visible in Vercel logs.
+      console.error('[shera-error] All attempts exhausted, queuing background retry. lastErr:', String(lastErr).slice(0, 500))
       alertLLMFailure(chatId, phone, String(lastErr)).catch(() => {})
       trackMetric(chatId, 'llm_failure', { phone, error: String(lastErr).slice(0, 200) }).catch(() => {})
       trackMetric(chatId, 'llm_fallback_sent', { phone }).catch(() => {})
-      try {
-        await sendText(chatId, 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏')
-      } catch { /* WAHA down */ }
+
+      const fallbackText = 'Halo! Aku lagi proses pesanannya, sebentar lagi aku kabarin lagi ya 🙏'
+      let fallbackDelivered = false
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const sendWithTimeout = Promise.race([
+            sendText(chatId, fallbackText),
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error('waha sendText timeout')), 5000)),
+          ])
+          await sendWithTimeout
+          fallbackDelivered = true
+          break
+        } catch (sendErr) {
+          console.error(`[shera-error] Fallback sendText attempt ${attempt}/2 failed:`, sendErr)
+          if (attempt < 2) await new Promise(r => setTimeout(r, 1500))
+        }
+      }
+      trackMetric(chatId, 'llm_fallback_delivery', { phone, delivered: fallbackDelivered }).catch(() => {})
 
       try {
         const retryAt = new Date(Date.now() + 20 * 60 * 1000).toISOString()
