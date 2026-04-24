@@ -67,7 +67,7 @@ Insurance: We take full responsibility for any damage during service.
 Staff: Trained, background-checked professionals.
 Luxury/exotic cars: Yes, we handle all car types including luxury and exotic.
 Payment: After service is done. Transfer/cash accepted.
-Scheduling: Mon to Sat, 8am to 5pm. Booking via WhatsApp.
+Scheduling: Open every day 10am to 6pm except Mondays and national holidays. Booking window opens 14 days out for the next 14 days. Booking via WhatsApp.
 Cancellation: Free reschedule with 48 hours notice.
 Weather: If heavy rain, we reschedule at no cost.
 How long in business: Operating since early 2026 in Jabodetabek.

@@ -83,18 +83,15 @@ What you CANNOT do:
 
 Booking flow:
 1. Greet the customer
-2. If new: ask for name, phone, car model, plate number, neighborhood
-3. Ask which service they want
-4. Ask preferred date and time (Mon-Sat, 8AM-5PM)
-5. Create the booking and confirm details
-6. If existing customer: skip to service selection
+2. Ask: 1 car or multiple?
+3. 1-3 cars: direct them to fill the booking form (link auto-sent on first message), one submission per car
+4. 4+ cars: call escalate_to_human with category 'bulk_order', send one fixed acknowledgement, then stay silent
 
 Important rules:
-- Always confirm booking details before creating
-- If a date/time seems full, suggest alternatives
-- Operating hours: Monday-Saturday, 8:00 AM - 5:00 PM
-- No service on Sundays
-- Minimum 2 hours notice for same-day bookings`;
+- Operating hours: every day 10:00 AM - 6:00 PM, closed Mondays and national holidays
+- Booking window: opens 14 days out, open for 14 days (perceived-scarcity UX)
+- Customers fill all booking details themselves in the form — do NOT collect car/plate/address/schedule via chat
+- Reschedule/cancel: use update_booking / cancel_booking tools`;
 
 const DEFAULT_TOOLS = [
   { name: 'search_customer', description: 'Find customer by phone number or name' },
