@@ -91,9 +91,14 @@ export const TIME_SLOTS = [
   '13:00', '14:00', '15:00', '16:00',
 ]
 
-// Earliest bookable date = today + BOOKING_LEAD_TIME_DAYS.
-// Days within this window are shown as "Fully Booked" in the UI.
+// Booking window:
+//   - Lead time: today + BOOKING_LEAD_TIME_DAYS days are closed (too soon).
+//   - Open window: the next BOOKING_OPEN_WINDOW_DAYS after that are bookable.
+//   - Everything beyond the open window is closed (too far out).
+// First bookable = today + BOOKING_LEAD_TIME_DAYS.
+// Last bookable (exclusive) = today + BOOKING_LEAD_TIME_DAYS + BOOKING_OPEN_WINDOW_DAYS.
 export const BOOKING_LEAD_TIME_DAYS = 14
+export const BOOKING_OPEN_WINDOW_DAYS = 14
 
 export const AREAS = [
   'Jakarta Pusat',

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import {
   WASH_SERVICES, DETAIL_SERVICES, ALL_SERVICES, DETAILING_VALUES,
-  WASH_PREREQ_PRICE, TIME_SLOTS, AREAS, BOOKING_LEAD_TIME_DAYS, formatRupiah,
+  WASH_PREREQ_PRICE, TIME_SLOTS, AREAS, BOOKING_LEAD_TIME_DAYS, BOOKING_OPEN_WINDOW_DAYS, formatRupiah,
 } from '@/lib/booking-form-constants'
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -86,10 +86,13 @@ export default function TokenBookingPage() {
             const d = new Date(fd.date + 'T00:00:00')
             const today = new Date()
             today.setHours(0, 0, 0, 0)
-            // Drop dates that are past OR inside the new buffer window
+            // Drop dates outside the bookable window (past/buffer OR beyond open window)
             const firstBookable = new Date(today)
             firstBookable.setDate(firstBookable.getDate() + BOOKING_LEAD_TIME_DAYS)
-            return d < firstBookable ? undefined : d
+            const lastBookableExclusive = new Date(firstBookable)
+            lastBookableExclusive.setDate(lastBookableExclusive.getDate() + BOOKING_OPEN_WINDOW_DAYS)
+            if (d < firstBookable || d >= lastBookableExclusive) return undefined
+            return d
           })(),
           time: fd.time || '',
           add_wash: fd.add_wash === true,
@@ -835,6 +838,11 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
     d.setDate(d.getDate() + BOOKING_LEAD_TIME_DAYS)
     return d
   }, [todayStart])
+  const lastBookableDateExclusive = useMemo(() => {
+    const d = new Date(firstBookableDate)
+    d.setDate(d.getDate() + BOOKING_OPEN_WINDOW_DAYS)
+    return d
+  }, [firstBookableDate])
 
   function prevMonth() {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
@@ -850,9 +858,10 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
     return d.getDay() === 0 || d < todayStart
   }
 
-  // Soft-disabled: today + next 13 days. Clickable, but time panel shows "Fully Booked".
-  function isInBufferWindow(d: Date): boolean {
-    return d >= todayStart && d < firstBookableDate
+  // Soft-disabled: inside lead-time buffer OR beyond the open window.
+  // Clickable, but time panel shows "Fully Booked".
+  function isOutsideBookableWindow(d: Date): boolean {
+    return d >= todayStart && (d < firstBookableDate || d >= lastBookableDateExclusive)
   }
 
   function selectDate(d: Date) {
@@ -860,7 +869,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
     update({ date: d, time: '' })
   }
 
-  const selectedInBuffer = form.date ? isInBufferWindow(form.date) : false
+  const selectedOutsideWindow = form.date ? isOutsideBookableWindow(form.date) : false
 
   function pickTime(t: string) {
     update({ time: t })
@@ -918,7 +927,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                   const disabled = !isCurrentMonth || isDisabled(d)
                   const selected = isSameDay(form.date, d)
                   const today = isToday(d)
-                  const inBuffer = !disabled && isInBufferWindow(d)
+                  const outsideWindow = !disabled && isOutsideBookableWindow(d)
 
                   return (
                     <div key={i} className="flex items-center justify-center">
@@ -931,7 +940,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                             ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25'
                             : today
                               ? 'text-white bg-white/5 ring-2 ring-white/80 cursor-pointer hover:bg-white/10'
-                              : inBuffer
+                              : outsideWindow
                                 ? 'text-white/40 bg-white/5 cursor-pointer hover:bg-white/10'
                                 : disabled
                                   ? 'text-white/15 cursor-not-allowed'
@@ -965,7 +974,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                     <p className="text-sm font-bold text-white mb-4">
                       {form.date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
                     </p>
-                    {selectedInBuffer ? (
+                    {selectedOutsideWindow ? (
                       <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
                         <p className="text-white/80 text-sm font-semibold mb-1">Fully Booked</p>
                         <p className="text-white/40 text-xs leading-relaxed">Pilih tanggal lain ya kak 🙏</p>
@@ -1008,7 +1017,7 @@ function StepSchedule({ form, update, goNext, errors, editingFromReview, returnT
                   <p className="text-sm font-bold text-white">
                     {form.date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}
                   </p>
-                  {selectedInBuffer ? (
+                  {selectedOutsideWindow ? (
                     <div className="flex flex-col items-center justify-center text-center py-6">
                       <p className="text-white/80 text-sm font-semibold mb-1">Fully Booked</p>
                       <p className="text-white/40 text-xs leading-relaxed">Pilih tanggal lain ya kak 🙏</p>
