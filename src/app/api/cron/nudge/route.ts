@@ -93,9 +93,9 @@ export async function GET(req: Request) {
       // reply by asking about issues — opens the door for the customer to
       // either come back with a question or complete the form.
       const nudges = [
-        `Hai ${firstName}, ga ada rush ya — aku lihat form booking-nya belum masuk ke sistem nih. Ada kendala pas ngisi?`,
-        `${firstName}, cek-in aja — form booking-nya belum ada yang masuk. Ada yang bingung atau mau ditanyain? Kabarin aku ya`,
-        `Hai ${firstName}, no rush kak 🙂 Form booking-nya belum aku terima nih. Ada kendala ga?`,
+        `Hai ${firstName}, no rush ya kak — aku lihat form booking-nya belum masuk nih. Kalau ada kendala pas ngisi, kabarin aku ya 🙂`,
+        `Hai ${firstName}, check-in aja kak — form booking-nya belum ada yang masuk. Kalau bingung atau ada yang mau ditanyain, chat aku ya`,
+        `Hai ${firstName}, no rush kak 🙂 Form booking-nya belum aku terima nih. Ada yang bisa aku bantu kak?`,
       ]
       const nudge = nudges[Math.floor(Math.random() * nudges.length)]
 
