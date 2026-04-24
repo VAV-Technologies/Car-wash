@@ -325,6 +325,11 @@ export async function submitBookingLink(
     .limit(1)
     .single()
 
+  // NOTE: `customers.neighborhood` has a DB check constraint that only accepts
+  // Jakarta Selatan sub-neighborhoods (pondok_indah, kemang, etc.), not the
+  // city-level Jabodetabek values used by the form Area picker. Area is
+  // preserved on booking_links.form_data.area. Until a DB migration relaxes
+  // that constraint, we skip writing it to customers.
   if (customer) {
     await supabase
       .from('customers')
@@ -333,7 +338,6 @@ export async function submitBookingLink(
         car_model: String(car_model).trim(),
         plate_number: String(plate_number).trim().toUpperCase(),
         address: String(address).trim(),
-        neighborhood: String(area),
       })
       .eq('id', customer.id)
   } else {
@@ -345,7 +349,6 @@ export async function submitBookingLink(
         car_model: String(car_model).trim(),
         plate_number: String(plate_number).trim().toUpperCase(),
         address: String(address).trim(),
-        neighborhood: String(area),
         segment: 'new',
         acquisition_source: 'whatsapp',
       })
