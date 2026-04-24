@@ -200,6 +200,59 @@ export async function getFormCompletionStatus(phone: string): Promise<FormComple
   return { filled, missing, formData, status: link.status, token: link.token }
 }
 
+// ─── Reset for new booking (multi-car) ──────────────────────────────
+
+export async function resetBookingLink(token: string): Promise<{ ok: boolean; error?: string }> {
+  const supabase = getSupabaseAdmin()
+
+  const { data: link } = await supabase
+    .from('booking_links')
+    .select('token, phone, customer_id, status')
+    .eq('token', token)
+    .maybeSingle()
+
+  if (!link) return { ok: false, error: 'Link tidak ditemukan' }
+
+  // Only reset submitted links. Active links don't need resetting.
+  if ((link as any).status !== 'submitted') {
+    return { ok: true }
+  }
+
+  // Pre-fill from customer record if available (preserves name/phone/car across submissions)
+  let prefill: Record<string, unknown> = { phone: (link as any).phone }
+  const cid = (link as any).customer_id
+  if (cid) {
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('name, phone, car_model, plate_number, address, neighborhood')
+      .eq('id', cid)
+      .single()
+    if (customer) {
+      prefill = {
+        name: (customer as any).name !== 'WhatsApp User' ? (customer as any).name : '',
+        phone: (customer as any).phone || (link as any).phone,
+        car_model: (customer as any).car_model || '',
+        plate_number: (customer as any).plate_number || '',
+        address: (customer as any).address || '',
+        area: (customer as any).neighborhood || '',
+      }
+    }
+  }
+
+  await supabase
+    .from('booking_links')
+    .update({
+      status: 'active',
+      form_data: prefill,
+      booking_id: null,
+      submitted_at: null,
+      updated_at: new Date().toISOString(),
+    } as any)
+    .eq('token', token)
+
+  return { ok: true }
+}
+
 // ─── Phone Cleaning (shared with shera.ts / book API) ───────────────
 
 function cleanPhone(phone: string): string {

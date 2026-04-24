@@ -191,20 +191,46 @@ export default function TokenBookingPage() {
   )
   if (alreadySubmitted) return (
     <div className="min-h-dvh flex items-center justify-center bg-[#0A0A0A] p-6">
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-5 max-w-sm mx-auto">
         <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
         <h2 className="text-xl font-bold text-white">Booking Sudah Dikirim</h2>
-        <p className="text-white/50 text-sm">Kalau mau booking lagi, chat Shera ya!</p>
-        {waNumber && (
-          <a href={`https://wa.me/${waNumber}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors font-medium text-sm">
-            <MessageCircle className="w-4 h-4" /> Chat Shera
+        <p className="text-white/50 text-sm">Punya mobil lain yang mau di-booking?</p>
+        <div className="flex flex-col gap-3 pt-2">
+          <Button
+            onClick={async () => { try { await fetch(`/api/book/${token}/reset`, { method: 'POST' }) } catch {} window.location.reload() }}
+            className="w-full h-14 rounded-full bg-orange-500 hover:bg-orange-600 text-base font-semibold"
+          >
+            Book Lagi
+          </Button>
+          <a
+            href="/"
+            className="w-full h-12 inline-flex items-center justify-center rounded-full border border-white/20 bg-transparent text-white hover:bg-white/10 transition-colors text-sm font-medium"
+          >
+            Kembali ke Home
           </a>
-        )}
+          {waNumber && (
+            <a
+              href={`https://wa.me/${waNumber}`}
+              className="text-white/40 hover:text-white/70 text-xs transition-colors inline-flex items-center justify-center gap-1 pt-1"
+            >
+              <MessageCircle className="w-3 h-3" /> Chat Shera
+            </a>
+          )}
+        </div>
       </div>
     </div>
   )
 
   // ─── Success ────────────────────────────────────────────────────
+  async function bookAgain() {
+    try {
+      await fetch(`/api/book/${token}/reset`, { method: 'POST' })
+    } catch {
+      // If reset fails, reloading will still surface the stuck state
+    }
+    window.location.reload()
+  }
+
   if (success) return (
     <div className="min-h-dvh flex items-center justify-center bg-[#0A0A0A] p-6">
       <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', duration: 0.5 }} className="text-center space-y-5 max-w-sm mx-auto">
@@ -230,10 +256,26 @@ export default function TokenBookingPage() {
           </div>
         )}
         <p className="text-white/40 text-xs">Ga perlu bayar dulu — bayarnya nanti setelah selesai</p>
+        <p className="text-white/60 text-sm pt-1">Punya mobil lain yang mau di-booking? Klik Book Lagi</p>
         <div className="flex flex-col gap-3 pt-2">
+          <Button
+            onClick={bookAgain}
+            className="w-full h-14 rounded-full bg-orange-500 hover:bg-orange-600 text-base font-semibold"
+          >
+            Book Lagi
+          </Button>
+          <a
+            href="/"
+            className="w-full h-12 inline-flex items-center justify-center rounded-full border border-white/20 bg-transparent text-white hover:bg-white/10 transition-colors text-sm font-medium"
+          >
+            Kembali ke Home
+          </a>
           {waNumber && (
-            <a href={`https://wa.me/${waNumber}`} className="flex items-center justify-center gap-2 px-5 py-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors font-medium">
-              <MessageCircle className="w-4 h-4" /> Kembali ke WhatsApp
+            <a
+              href={`https://wa.me/${waNumber}`}
+              className="text-white/40 hover:text-white/70 text-xs transition-colors inline-flex items-center justify-center gap-1 pt-1"
+            >
+              <MessageCircle className="w-3 h-3" /> Chat Shera
             </a>
           )}
         </div>
