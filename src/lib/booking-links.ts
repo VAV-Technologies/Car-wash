@@ -218,23 +218,36 @@ export async function resetBookingLink(token: string): Promise<{ ok: boolean; er
     return { ok: true }
   }
 
-  // Pre-fill from customer record if available (preserves name/phone/car across submissions)
+  // Pre-fill identity/location only (name, phone, address, area).
+  // Car model + plate are intentionally cleared so multi-car customers
+  // can fill in the next vehicle's details. Service/date/time also
+  // reset so each booking picks its own.
   let prefill: Record<string, unknown> = { phone: (link as any).phone }
   const cid = (link as any).customer_id
   if (cid) {
     const { data: customer } = await supabase
       .from('customers')
-      .select('name, phone, car_model, plate_number, address, neighborhood')
+      .select('name, phone, address, neighborhood')
       .eq('id', cid)
       .single()
     if (customer) {
+      // Try to pull area from the last booking_link submission (form_data.area)
+      // since customers.neighborhood isn't being written (check-constraint mismatch).
+      const { data: lastSubmittedLink } = await supabase
+        .from('booking_links')
+        .select('form_data')
+        .eq('phone', (link as any).phone)
+        .eq('status', 'submitted')
+        .order('submitted_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      const lastArea = (lastSubmittedLink as any)?.form_data?.area || (customer as any).neighborhood || ''
+
       prefill = {
         name: (customer as any).name !== 'WhatsApp User' ? (customer as any).name : '',
         phone: (customer as any).phone || (link as any).phone,
-        car_model: (customer as any).car_model || '',
-        plate_number: (customer as any).plate_number || '',
         address: (customer as any).address || '',
-        area: (customer as any).neighborhood || '',
+        area: lastArea,
       }
     }
   }

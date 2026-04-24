@@ -93,13 +93,20 @@ export default function TokenBookingPage() {
         }
         setForm(loaded)
         setWhatsappPhone(fd.phone || '')
-        // Restore to furthest completed step
-        if (loaded.time && loaded.date) setStep(6)
-        else if (loaded.address) setStep(5)
-        else if (loaded.car_model) setStep(4)
-        else if (loaded.name) setStep(3)
-        else if (loaded.service_type) setStep(2)
-        else if (loaded.category) setStep(1)
+        // Restore to furthest completed step — gate each on ALL prior fields
+        // (prevents skipping past an empty step when partial data exists)
+        const hasCategory = !!loaded.category
+        const hasService = hasCategory && !!loaded.service_type
+        const hasContact = hasService && !!loaded.name && !!loaded.phone
+        const hasCar = hasContact && !!loaded.car_model && !!loaded.plate_number
+        const hasAddress = hasCar && !!loaded.area && !!loaded.address
+        const hasSchedule = hasAddress && !!loaded.date && !!loaded.time
+        if (hasSchedule) setStep(6)
+        else if (hasAddress) setStep(5)
+        else if (hasCar) setStep(4)
+        else if (hasContact) setStep(3)
+        else if (hasService) setStep(2)
+        else if (hasCategory) setStep(1)
         setLoading(false)
       })
       .catch(() => { setNotFound(true); setLoading(false) })
