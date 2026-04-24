@@ -241,14 +241,6 @@ describe('Question edge cases', () => {
 // ─── Tool Definitions Validation ────────────────────────────────────
 
 describe('SHERA_TOOLS validation', () => {
-  it('has send_service_images with service_type as required', () => {
-    const tool = SHERA_TOOLS.find(t => t.function.name === 'send_service_images')
-    expect(tool).toBeDefined()
-    const params = tool!.function.parameters as any
-    expect(params.required).toContain('service_type')
-    expect(params.required).toContain('chat_id')
-  })
-
   it('has create_customer with description mentioning updates', () => {
     const tool = SHERA_TOOLS.find(t => t.function.name === 'create_customer')
     expect(tool).toBeDefined()
@@ -260,17 +252,58 @@ describe('SHERA_TOOLS validation', () => {
     expect(tool).toBeDefined()
   })
 
-  it('send_service_images description forbids calling without customer intent', () => {
-    const tool = SHERA_TOOLS.find(t => t.function.name === 'send_service_images')
-    expect(tool!.function.description).toMatch(/ONLY call this AFTER/i)
-  })
-
   it('all tools have required parameters', () => {
     for (const tool of SHERA_TOOLS) {
       const params = tool.function.parameters as any
       expect(params.required).toBeDefined()
       expect(params.required.length).toBeGreaterThan(0)
     }
+  })
+})
+
+// ─── v2 Car-Count Gate Assertions ───────────────────────────────────
+
+describe('SHERA_TOOLS after v2 strip', () => {
+  it('no send_service_images tool', () => {
+    expect(SHERA_TOOLS.find(t => t.function.name === 'send_service_images')).toBeUndefined()
+  })
+
+  it('escalate_to_human supports bulk_order category', () => {
+    const tool = SHERA_TOOLS.find(t => t.function.name === 'escalate_to_human')
+    expect(tool).toBeDefined()
+    expect(JSON.stringify(tool)).toContain('bulk_order')
+  })
+})
+
+describe('Car count gate prompt', () => {
+  it('active phase prompt asks 1-or-more cars', async () => {
+    const { getStatePrompt } = await import('../shera-state')
+    expect(getStatePrompt('active')).toMatch(/1 mobil.*lebih/)
+  })
+
+  it('active phase prompt describes 4+ routing via escalate_to_human with bulk_order', async () => {
+    const { getStatePrompt } = await import('../shera-state')
+    const p = getStatePrompt('active')
+    expect(p).toContain('escalate_to_human')
+    expect(p).toContain('bulk_order')
+  })
+
+  it('active phase prompt forbids proactive image/package recs', async () => {
+    const { getStatePrompt } = await import('../shera-state')
+    expect(getStatePrompt('active')).toMatch(/JANGAN.*(gambar|proaktif)/i)
+  })
+
+  it('PROMPT_BUSINESS has CAR COUNT GATE section', () => {
+    expect(SHERA_SYSTEM_PROMPT).toContain('CAR COUNT GATE')
+    expect(SHERA_SYSTEM_PROMPT).toMatch(/4\+? mobil/)
+  })
+
+  it('PROMPT_BUSINESS no longer has CUCI RECOMMENDATION', () => {
+    expect(SHERA_SYSTEM_PROMPT).not.toContain('CUCI RECOMMENDATION')
+  })
+
+  it('PROMPT_BUSINESS no longer has stale >8 mobil rule', () => {
+    expect(SHERA_SYSTEM_PROMPT).not.toMatch(/>8 mobil/)
   })
 })
 

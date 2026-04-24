@@ -3,7 +3,6 @@ import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/reso
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { isToolAllowed, getToolBlockReason, deriveState, getStatePrompt, type SheraState } from './shera-state'
 import { extractContext, formatContextBlock, validateResponse, type ConvoContext } from './shera-rules'
-import { alertImageDeliveryFailure } from './shera-alerts'
 import { trackMetric } from './shera-metrics'
 
 // ---------------------------------------------------------------------------
@@ -43,20 +42,23 @@ JAM KERJA: Senin-Sabtu 08:00-17:00. Minggu libur. Booking MINIMAL 48 jam dari se
 GARANSI: Ga puas → kita balik buat benerin tanpa biaya.
 BAYAR: Ga perlu deposit. Bayar setelah selesai.
 
-CUCI RECOMMENDATION (HANYA kalau customer minta bantu pilih cuci):
-Standard → perawatan rutin, mobil ga terlalu kotor
-Professional → lama ga dicuci, noda interior, bercak hujan, kontaminan (brake dust, iron, tree sap)
-Elite → paling lengkap, ceramic coating, engine bay, interior deep clean
-
 MAHAL? vs MINTA DISKON — INI BEDA:
 Kalau customer bilang MAHAL/KEMAHALAN → JUAL VALUE: produk premium import Korea/Jepang, detailer terlatih, datang ke rumah, garansi puas. Buat mereka ngerasa worth it. JANGAN bilang "ga bisa diskon" karena mereka BUKAN minta diskon — mereka cuma komentar soal harga.
 Kalau customer EKSPLISIT minta DISKON/POTONGAN/PROMO → baru tolak: "Sayangnya harga kita ga bisa di-diskon kak..."
 
-BOOKING: Semua booking via form link yang dikirim otomatis di awal percakapan. Kamu TIDAK kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat. Kamu jawab pertanyaan harga/paket/area dan arahkan customer ke form.
+BOOKING: Semua booking via form link yang dikirim otomatis di awal percakapan. Kamu TIDAK kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.
 
-ESCALATE hanya: >8 mobil, komplain Castudio, harga korporat, partnership.
-Apartemen BOLEH di-booking langsung — JANGAN escalate hanya karena alamatnya apartemen. Escalate HANYA kalau customer bilang ada masalah akses (security, parkir, izin gedung).
-JANGAN escalate: competitor complaint (itu peluang!), pertanyaan umum, booking biasa, alamat apartemen/gedung.`
+CAR COUNT GATE: Setelah customer kasih nama, tanya "1 mobil aja atau lebih kak?" sebagai CTA utama.
+Kalau customer nanya harga/area/paket sebelum jawab count → jawab pertanyaannya singkat dari LAYANAN di atas, lalu tutup dengan pertanyaan count di pesan yang sama.
+
+Routing berdasarkan jumlah mobil:
+1 mobil → "Oke kak, tinggal isi form yang tadi aku kirim ya 🙂"
+2 mobil → "Untuk 2 mobil, isi form-nya 2 kali ya kak, satu submission per mobil. Link-nya yang tadi aku kirim 🙂"
+3 mobil → "Untuk 3 mobil, isi form-nya 3 kali ya kak, satu submission per mobil. Link-nya yang tadi aku kirim 🙂"
+4+ mobil → PANGGIL escalate_to_human dengan category 'bulk_order', reason "Customer booking [N] mobil sekaligus", customer_message = pesan terakhir customer. Lalu kirim EXACTLY: "Untuk lebih dari 3 mobil, aku teruskan ke tim dulu ya kak. Nanti aku kabarin lagi 🙂" — JANGAN tambahkan kalimat lain.
+
+Setelah routing: diam. JANGAN tanya "ada lagi?" / "butuh bantuan lain?" / CTA apapun. Biarkan customer isi form.
+JANGAN pernah kirim gambar atau rekomendasi paket proaktif. Customer pilih sendiri di form.`
 
 // Legacy export for backward compatibility with tests
 export const SHERA_SYSTEM_PROMPT = PROMPT_IDENTITY + '\n' + PROMPT_BUSINESS
@@ -75,7 +77,6 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
   { type: 'function', function: { name: 'update_booking', description: 'Update an existing booking. Use this to reschedule (change date/time) or change the service type.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID' }, scheduled_date: { type: 'string', description: 'New date in YYYY-MM-DD format' }, scheduled_time: { type: 'string', description: 'New time in HH:MM format (24h)' }, service_type: { type: 'string', description: 'New service type' } }, required: ['booking_id'] } } },
   { type: 'function', function: { name: 'cancel_booking', description: 'Cancel an existing booking. Use this when the customer wants to cancel their appointment.', parameters: { type: 'object', properties: { booking_id: { type: 'string', description: 'The booking UUID to cancel' } }, required: ['booking_id'] } } },
   { type: 'function', function: { name: 'create_customer', description: 'Register a new customer OR update an existing customer record. Call this whenever you learn new customer details (name, car, plate, address) to save them to the database. If a customer with this phone already exists, their record will be updated with the new info.', parameters: { type: 'object', properties: { name: { type: 'string', description: "Customer's full name" }, phone: { type: 'string', description: 'Phone number (e.g. 628123456789)' }, car_model: { type: 'string', description: 'Car make and model (e.g. Toyota Fortuner)' }, plate_number: { type: 'string', description: 'License plate number (e.g. B 1234 ABC)' }, address: { type: 'string', description: 'Full street address' }, neighborhood: { type: 'string', description: 'Area or neighborhood for routing' } }, required: ['name', 'phone'] } } },
-  { type: 'function', function: { name: 'send_service_images', description: 'Send service menu images to the customer via WhatsApp. ONLY call this AFTER the customer has explicitly said they want either "cuci mobil/wash" or "detailing". NEVER call this just because you learned the customer\'s name. The customer MUST have stated what service category they want first.', parameters: { type: 'object', properties: { service_type: { type: 'string', description: 'Comma-separated service types to send. For wash: "standard_wash,professional,elite_wash". For detailing: "interior_detail,exterior_detail,window_detail,tire_rims,full_detail". Or "all" for everything.' }, chat_id: { type: 'string', description: 'The WhatsApp chat ID to send images to' } }, required: ['service_type', 'chat_id'] } } },
   { type: 'function', function: { name: 'escalate_to_human', description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'Brief reason why this needs human attention' }, category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' }, customer_message: { type: 'string', description: 'The customer message that triggered escalation' } }, required: ['reason', 'category'] } } },
   { type: 'function', function: { name: 'get_completed_jobs', description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' } }, required: ['customer_id'] } } },
   { type: 'function', function: { name: 'submit_job_rating', description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.', parameters: { type: 'object', properties: { job_id: { type: 'string', description: 'The job UUID to rate' }, rating: { type: 'number', description: 'Rating from 1 to 5' }, feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' } }, required: ['job_id', 'rating'] } } },
@@ -263,127 +264,6 @@ export async function executeSheraTool(
           .single()
         if (error) throw error
         return JSON.stringify({ success: true, rating, feedback: input.feedback || null })
-      }
-
-      case 'send_service_images': {
-        const { sendImage } = await import('@/lib/agents/waha')
-        // Get service images from knowledge base
-        const { data: images } = await supabase
-          .from('agent_knowledge')
-          .select('file_name, content')
-          .eq('agent_name', 'shera')
-          .like('file_name', 'service_image_%')
-
-        if (!images || images.length === 0) {
-          return JSON.stringify({ sent: false, reason: 'No service images uploaded yet. Describe services in text instead.' })
-        }
-
-        const chatId = String(input.chat_id)
-        // HARD RULE: Auto-expand to full category — never send just 1 image
-        const WASH_TYPES = ['standard_wash', 'professional', 'elite_wash']
-        const DETAIL_TYPES = ['interior_detail', 'exterior_detail', 'window_detail', 'tire_rims', 'full_detail']
-        const SUB_TYPES = ['sub_essentials', 'sub_plus', 'sub_elite']
-        let serviceTypeStr = input.service_type ? String(input.service_type).trim() : 'all'
-        if (!serviceTypeStr || serviceTypeStr === 'undefined' || serviceTypeStr === 'null') serviceTypeStr = 'all'
-        const rawRequested = serviceTypeStr.split(',').map(s => s.trim()).filter(Boolean)
-        // Auto-expand any partial category to full category
-        if (rawRequested.some(t => WASH_TYPES.includes(t))) serviceTypeStr = WASH_TYPES.join(',')
-        else if (rawRequested.some(t => DETAIL_TYPES.includes(t))) serviceTypeStr = DETAIL_TYPES.join(',')
-        else if (rawRequested.some(t => SUB_TYPES.includes(t))) serviceTypeStr = SUB_TYPES.join(',')
-        else if (serviceTypeStr !== 'all') serviceTypeStr = 'all' // unknown types → send everything
-        const requestedTypes = serviceTypeStr === 'all' ? null : serviceTypeStr.split(',').map(s => s.trim())
-
-        const SERVICE_LABELS: Record<string, string> = {
-          standard_wash: 'Standard Wash',
-          professional: 'Professional Wash',
-          elite_wash: 'Elite Wash',
-          interior_detail: 'Interior Detail',
-          exterior_detail: 'Exterior Detail',
-          window_detail: 'Window Detail',
-          tire_rims: 'Tire & Rims',
-          full_detail: 'Full Detail',
-          sub_essentials: 'Langganan Essentials',
-          sub_plus: 'Langganan Plus',
-          sub_elite: 'Langganan Elite',
-        }
-
-        // Prevent duplicate sends — same turn OR previous turns
-        if (ctx?.serviceImagesSent) {
-          return JSON.stringify({ sent: 0, already_sent: true, message: 'Images already sent this turn. Do NOT re-send. Just refer to packages already shown.' })
-        }
-        // Block re-sends across turns: if this category was already sent in conversation history
-        const isWashReq = rawRequested.some((t: string) => WASH_TYPES.includes(t))
-        const isDetailReq = rawRequested.some((t: string) => DETAIL_TYPES.includes(t))
-        if (isWashReq && ctx?.imagesSentCategories?.includes('wash')) {
-          return JSON.stringify({ sent: 0, already_sent: true, message: 'Wash images already sent earlier in this conversation. Do NOT re-send. Refer to packages already shown and continue the booking flow.' })
-        }
-        if (isDetailReq && ctx?.imagesSentCategories?.includes('detailing')) {
-          return JSON.stringify({ sent: 0, already_sent: true, message: 'Detailing images already sent earlier in this conversation. Do NOT re-send. Refer to packages already shown and continue the booking flow.' })
-        }
-
-        // Sort order: full_detail first for detailing, then rest alphabetically
-        const SEND_ORDER: Record<string, number> = {
-          standard_wash: 1, professional: 2, elite_wash: 3,
-          full_detail: 1, interior_detail: 2, exterior_detail: 3, tire_rims: 4, window_detail: 5,
-          sub_essentials: 1, sub_plus: 2, sub_elite: 3,
-        }
-        const sortedImages = [...images].sort((a, b) => {
-          const ka = a.file_name.replace('service_image_', '')
-          const kb = b.file_name.replace('service_image_', '')
-          return (SEND_ORDER[ka] || 99) - (SEND_ORDER[kb] || 99)
-        })
-
-        let sent = 0
-        let failed = 0
-        for (const img of sortedImages) {
-          const key = img.file_name.replace('service_image_', '')
-          if (requestedTypes && !requestedTypes.includes(key)) continue
-          const caption = SERVICE_LABELS[key] || key
-          try {
-            await sendImage(chatId, img.content, caption)
-            sent++
-            // Delay between images — WAHA needs time to process each send
-            if (sent < images.length) await new Promise(r => setTimeout(r, 2000))
-          } catch (err) {
-            failed++
-            console.error(`[send_service_images] Failed to send ${key}:`, err)
-          }
-        }
-
-        // Verify images were actually delivered (WAHA can return 2xx but not deliver)
-        if (sent > 0) {
-          try {
-            await new Promise(r => setTimeout(r, 2000))
-            const WAHA_API_URL = process.env.WAHA_API_URL!
-            const WAHA_API_KEY = process.env.WAHA_API_KEY!
-            // Check recent outgoing messages for image type
-            const verifyRes = await fetch(`${WAHA_API_URL}/api/default/chats/${chatId}/messages?limit=10&downloadMedia=false`, {
-              headers: { 'X-Api-Key': WAHA_API_KEY },
-            })
-            if (verifyRes.ok) {
-              const recentMsgs = await verifyRes.json()
-              const recentImages = Array.isArray(recentMsgs)
-                ? recentMsgs.filter((m: any) => m.fromMe && m.hasMedia).length
-                : 0
-              if (recentImages === 0) {
-                console.error(`[send_service_images] Verification failed: WAHA accepted ${sent} images but 0 delivered to ${chatId}`)
-                sent = 0
-              }
-            }
-          } catch (verifyErr) {
-            console.error('[send_service_images] Verification check failed:', verifyErr)
-            // Can't verify — trust the original send result
-          }
-        }
-
-        if (sent > 0 && ctx) ctx.serviceImagesSent = true
-        if (sent === 0) {
-          alertImageDeliveryFailure(chatId, failed).catch(() => {})
-          trackMetric(chatId, 'image_delivery_failure', { images_sent: 0, images_failed: failed }).catch(() => {})
-          return JSON.stringify({ sent: 0, failed, message: 'GAGAL kirim gambar. Kamu WAJIB kirim daftar harga pakai TEXT sebagai pengganti. Pakai format backup harga yang ada di system prompt.' })
-        }
-        trackMetric(chatId, 'image_delivery_success', { images_sent: sent, images_failed: failed }).catch(() => {})
-        return JSON.stringify({ sent, failed, message: 'Images sent successfully. Do NOT call send_service_images again. Ask the customer which package they want.' })
       }
 
       case 'get_booking_link_status': {

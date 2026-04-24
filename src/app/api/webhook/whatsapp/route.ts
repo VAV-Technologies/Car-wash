@@ -195,6 +195,25 @@ export async function POST(req: NextRequest) {
       phone = '+' + from.replace('@c.us', '')
     }
 
+    // ── Permanent silence check (bulk_order escalation) ─────────────
+    // If this chat has a bulk_order escalation, Shera stays silent forever.
+    // Admin takes over via live-chat. Never auto-respond in this conversation.
+    {
+      const { getSupabaseAdmin: getAdminMute } = await import('@/lib/supabase')
+      const dbMute = getAdminMute()
+      const { data: muteEsc } = await dbMute
+        .from('human_escalations')
+        .select('id')
+        .eq('chat_id', chatId)
+        .eq('category', 'bulk_order')
+        .limit(1)
+        .maybeSingle()
+      if (muteEsc) {
+        console.log(`[whatsapp-webhook] chat ${chatId} silenced by bulk_order escalation — skipping Shera`)
+        return NextResponse.json({ ok: true, skipped: 'silenced (bulk_order escalation)' })
+      }
+    }
+
     // ── Mark as seen after a brief pause ─────────────────────────
     const seenDelay = 2000 + Math.random() * 2000
     setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay) // sendSeen uses original from (works with both @lid and @c.us)

@@ -9,11 +9,6 @@ vi.mock('@/lib/supabase', () => ({
   getSupabaseAdmin: () => mockSupabase,
 }))
 
-const mockSendImage = vi.fn()
-vi.mock('@/lib/agents/waha', () => ({
-  sendImage: (...args: any[]) => mockSendImage(...args),
-}))
-
 import { executeSheraTool } from '../shera'
 
 // ─── Helper ─────────────────────────────────────────────────────────
@@ -430,149 +425,6 @@ describe('submit_job_rating', () => {
 })
 
 // =====================================================================
-// send_service_images
-// =====================================================================
-
-describe('send_service_images', () => {
-  const washImages = [
-    { file_name: 'service_image_standard_wash', content: 'https://example.com/standard.jpg' },
-    { file_name: 'service_image_professional', content: 'https://example.com/pro.jpg' },
-    { file_name: 'service_image_elite_wash', content: 'https://example.com/elite.jpg' },
-  ]
-
-  function mockImagesInDB(images: typeof washImages) {
-    const chain = mockChain({ data: images })
-    chain.like = vi.fn().mockResolvedValue({ data: images })
-    mockFrom.mockReturnValue(chain)
-  }
-
-  function mockVerification() {
-    const original = globalThis.fetch
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve([{ fromMe: true, hasMedia: true }]),
-    }) as any
-    return () => { globalThis.fetch = original }
-  }
-
-  it('returns "No service images" when DB is empty', async () => {
-    mockImagesInDB([])
-
-    const result = JSON.parse(await executeSheraTool('send_service_images', {
-      service_type: 'standard_wash',
-      chat_id: '628123@c.us',
-    }))
-
-    expect(result.sent).toBeFalsy()
-  })
-
-  it('sends all 3 wash images', { timeout: 15000 }, async () => {
-    mockImagesInDB(washImages)
-    mockSendImage.mockResolvedValue(undefined)
-    const restore = mockVerification()
-
-    try {
-      const result = JSON.parse(await executeSheraTool('send_service_images', {
-        service_type: 'standard_wash,professional,elite_wash',
-        chat_id: '628123@c.us',
-      }))
-
-      expect(result.sent).toBe(3)
-      expect(mockSendImage).toHaveBeenCalledTimes(3)
-    } finally { restore() }
-  })
-
-  it('auto-expands partial wash request to all wash types', { timeout: 15000 }, async () => {
-    process.env.WAHA_API_URL = 'http://localhost:3000'
-    process.env.WAHA_API_KEY = 'test'
-    mockImagesInDB([...washImages, { file_name: 'service_image_interior_detail', content: 'https://example.com/int.jpg' }])
-    mockSendImage.mockResolvedValue(undefined)
-    const restore = mockVerification()
-
-    try {
-      const result = JSON.parse(await executeSheraTool('send_service_images', {
-        service_type: 'standard_wash,elite_wash', // only 2 wash types
-        chat_id: '628123@c.us',
-      }))
-
-      // Auto-expanded to all 3 wash types (not 2, not 4)
-      expect(result.sent).toBe(3)
-    } finally { restore() }
-  })
-
-  it('returns GAGAL when all sends fail', async () => {
-    mockImagesInDB(washImages)
-    mockSendImage.mockRejectedValue(new Error('WAHA down'))
-
-    const result = JSON.parse(await executeSheraTool('send_service_images', {
-      service_type: 'standard_wash,professional,elite_wash',
-      chat_id: '628123@c.us',
-    }))
-
-    expect(result.sent).toBe(0)
-    expect(result.failed).toBe(3)
-    expect(result.message).toMatch(/GAGAL/)
-  })
-
-  it('reports partial failure correctly', { timeout: 15000 }, async () => {
-    mockImagesInDB(washImages)
-    let callCount = 0
-    mockSendImage.mockImplementation(() => {
-      callCount++
-      if (callCount === 2) throw new Error('WAHA timeout')
-      return Promise.resolve()
-    })
-    const restore = mockVerification()
-
-    try {
-      const result = JSON.parse(await executeSheraTool('send_service_images', {
-        service_type: 'standard_wash,professional,elite_wash',
-        chat_id: '628123@c.us',
-      }))
-
-      expect(result.sent).toBe(2)
-      expect(result.failed).toBe(1)
-    } finally { restore() }
-  })
-
-  it('blocks duplicate sends in same turn', async () => {
-    ctx.serviceImagesSent = true
-
-    const result = JSON.parse(await executeSheraTool('send_service_images', {
-      service_type: 'standard_wash',
-      chat_id: '628123@c.us',
-    }, undefined, ctx))
-
-    expect(result.already_sent).toBe(true)
-    expect(mockSendImage).not.toHaveBeenCalled()
-  })
-
-  it('sends images in correct sort order (standard → professional → elite)', { timeout: 15000 }, async () => {
-    // Provide images in wrong order to test sorting
-    const unsorted = [
-      { file_name: 'service_image_elite_wash', content: 'https://example.com/elite.jpg' },
-      { file_name: 'service_image_standard_wash', content: 'https://example.com/standard.jpg' },
-      { file_name: 'service_image_professional', content: 'https://example.com/pro.jpg' },
-    ]
-    mockImagesInDB(unsorted)
-    mockSendImage.mockResolvedValue(undefined)
-    const restore = mockVerification()
-
-    try {
-      await executeSheraTool('send_service_images', {
-        service_type: 'standard_wash,professional,elite_wash',
-        chat_id: '628123@c.us',
-      })
-
-      // Verify order: standard (1), professional (2), elite (3)
-      expect(mockSendImage.mock.calls[0][1]).toContain('standard')
-      expect(mockSendImage.mock.calls[1][1]).toContain('pro')
-      expect(mockSendImage.mock.calls[2][1]).toContain('elite')
-    } finally { restore() }
-  })
-})
-
-// =====================================================================
 // escalate_to_human
 // =====================================================================
 
@@ -624,26 +476,6 @@ describe('escalate_to_human', () => {
 // =====================================================================
 
 describe('State gating', () => {
-  it('blocks send_service_images in greeting state', async () => {
-    const result = JSON.parse(await executeSheraTool('send_service_images', {
-      service_type: 'standard_wash',
-      chat_id: '628123@c.us',
-    }, 'greeting'))
-
-    expect(result.blocked_by_state).toBe(true)
-    expect(result.current_state).toBe('greeting')
-    expect(mockSendImage).not.toHaveBeenCalled()
-  })
-
-  it('allows send_service_images in active state', async () => {
-    const result = JSON.parse(await executeSheraTool('send_service_images', {
-      service_type: 'standard_wash',
-      chat_id: '628123@c.us',
-    }, 'active'))
-
-    expect(result.blocked_by_state).toBeUndefined()
-  })
-
   it('allows search_customer in any state (ungated)', async () => {
     const chain = mockChain({ data: [] })
     chain.limit = vi.fn().mockResolvedValue({ data: [], error: null })

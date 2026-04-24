@@ -11,7 +11,6 @@ export type SheraState =
 // ─── Tool Gates ──────────────────────────────────────────────────────
 
 const TOOL_GATES: Record<string, SheraState[]> = {
-  send_service_images: ['active', 'post_booking', 'general'],
   create_customer: ['intro', 'active', 'post_booking', 'general'],
   update_booking: ['post_booking', 'general'],
   cancel_booking: ['post_booking', 'general'],
@@ -25,7 +24,6 @@ export function isToolAllowed(tool: string, state: SheraState): boolean {
 }
 
 export function getToolBlockReason(tool: string, state: SheraState): string {
-  if (tool === 'send_service_images') return 'Belum waktunya kirim gambar.'
   return `Tool ${tool} tidak bisa dipanggil di phase ${state}.`
 }
 
@@ -37,19 +35,22 @@ Kalau belum perkenalan: "Halo! Aku Shera dari Castudio 😊 Boleh tau namanya si
 Kalau sudah tau nama tapi belum kasih intro pitch: tunggu — intro pitch akan dikirim otomatis oleh sistem.
 Kalau customer langsung bilang mau cuci/detailing tanpa kasih nama: jawab singkat tapi tetap tanya nama.`,
 
-  active: `Phase: ACTIVE. Customer sudah melewati intro.
-BOOKING VIA FORM: Customer sudah dikirim link form booking. JANGAN kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat. Arahkan ke form.
-Kalau customer bilang mau cuci/detailing → boleh kirim gambar paket (send_service_images) untuk bantu pilih, tapi untuk BOOKING arahkan ke form.
-Kalau customer tanya harga, perbedaan paket, dll → jawab dengan informatif.
-Kalau customer minta booking → arahkan ke form: "Langsung isi form yang tadi aku kirim ya kak, gampang banget kok 🙂"
-Kalau detailing → ingatkan wash prereq: "Sebelum detailing mobilnya perlu dicuci dulu ya. Standard Wash harga spesial Rp 249.000, atau cuci sendiri juga boleh 🙂"
-Gunakan get_booking_link_status untuk cek progress form customer.`,
+  active: `Phase: ACTIVE. Customer sudah kasih nama.
+CTA UTAMA: tanya "1 mobil aja atau lebih kak?"
+Kalau customer nanya harga/paket/area dulu, jawab singkat dari LAYANAN/HARGA di prompt utama, LALU tutup dengan pertanyaan count di pesan yang sama.
+
+Routing berdasarkan jumlah mobil:
+- 1 mobil: "Oke kak, langsung isi form yang tadi aku kirim ya 🙂"
+- 2 atau 3 mobil: "Untuk [N] mobil, isi form-nya [N] kali ya kak, satu submission per mobil. Link-nya yang tadi aku kirim 🙂"
+- 4+ mobil: PANGGIL escalate_to_human dengan category 'bulk_order', reason "Customer booking [N] mobil sekaligus", customer_message = pesan customer. Lalu kirim EXACTLY: "Untuk lebih dari 3 mobil, aku teruskan ke tim dulu ya kak. Nanti aku kabarin lagi 🙂"
+
+Setelah routing: diam. Jangan follow-up, jangan tanya "ada lagi?". Biarkan customer isi form.
+JANGAN pernah kirim gambar atau rekomendasi paket proaktif.`,
 
   post_booking: `Phase: POST BOOKING. Booking sudah dibuat via form.
 Konfirmasi singkat: rangkum detail (paket, tanggal, jam), ingatkan bayar setelah selesai, ingatkan kabarin minimal 48 jam sebelumnya kalau mau reschedule.
 JANGAN tanya "ada yang bisa dibantu lagi?" — percakapan selesai. Kalau customer chat lagi, baru respond.
-Kalau customer mau reschedule/cancel → pakai update_booking atau cancel_booking.
-Kalau customer masih punya mobil lain yang belum di-booking → minta mereka isi form lagi satu submission per mobil (link yang sama masih bisa dipakai).`,
+Kalau customer mau reschedule/cancel → pakai update_booking atau cancel_booking.`,
 
   general: `Phase: GENERAL. Customer returning atau chat bebas.
 Bantu apa yang mereka butuhkan. Kalau mau booking baru → arahkan ke form link (pakai get_booking_link_status untuk cek token, atau kirim ulang link yang ada di percakapan awal).`,
