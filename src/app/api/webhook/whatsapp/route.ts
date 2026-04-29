@@ -195,6 +195,33 @@ export async function POST(req: NextRequest) {
       phone = '+' + from.replace('@c.us', '')
     }
 
+    // ── Johan branch: route authorized team members to the co-pilot ──
+    // Johan is a private back-office assistant. Authorized numbers are
+    // matched on the digit-stripped phone. He short-circuits both the
+    // SHERA_DISABLED check and the bulk_order silence — Johan must
+    // always answer the team, regardless of Shera's state.
+    {
+      const senderDigits = phone.replace(/\D/g, '')
+      const johanUsers = (process.env.JOHAN_AUTHORIZED_NUMBERS || '')
+        .split(',')
+        .map((s) => s.trim().replace(/\D/g, ''))
+        .filter(Boolean)
+
+      if (senderDigits && johanUsers.includes(senderDigits)) {
+        try {
+          const { processJohanMessage } = await import('@/lib/agents/johan')
+          setTimeout(() => { sendSeen(from).catch(() => {}) }, 500)
+          const draft = await processJohanMessage(chatId, phone, enrichedText)
+          await sendText(chatId, draft)
+          return NextResponse.json({ ok: true, agent: 'johan' })
+        } catch (err) {
+          console.error('[johan] error:', err)
+          await sendText(chatId, 'AI lagi error nih, coba lagi sebentar 🙏').catch(() => {})
+          return NextResponse.json({ ok: false, agent: 'johan', error: String(err) }, { status: 200 })
+        }
+      }
+    }
+
     // ── Kill switch: SHERA_DISABLED ─────────────────────────────────
     // Pause Shera entirely. Save inbound message to preserve history,
     // but skip read receipt, LLM call, booking link, and any outbound.
