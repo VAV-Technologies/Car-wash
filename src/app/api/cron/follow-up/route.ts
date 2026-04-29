@@ -21,6 +21,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  if (process.env.SHERA_DISABLED === 'true') {
+    return NextResponse.json({ status: 'ok', skipped: 'shera disabled' })
+  }
+
   const supabase = getSupabaseAdmin()
 
   try {

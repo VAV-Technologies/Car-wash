@@ -195,6 +195,39 @@ export async function POST(req: NextRequest) {
       phone = '+' + from.replace('@c.us', '')
     }
 
+    // ── Kill switch: SHERA_DISABLED ─────────────────────────────────
+    // Pause Shera entirely. Save inbound message to preserve history,
+    // but skip read receipt, LLM call, booking link, and any outbound.
+    if (process.env.SHERA_DISABLED === 'true') {
+      try {
+        const { getSupabaseAdmin: getAdminMute } = await import('@/lib/supabase')
+        const db = getAdminMute()
+        const { data: convo } = await db
+          .from('whatsapp_conversations')
+          .select('messages')
+          .eq('chat_id', chatId)
+          .maybeSingle()
+        const existingMsgs = Array.isArray(convo?.messages) ? convo.messages : []
+        const msgsWithNew = [
+          ...existingMsgs,
+          { role: 'user', content: enrichedText, timestamp: new Date().toISOString() },
+        ]
+        if (convo) {
+          await db
+            .from('whatsapp_conversations')
+            .update({ messages: msgsWithNew, last_message_at: new Date().toISOString() })
+            .eq('chat_id', chatId)
+        } else {
+          await db
+            .from('whatsapp_conversations')
+            .insert({ chat_id: chatId, phone: chatId.replace('@c.us', ''), messages: msgsWithNew, last_message_at: new Date().toISOString() })
+        }
+      } catch (saveErr) {
+        console.error('[whatsapp-webhook] SHERA_DISABLED — failed to save inbound:', saveErr)
+      }
+      return NextResponse.json({ ok: true, skipped: 'shera disabled' })
+    }
+
     // ── Permanent silence check (bulk_order escalation) ─────────────
     // If this chat has a bulk_order escalation, Shera stays silent forever.
     // Admin takes over via live-chat. Never auto-respond in this conversation.
