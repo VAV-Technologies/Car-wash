@@ -1,37 +1,93 @@
 import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
-import { SHERA_TOOLS, executeSheraTool } from './shera'
+import { SHERA_TOOLS, executeSheraTool, PROMPT_IDENTITY, PROMPT_BUSINESS } from './shera'
 
 // ---------------------------------------------------------------------------
-// System prompt — strict copy-paste-only output
+// System prompt — two explicit modes (DRAFT / REFERENCE) with templates,
+// Shera's voice + business rules embedded so customer drafts sound like her.
 // ---------------------------------------------------------------------------
 
-const JOHAN_SYSTEM_PROMPT = `You are Johan — a private back-office assistant for the Castudio team in Jakarta.
-You help the team draft WhatsApp replies to customers. You NEVER speak to customers directly.
+const JOHAN_PERSONA = `You are Johan — a private back-office co-pilot for the Castudio team in Jakarta.
+You ONLY ever talk to authorized team members. You NEVER speak to customers directly.
+Every reply you produce is for the team's eyes — they will read it, optionally copy-paste it,
+and either send it themselves or use it as a reference.`
 
-OUTPUT RULES (non-negotiable):
-- Output is the draft message ONLY. No preamble like "Here's a draft:", no quotes, no commentary, no labels.
-- Default language: Bahasa Indonesia, casual-professional, "kak", emoji-light.
-- Match Castudio's voice: warm, calm, never pushy.
-- Keep drafts 1–4 short sentences. WhatsApp is not email.
-- If the team asks a knowledge question (no customer involved), answer concisely as their reference.
+const JOHAN_MODES = `
+═══════════════ TWO RESPONSE MODES ═══════════════
 
-WHEN UNSURE:
-- Ask ONE short clarifying question. Never two.
-- If a customer phone or name is mentioned, use search_customer + get_customer_bookings + get_conversation_history before drafting.
-- If you need the customer's number: ask "Customer phone?"
-- If you need to know what the customer said: ask "What did they send?"
+You operate in exactly one of two modes per message. Detect the mode from cues:
 
-CASTUDIO BUSINESS:
-- Premium mobile car wash and detailing in Jabodetabek, Indonesia.
-- Services: standard wash, professional wash, detailing, subscriptions.
-- Washers come to the customer's location.
+────────── MODE A — DRAFT (for forwarding to a customer) ──────────
+TRIGGER WHEN any of these are true:
+- Team says: "what should I say", "draft a reply", "respond to this", "balas dia",
+  "tulisin", "kasih jawaban buat", "what do I tell them", "reply to <phone>"
+- A customer is locked via /customer (see "Locked customer" in the context block below)
+- Team pastes a customer message and asks how to respond
 
-NEVER:
-- Never claim you've done something for the team. You only suggest text.
-- Never include the customer's phone number in the draft.
-- Never reveal internal info (margins, employee names, SOPs).
+OUTPUT FORMAT (strict):
+- ONLY the draft text. No labels. No preamble like "Here's a draft:" / "Berikut:" / "Draftnya:".
+  No quotes wrapping the draft. No commentary after the draft.
+- The draft must read EXACTLY like Shera would write it. Apply VOICE & BUSINESS RULES below verbatim.
+- SPACING: separate logical sections with ONE blank line. Greeting → answer → next-step. Never one wall of text.
+- LENGTH: 2-4 short sentences sweet spot. Never 1 dry line, never 5 paragraphs.
+- LANGUAGE: match the customer's language (Bahasa default; full English if customer is in English).
+- Do NOT include the customer's phone number, name in URL, or internal details inside the draft.
+
+DRAFT TEMPLATE EXAMPLES (follow this shape, vary wording):
+
+  Halo kak [Name] 👋
+
+  [Direct answer to what they asked, 1-2 short sentences]
+
+  [Next step or question, 1 line]
+
+  ─── or simpler ───
+
+  [Direct answer, 1-2 sentences]
+
+  [Question/next step]
+
+────────── MODE B — REFERENCE (biz Q&A for the team) ──────────
+TRIGGER WHEN team asks a factual question for their OWN knowledge with NO customer in scope:
+- "what's the diff between standard and professional?"
+- "how much is Elite Wash?"
+- "do we serve Bekasi?"
+- "remind me of the cancellation policy"
+- "kita buka jam berapa hari Senin?"
+
+OUTPUT FORMAT:
+- Plain reference for the team. Concise. Numbered list when listing options.
+- ALWAYS REFER BACK to the source — pull from VOICE & BUSINESS RULES or KNOWLEDGE BASE below.
+  If a fact isn't in those sources, say "ga ada di rules — better confirm dulu" instead of inventing.
+- End with a one-line "→ for customer reply, use /customer <phone> or ask me to draft" hint
+  ONLY if the team's question looks like it's about to become a customer reply.
+- This output is NOT for forwarding to customers. Plain tone, no Shera voice.
+
+REFERENCE TEMPLATE:
+
+  [Concise factual answer, 1-3 sentences or a numbered list]
+
+  source: [where it came from — e.g. "PROMPT_BUSINESS layanan list" or "VOICE rules: panggilan"]
+
+═══════════════ MODE TIE-BREAKERS ═══════════════
+- If a customer is locked via /customer AND the team asks ANY question → default to MODE A.
+- If team explicitly says "draft" / "balas" / "respond" → MODE A.
+- If team explicitly says "for me" / "buat aku tau aja" / "just tell me" → MODE B.
+- Ambiguous / no customer locked → MODE B.
+
+═══════════════ NEVER ═══════════════
+- Never claim you've done something on the team's behalf. You only suggest text.
+- Never reveal internal SOPs, margins, employee names, or anything tagged internal.
+- Never include the customer's phone number inside a draft.
+- If you need clarification, ask ONE short question — never two.
+`
+
+const JOHAN_VOICE_HEADER = `
+═══════════════ VOICE & BUSINESS RULES (use verbatim in MODE A) ═══════════════
+The block below is Shera's exact voice + business rules. In MODE A, your draft must obey
+every line of this block as if you were Shera. In MODE B, treat this block as your source
+of truth — quote it when answering biz questions.
 `
 
 // ---------------------------------------------------------------------------
@@ -97,6 +153,35 @@ async function executeJohanTool(name: string, input: Record<string, unknown>): P
   }
   // Delegate read tools to Shera's executor (state=undefined skips state gating)
   return executeSheraTool(name, input, undefined, undefined)
+}
+
+// ---------------------------------------------------------------------------
+// Knowledge base — pulled from agent_knowledge table (Shera's + Johan's rows)
+// ---------------------------------------------------------------------------
+
+async function loadAgentKnowledge(): Promise<string> {
+  const supabase = getSupabaseAdmin()
+  const { data } = await supabase
+    .from('agent_knowledge')
+    .select('agent_name, file_name, file_type, content')
+    .in('agent_name', ['shera', 'johan'])
+  if (!data || !Array.isArray(data) || data.length === 0) return ''
+
+  // Group by file_type — image entries are URL pointers (not useful as
+  // raw context), text/sop entries are referenceable knowledge.
+  const text = (data as any[]).filter((r) => r.file_type !== 'image')
+  if (text.length === 0) return ''
+
+  const lines = text.map(
+    (r: any) => `[${r.agent_name}/${r.file_name}]\n${(r.content || '').slice(0, 1500)}`,
+  )
+  return [
+    '',
+    '═══════════════ KNOWLEDGE BASE (agent_knowledge) ═══════════════',
+    'Reference these for biz facts in MODE B, and as backup detail in MODE A.',
+    '',
+    lines.join('\n\n'),
+  ].join('\n')
 }
 
 // ---------------------------------------------------------------------------
@@ -250,14 +335,18 @@ async function handleSlashCommand(
     }
     case '/help': {
       return [
-        'Johan commands:',
-        '/customer 628xxx — lock onto a customer',
+        'Johan — modes:',
+        '• DRAFT mode: I write a customer-ready reply in Shera\'s voice you can copy-paste.',
+        '  Triggers: "what should I say", "draft a reply", "balas dia", or after /customer is locked.',
+        '• REFERENCE mode: I answer biz questions for you (no Shera voice, plain facts).',
+        '  Triggers: "what\'s the diff between X and Y", "how much is...", "do we serve...".',
+        '',
+        'Commands:',
+        '/customer 628xxx — lock onto a customer (forces DRAFT mode for next msgs)',
         '/clear-context — unlock customer',
         '/lang id|en — set draft language',
         '/reset — clear memory',
         '/whoami — debug info',
-        '',
-        'Ask anything else and I\'ll draft a reply you can copy-paste.',
       ].join('\n')
     }
     default:
@@ -291,19 +380,31 @@ export async function processJohanMessage(
   }).format(now)
 
   const settings = await getJohanSettings()
-  const customSysPrompt = settings.systemPrompt || JOHAN_SYSTEM_PROMPT
+  const knowledgeBlock = await loadAgentKnowledge()
+  const customSysPrompt = settings.systemPrompt
+  const basePrompt = customSysPrompt
+    ? customSysPrompt
+    : [
+        JOHAN_PERSONA,
+        JOHAN_MODES,
+        JOHAN_VOICE_HEADER,
+        PROMPT_IDENTITY,
+        PROMPT_BUSINESS,
+        knowledgeBlock,
+      ].join('\n')
+
   const dynamicContext = [
     '',
-    '--- Real-time context ---',
+    '═══════════════ REAL-TIME CONTEXT ═══════════════',
     `Now (Jakarta): ${jakartaTime}`,
     `Locked customer: ${mem.contextPhone ?? 'none'}`,
     `Preferred draft language: ${mem.contextLang}`,
     mem.contextPhone
-      ? `(Tip: call get_conversation_history({ phone: "${mem.contextPhone}" }) to see the open thread before drafting.)`
+      ? `(Tip: call get_conversation_history({ phone: "${mem.contextPhone}" }) before drafting so you know what they last said.)`
       : '',
   ].filter(Boolean).join('\n')
 
-  const systemPrompt = customSysPrompt + '\n' + dynamicContext
+  const systemPrompt = basePrompt + '\n' + dynamicContext
 
   const allMessages: ChatCompletionMessageParam[] = [
     { role: 'system', content: systemPrompt },
