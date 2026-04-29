@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
 async function isAuthorized(req: NextRequest): Promise<boolean> {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     const userMessage = `Service: ${body.serviceName}\n\nDescription from user:\n${body.description || 'No description provided. Analyze based on the service name.'}`
 
     const response = await openai.chat.completions.create({
-      model: GPT_MODEL,
+      model: LLM_MODEL,
       max_completion_tokens: 2048,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

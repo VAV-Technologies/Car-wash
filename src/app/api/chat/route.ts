@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
     ]
 
     let response = await openai.chat.completions.create({
-      model: GPT_MODEL,
+      model: LLM_MODEL,
       max_completion_tokens: 1024,
       tools,
       messages: allMessages,
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
       }
 
       response = await openai.chat.completions.create({
-        model: GPT_MODEL,
+        model: LLM_MODEL,
         max_completion_tokens: 1024,
         tools,
         messages: allMessages,

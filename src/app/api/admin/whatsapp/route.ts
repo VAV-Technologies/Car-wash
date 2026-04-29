@@ -134,7 +134,7 @@ export async function GET(req: NextRequest) {
           return NextResponse.json({
             api_key: null,
             has_key: false,
-            model: 'gpt-5.4-mini',
+            model: 'grok-4-20-reasoning',
             max_tokens: 1024,
             system_prompt: null,
           })
@@ -191,9 +191,9 @@ export async function GET(req: NextRequest) {
             results.push({ name: 'AI API Key', status: 'fail', error: 'No API key configured' })
           } else {
             // Try a minimal API call via Azure OpenAI
-            const { createOpenAIClient, GPT_MODEL } = await import('@/lib/agents/openai-client')
+            const { createOpenAIClient, LLM_MODEL } = await import('@/lib/agents/openai-client')
             const openai = createOpenAIClient(apiKey)
-            await openai.chat.completions.create({ model: GPT_MODEL, max_completion_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
+            await openai.chat.completions.create({ model: LLM_MODEL, max_completion_tokens: 10, messages: [{ role: 'user', content: 'ping' }] })
             results.push({ name: 'AI API Key', status: 'pass' })
           }
         } catch (err: any) {

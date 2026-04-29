@@ -1,6 +1,6 @@
 import { querySearchAnalytics } from './gsc'
 import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 
 function getDateString(daysAgo: number): string {
   const d = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
@@ -70,7 +70,7 @@ export async function brainstormTopics(): Promise<Array<{ keyword: string; inten
     .join('\n')
 
   const response = await client.chat.completions.create({
-    model: GPT_MODEL,
+    model: LLM_MODEL,
     max_completion_tokens: 2048,
     messages: [
       { role: 'system', content: DIMAS_BRAND_CONTEXT },

@@ -1,5 +1,5 @@
 import { getOpenAIClient } from './researcher'
-import { GPT_MODEL } from '@/lib/agents/openai-client'
+import { LLM_MODEL } from '@/lib/agents/openai-client'
 import { DIMAS_CONFIG, DIMAS_BRAND_CONTEXT, getSupabaseClient } from './config'
 
 interface GeneratedPost {
@@ -150,7 +150,7 @@ export async function generatePost(keyword: { keyword: string; intent: string; c
   const existingLinks = (existingPosts || []).map((p: any) => `"${p.title}" (/tips/${p.slug})`).join('\n')
 
   const response = await client.chat.completions.create({
-    model: GPT_MODEL,
+    model: LLM_MODEL,
     max_completion_tokens: 4096,
     messages: [
       { role: 'system', content: `You are an expert SEO content writer for Castudio's Indonesian automotive lifestyle blog. Write in Bahasa Indonesia. Never use em dashes. Write like a car enthusiast, not a corporate brand. Direct, conversational, knowledgeable.\n\n${DIMAS_BRAND_CONTEXT}` },

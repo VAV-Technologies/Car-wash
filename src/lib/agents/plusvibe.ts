@@ -1,4 +1,4 @@
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { replyToEmail } from './plusvibe-client'
 
@@ -130,7 +130,7 @@ export async function classifyReply(replyText: string): Promise<{
 }> {
   const openai = await getOpenAIClient()
   const response = await openai.chat.completions.create({
-    model: GPT_MODEL,
+    model: LLM_MODEL,
     max_completion_tokens: 512,
     messages: [
       { role: 'system', content: CLASSIFICATION_PROMPT },
@@ -162,7 +162,7 @@ export async function generateReply(
   let reply: string
   try {
     const response = await openai.chat.completions.create({
-      model: GPT_MODEL,
+      model: LLM_MODEL,
       max_completion_tokens: 512,
       messages: [
         { role: 'system', content: REPLY_GENERATION_PROMPT },

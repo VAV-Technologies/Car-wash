@@ -25,4 +25,7 @@ export function createOpenAIClient(apiKey?: string): OpenAI {
   })
 }
 
-export const GPT_MODEL = process.env.AI_MODEL || process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-5.4-mini'
+// Default LLM deployment to call. Can be a Grok, GPT, Kimi, etc. deployment alias on Azure AI Foundry.
+// Resolution order: AI_MODEL env var (canonical) → AZURE_OPENAI_DEPLOYMENT (legacy) → hardcoded fallback.
+// Per-agent overrides live in agent_settings.model and take precedence over this default.
+export const LLM_MODEL = process.env.AI_MODEL || process.env.AZURE_OPENAI_DEPLOYMENT || 'grok-4-20-reasoning'

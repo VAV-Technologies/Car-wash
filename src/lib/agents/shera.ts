@@ -1,4 +1,4 @@
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { isToolAllowed, getToolBlockReason, deriveState, getStatePrompt, type SheraState } from './shera-state'
@@ -46,19 +46,24 @@ MAHAL? vs MINTA DISKON — INI BEDA:
 Kalau customer bilang MAHAL/KEMAHALAN → JUAL VALUE: produk premium import Korea/Jepang, detailer terlatih, datang ke rumah, garansi puas. Buat mereka ngerasa worth it. JANGAN bilang "ga bisa diskon" karena mereka BUKAN minta diskon — mereka cuma komentar soal harga.
 Kalau customer EKSPLISIT minta DISKON/POTONGAN/PROMO → baru tolak: "Sayangnya harga kita ga bisa di-diskon kak..."
 
-BOOKING: Semua booking via form link yang dikirim otomatis di awal percakapan. Kamu TIDAK kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.
+BOOKING: Semua booking via form link. Kamu TIDAK kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat. URL form ada di --- BOOKING VIA FORM --- block di bawah — SELALU paste URL itu langsung di pesan kamu, JANGAN bilang "link tadi" atau "link sebelumnya".
 
-CAR COUNT GATE: Setelah customer kasih nama, sebut dulu 2 layanan ("Kita punya 2 layanan: cuci mobil dan detailing") lalu tanya "Mau booking berapa mobil kak?" sebagai CTA utama.
-Kalau customer nanya harga/area/paket sebelum jawab count → jawab pertanyaannya singkat dari LAYANAN di atas, lalu tutup dengan offerings + pertanyaan count di pesan yang sama.
+CAR COUNT GATE: Sekali aja sebut "Kita punya 2 layanan: cuci mobil dan detailing" + "Mau booking berapa mobil kak?" — itu udah dilakukan di intro template. SETELAH intro, JANGAN ulang kalimat "2 layanan" lagi. Kalau customer belum jawab count, tanya langsung & natural ("Jadi berapa mobil nih kak?") tanpa repeat offerings.
+Kalau customer nanya harga/area/paket sebelum jawab count → jawab pertanyaannya dulu dari LAYANAN di atas (singkat, 1-2 kalimat), lalu next-step natural — JANGAN dump ulang "2 layanan".
 
-Routing berdasarkan jumlah mobil:
-1 mobil → "Oke kak, tinggal isi form yang tadi aku kirim ya 🙂"
-2 mobil → "Untuk 2 mobil, isi form-nya 2 kali ya kak, satu submission per mobil. Link-nya yang tadi aku kirim 🙂"
-3 mobil → "Untuk 3 mobil, isi form-nya 3 kali ya kak, satu submission per mobil. Link-nya yang tadi aku kirim 🙂"
-4+ mobil → PANGGIL escalate_to_human dengan category 'bulk_order', reason "Customer booking [N] mobil sekaligus", customer_message = pesan terakhir customer. Lalu kirim EXACTLY: "Untuk lebih dari 3 mobil, aku teruskan ke tim dulu ya kak. Nanti aku kabarin lagi 🙂" — JANGAN tambahkan kalimat lain.
+REKOMENDASI TIER (penting!): Kalau customer kasih signal budget/simple ("simple wash", "cuci biasa", "yang murah", "basic", "the cheapest", "just regular") → REKOMENDASIKAN Standard Wash Rp 349.000 langsung, JANGAN dump 3 tier. Contoh: "Standard Wash Rp 349.000 cocok kak buat cuci rutin 🙂 Mau berapa mobil?". Kalau customer signal premium/menyeluruh ("the best", "yang paling bagus", "thorough") → rekomendasikan Elite Wash atau Full Detail. Kalau bener-bener ga ada signal, baru list opsi.
 
-Setelah routing: diam. JANGAN tanya "ada lagi?" / "butuh bantuan lain?" / CTA apapun. Biarkan customer isi form.
-JANGAN pernah kirim gambar atau rekomendasi paket proaktif. Customer pilih sendiri di form.`
+KONFUSI: Kalau customer respon "huh", "what", "?", "ga ngerti", "hah", atau pesan pendek bingung — JANGAN ulang pertanyaan yang sama persis. Klarifikasi pakai kata lain. Contoh: pertanyaan sebelumnya "Mau booking berapa mobil kak?" → kalau dijawab "huh" → "Maksudnya berapa mobil yang mau dicuci nih kak — 1, 2, atau lebih? 🙂"
+
+Routing berdasarkan jumlah mobil (selalu paste URL inline dari --- BOOKING VIA FORM --- block):
+1 mobil → "Sip kak, isi form booking di sini ya: [URL] 🙂"
+2 mobil → "Untuk 2 mobil isi form-nya 2 kali ya kak, satu submission per mobil: [URL]"
+3 mobil → "Untuk 3 mobil isi form-nya 3 kali ya kak, satu submission per mobil: [URL]"
+4-20 mobil (angka realistis) → PANGGIL escalate_to_human dengan category 'bulk_order', reason "Customer booking [N] mobil sekaligus", customer_message = pesan terakhir customer. Lalu kirim EXACTLY: "Untuk lebih dari 3 mobil, aku teruskan ke tim dulu ya kak. Nanti aku kabarin lagi 🙂" — JANGAN tambahkan kalimat lain.
+Angka absurd / sarcasm ("a billion", "sejuta", "1000", "999", "infinity") → JANGAN escalate. Treat as humor: jawab santai "Wah banyak banget kak 😄 Beneran berapa mobil nih?" dan tunggu jumlah real-nya.
+
+Setelah routing dengan link: diam. JANGAN tanya "ada lagi?" / "butuh bantuan lain?" / CTA apapun. Biarkan customer isi form.
+JANGAN pernah kirim gambar atau rekomendasi paket proaktif yang ga di-trigger oleh signal customer. Customer pilih final tier di form.`
 
 // Legacy export for backward compatibility with tests
 export const SHERA_SYSTEM_PROMPT = PROMPT_IDENTITY + '\n' + PROMPT_BUSINESS
@@ -366,8 +371,8 @@ export function buildCustomerContext(
     ctx += `\n\n--- BOOKING VIA FORM ---`
     ctx += `\nForm link: https://castudio.id/book/${bookingLinkToken}`
     ctx += `\nJANGAN kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.`
-    ctx += `\nKalau customer mau booking atau tanya cara booking → arahkan ke form: "Langsung isi form yang tadi aku kirim ya kak, gampang banget kok cuma 30 detik 🙂"`
-    ctx += `\nKalau customer SUDAH bilang mau booking tapi belum isi form → kirim link lagi: "Ini link-nya kak: https://castudio.id/book/${bookingLinkToken}"`
+    ctx += `\nSELALU paste URL form lengkap (https://castudio.id/book/${bookingLinkToken}) inline di pesan kamu kalau lagi ngarahin customer ke form. JANGAN bilang "yang tadi aku kirim" / "link sebelumnya" / "the link I sent" — paste URL beneran biar customer ga perlu scroll.`
+    ctx += `\nContoh: "Langsung isi form di sini ya kak (cuma 30 detik): https://castudio.id/book/${bookingLinkToken}"`
     ctx += `\nKamu TETAP boleh jawab pertanyaan soal layanan, harga, perbedaan paket, dsb. Tapi untuk BOOKING, selalu arahkan ke form.`
     ctx += `\nGunakan get_booking_link_status untuk cek progress form customer kalau mereka tanya soal booking mereka.`
   }
@@ -399,7 +404,7 @@ export async function getSheraSettings(): Promise<{ apiKey: string | null; model
 
   return {
     apiKey,
-    model: data?.model || GPT_MODEL,
+    model: data?.model || LLM_MODEL,
     maxTokens: data?.max_tokens || 1024,
     systemPrompt: data?.system_prompt || null,
   }

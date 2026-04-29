@@ -111,15 +111,15 @@ const DATA_ACCESS = [
 
 const MODEL_OPTIONS = [
   {
-    value: 'gpt-5.4-mini',
-    label: 'GPT-5.4 Mini (Recommended)',
+    value: 'grok-4-20-reasoning',
+    label: 'Grok 4 Reasoning (Recommended)',
   },
 ];
 
 export default function WASettings() {
   const [settings, setSettings] = useState<Settings>({
     api_key: '',
-    model: 'gpt-5.4-mini',
+    model: 'grok-4-20-reasoning',
     max_tokens: 1024,
     system_prompt: '',
     has_key: false,
@@ -131,11 +131,11 @@ export default function WASettings() {
   const [keySaved, setKeySaved] = useState(false);
   const [modelSaving, setModelSaving] = useState(false);
   const [modelSaved, setModelSaved] = useState(false);
-  const [localModel, setLocalModel] = useState('gpt-5.4-mini');
+  const [localModel, setLocalModel] = useState('grok-4-20-reasoning');
   const [localMaxTokens, setLocalMaxTokens] = useState(1024);
   const [runningHealth, setRunningHealth] = useState(false);
   const [healthResults, setHealthResults] = useState<HealthResult[]>([
-    { label: 'Claude API Key', description: 'API key is valid and can reach Claude', status: 'idle' },
+    { label: 'LLM API Key', description: 'API key is valid and can reach the model provider', status: 'idle' },
     { label: 'Castudio Database', description: 'Can query customer and booking data', status: 'idle' },
     { label: 'WAHA Server', description: 'WhatsApp server is reachable', status: 'idle' },
     { label: 'Webhook Endpoint', description: 'Webhook is live and responding', status: 'idle' },
@@ -164,7 +164,7 @@ export default function WASettings() {
       if (res.ok) {
         const data = await res.json();
         setSettings(data);
-        setLocalModel(data.model || 'gpt-5.4-mini');
+        setLocalModel(data.model || 'grok-4-20-reasoning');
         setLocalMaxTokens(data.max_tokens || 1024);
         setLocalPrompt(data.system_prompt || DEFAULT_PROMPT);
       }

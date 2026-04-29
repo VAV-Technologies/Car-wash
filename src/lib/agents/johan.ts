@@ -1,4 +1,4 @@
-import { createOpenAIClient, GPT_MODEL } from '@/lib/agents/openai-client'
+import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import type { ChatCompletionTool, ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { getSupabaseAdmin } from '@/lib/supabase'
 import { SHERA_TOOLS, executeSheraTool, PROMPT_IDENTITY, PROMPT_BUSINESS } from './shera'
@@ -202,7 +202,7 @@ async function getJohanSettings() {
   }
   return {
     apiKey,
-    model: data?.model || GPT_MODEL,
+    model: data?.model || LLM_MODEL,
     maxTokens: data?.max_tokens || 1024,
     systemPrompt: data?.system_prompt || null,
   }
