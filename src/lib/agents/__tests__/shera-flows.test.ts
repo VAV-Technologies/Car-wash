@@ -296,7 +296,7 @@ describe('Car count gate prompt', () => {
 
   it('PROMPT_BUSINESS has CAR COUNT GATE section', () => {
     expect(SHERA_SYSTEM_PROMPT).toContain('CAR COUNT GATE')
-    expect(SHERA_SYSTEM_PROMPT).toMatch(/4\+? mobil/)
+    expect(SHERA_SYSTEM_PROMPT).toMatch(/4[-+]20? mobil|4\+? mobil/)
   })
 
   it('PROMPT_BUSINESS no longer has CUCI RECOMMENDATION', () => {

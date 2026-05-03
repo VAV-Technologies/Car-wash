@@ -25,7 +25,6 @@ async function resetChat(chatId) {
   const phone = phoneOf(chatId);
   await db.from('whatsapp_conversations').delete().eq('chat_id', chatId);
   await db.from('human_escalations').delete().eq('chat_id', chatId);
-  await db.from('booking_links').delete().eq('phone', phone);
   await db.from('customers').delete().eq('phone', phone);
 }
 
@@ -62,15 +61,6 @@ async function seedIntroDone(chatId, name) {
     customer_id: cust.id,
     messages: introSeedMessages(name),
     last_message_at: new Date().toISOString(),
-  });
-  // Active booking_link so Shera's prompt context has the link
-  await db.from('booking_links').insert({
-    token: 'test-' + crypto.randomBytes(3).toString('hex'),
-    phone,
-    customer_id: cust.id,
-    chat_id: chatId,
-    form_data: {},
-    status: 'active',
   });
   return cust.id;
 }
@@ -476,7 +466,6 @@ async function runEdge() {
     await db.from('human_escalations').delete().eq('chat_id', c);
   }
   for (const p of phones) {
-    await db.from('booking_links').delete().eq('phone', p);
     // Delete bookings first (FK to customers)
     const { data: cust } = await db.from('customers').select('id').eq('phone', p).maybeSingle();
     if (cust) {

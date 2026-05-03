@@ -91,6 +91,20 @@ export async function POST(req: NextRequest) {
       customer = newCustomer
     }
 
+    // ── Backfill WhatsApp conversation → customer link ───────────
+    // If this person had chatted before submitting the form, the chat row
+    // exists with chat_id like "6281234567890@c.us" but customer_id is null.
+    // Phone-match populates the link so admin sees chat + booking together.
+    try {
+      await supabase
+        .from('whatsapp_conversations')
+        .update({ customer_id: customer!.id } as any)
+        .ilike('chat_id', `%${cleanedPhone}%`)
+        .is('customer_id', null)
+    } catch {
+      // Non-blocking: booking creation is the priority.
+    }
+
     // ── Create booking(s) ────────────────────────────────────────
     const bookingIds: string[] = []
 

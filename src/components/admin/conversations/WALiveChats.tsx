@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Loader2, MessageSquare, RefreshCw, User, Clock, CheckCircle2, AlertTriangle, FileText } from 'lucide-react'
+import { Loader2, MessageSquare, RefreshCw, User, Clock, CheckCircle2, AlertTriangle } from 'lucide-react'
 
 interface LiveChat {
   id: string
@@ -16,9 +16,6 @@ interface LiveChat {
   has_images_sent: boolean
   has_booking: boolean
   created_at: string
-  form_status: string | null
-  form_filled: number
-  form_total: number
 }
 
 interface ChatDetail {
@@ -172,21 +169,6 @@ export default function WALiveChats() {
                   <StateBadge state={chat.state} />
                   <span className="text-[10px] text-white/20">{chat.message_count} msgs</span>
                   {chat.has_booking && <CheckCircle2 className="h-3 w-3 text-green-400" />}
-                  {chat.form_status === 'submitted' && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
-                      <FileText className="h-2.5 w-2.5" /> Booked
-                    </span>
-                  )}
-                  {chat.form_status === 'active' && chat.form_filled > 0 && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                      <FileText className="h-2.5 w-2.5" /> {chat.form_filled}/{chat.form_total}
-                    </span>
-                  )}
-                  {chat.form_status === 'active' && chat.form_filled === 0 && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 text-white/30 border border-white/10">
-                      <FileText className="h-2.5 w-2.5" /> Link sent
-                    </span>
-                  )}
                 </div>
               </button>
             )

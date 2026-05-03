@@ -1,6 +1,7 @@
 import { createOpenAIClient, LLM_MODEL } from '@/lib/agents/openai-client'
 import { getSupabaseAdmin } from '@/lib/supabase'
-import { replyToEmail } from './plusvibe-client'
+import { replyToEmail, getEmailThread } from './plusvibe-client'
+import { sendTelegramMessage } from './telegram-client'
 
 const CLASSIFICATION_PROMPT = `You are an email reply classifier for a B2B sales outreach campaign. Classify the reply into exactly ONE category and extract relevant data.
 
@@ -179,32 +180,80 @@ export async function generateReply(
   return reply
 }
 
-export async function triggerWhatsAppAgent(
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+// Bilingual discount-language detection. Catches both English (campaigns) and
+// Indonesian (Castudio's local market). Used to flag handoffs where the lead
+// may have been offered a discount upstream — the human handler must honor it.
+const DISCOUNT_PATTERNS: RegExp[] = [
+  /discount/i,
+  /diskon/i,
+  /\bpromo(tion|si)?\b/i,
+  /\d{1,2}\s*%\s*(off|discount|diskon|potongan)/i,
+  /special\s+(offer|pricing|rate|price)/i,
+  /harga\s+(khusus|spesial)/i,
+  /potongan\s+harga/i,
+]
+
+export function detectDiscount(text: string): string | null {
+  if (!text) return null
+  for (const pat of DISCOUNT_PATTERNS) {
+    const match = text.match(pat)
+    if (!match || match.index === undefined) continue
+    const idx = match.index
+    const sentenceStart = Math.max(0, text.lastIndexOf('.', idx) + 1, text.lastIndexOf('\n', idx) + 1)
+    const dotEnd = text.indexOf('.', idx)
+    const newlineEnd = text.indexOf('\n', idx)
+    const candidates = [dotEnd, newlineEnd].filter((n) => n > 0)
+    const sentenceEnd = candidates.length > 0 ? Math.min(...candidates) + 1 : Math.min(text.length, idx + 200)
+    const snippet = text.slice(sentenceStart, sentenceEnd).trim()
+    return snippet.length > 200 ? snippet.slice(0, 200) + '…' : snippet
+  }
+  return null
+}
+
+// Look for discount language in the lead's latest reply first (cheap), then
+// fall back to fetching the full email thread from Plusvibe. If the thread
+// fetch fails, swallow the error — the handoff itself must not break.
+export async function findDiscountInThread(
+  emailId: string,
+  latestReplyText: string,
+): Promise<string | null> {
+  const inReply = detectDiscount(latestReplyText)
+  if (inReply) return inReply
+
+  try {
+    const thread = await getEmailThread(emailId)
+    if (Array.isArray(thread)) {
+      for (const msg of thread) {
+        const raw = msg?.text_body || msg?.body || msg?.html_body || msg?.content || msg?.snippet || ''
+        const stripped = String(raw).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ')
+        const found = detectDiscount(stripped)
+        if (found) return found
+      }
+    }
+  } catch (err) {
+    console.error('[plusvibe] discount detection: thread fetch failed', err)
+  }
+  return null
+}
+
+export async function notifyTelegramHandoff(
   lead: { first_name: string; lead_email: string; company_name: string; job_title: string; campaign_name: string },
   phone: string,
-  threadSummary: string
+  threadSummary: string,
+  latestReplyText: string,
+  discountNote: string | null = null,
 ) {
   const supabase = getSupabaseAdmin()
 
-  // Clean phone
+  // Normalize phone to 62xxx (used for wa.me link AND customer stub lookup)
   let cleanPhone = phone.replace(/[\s\-.()\+]/g, '')
   if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1)
 
-  const chatId = cleanPhone + '@c.us'
-
-  // DEDUP: If conversation already exists for this chatId, skip (prevents duplicate messages from webhook retries)
-  const { data: existingConvo } = await supabase
-    .from('whatsapp_conversations')
-    .select('id')
-    .eq('chat_id', chatId)
-    .maybeSingle()
-
-  if (existingConvo) {
-    console.log(`[plusvibe] Skipping triggerWhatsAppAgent — conversation already exists for ${chatId}`)
-    return
-  }
-
-  // Create customer in Castudio DB
+  // Create customer stub if no existing record matches the phone
   const { data: existingCustomer } = await supabase
     .from('customers')
     .select('id')
@@ -223,46 +272,31 @@ export async function triggerWhatsAppAgent(
     })
   }
 
-  // Send opening WhatsApp via WAHA
-  const WAHA_API_URL = process.env.WAHA_API_URL
-  const WAHA_API_KEY = process.env.WAHA_API_KEY
-  if (!WAHA_API_URL || !WAHA_API_KEY) {
-    console.error('[plusvibe] Missing WAHA env vars for WhatsApp handoff')
-    return
-  }
+  // Telegram cap is 4096 chars; keep latest reply trimmed
+  const trimmedReply = latestReplyText.length > 800
+    ? latestReplyText.slice(0, 800) + '…'
+    : latestReplyText
 
-  const firstName = lead.first_name || 'there'
-  const openingMessage = `Hai ${firstName}! Makasih udah share nomornya lewat email. Aku Shera dari Castudio 😊 Mau cuci mobil atau detailing nih?`
+  const firstName = lead.first_name || 'Lead'
+  const discountBlock = discountNote
+    ? `⚠️ <b>DISCOUNT OFFERED — honor it:</b>\n<i>${escapeHtml(discountNote)}</i>\n\n`
+    : ''
 
-  await fetch(`${WAHA_API_URL}/api/sendText`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Api-Key': WAHA_API_KEY },
-    body: JSON.stringify({ session: 'default', chatId, text: openingMessage }),
-  })
+  const text =
+    `🚗 <b>New Lead — Phone Shared</b>\n\n` +
+    discountBlock +
+    `<b>Name:</b> ${escapeHtml(firstName)}\n` +
+    `<b>Company:</b> ${escapeHtml(lead.company_name || '—')}\n` +
+    `<b>Title:</b> ${escapeHtml(lead.job_title || '—')}\n` +
+    `<b>Email:</b> ${escapeHtml(lead.lead_email)}\n` +
+    `<b>Phone:</b> +${cleanPhone}\n` +
+    `<b>Campaign:</b> ${escapeHtml(lead.campaign_name || '—')}\n\n` +
+    `<b>Summary:</b> ${escapeHtml(threadSummary)}\n\n` +
+    `<b>Latest reply:</b>\n<i>${escapeHtml(trimmedReply)}</i>\n\n` +
+    `👉 <a href="https://wa.me/${cleanPhone}">Open WhatsApp chat</a>\n` +
+    `Please reach out as soon as possible.`
 
-  // Create conversation record with context for Shera
-  const { data: convo } = await supabase
-    .from('whatsapp_conversations')
-    .select('id, messages')
-    .eq('chat_id', chatId)
-    .maybeSingle()
-
-  const sheraContext = `LEAD FROM EMAIL CAMPAIGN (Ryan agent handoff). Name: ${lead.first_name || 'unknown'}. Email: ${lead.lead_email}. Company: ${lead.company_name || 'unknown'}. Title: ${lead.job_title || 'unknown'}. Campaign: ${lead.campaign_name || 'unknown'}. Email thread summary: ${threadSummary}. This person already knows about Castudio from email. JANGAN tanya nama lagi, namanya ${lead.first_name || 'unknown'}. Kamu sudah tanya mau cuci atau detailing. Kalau mereka jawab cuci atau detailing, langsung kirim gambar paket. Flow: cuci/detail → pilih paket → mobil apa → plat → alamat → jadwal → booking.`
-
-  if (!convo) {
-    await supabase.from('whatsapp_conversations').insert({
-      chat_id: chatId,
-      phone: cleanPhone,
-      messages: [
-        { role: 'assistant', content: openingMessage, timestamp: new Date().toISOString(), context: sheraContext },
-      ],
-    })
-  } else {
-    // Existing conversation — append context
-    const msgs = Array.isArray(convo.messages) ? convo.messages : []
-    msgs.push({ role: 'assistant', content: openingMessage, timestamp: new Date().toISOString(), context: sheraContext })
-    await supabase.from('whatsapp_conversations').update({ messages: msgs.slice(-30), last_message_at: new Date().toISOString() }).eq('chat_id', chatId)
-  }
+  await sendTelegramMessage(text)
 }
 
 async function getOpenAIClient() {
@@ -413,7 +447,8 @@ export async function processEmailReply(payload: any) {
       return { action: 'replied', classification: 'PHONE_NUMBER_FOUND', reply, note: 'phone too short, asked to reshare' }
     }
 
-    // Save phone
+    // Save phone. NOTE: column name `handed_off_to_whatsapp` is legacy from the Shera-WhatsApp era;
+    // it now means "escalated to a human via Telegram". Admin UI still reads this column.
     await supabase.from('email_leads').update({ phone_number: phone, current_status: 'handed_off_to_whatsapp', handed_off_to_whatsapp: true }).eq('id', lead.id)
 
     // Send email confirmation FIRST (lead sees this immediately)
@@ -421,13 +456,9 @@ export async function processEmailReply(payload: any) {
       const confirmReply = `<p>Got it, ${lead.first_name || 'there'}! You'll hear from us on WhatsApp shortly.</p>`
       await replyToEmail(payload.last_email_id, subject, payload.to_email, payload.from_email, confirmReply)
     } catch {
-      // Email reply failed — continue to WhatsApp anyway
+      // Email reply failed — continue to Telegram handoff anyway
     }
 
-    // Schedule WhatsApp handoff after a delay (fire-and-forget to a delayed endpoint)
-    // Can't wait 60s in this function (Vercel timeout), so we save the handoff
-    // data and let the follow-up cron or a separate call handle it.
-    // For now: store the handoff intent, and trigger via a background fetch.
     const handoffData = {
       first_name: lead.first_name || '',
       lead_email: lead.lead_email,
@@ -438,20 +469,31 @@ export async function processEmailReply(payload: any) {
       summary: classification.summary || 'Lead replied to email campaign with phone number',
     }
 
-    // Store handoff for delayed processing
+    // Audit trail of the handoff intent (kept for admin UI / debugging)
     await supabase.from('email_leads').update({
-      washer_notes: JSON.stringify({ pending_wa_handoff: true, handoff_data: handoffData, handoff_at: new Date(Date.now() + 90000).toISOString() }),
+      washer_notes: JSON.stringify({ pending_telegram_handoff: true, handoff_data: handoffData, handoff_at: new Date().toISOString() }),
     }).eq('id', lead.id)
 
-    // Trigger WhatsApp after 30s delay (best we can do within function timeout)
-    const delay = 25000 + Math.random() * 10000 // 25-35 seconds
-    await new Promise(resolve => setTimeout(resolve, delay))
+    // Look for discount language anywhere in the email sequence so the human
+    // handler knows to honor any prior offer. Resilient — failures are logged
+    // and the handoff continues without a discount notice.
+    const discountNote = await findDiscountInThread(payload.last_email_id, replyText)
 
-    await triggerWhatsAppAgent(
-      { first_name: handoffData.first_name, lead_email: handoffData.lead_email, company_name: handoffData.company_name, job_title: handoffData.job_title, campaign_name: handoffData.campaign_name },
-      phone,
-      handoffData.summary
-    )
+    // Short pause so the email confirmation lands first, then ping Telegram
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    try {
+      await notifyTelegramHandoff(
+        { first_name: handoffData.first_name, lead_email: handoffData.lead_email, company_name: handoffData.company_name, job_title: handoffData.job_title, campaign_name: handoffData.campaign_name },
+        phone,
+        handoffData.summary,
+        replyText,
+        discountNote,
+      )
+    } catch (err) {
+      console.error('[plusvibe] Telegram handoff failed:', err)
+      // Lead is still marked handed_off in DB; admin UI surfaces it for manual follow-up.
+    }
 
     return { action: 'handed_off', classification: cat, phone }
   }

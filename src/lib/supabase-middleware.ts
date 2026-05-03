@@ -56,5 +56,14 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // AI Chat (Johan): internal team tool, gated by admin auth
+  const isAiRoute = request.nextUrl.pathname.startsWith('/ai')
+  if (isAiRoute && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/admin/login'
+    url.searchParams.set('next', '/ai')
+    return NextResponse.redirect(url)
+  }
+
   return supabaseResponse
 }

@@ -85,7 +85,6 @@ export const SHERA_TOOLS: ChatCompletionTool[] = [
   { type: 'function', function: { name: 'escalate_to_human', description: 'Flag this conversation for internal review. The customer should NOT know about this. Just tell them you need to check something and will get back to them.', parameters: { type: 'object', properties: { reason: { type: 'string', description: 'Brief reason why this needs human attention' }, category: { type: 'string', description: 'Category: bulk_order, access_permission, complaint, custom_request, partnership, other' }, customer_message: { type: 'string', description: 'The customer message that triggered escalation' } }, required: ['reason', 'category'] } } },
   { type: 'function', function: { name: 'get_completed_jobs', description: 'Get recently completed jobs for a customer. Use this when following up on a completed service to check if the customer has already rated it.', parameters: { type: 'object', properties: { customer_id: { type: 'string', description: 'The customer UUID' } }, required: ['customer_id'] } } },
   { type: 'function', function: { name: 'submit_job_rating', description: 'Save a customer rating (1-5 stars) and feedback for a completed job. Use this after the customer provides their rating and any comments about the service.', parameters: { type: 'object', properties: { job_id: { type: 'string', description: 'The job UUID to rate' }, rating: { type: 'number', description: 'Rating from 1 to 5' }, feedback: { type: 'string', description: 'Customer feedback, notes, or complaints about the service' } }, required: ['job_id', 'rating'] } } },
-  { type: 'function', function: { name: 'get_booking_link_status', description: 'Check the status of the customer\'s booking form link. Shows what fields are filled and what is still missing. Use this to check if the customer has started or completed the booking form.', parameters: { type: 'object', properties: { phone: { type: 'string', description: 'Customer phone number' } }, required: ['phone'] } } },
 ]
 
 // ---------------------------------------------------------------------------
@@ -271,12 +270,6 @@ export async function executeSheraTool(
         return JSON.stringify({ success: true, rating, feedback: input.feedback || null })
       }
 
-      case 'get_booking_link_status': {
-        const { getFormCompletionStatus } = await import('@/lib/booking-links')
-        const result = await getFormCompletionStatus(cleanPhone(String(input.phone)))
-        return JSON.stringify(result)
-      }
-
       case 'escalate_to_human': {
         const { data, error } = await supabase
           .from('human_escalations')
@@ -329,7 +322,6 @@ export function buildCustomerContext(
   customer: CustomerRecord | null,
   phone: string,
   lastBooking?: { service_type: string; scheduled_date: string } | null,
-  bookingLinkToken?: string | null,
 ): string {
   const type = classifyCustomer(customer)
   let ctx = ''
@@ -366,16 +358,13 @@ export function buildCustomerContext(
     ctx += `\nKalau customer kasih info baru (nama, mobil, plat, alamat) di chat, panggil create_customer untuk simpan record customer.`
   }
 
-  // Booking form directive — redirect all booking to the form link
-  if (bookingLinkToken) {
-    ctx += `\n\n--- BOOKING VIA FORM ---`
-    ctx += `\nForm link: https://castudio.id/book/${bookingLinkToken}`
-    ctx += `\nJANGAN kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.`
-    ctx += `\nSELALU paste URL form lengkap (https://castudio.id/book/${bookingLinkToken}) inline di pesan kamu kalau lagi ngarahin customer ke form. JANGAN bilang "yang tadi aku kirim" / "link sebelumnya" / "the link I sent" — paste URL beneran biar customer ga perlu scroll.`
-    ctx += `\nContoh: "Langsung isi form di sini ya kak (cuma 30 detik): https://castudio.id/book/${bookingLinkToken}"`
-    ctx += `\nKamu TETAP boleh jawab pertanyaan soal layanan, harga, perbedaan paket, dsb. Tapi untuk BOOKING, selalu arahkan ke form.`
-    ctx += `\nGunakan get_booking_link_status untuk cek progress form customer kalau mereka tanya soal booking mereka.`
-  }
+  // Booking form directive — redirect all booking to the shared form
+  ctx += `\n\n--- BOOKING VIA FORM ---`
+  ctx += `\nForm link: https://castudio.id/book`
+  ctx += `\nJANGAN kumpulkan detail booking (paket, mobil, plat, alamat, jadwal) via chat.`
+  ctx += `\nSELALU paste URL form lengkap (https://castudio.id/book) inline di pesan kamu kalau lagi ngarahin customer ke form. JANGAN bilang "yang tadi aku kirim" / "link sebelumnya" — paste URL beneran biar customer ga perlu scroll.`
+  ctx += `\nContoh: "Langsung isi form di sini ya kak (cuma 30 detik): https://castudio.id/book"`
+  ctx += `\nKamu TETAP boleh jawab pertanyaan soal layanan, harga, perbedaan paket, dsb. Tapi untuk BOOKING, selalu arahkan ke form.`
 
   return ctx
 }
@@ -576,9 +565,8 @@ export async function processMessage(
   systemPrompt += `\nPhone: ${phone} (SUDAH punya, JANGAN tanya)`
   systemPrompt += `\nChat ID: ${chatId}`
 
-  // Customer context (with booking form link if available)
-  const bookingLinkToken: string | null = (conversation as any)?.booking_link_token || null
-  systemPrompt += buildCustomerContext(customer, phone, lastBooking, bookingLinkToken)
+  // Customer context (booking form URL is the shared /book endpoint)
+  systemPrompt += buildCustomerContext(customer, phone, lastBooking)
 
   // Safety net for reasoning model
   systemPrompt += `\n\nKalau bingung: rangkum apa yang sudah kamu tau, list apa yang kurang, dan tanya langkah berikutnya.`

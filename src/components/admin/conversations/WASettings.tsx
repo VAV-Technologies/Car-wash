@@ -100,7 +100,6 @@ const DEFAULT_TOOLS = [
   { name: 'update_booking', description: 'Reschedule a booking (change date/time)' },
   { name: 'cancel_booking', description: 'Cancel an existing booking' },
   { name: 'create_customer', description: 'Register a new customer' },
-  { name: 'get_booking_link_status', description: "Check the customer's booking form progress" },
 ];
 
 const DATA_ACCESS = [

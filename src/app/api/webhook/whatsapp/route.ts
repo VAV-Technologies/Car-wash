@@ -195,33 +195,6 @@ export async function POST(req: NextRequest) {
       phone = '+' + from.replace('@c.us', '')
     }
 
-    // ── Johan branch: route authorized team members to the co-pilot ──
-    // Johan is a private back-office assistant. Authorized numbers are
-    // matched on the digit-stripped phone. He short-circuits both the
-    // SHERA_DISABLED check and the bulk_order silence — Johan must
-    // always answer the team, regardless of Shera's state.
-    {
-      const senderDigits = phone.replace(/\D/g, '')
-      const johanUsers = (process.env.JOHAN_AUTHORIZED_NUMBERS || '')
-        .split(',')
-        .map((s) => s.trim().replace(/\D/g, ''))
-        .filter(Boolean)
-
-      if (senderDigits && johanUsers.includes(senderDigits)) {
-        try {
-          const { processJohanMessage } = await import('@/lib/agents/johan')
-          setTimeout(() => { sendSeen(from).catch(() => {}) }, 500)
-          const draft = await processJohanMessage(chatId, phone, enrichedText)
-          await sendText(chatId, draft)
-          return NextResponse.json({ ok: true, agent: 'johan' })
-        } catch (err) {
-          console.error('[johan] error:', err)
-          await sendText(chatId, 'AI lagi error nih, coba lagi sebentar 🙏').catch(() => {})
-          return NextResponse.json({ ok: false, agent: 'johan', error: String(err) }, { status: 200 })
-        }
-      }
-    }
-
     // ── Kill switch: SHERA_DISABLED ─────────────────────────────────
     // Pause Shera entirely. Save inbound message to preserve history,
     // but skip read receipt, LLM call, booking link, and any outbound.
@@ -298,38 +271,14 @@ export async function POST(req: NextRequest) {
     // Get or create conversation
     let { data: convo } = await supabase
       .from('whatsapp_conversations')
-      .select('messages, booking_link_token')
+      .select('messages')
       .eq('chat_id', chatId)
       .single()
 
     const isFirstMessage = !convo || !(convo as any).messages || (Array.isArray((convo as any).messages) && (convo as any).messages.length === 0)
-    const needsBookingToken = isFirstMessage || !(convo as any)?.booking_link_token
 
     if (isFirstMessage) {
       trackMetric(chatId, 'conversation_started', { phone }).catch(() => {})
-    }
-
-    if (needsBookingToken) {
-      // Generate unique booking link for this customer.
-      // Fires on first message OR when a pre-existing conversation has no token yet
-      // (backfill for customers whose conversation predates this feature).
-      try {
-        const { getOrCreateBookingLink } = await import('@/lib/booking-links')
-        const cleanedPhoneForLink = chatId.replace('@c.us', '')
-        const { data: cust } = await supabase
-          .from('customers')
-          .select('id')
-          .or(`phone.ilike.%${cleanedPhoneForLink}%`)
-          .limit(1)
-          .maybeSingle()
-        const { token } = await getOrCreateBookingLink(cleanedPhoneForLink, chatId, (cust as any)?.id)
-        await supabase
-          .from('whatsapp_conversations')
-          .update({ booking_link_token: token } as any)
-          .eq('chat_id', chatId)
-      } catch (linkErr) {
-        console.error('[whatsapp-webhook] Failed to generate booking link:', linkErr)
-      }
     }
 
     // ── SAVE INCOMING MESSAGE IMMEDIATELY ─────────────────────────
@@ -549,18 +498,12 @@ export async function POST(req: NextRequest) {
     // ── Send reply back via WAHA ───────────────────────────────────
     await sendText(chatId, reply)
 
-    // Send booking form link as a second message on first contact
+    // Send the shared booking form link as a second message on first contact.
+    // The form is general; no per-customer token, no prefill expected.
     if (isFirstMessage) {
       try {
-        const { data: convoForLink } = await supabase
-          .from('whatsapp_conversations')
-          .select('booking_link_token')
-          .eq('chat_id', chatId)
-          .single()
-        if (convoForLink?.booking_link_token) {
-          await new Promise(r => setTimeout(r, 1500))
-          await sendText(chatId, `Biar lebih gampang, boleh isi form booking di sini ya kak (cuma 30 detik): https://castudio.id/book/${convoForLink.booking_link_token}`)
-        }
+        await new Promise(r => setTimeout(r, 1500))
+        await sendText(chatId, `Biar lebih gampang, boleh isi form booking di sini ya kak (cuma 30 detik): https://castudio.id/book`)
       } catch {
         // Non-critical — don't break the flow if link send fails
       }

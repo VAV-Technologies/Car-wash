@@ -6,7 +6,7 @@ import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, HelpCircle, CalendarCheck, Paintbrush } from 'lucide-react';
+import { Menu, ChevronDown, Droplets, Building2, Phone, Info, BookOpen, HelpCircle, CalendarCheck, Paintbrush, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/shared/logo';
@@ -70,6 +70,12 @@ export function Navbar() {
 
   const navEntries = getNavEntries(t);
   const navLinkGroups = navEntries.filter(isGroup);
+
+  // On internal /ai routes, swap the public Contact CTA for an Admin Panel shortcut
+  const isAiRoute = pathname.startsWith('/ai');
+  const ctaHref = isAiRoute ? '/admin/dashboard' : '/contact';
+  const ctaLabel = isAiRoute ? 'Access Admin Panel' : t('common.nav.contactUs');
+  const CtaIcon = isAiRoute ? Shield : Phone;
 
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -179,9 +185,12 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right - Contact button */}
+        {/* Right - CTA (Contact, or Admin Panel on /ai) */}
         <div className="hidden md:flex items-center space-x-2.5">
-          <Link href="/contact" className="inline-flex items-center justify-center w-36 h-10 text-sm font-medium rounded-none transition-colors bg-brand-orange text-black hover:bg-brand-orange-dark">{t('common.nav.contactUs')}</Link>
+          <Link href={ctaHref} className={cn(
+            "inline-flex items-center justify-center h-10 text-sm font-medium rounded-none transition-colors bg-brand-orange text-black hover:bg-brand-orange-dark",
+            isAiRoute ? "px-4 whitespace-nowrap" : "w-36"
+          )}>{ctaLabel}</Link>
         </div>
 
         {/* Mobile Menu */}
@@ -245,10 +254,10 @@ export function Navbar() {
                   );
                 })}
 
-                {/* Contact — primary CTA */}
+                {/* Primary CTA (Contact, or Admin Panel on /ai) */}
                 <SheetClose asChild>
                   <Button asChild className="justify-start text-base font-normal rounded-none px-4 py-3 bg-brand-orange text-black hover:bg-brand-orange-dark w-full">
-                    <Link href="/contact" className="flex items-center"><Phone className="mr-2 h-4 w-4" /> {t('common.nav.contactUs')}</Link>
+                    <Link href={ctaHref} className="flex items-center"><CtaIcon className="mr-2 h-4 w-4" /> {ctaLabel}</Link>
                   </Button>
                 </SheetClose>
               </nav>

@@ -22,9 +22,11 @@ export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperPro
   }
 
   const isHomePage = pathname === '/';
-  // /book routes are full-viewport wizards: keep site Navbar but hide site Footer + WhatsApp button.
-  // This keeps total page height = viewport, so window-level scrolling can't push the book's internal nav off screen.
+  // /book and /ai are full-viewport tools: keep site Navbar but hide site Footer + WhatsApp button.
+  // Total page height = viewport, so window-level scrolling can't push internal nav off screen.
   const isBookRoute = pathname.startsWith('/book');
+  const isAiRoute = pathname.startsWith('/ai');
+  const isFullViewportTool = isBookRoute || isAiRoute;
 
   return (
     <LanguageProvider>
@@ -41,8 +43,8 @@ export default function GlobalLayoutWrapper({ children }: GlobalLayoutWrapperPro
         )}
         {children}
       </main>
-      {!isBookRoute && <Footer />}
-      {!isBookRoute && <WhatsAppButton />}
+      {!isFullViewportTool && <Footer />}
+      {!isFullViewportTool && <WhatsAppButton />}
     </LanguageProvider>
   );
 }

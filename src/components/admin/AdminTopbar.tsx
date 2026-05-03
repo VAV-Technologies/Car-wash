@@ -11,17 +11,20 @@ const titles: Record<string, string> = {
   '/admin/finance': 'Finance',
   '/admin/inventory': 'Inventory',
   '/admin/settings': 'Settings',
+  '/ai': 'AI Chat',
 }
 
 export default function AdminTopbar() {
   const pathname = usePathname()
 
   const title = titles[pathname] || (
-    pathname.includes('/admin/customers/') && pathname.includes('/edit')
-      ? 'Edit Customer'
-      : pathname.includes('/admin/customers/')
-        ? 'Customer Profile'
-        : 'Admin'
+    pathname.startsWith('/ai/')
+      ? 'AI Chat'
+      : pathname.includes('/admin/customers/') && pathname.includes('/edit')
+        ? 'Edit Customer'
+        : pathname.includes('/admin/customers/')
+          ? 'Customer Profile'
+          : 'Admin'
   )
 
   return (
