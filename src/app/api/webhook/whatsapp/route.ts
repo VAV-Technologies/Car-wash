@@ -53,10 +53,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'no payload/data' })
     }
 
-    if (message.fromMe) {
-      return NextResponse.json({ ok: true, skipped: 'outgoing message' })
-    }
-
     const from: string | undefined = message.from
     if (!from) {
       return NextResponse.json({ ok: true, skipped: 'no from field' })
@@ -86,80 +82,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: 'blocked number' })
     }
 
-    // Bot loop detection: if 10+ messages from same sender in last 3 minutes, stop replying
-    try {
-      const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
-      const db = getAdmin()
-      const { data: recentConvo } = await db
-        .from('whatsapp_conversations')
-        .select('messages')
-        .eq('chat_id', from)
-        .maybeSingle()
-
-      if (recentConvo?.messages && Array.isArray(recentConvo.messages)) {
-        const threeMinAgo = Date.now() - 3 * 60 * 1000
-        const recentMsgs = recentConvo.messages.filter(
-          (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
-        )
-        if (recentMsgs.length >= 20) {
-          console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
-          return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
-        }
-      }
-    } catch {
-      // Bot loop check failed — continue processing anyway
-    }
-
-    const messageText: string | undefined = message.body
-    const mediaType: string | undefined = message.type // chat, image, video, sticker, document, audio, ptt
-
-    // Extract quoted/reply context from WAHA payload
-    const contextInfo = message._data?.contextInfo
-    let quotedContext: string | null = null
-    if (contextInfo?.quotedMessage) {
-      const imgCaption = contextInfo.quotedMessage.imageMessage?.caption
-      const textBody = contextInfo.quotedMessage.conversation
-        || contextInfo.quotedMessage.extendedTextMessage?.text
-      quotedContext = imgCaption || textBody || null
-    }
-
-    // Stickers: silently ignore (like an emoji, no response needed)
-    if (mediaType === 'sticker') {
-      return NextResponse.json({ ok: true, skipped: 'sticker' })
-    }
-
-    // Images, videos, audio, documents WITHOUT text: escalate to human
-    if (mediaType && ['image', 'video', 'audio', 'ptt', 'document'].includes(mediaType) && !messageText) {
-      const { getSupabaseAdmin } = await import('@/lib/supabase')
-      const supabase = getSupabaseAdmin()
-      await supabase.from('human_escalations').insert({
-        chat_id: from,
-        phone: '+' + from.replace('@c.us', ''),
-        reason: `Customer sent ${mediaType} — needs human review`,
-        category: 'other',
-        customer_message: `[${mediaType} attachment]`,
-        status: 'pending',
-      })
-
-      const seenDelay = 2000 + Math.random() * 2000
-      setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay)
-      await new Promise(r => setTimeout(r, 10000 + Math.random() * 10000))
-      await sendText(from, 'Oke aku terima filenya. Nanti aku teruskan ke tim ya')
-      return NextResponse.json({ ok: true, handled: 'media-escalated' })
-    }
-
-    // Empty / undefined body (allow through if replying to a message)
-    if (!messageText && !quotedContext) {
-      return NextResponse.json({ ok: true, skipped: 'empty body' })
-    }
-
-    // Prepend quoted context so Claude understands what the customer is replying to
-    let enrichedText = messageText || ''
-    if (quotedContext) {
-      enrichedText = `[Customer replied to: "${quotedContext}"]\n${enrichedText}`.trim()
-    }
-
-    // ── Extract identifiers ────────────────────────────────────────
+    // ── Resolve identifiers (needed by both kill-switch save and active path) ──
     let chatId = from // e.g. "6281234567890@c.us" or "116015774097507@lid"
     let phone: string
 
@@ -195,10 +118,38 @@ export async function POST(req: NextRequest) {
       phone = '+' + from.replace('@c.us', '')
     }
 
+    // ── Extract content (needed by both paths) ─────────────────────
+    const messageText: string | undefined = message.body
+    const mediaType: string | undefined = message.type // chat, image, video, sticker, document, audio, ptt
+
+    // Extract quoted/reply context from WAHA payload
+    const contextInfo = message._data?.contextInfo
+    let quotedContext: string | null = null
+    if (contextInfo?.quotedMessage) {
+      const imgCaption = contextInfo.quotedMessage.imageMessage?.caption
+      const textBody = contextInfo.quotedMessage.conversation
+        || contextInfo.quotedMessage.extendedTextMessage?.text
+      quotedContext = imgCaption || textBody || null
+    }
+
+    // Prepend quoted context so the log captures what the customer was replying to
+    let enrichedText = messageText || ''
+    if (quotedContext) {
+      enrichedText = `[Customer replied to: "${quotedContext}"]\n${enrichedText}`.trim()
+    }
+
     // ── Kill switch: SHERA_DISABLED ─────────────────────────────────
-    // Pause Shera entirely. Save inbound message to preserve history,
-    // but skip read receipt, LLM call, booking link, and any outbound.
-    if (process.env.SHERA_DISABLED === 'true') {
+    // When on, Shera does literally nothing except save real customer↔human
+    // messages (both directions) to whatsapp_conversations. No replies, no
+    // read-receipts, no escalation rows, no tool calls, no booking-link sends.
+    // Defense-in-depth check tolerates accidental whitespace/case in the env value.
+    if ((process.env.SHERA_DISABLED ?? '').trim().toLowerCase() === 'true') {
+      const content = enrichedText || (mediaType ? `[${mediaType}]` : '')
+      if (!content) {
+        return NextResponse.json({ ok: true, skipped: 'shera disabled — empty body' })
+      }
+      const role = message.fromMe ? 'assistant' : 'user'
+      const newMsg = { role, content, timestamp: new Date().toISOString() }
       try {
         const { getSupabaseAdmin: getAdminMute } = await import('@/lib/supabase')
         const db = getAdminMute()
@@ -208,10 +159,7 @@ export async function POST(req: NextRequest) {
           .eq('chat_id', chatId)
           .maybeSingle()
         const existingMsgs = Array.isArray(convo?.messages) ? convo.messages : []
-        const msgsWithNew = [
-          ...existingMsgs,
-          { role: 'user', content: enrichedText, timestamp: new Date().toISOString() },
-        ]
+        const msgsWithNew = [...existingMsgs, newMsg]
         if (convo) {
           await db
             .from('whatsapp_conversations')
@@ -223,9 +171,68 @@ export async function POST(req: NextRequest) {
             .insert({ chat_id: chatId, phone: chatId.replace('@c.us', ''), messages: msgsWithNew, last_message_at: new Date().toISOString() })
         }
       } catch (saveErr) {
-        console.error('[whatsapp-webhook] SHERA_DISABLED — failed to save inbound:', saveErr)
+        console.error('[whatsapp-webhook] SHERA_DISABLED — failed to save:', saveErr)
       }
       return NextResponse.json({ ok: true, skipped: 'shera disabled' })
+    }
+
+    // ── Active path: only reached when Shera is on ──────────────────
+    if (message.fromMe) {
+      return NextResponse.json({ ok: true, skipped: 'outgoing message' })
+    }
+
+    // Stickers: silently ignore (like an emoji, no response needed)
+    if (mediaType === 'sticker') {
+      return NextResponse.json({ ok: true, skipped: 'sticker' })
+    }
+
+    // Bot loop detection: if 20+ messages from same sender in last 3 minutes, stop replying
+    try {
+      const { getSupabaseAdmin: getAdmin } = await import('@/lib/supabase')
+      const db = getAdmin()
+      const { data: recentConvo } = await db
+        .from('whatsapp_conversations')
+        .select('messages')
+        .eq('chat_id', from)
+        .maybeSingle()
+
+      if (recentConvo?.messages && Array.isArray(recentConvo.messages)) {
+        const threeMinAgo = Date.now() - 3 * 60 * 1000
+        const recentMsgs = recentConvo.messages.filter(
+          (m: any) => m.timestamp && new Date(m.timestamp).getTime() > threeMinAgo
+        )
+        if (recentMsgs.length >= 20) {
+          console.warn(`[whatsapp-webhook] Bot loop detected for ${from} — ${recentMsgs.length} messages in 3 min`)
+          return NextResponse.json({ ok: true, skipped: 'bot loop detected' })
+        }
+      }
+    } catch {
+      // Bot loop check failed — continue processing anyway
+    }
+
+    // Images, videos, audio, documents WITHOUT text: escalate to human
+    if (mediaType && ['image', 'video', 'audio', 'ptt', 'document'].includes(mediaType) && !messageText) {
+      const { getSupabaseAdmin } = await import('@/lib/supabase')
+      const supabase = getSupabaseAdmin()
+      await supabase.from('human_escalations').insert({
+        chat_id: from,
+        phone: '+' + from.replace('@c.us', ''),
+        reason: `Customer sent ${mediaType} — needs human review`,
+        category: 'other',
+        customer_message: `[${mediaType} attachment]`,
+        status: 'pending',
+      })
+
+      const seenDelay = 2000 + Math.random() * 2000
+      setTimeout(() => { sendSeen(from).catch(() => {}) }, seenDelay)
+      await new Promise(r => setTimeout(r, 10000 + Math.random() * 10000))
+      await sendText(from, 'Oke aku terima filenya. Nanti aku teruskan ke tim ya')
+      return NextResponse.json({ ok: true, handled: 'media-escalated' })
+    }
+
+    // Empty / undefined body (allow through if replying to a message)
+    if (!messageText && !quotedContext) {
+      return NextResponse.json({ ok: true, skipped: 'empty body' })
     }
 
     // ── Permanent silence check (bulk_order escalation) ─────────────
