@@ -6,7 +6,6 @@ import { ArrowLeft, ShieldCheck } from 'lucide-react'
 import WADashboard from '@/components/admin/conversations/WADashboard'
 import WALiveChats from '@/components/admin/conversations/WALiveChats'
 import WASessions from '@/components/admin/conversations/WASessions'
-import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
 import WAQualityMetrics from '@/components/admin/conversations/WAQualityMetrics'
 
 const TABS = [
@@ -14,7 +13,6 @@ const TABS = [
   { key: 'chats', label: 'Live Chats' },
   { key: 'quality', label: 'Quality' },
   { key: 'sessions', label: 'Sessions' },
-  { key: 'events', label: 'Event Monitor' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -74,7 +72,6 @@ export default function SheraAgentPage() {
       {activeTab === 'chats' && <WALiveChats />}
       {activeTab === 'quality' && <WAQualityMetrics />}
       {activeTab === 'sessions' && <WASessions />}
-      {activeTab === 'events' && <WAEventMonitor />}
     </div>
   )
 }
