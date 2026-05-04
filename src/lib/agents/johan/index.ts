@@ -27,11 +27,15 @@ export interface JohanRunInput {
   history: JohanHistoryMessage[]
   userMessage: string
   metadata: ThreadMetadata
-  userId: string
+  userId: string | null
   userEmail: string | null
   threadId: string
   assistantMessageId: string
   abortSignal?: AbortSignal
+  // Telegram surface: tg_user_id is logged to ai_action_log when invoked
+  // from a Telegram DM rather than the web /ai surface.
+  tgUserId?: number | null
+  tgDisplayName?: string | null
 }
 
 export type JohanStreamEvent =
@@ -139,11 +143,13 @@ export async function* runJohan(input: JohanRunInput): AsyncGenerator<JohanStrea
   const { history, userMessage, metadata, abortSignal } = input
 
   const ctx: ActionContext = {
-    userId: input.userId,
+    userId: input.userId as any,
     userEmail: input.userEmail,
     threadId: input.threadId,
     assistantMessageId: input.assistantMessageId,
     supabaseAdmin: getSupabaseAdmin(),
+    tgUserId: input.tgUserId ?? null,
+    tgDisplayName: input.tgDisplayName ?? null,
   }
 
   try {

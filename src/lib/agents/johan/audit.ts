@@ -11,6 +11,7 @@ export async function logActionStart(
     tool_name: toolName,
     params: params ?? {},
     idempotency_key: ctx.assistantMessageId,
+    tg_user_id: ctx.tgUserId ?? null,
   }
 
   // Insert is FK-sensitive: message_id → ai_chat_messages, user_id → auth.users.

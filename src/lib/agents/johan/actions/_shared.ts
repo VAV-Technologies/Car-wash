@@ -7,6 +7,11 @@ export interface ActionContext {
   threadId: string
   assistantMessageId: string
   supabaseAdmin: SupabaseClient
+  // Set when the action is invoked from the Telegram surface (vs the web
+  // /ai surface). userId may be null in that case; tg_user_id is logged
+  // to ai_action_log for attribution.
+  tgUserId?: number | null
+  tgDisplayName?: string | null
 }
 
 export interface ActionResult {
