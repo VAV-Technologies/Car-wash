@@ -212,8 +212,8 @@ export function validateResponse(response: string, ctx: ConvoContext): Validatio
     issues.push('stripped unauthorized discount offer')
     if (output.length < 10) {
       output = ctx.language === 'en'
-        ? "Unfortunately we can't offer discounts — our prices reflect the premium materials and thorough process we use 🙂"
-        : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium import dan prosesnya teliti 🙂"
+        ? "Unfortunately we can't offer discounts. Our prices reflect the task-specific premium products and thorough process we use 🙂"
+        : "Sayangnya harga kita ga bisa di-diskon kak, karena kita pakai produk premium khusus buat tiap job dan prosesnya teliti 🙂"
     }
   }
 
