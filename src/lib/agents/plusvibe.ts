@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 import { replyToEmail, getEmailThread } from './plusvibe-client'
 import { sendTelegramMessage } from './telegram-client'
 import { loadAgentKnowledge } from './johan/knowledge'
+import { isApprovalEnabled, postDraftForApproval } from './ryan-tg'
 
 // ─── Classification prompt ──────────────────────────────────────────
 // Stays lean — no KB injection. Just routes the email to the right branch.
@@ -676,6 +677,286 @@ async function sendAndLogReply(
   }
 }
 
+// ─── Draft language hint (for Telegram message header only) ─────────
+
+function detectReplyLanguage(text: string): string | null {
+  const t = (text || '').toLowerCase()
+  if (/\b(kak|kita|kami|saya|aku|mau|gimana|bisa|pakai|buat|kalau|udah|deh|nih|sih)\b/.test(t)) return 'id'
+  if (/\b(the|and|you|your|our|with|that|happy|hey|reach|whatsapp)\b/.test(t)) return 'en'
+  return null
+}
+
+// ─── Queue-or-send a draft ──────────────────────────────────────────
+// When the Ryan approval bot is configured, the AI-generated draft lands
+// in email_pending_drafts and a Telegram message goes to the team. The
+// actual replyToEmail call happens later, in the approve handler. When
+// the bot isn't configured, falls back to immediate-send (current
+// behavior) so the deploy is safe even before the bot token is plugged
+// in.
+
+async function queueOrSendDraft(
+  lead: any,
+  payload: any,
+  classification: { classification: string; objection_type: string | null; summary: string },
+  draftHtml: string,
+): Promise<{ action: string; reply?: string; draftId?: string; reason?: string }> {
+  const supabase = getSupabaseAdmin()
+  const subject: string = payload.subject || ''
+  const inboundText: string = payload.text_body || payload.snippet || ''
+
+  if (!isApprovalEnabled()) {
+    // Legacy / fallback path: send immediately.
+    await sendAndLogReply(lead.id, payload.last_email_id, subject, payload.to_email, payload.from_email, draftHtml)
+    if (classification.classification === 'NOT_INTERESTED') {
+      await supabase.from('email_leads').update({ current_status: 'closed' }).eq('id', lead.id)
+    }
+    return { action: 'replied', reply: draftHtml }
+  }
+
+  const { data: draft } = await supabase
+    .from('email_pending_drafts')
+    .insert({
+      email_lead_id: lead.id,
+      last_email_id: payload.last_email_id,
+      subject,
+      // The OUTBOUND from/to is reversed from the inbound: we send FROM
+      // the address the lead emailed TO, and TO the address the lead
+      // emailed FROM.
+      from_email: payload.to_email || null,
+      to_email: payload.from_email || null,
+      inbound_text: inboundText,
+      classification: classification.classification,
+      classification_summary: classification.summary || null,
+      objection_type: classification.objection_type || null,
+      language: detectReplyLanguage(draftHtml) || detectReplyLanguage(inboundText),
+      draft_html: draftHtml,
+      status: 'pending',
+    })
+    .select('id')
+    .single()
+
+  const draftRow = draft as { id: string } | null
+  if (!draftRow) {
+    console.error('[plusvibe] failed to insert email_pending_drafts row')
+    // Fall back to immediate send so the lead isn't left in limbo.
+    await sendAndLogReply(lead.id, payload.last_email_id, subject, payload.to_email, payload.from_email, draftHtml)
+    if (classification.classification === 'NOT_INTERESTED') {
+      await supabase.from('email_leads').update({ current_status: 'closed' }).eq('id', lead.id)
+    }
+    return { action: 'replied', reply: draftHtml, reason: 'pending insert failed; auto-sent' }
+  }
+
+  try {
+    const { chatId, messageId } = await postDraftForApproval({
+      draftId: draftRow.id,
+      leadName: lead.first_name || null,
+      leadEmail: lead.lead_email,
+      companyName: lead.company_name || null,
+      campaignName: lead.campaign_name || null,
+      replyCount: lead.reply_count || 0,
+      classification: classification.classification,
+      objectionType: classification.objection_type,
+      language: detectReplyLanguage(draftHtml) || detectReplyLanguage(inboundText),
+      inboundText,
+      draftHtml,
+    })
+    await supabase
+      .from('email_pending_drafts')
+      .update({ tg_chat_id: chatId, tg_message_id: messageId })
+      .eq('id', draftRow.id)
+    return { action: 'queued_for_approval', draftId: draftRow.id }
+  } catch (err: any) {
+    console.error('[plusvibe] failed to post draft to Telegram', err)
+    await supabase
+      .from('email_pending_drafts')
+      .update({ status: 'error', send_error: String(err?.message || err) })
+      .eq('id', draftRow.id)
+    return { action: 'error', reason: 'telegram post failed', draftId: draftRow.id }
+  }
+}
+
+// ─── Draft actions (called by the Ryan-TG webhook) ─────────────────
+
+export interface DraftActor {
+  tgUserId: number
+  username: string | null
+}
+
+export interface PendingDraftRow {
+  id: string
+  email_lead_id: string
+  last_email_id: string
+  subject: string | null
+  from_email: string | null
+  to_email: string | null
+  inbound_text: string
+  classification: string | null
+  classification_summary: string | null
+  objection_type: string | null
+  language: string | null
+  draft_html: string
+  edit_history: Array<Record<string, unknown>>
+  status: 'pending' | 'approved' | 'denied' | 'sent' | 'error'
+  tg_chat_id: number | null
+  tg_message_id: number | null
+  tg_edit_prompt_message_id: number | null
+}
+
+// Approve: atomic claim → send email → mark sent → update lead audit.
+// Idempotent: a second click does nothing because status is no longer
+// 'pending' after the first claim.
+export async function approveDraft(
+  draftId: string,
+  actor: DraftActor,
+): Promise<{ ok: true; draft: PendingDraftRow } | { ok: false; reason: string; draft?: PendingDraftRow }> {
+  const supabase = getSupabaseAdmin()
+
+  const { data: claimed } = await supabase
+    .from('email_pending_drafts')
+    .update({
+      status: 'approved',
+      actioned_at: new Date().toISOString(),
+      actioned_by_tg_user_id: actor.tgUserId,
+      actioned_by_tg_username: actor.username,
+    })
+    .eq('id', draftId)
+    .eq('status', 'pending')
+    .select()
+    .single()
+
+  const draft = claimed as PendingDraftRow | null
+  if (!draft) return { ok: false, reason: 'already actioned or not found' }
+
+  try {
+    await replyToEmail(
+      draft.last_email_id,
+      draft.subject || '',
+      draft.from_email || '',
+      draft.to_email || '',
+      draft.draft_html,
+    )
+  } catch (err: any) {
+    await supabase
+      .from('email_pending_drafts')
+      .update({ status: 'error', send_error: String(err?.message || err) })
+      .eq('id', draftId)
+    return { ok: false, reason: `send failed: ${err?.message || err}`, draft }
+  }
+
+  await supabase
+    .from('email_pending_drafts')
+    .update({ status: 'sent' })
+    .eq('id', draftId)
+
+  const leadUpdate: Record<string, unknown> = {
+    last_outbound_html: draft.draft_html,
+    last_outbound_at: new Date().toISOString(),
+  }
+  if (draft.classification === 'NOT_INTERESTED') {
+    leadUpdate.current_status = 'closed'
+  }
+  await supabase.from('email_leads').update(leadUpdate).eq('id', draft.email_lead_id)
+
+  return { ok: true, draft: { ...draft, status: 'sent' } }
+}
+
+export async function denyDraft(
+  draftId: string,
+  actor: DraftActor,
+): Promise<{ ok: true; draft: PendingDraftRow } | { ok: false; reason: string }> {
+  const supabase = getSupabaseAdmin()
+  const { data: claimed } = await supabase
+    .from('email_pending_drafts')
+    .update({
+      status: 'denied',
+      actioned_at: new Date().toISOString(),
+      actioned_by_tg_user_id: actor.tgUserId,
+      actioned_by_tg_username: actor.username,
+    })
+    .eq('id', draftId)
+    .eq('status', 'pending')
+    .select()
+    .single()
+
+  const draft = claimed as PendingDraftRow | null
+  if (!draft) return { ok: false, reason: 'already actioned or not found' }
+  return { ok: true, draft }
+}
+
+// Apply an edit (from a force-reply or direct reply). Wraps user's plain
+// text into <p> tags so the email body stays HTML. Status stays 'pending'
+// so the same row can be approved/denied/re-edited again.
+export async function applyEditToDraft(
+  draftId: string,
+  newText: string,
+  actor: DraftActor,
+): Promise<{ ok: true; draft: PendingDraftRow } | { ok: false; reason: string }> {
+  const supabase = getSupabaseAdmin()
+
+  const { data: currentRaw } = await supabase
+    .from('email_pending_drafts')
+    .select('*')
+    .eq('id', draftId)
+    .eq('status', 'pending')
+    .maybeSingle()
+  const current = currentRaw as PendingDraftRow | null
+  if (!current) return { ok: false, reason: 'draft not pending or not found' }
+
+  const trimmed = (newText || '').trim()
+  if (!trimmed) return { ok: false, reason: 'empty edit text' }
+
+  const newHtml = trimmed.includes('<p>')
+    ? trimmed
+    : trimmed
+        .split(/\n{2,}/)
+        .map((p) => `<p>${escapeHtml(p.trim())}</p>`)
+        .join('\n')
+
+  const editEntry = {
+    at: new Date().toISOString(),
+    by_tg_user_id: actor.tgUserId,
+    by: actor.username || String(actor.tgUserId),
+    before: current.draft_html,
+    after: newHtml,
+  }
+  const history = Array.isArray(current.edit_history) ? [...current.edit_history, editEntry] : [editEntry]
+
+  const { data: updated } = await supabase
+    .from('email_pending_drafts')
+    .update({ draft_html: newHtml, edit_history: history })
+    .eq('id', draftId)
+    .eq('status', 'pending')
+    .select()
+    .single()
+
+  const draft = updated as PendingDraftRow | null
+  if (!draft) return { ok: false, reason: 'race lost during edit' }
+  return { ok: true, draft }
+}
+
+// Lookup helper for the webhook: given a draft row, fetch the lead context
+// needed to re-render the Telegram message header.
+export async function loadDraftWithLead(draftId: string): Promise<{
+  draft: PendingDraftRow
+  lead: { first_name: string | null; lead_email: string; company_name: string | null; campaign_name: string | null; reply_count: number } | null
+} | null> {
+  const supabase = getSupabaseAdmin()
+  const { data: draftRaw } = await supabase
+    .from('email_pending_drafts')
+    .select('*')
+    .eq('id', draftId)
+    .maybeSingle()
+  const draft = draftRaw as PendingDraftRow | null
+  if (!draft) return null
+
+  const { data: leadRaw } = await supabase
+    .from('email_leads')
+    .select('first_name, lead_email, company_name, campaign_name, reply_count')
+    .eq('id', draft.email_lead_id)
+    .maybeSingle()
+  return { draft, lead: (leadRaw as any) ?? null }
+}
+
 // ─── Main webhook entry point ───────────────────────────────────────
 
 export async function processEmailReply(payload: any) {
@@ -776,9 +1057,8 @@ export async function processEmailReply(payload: any) {
 
   if (cat === 'NOT_INTERESTED') {
     const reply = await generateReply(leadSlim, cat, replyText, whatsappNumber)
-    await sendAndLogReply(lead.id, payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
-    await supabase.from('email_leads').update({ current_status: 'closed' }).eq('id', lead.id)
-    return { action: 'replied', classification: cat, reply }
+    const result = await queueOrSendDraft(lead, payload, classification, reply)
+    return { ...result, classification: cat }
   }
 
   if (cat === 'PHONE_NUMBER_FOUND') {
@@ -843,8 +1123,8 @@ export async function processEmailReply(payload: any) {
 
   // INTERESTED_NO_NUMBER, OBJECTION, UNRELATED
   const reply = await generateReply(leadSlim, cat, replyText, whatsappNumber)
-  await sendAndLogReply(lead.id, payload.last_email_id, subject, payload.to_email, payload.from_email, reply)
-  return { action: 'replied', classification: cat, reply }
+  const result = await queueOrSendDraft(lead, payload, classification, reply)
+  return { ...result, classification: cat }
 }
 
 // ─── Test surface ───────────────────────────────────────────────────
