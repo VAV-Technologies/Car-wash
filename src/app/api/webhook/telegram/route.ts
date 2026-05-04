@@ -32,11 +32,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: 'unauthorized' })
   }
 
-  // ── DM-only filter for messages ──
-  // (Callback queries don't have chat.type at the top level; the inner
-  // message's chat is checked downstream where needed.)
-  if (update.message && update.message.chat.type !== 'private') {
-    return NextResponse.json({ ok: true, skipped: 'non-private chat' })
+  // ── Reject broadcast channels only — bots don't belong there.
+  // Private DMs and groups/supergroups both reach the handler, which
+  // applies the addressing rule (slash / @mention / reply-to-bot) for groups.
+  if (update.message && update.message.chat.type === 'channel') {
+    return NextResponse.json({ ok: true, skipped: 'channel chat' })
   }
 
   try {
@@ -47,13 +47,8 @@ export async function POST(req: NextRequest) {
     }
   } catch (err: any) {
     console.error('[telegram-webhook] handler error:', err?.message || err)
-    // DIAG: surface error in response temporarily for debugging.
-    return NextResponse.json({
-      ok: false,
-      error: 'handler error',
-      detail: String(err?.message || err).slice(0, 500),
-      stack: String(err?.stack || '').split('\n').slice(0, 5).join('\n'),
-    })
+    // Return 200 so Telegram doesn't retry; we logged the error.
+    return NextResponse.json({ ok: false, error: 'handler error' })
   }
 
   return NextResponse.json({ ok: true })

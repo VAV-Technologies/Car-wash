@@ -47,6 +47,28 @@ interface IncomingMessage {
   chat: TelegramChat
   text?: string
   date: number
+  reply_to_message?: { from?: TelegramUser }
+}
+
+const BOT_USERNAME = process.env.JOHAN_TELEGRAM_BOT_USERNAME || 'Johan_Castudio_Bot'
+
+function isAddressedToBot(msg: IncomingMessage): boolean {
+  const text = msg.text || ''
+  // Slash commands always address the bot (Telegram's `/cmd@username` form
+  // also passes since text.startsWith('/') is true)
+  if (text.startsWith('/')) return true
+  // Plain @mention anywhere in the text
+  if (text.includes(`@${BOT_USERNAME}`)) return true
+  // Reply to one of the bot's prior messages
+  if (msg.reply_to_message?.from?.username === BOT_USERNAME) return true
+  return false
+}
+
+function stripBotMention(text: string): string {
+  // Remove `@BotUsername` tokens (with optional trailing whitespace) so
+  // the agent sees the question without the routing prefix.
+  const re = new RegExp(`@${BOT_USERNAME}\\b\\s?`, 'gi')
+  return text.replace(re, '').trim()
 }
 
 interface IncomingCallback {
@@ -72,7 +94,16 @@ function displayNameOf(user: TelegramUser | undefined): string | null {
 export async function handleMessage(update: TelegramUpdate): Promise<void> {
   const msg = update.message
   if (!msg || !msg.from) return
-  if (msg.chat.type !== 'private') return // DM-only — silent drop in groups
+
+  // Channel rejection (broadcast channels — bots don't belong)
+  if (msg.chat.type === 'channel') return
+
+  // Group addressing rule: only act in groups when the message is for the
+  // bot (slash command, @mention, or reply to one of our messages).
+  // DMs always pass through.
+  const isGroup = msg.chat.type === 'group' || msg.chat.type === 'supergroup'
+  if (isGroup && !isAddressedToBot(msg)) return
+
   if (!msg.text) {
     // No-text messages (stickers, photos, etc.) — politely decline
     await sendMessage(msg.chat.id, '<i>Johan only handles text right now. Send a message or a slash command.</i>')
@@ -81,7 +112,9 @@ export async function handleMessage(update: TelegramUpdate): Promise<void> {
 
   const tgUserId = msg.from.id
   const displayName = displayNameOf(msg.from)
-  const text = msg.text.trim()
+  // Strip the @BotUsername token from group messages so the agent sees a
+  // clean question. DMs pass through unchanged.
+  const text = isGroup ? stripBotMention(msg.text.trim()) : msg.text.trim()
 
   // Get or create the user's active thread + state.
   await clearAbortFlag(tgUserId)
