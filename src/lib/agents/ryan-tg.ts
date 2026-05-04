@@ -69,9 +69,10 @@ function escapeHtml(s: string): string {
 
 function htmlToTgPlain(html: string): string {
   // Telegram's HTML mode allows <b><i><u><s><code><pre><a> but NOT <p>/<br>.
-  // The drafts are stored as <p>...</p> blocks, so convert paragraphs to
-  // double-newlines and strip tags.
-  return html
+  // Drafts are stored as <p>...</p> blocks, so convert paragraphs to
+  // double-newlines and strip tags. Preserves the user-visible spacing
+  // structure (each <p> becomes its own line with a blank line between).
+  return String(html || '')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')
     .replace(/<p[^>]*>/gi, '')
@@ -81,12 +82,53 @@ function htmlToTgPlain(html: string): string {
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+// More forgiving HTML→text for email thread bodies — preserves paragraph,
+// div, list, and heading breaks as newlines so the rendered thread reads
+// like the original. Used only for thread items, not Ryan's own drafts.
+function emailHtmlToText(html: string): string {
+  if (!html) return ''
+  return String(html)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|tr|h[1-6]|blockquote)>/gi, '\n')
+    .replace(/<(p|div|li|h[1-6]|blockquote)[^>]*>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\r\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
 
 function truncate(s: string, max: number): string {
   if (!s) return ''
   return s.length > max ? s.slice(0, max - 1) + '…' : s
+}
+
+// Telegram caps a single message at 4096 chars. Stay under 3800 to leave
+// headroom for the parse_mode HTML overhead + safety margin.
+const MAX_TG_MESSAGE_CHARS = 3800
+
+export interface ThreadMessageItem {
+  from?: string | null
+  from_email?: string | null
+  to?: string | null
+  to_email?: string | null
+  subject?: string | null
+  date?: string | null
+  created_at?: string | null
+  received_at?: string | null
+  text_body?: string | null
+  body?: string | null
+  html_body?: string | null
+  content?: string | null
+  snippet?: string | null
+  [key: string]: unknown
 }
 
 export interface DraftMessageInput {
@@ -101,6 +143,9 @@ export interface DraftMessageInput {
   language: string | null
   inboundText: string
   draftHtml: string
+  // Full Plusvibe thread snapshot, oldest → newest. Optional — falls back
+  // to inboundText only when missing (legacy rows or thread fetch failed).
+  threadSnapshot?: ThreadMessageItem[] | null
 }
 
 function flagFor(language: string | null | undefined): string {
@@ -122,7 +167,9 @@ function approveKeyboard(draftId: string) {
   }
 }
 
-function buildDraftBody(d: DraftMessageInput): string {
+// ─── Render: thread message(s) ──────────────────────────────────────
+
+function buildThreadHeader(d: DraftMessageInput): string {
   const fromLine = d.leadName
     ? `${escapeHtml(d.leadName)} &lt;${escapeHtml(d.leadEmail)}&gt;`
     : escapeHtml(d.leadEmail)
@@ -130,50 +177,156 @@ function buildDraftBody(d: DraftMessageInput): string {
     d.objectionType ? ` / ${escapeHtml(d.objectionType)}` : ''
   }</code>${flagFor(d.language)}`
 
-  const inbound = truncate(d.inboundText.trim(), 1500)
-  const draftPlain = truncate(htmlToTgPlain(d.draftHtml), 2000)
-
   return [
     `📨 <b>New email reply</b>`,
-    `From: <i>${fromLine}</i>`,
-    d.companyName ? `Company: ${escapeHtml(d.companyName)}` : null,
+    ``,
+    `<b>From:</b> <i>${fromLine}</i>`,
+    d.companyName ? `<b>Company:</b> ${escapeHtml(d.companyName)}` : null,
     d.campaignName
-      ? `Campaign: ${escapeHtml(d.campaignName)} · Reply #${d.replyCount}`
-      : `Reply #${d.replyCount}`,
-    '',
-    `━━━ <b>Latest reply</b> ━━━`,
-    `<i>${escapeHtml(inbound)}</i>`,
-    '',
-    `━━━ <b>Ryan's draft</b> · ${classLine} ━━━`,
-    escapeHtml(draftPlain),
+      ? `<b>Campaign:</b> ${escapeHtml(d.campaignName)} · Reply #${d.replyCount}`
+      : `<b>Reply:</b> #${d.replyCount}`,
+    `<b>Classification:</b> ${classLine}`,
   ]
-    .filter(Boolean)
+    .filter((s) => s !== null)
     .join('\n')
 }
 
-export async function postDraftForApproval(
-  d: DraftMessageInput,
-): Promise<{ chatId: number; messageId: number }> {
+function bodyFromThreadItem(m: ThreadMessageItem): string {
+  // Prefer plain text; fall back to converting the HTML body. Either way,
+  // preserve newline/paragraph structure so the rendered email looks like
+  // the original.
+  const txt = m.text_body || m.body || m.content || m.snippet || ''
+  if (txt && String(txt).trim()) {
+    return String(txt)
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  }
+  if (m.html_body) return emailHtmlToText(String(m.html_body))
+  return ''
+}
+
+function formatEmailBlock(m: ThreadMessageItem, index: number): string {
+  const from = String(m.from || m.from_email || 'unknown').trim()
+  const to = String(m.to || m.to_email || '').trim()
+  const subject = String(m.subject || '').trim()
+  const date = String(m.date || m.created_at || m.received_at || '').trim()
+  const body = bodyFromThreadItem(m)
+
+  const header: string[] = [`<b>[${index}]</b>${date ? `  <i>${escapeHtml(date)}</i>` : ''}`]
+  if (from) header.push(`<b>From:</b> ${escapeHtml(from)}`)
+  if (to) header.push(`<b>To:</b> ${escapeHtml(to)}`)
+  if (subject) header.push(`<b>Subject:</b> ${escapeHtml(subject)}`)
+
+  return [header.join('\n'), '', escapeHtml(body)].join('\n').trim()
+}
+
+function buildThreadMessages(d: DraftMessageInput): string[] {
+  const header = buildThreadHeader(d)
+  const divider = '\n\n═══════════════════════════════\n\n'
+  const sectionDivider = '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📧 <b>EMAIL THREAD</b>'
+
+  const items: ThreadMessageItem[] =
+    d.threadSnapshot && d.threadSnapshot.length > 0
+      ? d.threadSnapshot
+      : [
+          // Fallback: render only the latest inbound text as a single block.
+          { text_body: d.inboundText, from: d.leadEmail },
+        ]
+
+  const sectionHeader = `${sectionDivider}${
+    items.length > 1 ? ` (${items.length} messages)` : ''
+  }\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`
+
+  // Greedy pack: keep appending blocks until we'd exceed MAX_TG_MESSAGE_CHARS.
+  // First message starts with the header + section title.
+  const messages: string[] = []
+  let current = header + sectionHeader
+
+  for (let i = 0; i < items.length; i++) {
+    const block = formatEmailBlock(items[i], i + 1)
+    const sep = i === 0 ? '' : divider
+    if (current.length + sep.length + block.length > MAX_TG_MESSAGE_CHARS) {
+      messages.push(current.trimEnd())
+      current = `<i>(thread continued, part ${messages.length + 1})</i>\n\n` + block
+    } else {
+      current += sep + block
+    }
+  }
+  messages.push(current.trimEnd())
+  return messages
+}
+
+// ─── Render: draft message ──────────────────────────────────────────
+
+function buildDraftBody(d: DraftMessageInput): string {
+  // The draft message is intentionally minimal: a label, a blank line,
+  // then the draft body exactly as it would appear in the email. That way
+  // the user can copy the message and only needs to delete two lines off
+  // the top before pasting + editing.
+  const draftPlain = htmlToTgPlain(d.draftHtml)
+  return `📝 <b>Draft</b>\n\n${escapeHtml(draftPlain)}`
+}
+
+// ─── Public API ─────────────────────────────────────────────────────
+
+export interface PostDraftResult {
+  chatId: number
+  draftMessageId: number
+  threadMessageIds: number[]
+}
+
+export async function postDraftForApproval(d: DraftMessageInput): Promise<PostDraftResult> {
   const { chatId } = getConfig()
-  const result = await tg<{ message_id: number; chat: { id: number } }>('sendMessage', {
+
+  // 1. Send thread message(s) — no buttons. Each part posted in order so
+  //    the chat shows oldest → newest naturally.
+  const threadParts = buildThreadMessages(d)
+  const threadMessageIds: number[] = []
+  let lastThreadMessageId: number | undefined
+  for (const text of threadParts) {
+    const result = await tg<{ message_id: number; chat: { id: number } }>('sendMessage', {
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      disable_web_page_preview: true,
+    })
+    threadMessageIds.push(result.message_id)
+    lastThreadMessageId = result.message_id
+  }
+
+  // 2. Send the draft message with the action buttons. Visually attach it
+  //    to the last thread message so they read as a pair.
+  const draftResult = await tg<{ message_id: number; chat: { id: number } }>('sendMessage', {
     chat_id: chatId,
     text: buildDraftBody(d),
     parse_mode: 'HTML',
     disable_web_page_preview: true,
     reply_markup: approveKeyboard(d.draftId),
+    ...(lastThreadMessageId
+      ? { reply_to_message_id: lastThreadMessageId, allow_sending_without_reply: true }
+      : {}),
   })
-  return { chatId: result.chat.id, messageId: result.message_id }
+
+  return {
+    chatId: draftResult.chat.id,
+    draftMessageId: draftResult.message_id,
+    threadMessageIds,
+  }
 }
+
+// editDraftMessage / markStatusOnMessage operate on the DRAFT message
+// only — the thread message(s) stay as a static historical record.
 
 export async function editDraftMessage(
   chatId: number,
-  messageId: number,
+  draftMessageId: number,
   d: DraftMessageInput,
   options: { keepButtons?: boolean } = {},
 ): Promise<void> {
   await tg('editMessageText', {
     chat_id: chatId,
-    message_id: messageId,
+    message_id: draftMessageId,
     text: buildDraftBody(d),
     parse_mode: 'HTML',
     disable_web_page_preview: true,
@@ -183,16 +336,16 @@ export async function editDraftMessage(
 
 export async function markStatusOnMessage(
   chatId: number,
-  messageId: number,
+  draftMessageId: number,
   d: DraftMessageInput,
   statusLine: string,
 ): Promise<void> {
-  // Re-renders the message body and appends a status line, then drops the
+  // Re-renders the draft body and appends a status line, then drops the
   // buttons. statusLine is HTML (<b>...</b> ok).
   const text = buildDraftBody(d) + '\n\n' + statusLine
   await tg('editMessageText', {
     chat_id: chatId,
-    message_id: messageId,
+    message_id: draftMessageId,
     text,
     parse_mode: 'HTML',
     disable_web_page_preview: true,

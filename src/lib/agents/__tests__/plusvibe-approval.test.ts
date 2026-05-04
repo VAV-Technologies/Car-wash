@@ -203,7 +203,7 @@ describe('processEmailReply — approval enabled', () => {
     })
     pushClassification({ classification: 'INTERESTED_NO_NUMBER' })
     pushReplyHtml('<p>Cool, drop your WA number?</p>')
-    mockPostDraft.mockResolvedValueOnce({ chatId: -100123, messageId: 999 })
+    mockPostDraft.mockResolvedValueOnce({ chatId: -100123, draftMessageId: 999, threadMessageIds: [998] })
 
     const r = await processEmailReply(basePayload)
 
@@ -225,7 +225,7 @@ describe('processEmailReply — approval enabled', () => {
     })
     pushClassification({ classification: 'NOT_INTERESTED' })
     pushReplyHtml('<p>All good, appreciate the honesty.</p>')
-    mockPostDraft.mockResolvedValueOnce({ chatId: -100123, messageId: 1000 })
+    mockPostDraft.mockResolvedValueOnce({ chatId: -100123, draftMessageId: 1000, threadMessageIds: [999] })
 
     const r = await processEmailReply({ ...basePayload, text_body: 'Not interested.' })
 

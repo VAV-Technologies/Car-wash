@@ -713,6 +713,18 @@ async function queueOrSendDraft(
     return { action: 'replied', reply: draftHtml }
   }
 
+  // Fetch the full thread once at queue time. Plusvibe's webhook only
+  // includes the latest reply, so without this the Telegram message
+  // wouldn't show prior context. Failures are non-fatal — we fall back
+  // to rendering just the inbound text.
+  let threadSnapshot: any[] | null = null
+  try {
+    const fetched = await getEmailThread(payload.last_email_id)
+    if (Array.isArray(fetched)) threadSnapshot = fetched
+  } catch (err) {
+    console.error('[plusvibe] thread fetch failed', err)
+  }
+
   const { data: draft } = await supabase
     .from('email_pending_drafts')
     .insert({
@@ -731,6 +743,7 @@ async function queueOrSendDraft(
       language: detectReplyLanguage(draftHtml) || detectReplyLanguage(inboundText),
       draft_html: draftHtml,
       status: 'pending',
+      thread_snapshot: threadSnapshot,
     })
     .select('id')
     .single()
@@ -747,7 +760,7 @@ async function queueOrSendDraft(
   }
 
   try {
-    const { chatId, messageId } = await postDraftForApproval({
+    const { chatId, draftMessageId, threadMessageIds } = await postDraftForApproval({
       draftId: draftRow.id,
       leadName: lead.first_name || null,
       leadEmail: lead.lead_email,
@@ -759,10 +772,15 @@ async function queueOrSendDraft(
       language: detectReplyLanguage(draftHtml) || detectReplyLanguage(inboundText),
       inboundText,
       draftHtml,
+      threadSnapshot,
     })
     await supabase
       .from('email_pending_drafts')
-      .update({ tg_chat_id: chatId, tg_message_id: messageId })
+      .update({
+        tg_chat_id: chatId,
+        tg_message_id: draftMessageId,
+        tg_thread_message_ids: threadMessageIds,
+      })
       .eq('id', draftRow.id)
     return { action: 'queued_for_approval', draftId: draftRow.id }
   } catch (err: any) {
@@ -800,6 +818,8 @@ export interface PendingDraftRow {
   tg_chat_id: number | null
   tg_message_id: number | null
   tg_edit_prompt_message_id: number | null
+  tg_thread_message_ids?: number[] | null
+  thread_snapshot?: any[] | null
 }
 
 // Approve: atomic claim → send email → mark sent → update lead audit.
