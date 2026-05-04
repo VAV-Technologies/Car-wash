@@ -10,7 +10,6 @@ import {
   UserCog, Cog,
   Zap,
   BarChart3, Target, Bot, Shield, Settings, Network,
-  Sparkles,
   ChevronDown, LogOut,
 } from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
@@ -61,7 +60,6 @@ const navGroups: NavGroup[] = [
     label: 'Technology',
     items: [
       { label: 'Agents', href: '/admin/agents', icon: Bot },
-      { label: 'AI Chat', href: '/ai', icon: Sparkles },
       { label: 'Accounts', href: '/admin/accounts', icon: Shield },
     ],
   },

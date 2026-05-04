@@ -44,12 +44,12 @@ export default function JohanAgentPage() {
           <p className="text-sm text-white/50 mt-1">Booking Co-pilot</p>
         </div>
         <a
-          href="/ai"
+          href="https://t.me/Johan_Castudio_Bot"
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400 hover:bg-orange-500/20 transition-colors"
         >
-          Open Chat
+          Open in Telegram
           <ExternalLink className="h-3 w-3" />
         </a>
         <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
@@ -244,14 +244,7 @@ function ActionsTab() {
                 <td className="px-5 py-2 text-white/60">{r.duration_ms ? `${r.duration_ms}ms` : '—'}</td>
                 <td className="px-5 py-2 text-white/40 font-mono text-xs">
                   {r.thread_id ? (
-                    <a
-                      href={`/ai/${r.thread_id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hover:text-orange-400"
-                    >
-                      {r.thread_id.slice(0, 8)}…
-                    </a>
+                    <span title={r.thread_id}>{r.thread_id.slice(0, 8)}…</span>
                   ) : (
                     '—'
                   )}
@@ -388,12 +381,10 @@ function ThreadsTab() {
           <div className="px-5 py-6 text-center text-white/40">No threads yet</div>
         )}
         {rows.map((t) => (
-          <a
+          <div
             key={t.id}
-            href={`/ai/${t.id}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-4 px-5 py-3 hover:bg-white/5"
+            className="flex items-center gap-4 px-5 py-3"
+            title={t.id}
           >
             <Bot className="h-4 w-4 text-orange-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
@@ -407,8 +398,8 @@ function ThreadsTab() {
                 {t.archived_at && ' · archived'}
               </div>
             </div>
-            <ExternalLink className="h-3 w-3 text-white/30" />
-          </a>
+            <span className="text-xs text-white/30 font-mono">{t.id.slice(0, 8)}…</span>
+          </div>
         ))}
       </div>
     </div>
