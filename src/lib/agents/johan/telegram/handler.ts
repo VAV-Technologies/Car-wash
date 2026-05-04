@@ -511,7 +511,8 @@ export async function handleCallbackQuery(update: TelegramUpdate): Promise<void>
   }
 
   if (parsed.action === 'cancel') {
-    const pending = await loadPending(parsed.arg, threadId)
+    // Look up by id only — in a group, the tapper may not be the proposer.
+    const pending = await loadPending(parsed.arg)
     if (pending && pending.status === 'pending') {
       await markPendingStatus(parsed.arg, 'cancelled')
     }
@@ -529,7 +530,8 @@ export async function handleCallbackQuery(update: TelegramUpdate): Promise<void>
   }
 
   if (parsed.action === 'confirm') {
-    const pending = await loadPending(parsed.arg, threadId)
+    // Look up by id only — the tapper may not be the proposer in a group.
+    const pending = await loadPending(parsed.arg)
     if (!pending) {
       await answerCallbackQuery(cb.id, 'Not found')
       return
@@ -554,23 +556,34 @@ export async function handleCallbackQuery(update: TelegramUpdate): Promise<void>
       ).catch(() => {})
     }
 
-    // Patch thread metadata to mark this pending action as confirmed,
-    // then re-run Johan so it executes the staged tool.
-    await patchThreadMetadata(threadId, { pendingConfirmedFor: parsed.arg })
+    // Execute in the proposer's thread (where the action was staged), not
+    // the tapper's. Audit records the tapper's tg_user_id for attribution.
+    const proposerThreadId = pending.thread_id
+    await patchThreadMetadata(proposerThreadId, { pendingConfirmedFor: parsed.arg })
     if (chatId) {
-      const refreshed = await getOrCreateActiveThread(tgUserId, displayName)
+      const db = getSupabaseAdmin()
+      const { data: t } = await db
+        .from('ai_chat_threads')
+        .select('metadata')
+        .eq('id', proposerThreadId)
+        .maybeSingle()
+      const metadata = ((t as any)?.metadata as ThreadMetadata) || {
+        context_phone: null,
+        context_lang: 'id',
+        pendingConfirmedFor: parsed.arg,
+      }
       await runWithStreamer(
         chatId,
         tgUserId,
         displayName,
-        threadId,
-        refreshed.metadata,
+        proposerThreadId,
+        { ...metadata, pendingConfirmedFor: parsed.arg },
         '',
         true,
       )
     }
     // Clear pendingConfirmedFor so it doesn't re-fire on next message.
-    await patchThreadMetadata(threadId, { pendingConfirmedFor: null })
+    await patchThreadMetadata(proposerThreadId, { pendingConfirmedFor: null })
   }
 }
 

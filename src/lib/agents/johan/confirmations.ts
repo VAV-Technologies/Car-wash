@@ -70,14 +70,16 @@ export async function stagePendingAction(input: StageInput, ctx: ActionContext):
   })
 }
 
-export async function loadPending(pendingId: string, threadId: string): Promise<PendingAction | null> {
+export async function loadPending(
+  pendingId: string,
+  threadId?: string,
+): Promise<PendingAction | null> {
+  // threadId is optional — when omitted (e.g., a group Confirm tap from a
+  // different user than the proposer), look up by id only.
   const supabase = getSupabaseAdmin()
-  const { data } = await supabase
-    .from('ai_pending_actions')
-    .select('*')
-    .eq('id', pendingId)
-    .eq('thread_id', threadId)
-    .maybeSingle()
+  let q = supabase.from('ai_pending_actions').select('*').eq('id', pendingId)
+  if (threadId) q = q.eq('thread_id', threadId)
+  const { data } = await q.maybeSingle()
   if (!data) return null
   const row = data as any as PendingAction
   if (new Date(row.expires_at).getTime() < Date.now()) {
