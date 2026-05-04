@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MessageCircle, Mail, PenTool } from 'lucide-react';
+import { MessageCircle, Mail, PenTool, Bot } from 'lucide-react';
 
 export default function AgentsPage() {
   return (
@@ -15,24 +15,46 @@ export default function AgentsPage() {
 
         {/* Agent Cards */}
         <div className="space-y-4">
-          {/* Shera */}
+          {/* Johan */}
           <Link
-            href="/admin/agents/shera"
-            className="block rounded-xl border border-green-500/20 bg-[#171717] p-5 hover:border-green-500/40 transition-colors"
+            href="/admin/agents/johan"
+            className="block rounded-xl border border-orange-500/20 bg-[#171717] p-5 hover:border-orange-500/40 transition-colors"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-green-400" />
+                <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center">
+                  <Bot className="w-6 h-6 text-orange-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Shera</h3>
-                  <p className="text-sm text-white/50">WhatsApp AI Agent</p>
-                  <p className="text-xs text-white/30 mt-0.5">Runs 24/7</p>
+                  <h3 className="text-lg font-bold text-white">Johan</h3>
+                  <p className="text-sm text-white/50">Booking Co-pilot</p>
+                  <p className="text-xs text-white/30 mt-0.5">Drafts replies, stages bookings for human approval</p>
                 </div>
               </div>
               <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
                 Active
+              </span>
+            </div>
+          </Link>
+
+          {/* Shera (now read-only) */}
+          <Link
+            href="/admin/agents/shera"
+            className="block rounded-xl border border-white/10 bg-[#171717] p-5 hover:border-white/20 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-white/50" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Shera</h3>
+                  <p className="text-sm text-white/50">WhatsApp Conversation Monitor</p>
+                  <p className="text-xs text-white/30 mt-0.5">Logs human↔customer chats, no AI replies</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-white/10 text-white/70">
+                Read-only
               </span>
             </div>
           </Link>

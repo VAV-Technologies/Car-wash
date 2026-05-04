@@ -2,23 +2,19 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ShieldCheck } from 'lucide-react'
 import WADashboard from '@/components/admin/conversations/WADashboard'
+import WALiveChats from '@/components/admin/conversations/WALiveChats'
 import WASessions from '@/components/admin/conversations/WASessions'
 import WAEventMonitor from '@/components/admin/conversations/WAEventMonitor'
-import WASettings from '@/components/admin/conversations/WASettings'
-import WARules from '@/components/admin/conversations/WARules'
-import WAServiceImages from '@/components/admin/conversations/WAServiceImages'
 import WAQualityMetrics from '@/components/admin/conversations/WAQualityMetrics'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
+  { key: 'chats', label: 'Live Chats' },
   { key: 'quality', label: 'Quality' },
-  { key: 'rules', label: 'Rules' },
-  { key: 'images', label: 'Service Images' },
   { key: 'sessions', label: 'Sessions' },
   { key: 'events', label: 'Event Monitor' },
-  { key: 'settings', label: 'Settings' },
 ] as const
 
 type TabKey = (typeof TABS)[number]['key']
@@ -38,11 +34,22 @@ export default function SheraAgentPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-white">Shera</h1>
-          <p className="text-sm text-white/50 mt-1">WhatsApp AI Agent</p>
+          <p className="text-sm text-white/50 mt-1">WhatsApp Conversation Monitor</p>
         </div>
-        <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-400">
-          Active
+        <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-white/10 text-white/70">
+          Read-only
         </span>
+      </div>
+
+      {/* Read-only banner */}
+      <div className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
+        <ShieldCheck className="h-5 w-5 text-white/60 mt-0.5 flex-shrink-0" />
+        <div className="text-sm text-white/70">
+          <p className="font-medium text-white">Shera is disabled.</p>
+          <p className="mt-1 text-white/60">
+            A human handles every customer conversation. Inbound and outbound WhatsApp messages are still logged here for bookkeeping and quality measurement, but no AI replies, tools, or escalations fire.
+          </p>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -64,12 +71,10 @@ export default function SheraAgentPage() {
 
       {/* Tab Content */}
       {activeTab === 'dashboard' && <WADashboard />}
+      {activeTab === 'chats' && <WALiveChats />}
       {activeTab === 'quality' && <WAQualityMetrics />}
-      {activeTab === 'rules' && <WARules />}
-      {activeTab === 'images' && <WAServiceImages />}
       {activeTab === 'sessions' && <WASessions />}
       {activeTab === 'events' && <WAEventMonitor />}
-      {activeTab === 'settings' && <WASettings />}
     </div>
   )
 }
