@@ -162,6 +162,10 @@ const noLLMKey = {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  // clearAllMocks doesn't drop mockResolvedValueOnce queues. Reset the LLM
+  // mock fully so leftover queued responses from a previous test (e.g. when
+  // the runtime now skips the LLM via pre-classification) don't leak.
+  mockLLMCreate.mockReset()
   inserts.length = 0
   updates.length = 0
   process.env.TELEGRAM_BOT_TOKEN = 'test-token'

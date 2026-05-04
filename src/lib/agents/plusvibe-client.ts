@@ -1,14 +1,37 @@
+import { getSupabaseAdmin } from '@/lib/supabase'
+
 const BASE_URL = 'https://api.plusvibe.ai/api/v1'
 
-function getConfig() {
-  const apiKey = process.env.PLUSVIBE_API_KEY
-  const workspaceId = process.env.PLUSVIBE_WORKSPACE_ID
-  if (!apiKey || !workspaceId) throw new Error('Missing PLUSVIBE_API_KEY or PLUSVIBE_WORKSPACE_ID')
+// Resolution order: env vars first (deploy-time), then agent_settings.config
+// (admin-UI-edit-time). Either source can satisfy either field independently.
+async function getConfig(): Promise<{ apiKey: string; workspaceId: string }> {
+  let apiKey = process.env.PLUSVIBE_API_KEY || ''
+  let workspaceId = process.env.PLUSVIBE_WORKSPACE_ID || ''
+
+  if (!apiKey || !workspaceId) {
+    try {
+      const supabase = getSupabaseAdmin()
+      const { data } = await supabase
+        .from('agent_settings')
+        .select('config')
+        .eq('agent_name', 'plusvibe')
+        .maybeSingle()
+      const cfg = (data?.config as { plusvibe_api_key?: string; workspace_id?: string } | null) || {}
+      if (!apiKey && cfg.plusvibe_api_key) apiKey = cfg.plusvibe_api_key
+      if (!workspaceId && cfg.workspace_id) workspaceId = cfg.workspace_id
+    } catch {
+      // fall through to throw below
+    }
+  }
+
+  if (!apiKey || !workspaceId) {
+    throw new Error('Missing PLUSVIBE_API_KEY or PLUSVIBE_WORKSPACE_ID (env or agent_settings.config)')
+  }
   return { apiKey, workspaceId }
 }
 
 async function pvFetch(path: string, options: RequestInit = {}): Promise<Response> {
-  const { apiKey, workspaceId } = getConfig()
+  const { apiKey, workspaceId } = await getConfig()
   const separator = path.includes('?') ? '&' : '?'
   const url = `${BASE_URL}${path}${separator}workspace_id=${workspaceId}`
 

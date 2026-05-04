@@ -2,12 +2,28 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Copy, Check, RefreshCw, Mail, Phone, Users, ArrowRightLeft } from 'lucide-react'
+import {
+  ArrowLeft,
+  Copy,
+  Check,
+  RefreshCw,
+  Mail,
+  Phone,
+  Users,
+  ArrowRightLeft,
+  Loader2,
+  Play,
+  AlertTriangle,
+} from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import AgentRulesEditor from '@/components/admin/agents/AgentRulesEditor'
 
 const TABS = [
   { key: 'dashboard', label: 'Dashboard' },
   { key: 'leads', label: 'Leads' },
+  { key: 'rules', label: 'Rules' },
+  { key: 'prompt', label: 'Prompt' },
+  { key: 'test', label: 'Test' },
   { key: 'settings', label: 'Settings' },
 ] as const
 
@@ -26,6 +42,8 @@ interface EmailLead {
   phone_number: string | null
   handed_off_to_whatsapp: boolean
   created_at: string
+  last_outbound_html: string | null
+  last_outbound_at: string | null
 }
 
 interface Stats {
@@ -142,7 +160,6 @@ function LeadsTab() {
 
   return (
     <div className="space-y-4">
-      {/* Filter bar */}
       <div className="flex items-center gap-2 flex-wrap">
         {filters.map((f) => (
           <button
@@ -165,7 +182,6 @@ function LeadsTab() {
         </button>
       </div>
 
-      {/* Table */}
       <div className="rounded-xl border border-white/10 bg-[#171717] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -218,18 +234,41 @@ function LeadsTab() {
                         <td className="px-4 py-3 text-white/50 hidden lg:table-cell">{lead.last_classification || '-'}</td>
                         <td className="px-4 py-3 text-white/50 hidden md:table-cell">{lead.phone_number || '-'}</td>
                       </tr>
-                      {isExpanded && lead.classification_history && lead.classification_history.length > 0 && (
+                      {isExpanded && (
                         <tr key={`${lead.id}-expanded`} className="border-b border-white/5">
-                          <td colSpan={8} className="px-6 py-4 bg-white/[0.02]">
-                            <p className="text-xs text-white/40 font-medium mb-2">Classification History</p>
-                            <div className="space-y-1">
-                              {lead.classification_history.map((entry, idx) => (
-                                <div key={idx} className="flex items-center gap-3 text-xs text-white/50">
-                                  <span className="text-white/30">{String(entry.date || entry.timestamp || `#${idx + 1}`)}</span>
-                                  <span className="text-white/70">{String(entry.classification || entry.label || JSON.stringify(entry))}</span>
+                          <td colSpan={8} className="px-6 py-4 bg-white/[0.02] space-y-4">
+                            {lead.last_outbound_html && (
+                              <div>
+                                <p className="text-xs text-white/40 font-medium mb-2">
+                                  Last reply from Ryan
+                                  {lead.last_outbound_at && (
+                                    <span className="text-white/25 ml-2">
+                                      ({new Date(lead.last_outbound_at).toLocaleString()})
+                                    </span>
+                                  )}
+                                </p>
+                                <div
+                                  className="text-sm text-white/80 bg-[#0f0f0f] border border-white/10 rounded-lg p-3 prose prose-invert prose-sm max-w-none"
+                                  dangerouslySetInnerHTML={{ __html: lead.last_outbound_html }}
+                                />
+                              </div>
+                            )}
+                            {lead.classification_history && lead.classification_history.length > 0 && (
+                              <div>
+                                <p className="text-xs text-white/40 font-medium mb-2">Classification History</p>
+                                <div className="space-y-1">
+                                  {lead.classification_history.map((entry, idx) => (
+                                    <div key={idx} className="flex items-center gap-3 text-xs text-white/50">
+                                      <span className="text-white/30">{String(entry.date || entry.timestamp || `#${idx + 1}`)}</span>
+                                      <span className="text-white/70">{String(entry.classification || entry.label || JSON.stringify(entry))}</span>
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            )}
+                            {!lead.last_outbound_html && (!lead.classification_history || lead.classification_history.length === 0) && (
+                              <p className="text-xs text-white/30">No reply or classification history yet.</p>
+                            )}
                           </td>
                         </tr>
                       )}
@@ -245,10 +284,309 @@ function LeadsTab() {
   )
 }
 
+// ─── Rules Tab ───────────────────────────────────────────────────
+function RulesTab() {
+  return (
+    <AgentRulesEditor
+      agentName="ryan"
+      displayName="Ryan"
+      description="Rules added here apply to Ryan, the email reply agent. They get injected at the top of his prompt and override the persona/few-shot defaults."
+      contentPlaceholder="Rule content — e.g. 'If they ask where we got their email, say it came from our marketing team.'"
+    />
+  )
+}
+
+// ─── Prompt Tab ──────────────────────────────────────────────────
+function PromptTab() {
+  const [overrideEnabled, setOverrideEnabled] = useState(false)
+  const [override, setOverride] = useState('')
+  const [loaded, setLoaded] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from('agent_settings')
+        .select('system_prompt')
+        .eq('agent_name', 'plusvibe')
+        .maybeSingle()
+      const sp = (data?.system_prompt as string | null) ?? null
+      // Legacy JSON (workspace_id) is ignored — those are Settings-tab values.
+      if (sp && !sp.trim().startsWith('{')) {
+        setOverride(sp)
+        setOverrideEnabled(true)
+      }
+      setLoaded(true)
+    }
+    load()
+  }, [])
+
+  async function save() {
+    setSaving(true)
+    const value = overrideEnabled ? override : null
+    const { data: existing } = await supabase
+      .from('agent_settings')
+      .select('id')
+      .eq('agent_name', 'plusvibe')
+      .maybeSingle()
+
+    if (existing) {
+      await supabase
+        .from('agent_settings')
+        .update({ system_prompt: value })
+        .eq('agent_name', 'plusvibe')
+    } else {
+      await supabase
+        .from('agent_settings')
+        .insert({ agent_name: 'plusvibe', system_prompt: value })
+    }
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  if (!loaded) {
+    return <div className="text-white/30 text-sm py-8 text-center">Loading…</div>
+  }
+
+  return (
+    <div className="max-w-3xl space-y-5">
+      <div className="rounded-xl border border-white/10 bg-[#171717] p-5 space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-white font-semibold">System Prompt Override</h2>
+            <p className="text-sm text-white/40 mt-1">
+              When enabled, this replaces Ryan&apos;s built-in persona block. Rules and the
+              shared knowledge base are still appended automatically. Leave disabled to
+              use the default persona shipped in code.
+            </p>
+          </div>
+          <button
+            onClick={() => setOverrideEnabled(!overrideEnabled)}
+            className={`relative w-12 h-6 rounded-full transition-colors shrink-0 ${
+              overrideEnabled ? 'bg-orange-500' : 'bg-white/10'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
+                overrideEnabled ? 'translate-x-6' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
+        {overrideEnabled && (
+          <textarea
+            value={override}
+            onChange={(e) => setOverride(e.target.value)}
+            placeholder="Paste a custom Ryan persona here. Keep it focused on voice + identity — facts come from the knowledge base."
+            rows={16}
+            className="w-full bg-[#0f0f0f] border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm font-mono placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors resize-y"
+          />
+        )}
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-sm font-medium transition-colors"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+          {saved && <span className="text-green-400 text-sm">Saved</span>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Test Tab ────────────────────────────────────────────────────
+interface TestResult {
+  classification: {
+    classification: string
+    objection_type: string | null
+    sentiment: string
+    summary: string
+  }
+  reply: string
+  bannedPhraseHit: string | null
+}
+
+function TestTab() {
+  const [inboundText, setInboundText] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
+  const [running, setRunning] = useState(false)
+  const [result, setResult] = useState<TestResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  async function run() {
+    if (!inboundText.trim()) return
+    setRunning(true)
+    setError(null)
+    setResult(null)
+    try {
+      const res = await fetch('/api/admin/agents/ryan/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          inboundText,
+          firstName: firstName || undefined,
+          companyName: companyName || undefined,
+          jobTitle: jobTitle || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data?.error || `HTTP ${res.status}`)
+      } else {
+        setResult(data as TestResult)
+      }
+    } catch (err: any) {
+      setError(err?.message || String(err))
+    } finally {
+      setRunning(false)
+    }
+  }
+
+  const examplePrompts = [
+    'What differentiates you from a regular car wash?',
+    'How did you get my email address?',
+    'How much do you charge?',
+    'Not interested, please remove me.',
+    'Sounds good, my number is 0812-3456-7890.',
+  ]
+
+  return (
+    <div className="max-w-3xl space-y-5">
+      <div className="rounded-xl border border-white/10 bg-[#171717] p-5 space-y-4">
+        <div>
+          <h2 className="text-white font-semibold">Test Ryan</h2>
+          <p className="text-sm text-white/40 mt-1">
+            Paste an inbound email reply and see exactly what Ryan would send back.
+            Nothing is delivered, nothing is logged, and no leads are mutated.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-white mb-1.5">Inbound email body</label>
+          <textarea
+            value={inboundText}
+            onChange={(e) => setInboundText(e.target.value)}
+            placeholder="What the lead wrote back to us..."
+            rows={6}
+            className="w-full bg-[#0f0f0f] border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors resize-y"
+          />
+          <div className="flex items-center gap-2 flex-wrap mt-2">
+            {examplePrompts.map((p) => (
+              <button
+                key={p}
+                onClick={() => setInboundText(p)}
+                className="text-[11px] px-2 py-1 rounded bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First name (optional)"
+            className="rounded-lg border border-white/10 bg-[#0f0f0f] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-orange-500/50"
+          />
+          <input
+            type="text"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Company (optional)"
+            className="rounded-lg border border-white/10 bg-[#0f0f0f] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-orange-500/50"
+          />
+          <input
+            type="text"
+            value={jobTitle}
+            onChange={(e) => setJobTitle(e.target.value)}
+            placeholder="Job title (optional)"
+            className="rounded-lg border border-white/10 bg-[#0f0f0f] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-orange-500/50"
+          />
+        </div>
+
+        <button
+          onClick={run}
+          disabled={running || !inboundText.trim()}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-sm font-medium transition-colors"
+        >
+          {running ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+          Run
+        </button>
+
+        {error && (
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
+
+        {result && (
+          <div className="space-y-4 pt-2 border-t border-white/10">
+            <div>
+              <p className="text-xs text-white/40 font-medium mb-1.5">Classification</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-xs font-medium">
+                  {result.classification.classification}
+                </span>
+                {result.classification.objection_type && (
+                  <span className="px-2 py-0.5 rounded bg-white/5 text-white/60 text-xs">
+                    {result.classification.objection_type}
+                  </span>
+                )}
+                <span className="px-2 py-0.5 rounded bg-white/5 text-white/40 text-xs">
+                  {result.classification.sentiment}
+                </span>
+              </div>
+              <p className="text-xs text-white/40 mt-2 italic">
+                {result.classification.summary}
+              </p>
+            </div>
+
+            {result.bannedPhraseHit && (
+              <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-300 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div>
+                  Reply still contains a banned phrase: <code className="font-mono">{result.bannedPhraseHit}</code>.
+                  Tighten the prompt or add a Rule to forbid it.
+                </div>
+              </div>
+            )}
+
+            <div>
+              <p className="text-xs text-white/40 font-medium mb-1.5">Reply Ryan would send</p>
+              <div
+                className="rounded-lg border border-white/10 bg-[#0f0f0f] px-4 py-3 text-sm text-white/90 prose prose-invert prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: result.reply }}
+              />
+              <details className="mt-2 text-xs text-white/30">
+                <summary className="cursor-pointer hover:text-white/50">Raw HTML</summary>
+                <pre className="mt-2 p-3 bg-[#0a0a0a] rounded text-white/60 font-mono whitespace-pre-wrap break-all">
+                  {result.reply}
+                </pre>
+              </details>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Settings Tab ────────────────────────────────────────────────
 function SettingsTab() {
   const [apiKey, setApiKey] = useState('')
-  const [claudeKey, setClaudeKey] = useState('')
+  const [aiKey, setAiKey] = useState('')
   const [workspaceId, setWorkspaceId] = useState('')
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -260,24 +598,31 @@ function SettingsTab() {
     async function loadSettings() {
       const { data } = await supabase
         .from('agent_settings')
-        .select('api_key, system_prompt')
+        .select('api_key, config, system_prompt')
         .eq('agent_name', 'plusvibe')
         .single()
 
       if (data) {
         if (data.api_key) {
           try {
-            setApiKey(atob(data.api_key))
+            setAiKey(atob(data.api_key))
           } catch {
-            setApiKey(data.api_key)
+            setAiKey(data.api_key)
           }
         }
-        if (data.system_prompt) {
+        // Preferred: config column. Fallback: legacy JSON in system_prompt
+        // (until the migration backfill runs).
+        const cfg = (data.config as { workspace_id?: string; plusvibe_api_key?: string } | null) || null
+        if (cfg && typeof cfg === 'object') {
+          if (cfg.workspace_id) setWorkspaceId(cfg.workspace_id)
+          if (cfg.plusvibe_api_key) setApiKey(cfg.plusvibe_api_key)
+        } else if (data.system_prompt && typeof data.system_prompt === 'string' && data.system_prompt.trim().startsWith('{')) {
           try {
             const parsed = JSON.parse(data.system_prompt)
             if (parsed.workspace_id) setWorkspaceId(parsed.workspace_id)
+            if (parsed.plusvibe_api_key) setApiKey(parsed.plusvibe_api_key)
           } catch {
-            // ignore parse error
+            // ignore
           }
         }
       }
@@ -288,18 +633,16 @@ function SettingsTab() {
 
   async function handleSave() {
     setSaving(true)
-    const claudeEncoded = claudeKey ? btoa(claudeKey) : undefined
-    const systemPrompt = JSON.stringify({ workspace_id: workspaceId, plusvibe_api_key: apiKey })
 
-    const upsertData: Record<string, unknown> = { agent_name: 'plusvibe', system_prompt: systemPrompt }
-    if (claudeEncoded) upsertData.api_key = claudeEncoded
+    const update: Record<string, unknown> = {
+      agent_name: 'plusvibe',
+      config: { workspace_id: workspaceId, plusvibe_api_key: apiKey },
+    }
+    if (aiKey) update.api_key = btoa(aiKey)
 
     const { error } = await supabase
       .from('agent_settings')
-      .upsert(
-        upsertData,
-        { onConflict: 'agent_name' }
-      )
+      .upsert(update, { onConflict: 'agent_name' })
 
     if (error) {
       console.error('Error saving settings:', error)
@@ -320,22 +663,26 @@ function SettingsTab() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      {/* Claude API Key */}
       <div className="rounded-xl border border-orange-500/20 bg-[#171717] p-5 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-white mb-1.5">Claude API Key</label>
-          <p className="text-xs text-white/30 mb-2">Powers Ryan's AI. If not set, falls back to Shera's key.</p>
+          <label className="block text-sm font-medium text-white mb-1.5">AI API Key</label>
+          <p className="text-xs text-white/30 mb-2">
+            Powers Ryan&apos;s classification and reply generation. Currently routes through
+            Azure AI Foundry (default model: <code className="font-mono">grok-4-20-reasoning</code>,
+            override via <code className="font-mono">AI_MODEL</code> env var or
+            <code className="font-mono"> agent_settings.model</code>). If empty, falls back to
+            Shera&apos;s key, then the base model connector.
+          </p>
           <input
             type="password"
-            value={claudeKey}
-            onChange={(e) => setClaudeKey(e.target.value)}
-            placeholder="sk-ant-api03-..."
+            value={aiKey}
+            onChange={(e) => setAiKey(e.target.value)}
+            placeholder="sk-..."
             className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-orange-500/50 focus:outline-none"
           />
         </div>
       </div>
 
-      {/* Plusvibe API Key */}
       <div className="rounded-xl border border-white/10 bg-[#171717] p-5 space-y-4">
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Plusvibe API Key</label>
@@ -348,7 +695,6 @@ function SettingsTab() {
           />
         </div>
 
-        {/* Workspace ID */}
         <div>
           <label className="block text-sm font-medium text-white mb-1.5">Workspace ID</label>
           <input
@@ -369,7 +715,6 @@ function SettingsTab() {
         </button>
       </div>
 
-      {/* Webhook URL */}
       <div className="rounded-xl border border-white/10 bg-[#171717] p-5 space-y-3">
         <label className="block text-sm font-medium text-white">Webhook URL</label>
         <div className="flex items-center gap-2">
@@ -398,7 +743,6 @@ export default function PlusvibeAgentPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4">
         <Link
           href="/admin/agents"
@@ -415,13 +759,12 @@ export default function PlusvibeAgentPage() {
         </span>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-1 border-b border-white/10">
+      <div className="flex items-center gap-1 border-b border-white/10 overflow-x-auto">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               activeTab === tab.key
                 ? 'text-orange-500 border-orange-500'
                 : 'text-white/50 border-transparent hover:text-white hover:border-white/20'
@@ -432,9 +775,11 @@ export default function PlusvibeAgentPage() {
         ))}
       </div>
 
-      {/* Tab Content */}
       {activeTab === 'dashboard' && <DashboardTab />}
       {activeTab === 'leads' && <LeadsTab />}
+      {activeTab === 'rules' && <RulesTab />}
+      {activeTab === 'prompt' && <PromptTab />}
+      {activeTab === 'test' && <TestTab />}
       {activeTab === 'settings' && <SettingsTab />}
     </div>
   )
