@@ -12,9 +12,9 @@ export const maxDuration = 300
 export async function POST(req: NextRequest) {
   // ── Validate Telegram secret token ──
   const secret = req.headers.get('x-telegram-bot-api-secret-token')
-  const expected = process.env.TELEGRAM_WEBHOOK_SECRET
+  const expected = process.env.JOHAN_TELEGRAM_WEBHOOK_SECRET
   if (!expected || secret !== expected) {
-    console.warn('[telegram-webhook] missing or invalid secret token')
+    console.warn('[johan-telegram-webhook] missing or invalid secret token')
     return NextResponse.json({ ok: false }, { status: 401 })
   }
 

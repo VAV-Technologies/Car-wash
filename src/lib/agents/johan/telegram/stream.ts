@@ -1,4 +1,4 @@
-import { editMessageText, sendMessage } from '@/lib/agents/telegram-client'
+import { editMessageText, sendMessage } from './bot-client'
 import { markdownToTelegramHtml, truncateForTelegram } from './markdown'
 
 const EDIT_THROTTLE_MS = 1500

@@ -2,7 +2,7 @@ import type { ActionContext } from '../actions/_shared'
 import { getSupabaseAdmin } from '@/lib/supabase'
 
 export function getAuthorizedTelegramIds(): Set<number> {
-  const raw = process.env.TELEGRAM_AUTHORIZED_USER_IDS ?? ''
+  const raw = process.env.JOHAN_TELEGRAM_AUTHORIZED_USER_IDS ?? ''
   return new Set(
     raw
       .split(',')

@@ -3,8 +3,7 @@ import {
   editMessageText,
   answerCallbackQuery,
   sendChatAction,
-  type InlineKeyboardMarkup,
-} from '@/lib/agents/telegram-client'
+} from './bot-client'
 import { runJohan, type JohanHistoryMessage } from '../index'
 import { parseSlashCommand, type ThreadMetadata } from '../slash'
 import { loadPending, markPendingStatus } from '../confirmations'
