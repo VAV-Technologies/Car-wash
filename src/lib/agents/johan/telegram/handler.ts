@@ -57,16 +57,19 @@ function isAddressedToBot(msg: IncomingMessage): boolean {
   // Slash commands always address the bot (Telegram's `/cmd@username` form
   // also passes since text.startsWith('/') is true)
   if (text.startsWith('/')) return true
-  // Plain @mention anywhere in the text
-  if (text.includes(`@${BOT_USERNAME}`)) return true
-  // Reply to one of the bot's prior messages
-  if (msg.reply_to_message?.from?.username === BOT_USERNAME) return true
+  // Plain @mention anywhere in the text. Case-insensitive — Telegram
+  // usernames are case-insensitive and clients may pass through whatever
+  // the user typed.
+  if (text.toLowerCase().includes(`@${BOT_USERNAME.toLowerCase()}`)) return true
+  // Reply to one of the bot's prior messages.
+  const replyUsername = msg.reply_to_message?.from?.username || ''
+  if (replyUsername.toLowerCase() === BOT_USERNAME.toLowerCase()) return true
   return false
 }
 
 function stripBotMention(text: string): string {
   // Remove `@BotUsername` tokens (with optional trailing whitespace) so
-  // the agent sees the question without the routing prefix.
+  // the agent sees the question without the routing prefix. Case-insensitive.
   const re = new RegExp(`@${BOT_USERNAME}\\b\\s?`, 'gi')
   return text.replace(re, '').trim()
 }
@@ -293,7 +296,7 @@ async function handleTelegramSpecificCommand(
         '/stop — abort current run',
         '/start — boot status',
         '',
-        '<i>DMs only. The bot stays silent in group chats.</i>',
+        '<i>Works in DMs (every message) and groups (when you address me: slash command, @mention, or reply to one of my messages). Per-user state stays independent — your locks and threads are yours alone.</i>',
       ]
       await sendMessage(chatId, lines.join('\n'))
       return true
