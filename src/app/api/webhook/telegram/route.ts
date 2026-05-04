@@ -47,8 +47,13 @@ export async function POST(req: NextRequest) {
     }
   } catch (err: any) {
     console.error('[telegram-webhook] handler error:', err?.message || err)
-    // Return 200 so Telegram doesn't retry; we logged the error.
-    return NextResponse.json({ ok: false, error: 'handler error' })
+    // DIAG: surface error in response temporarily for debugging.
+    return NextResponse.json({
+      ok: false,
+      error: 'handler error',
+      detail: String(err?.message || err).slice(0, 500),
+      stack: String(err?.stack || '').split('\n').slice(0, 5).join('\n'),
+    })
   }
 
   return NextResponse.json({ ok: true })
