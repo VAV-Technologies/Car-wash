@@ -5,6 +5,11 @@ import { getAction, getActionToolSpecs } from './actions'
 import { stagePendingAction, loadConfirmedAction, markPendingStatus } from './confirmations'
 import { logActionStart, logActionResult, findIdempotentResult } from './audit'
 import type { ActionContext } from './actions/_shared'
+import {
+  GLOBAL_READ_TOOL_SPECS,
+  GLOBAL_READ_TOOL_NAMES,
+  executeGlobalReadTool,
+} from './reads'
 
 const READ_ONLY_TOOL_NAMES = new Set([
   'search_customer',
@@ -31,6 +36,9 @@ const READ_TOOL_SPECS: ChatCompletionTool[] = [
       },
     },
   },
+  // Global cross-customer reads — list_bookings, list_customers, list_subscriptions,
+  // list_transactions, list_employees, get_business_snapshot.
+  ...GLOBAL_READ_TOOL_SPECS,
 ]
 
 export function getJohanTools(): ChatCompletionTool[] {
@@ -81,6 +89,9 @@ export async function executeJohanTool(
   }
   if (name === 'get_conversation_history') {
     return getConversationHistory(input)
+  }
+  if (GLOBAL_READ_TOOL_NAMES.has(name)) {
+    return executeGlobalReadTool(name, input)
   }
 
   // All write paths require ctx
