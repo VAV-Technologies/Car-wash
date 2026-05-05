@@ -510,9 +510,31 @@ export async function POST(req: NextRequest) {
     if (isFirstMessage) {
       try {
         await new Promise(r => setTimeout(r, 1500))
-        await sendText(chatId, `Biar lebih gampang, boleh isi form booking di sini ya kak (cuma 30 detik): https://castudio.id/book`)
+        const linkText = `Biar lebih gampang, boleh isi form booking di sini ya kak (cuma 30 detik): https://castudio.id/book`
+        await sendText(chatId, linkText)
+
+        // Log the link send so /api/cron/nudge can detect "link sent, no booking".
+        // The marker `auto-booking-link` is the deterministic signal the cron keys off.
+        const { data: linkConvo } = await supabase
+          .from('whatsapp_conversations')
+          .select('id, messages')
+          .eq('chat_id', chatId)
+          .single()
+        if (linkConvo) {
+          const linkMsgs = Array.isArray(linkConvo.messages) ? linkConvo.messages : []
+          linkMsgs.push({
+            role: 'assistant',
+            content: linkText,
+            timestamp: new Date().toISOString(),
+            context: 'auto-booking-link',
+          })
+          await supabase
+            .from('whatsapp_conversations')
+            .update({ messages: linkMsgs.slice(-30), last_message_at: new Date().toISOString() })
+            .eq('id', linkConvo.id)
+        }
       } catch {
-        // Non-critical — don't break the flow if link send fails
+        // Non-critical — don't break the flow if link send/log fails
       }
     }
 
