@@ -361,11 +361,17 @@ export async function sendEditPrompt(
   const result = await tg<{ message_id: number }>('sendMessage', {
     chat_id: chatId,
     reply_to_message_id: draftMessageId,
+    allow_sending_without_reply: true,
     text:
-      `✏️ Reply to this message with the edited draft. The new text will replace the draft above.\n` +
-      `<code>edit:${draftId}</code>`,
+      `✏️ <b>Reply to this message</b> with the edited draft.\n` +
+      `Whatever you send back replaces the draft above (it stays pending — tap Approve afterwards to send it).\n\n` +
+      `<i>If you don't see a reply box auto-focused, long-press this message and tap Reply, then type your edit.</i>`,
     parse_mode: 'HTML',
-    reply_markup: { force_reply: true, selective: true },
+    // selective omitted → force_reply auto-focuses the reply box for
+    // every group member. Setting selective:true together with the
+    // bot's own message as the reply target causes Telegram to skip
+    // auto-focusing for any human, so the edit reply box never opens.
+    reply_markup: { force_reply: true, input_field_placeholder: 'Type the edited draft…' },
   })
   return { messageId: result.message_id }
 }

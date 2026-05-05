@@ -188,11 +188,20 @@ async function handleMessage(message: any): Promise<void> {
   // We only care about replies to our prompt or to the draft message
   // itself. Ignore everything else.
   const replyTo = message.reply_to_message
-  if (!replyTo) return
+  if (!replyTo) {
+    console.log(
+      '[ryan-tg-webhook] message without reply_to ignored',
+      JSON.stringify({ chat: message.chat?.id, from: message.from?.username, text: String(message.text || '').slice(0, 80) }),
+    )
+    return
+  }
 
   const tgUserId: number = message.from?.id
   const username: string | null = message.from?.username || message.from?.first_name || null
-  if (!isAuthorizedUser(tgUserId)) return
+  if (!isAuthorizedUser(tgUserId)) {
+    console.log('[ryan-tg-webhook] reply from unauthorized user', { tgUserId, username })
+    return
+  }
 
   const newText = String(message.text || '').trim()
   if (!newText) return
@@ -222,10 +231,21 @@ async function handleMessage(message: any): Promise<void> {
     draftId = (byDraft as any)?.id ?? null
   }
 
-  if (!draftId) return // not a reply to anything we care about
+  if (!draftId) {
+    console.log('[ryan-tg-webhook] reply did not match any pending draft', {
+      chatId: message.chat.id,
+      replyToMessageId: replyTo.message_id,
+    })
+    return
+  }
 
   const result = await applyEditToDraft(draftId, newText, { tgUserId, username })
-  if (!result.ok) return
+  if (!result.ok) {
+    console.log('[ryan-tg-webhook] applyEditToDraft failed', { draftId, reason: result.reason })
+    return
+  }
+
+  console.log('[ryan-tg-webhook] edit captured', { draftId, by: username, len: newText.length })
 
   const ctx = await loadDraftWithLead(draftId)
   if (!ctx) return
