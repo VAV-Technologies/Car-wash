@@ -135,6 +135,9 @@ export interface DraftMessageInput {
   draftId: string
   leadName: string | null
   leadEmail: string
+  // Our outbound sender address for this lead (e.g. vilca.a@highride.club).
+  // Used to label thread messages as Agent vs Customer.
+  agentEmail?: string | null
   companyName: string | null
   campaignName: string | null
   replyCount: number
@@ -170,8 +173,8 @@ function approveKeyboard(draftId: string) {
 // ─── Render: thread message(s) ──────────────────────────────────────
 
 function buildThreadHeader(d: DraftMessageInput): string {
-  const fromLine = d.leadName
-    ? `${escapeHtml(d.leadName)} &lt;${escapeHtml(d.leadEmail)}&gt;`
+  const customerLabel = d.leadName
+    ? `${escapeHtml(d.leadName)} (${escapeHtml(d.leadEmail)})`
     : escapeHtml(d.leadEmail)
   const classLine = `<code>${escapeHtml(d.classification)}${
     d.objectionType ? ` / ${escapeHtml(d.objectionType)}` : ''
@@ -179,76 +182,144 @@ function buildThreadHeader(d: DraftMessageInput): string {
 
   return [
     `📨 <b>New email reply</b>`,
-    ``,
-    `<b>From:</b> <i>${fromLine}</i>`,
-    d.companyName ? `<b>Company:</b> ${escapeHtml(d.companyName)}` : null,
+    `👤 <b>Customer:</b> ${customerLabel}`,
+    d.companyName ? `🏢 <b>Company:</b> ${escapeHtml(d.companyName)}` : null,
     d.campaignName
-      ? `<b>Campaign:</b> ${escapeHtml(d.campaignName)} · Reply #${d.replyCount}`
-      : `<b>Reply:</b> #${d.replyCount}`,
-    `<b>Classification:</b> ${classLine}`,
+      ? `🎯 <b>Campaign:</b> ${escapeHtml(d.campaignName)} · Reply #${d.replyCount}`
+      : `🎯 <b>Reply:</b> #${d.replyCount}`,
+    `🏷️ <b>Classification:</b> ${classLine}`,
   ]
     .filter((s) => s !== null)
     .join('\n')
 }
 
-function bodyFromThreadItem(m: ThreadMessageItem): string {
-  // Prefer plain text; fall back to converting the HTML body. Either way,
-  // preserve newline/paragraph structure so the rendered email looks like
-  // the original.
-  const txt = m.text_body || m.body || m.content || m.snippet || ''
-  if (txt && String(txt).trim()) {
-    return String(txt)
-      .replace(/\r\n/g, '\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
+// ─── Quote-stripping ────────────────────────────────────────────────
+// Email replies typically contain the entire prior thread inline as
+// quoted history. Since we render each thread message separately, that
+// inline quote is redundant noise. extractNewContent finds the first
+// quote marker and returns only the text above it.
+
+function extractNewContent(text: string): string {
+  if (!text) return ''
+  const normalized = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  const lines = normalized.split('\n')
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim()
+
+    // Gmail / standard "On <date> ... wrote:" attribution
+    if (/^On\s+.{5,}\swrote:\s*$/.test(trimmed)) {
+      return joinUntil(lines, i)
+    }
+    // Some clients break it across two lines: "On <date>" then "<name> wrote:"
+    if (/^On\s+.{5,}$/.test(trimmed) && i + 1 < lines.length && /^.+wrote:\s*$/.test(lines[i + 1].trim())) {
+      return joinUntil(lines, i)
+    }
+    // Outlook forwarded separator
+    if (/^_{5,}\s*$/.test(trimmed)) {
+      return joinUntil(lines, i)
+    }
+    // Outlook "From: <email>" header block (preceded by blank line)
+    if (i > 0 && /^From:\s+.+@/.test(trimmed) && lines[i - 1].trim() === '') {
+      return joinUntil(lines, i)
+    }
+    // Quoted lines (>) — but only if we already have some content above,
+    // otherwise the very first line of the email could be a misread.
+    if (trimmed.startsWith('>') && i > 0) {
+      // Walk back over blank lines so we don't keep dangling whitespace
+      let cut = i
+      while (cut > 0 && lines[cut - 1].trim() === '') cut--
+      return joinUntil(lines, cut)
+    }
   }
-  if (m.html_body) return emailHtmlToText(String(m.html_body))
-  return ''
+
+  return normalized.trim()
 }
 
-function formatEmailBlock(m: ThreadMessageItem, index: number): string {
-  const from = String(m.from || m.from_email || 'unknown').trim()
-  const to = String(m.to || m.to_email || '').trim()
-  const subject = String(m.subject || '').trim()
+function joinUntil(lines: string[], end: number): string {
+  return lines.slice(0, end).join('\n').replace(/\n{3,}/g, '\n\n').trim()
+}
+
+function bodyFromThreadItem(m: ThreadMessageItem): string {
+  const txt = m.text_body || m.body || m.content || m.snippet || ''
+  let raw = ''
+  if (txt && String(txt).trim()) {
+    raw = String(txt).replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
+  } else if (m.html_body) {
+    raw = emailHtmlToText(String(m.html_body))
+  }
+  return extractNewContent(raw)
+}
+
+// ─── Role labels (Agent vs Customer) ────────────────────────────────
+
+function emailMatches(addr: string | null | undefined, target: string | null | undefined): boolean {
+  if (!addr || !target) return false
+  const norm = (s: string) => s.toLowerCase().match(/[\w._%+-]+@[\w.-]+\.[a-z]{2,}/i)?.[0] || s.toLowerCase().trim()
+  return norm(addr) === norm(target)
+}
+
+function roleFor(messageFrom: string | null | undefined, agentEmail: string | null | undefined, leadEmail: string | null | undefined): { label: string; emoji: string } {
+  if (emailMatches(messageFrom, agentEmail)) return { label: 'Agent', emoji: '🤖' }
+  if (emailMatches(messageFrom, leadEmail)) return { label: 'Customer', emoji: '👤' }
+  // Fallback: anything else (rare — maybe a CC or different sender). Show
+  // the email so it's not silently mislabeled.
+  return { label: messageFrom || 'Unknown', emoji: '✉️' }
+}
+
+function shortDate(input: string | null | undefined): string {
+  if (!input) return ''
+  const d = new Date(input)
+  if (isNaN(d.getTime())) return String(input)
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Jakarta',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(d)
+}
+
+function formatEmailBlock(m: ThreadMessageItem, agentEmail: string | null | undefined, leadEmail: string | null | undefined): string {
+  const from = String(m.from || m.from_email || '').trim()
   const date = String(m.date || m.created_at || m.received_at || '').trim()
   const body = bodyFromThreadItem(m)
+  const role = roleFor(from, agentEmail, leadEmail)
+  const dateLabel = shortDate(date)
 
-  const header: string[] = [`<b>[${index}]</b>${date ? `  <i>${escapeHtml(date)}</i>` : ''}`]
-  if (from) header.push(`<b>From:</b> ${escapeHtml(from)}`)
-  if (to) header.push(`<b>To:</b> ${escapeHtml(to)}`)
-  if (subject) header.push(`<b>Subject:</b> ${escapeHtml(subject)}`)
+  const header = dateLabel
+    ? `${role.emoji} <b>${role.label}</b>  <i>${escapeHtml(dateLabel)}</i>`
+    : `${role.emoji} <b>${role.label}</b>`
 
-  return [header.join('\n'), '', escapeHtml(body)].join('\n').trim()
+  return body ? `${header}\n${escapeHtml(body)}` : header
 }
 
 function buildThreadMessages(d: DraftMessageInput): string[] {
   const header = buildThreadHeader(d)
-  const divider = '\n\n═══════════════════════════════\n\n'
-  const sectionDivider = '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📧 <b>EMAIL THREAD</b>'
+  const sectionHeader = `\n\n📧 <b>Thread</b>${
+    d.threadSnapshot && d.threadSnapshot.length > 1 ? ` (${d.threadSnapshot.length} messages)` : ''
+  }\n`
 
   const items: ThreadMessageItem[] =
     d.threadSnapshot && d.threadSnapshot.length > 0
       ? d.threadSnapshot
       : [
-          // Fallback: render only the latest inbound text as a single block.
+          // Fallback: render only the latest inbound text as one block,
+          // attributed to the lead.
           { text_body: d.inboundText, from: d.leadEmail },
         ]
 
-  const sectionHeader = `${sectionDivider}${
-    items.length > 1 ? ` (${items.length} messages)` : ''
-  }\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`
-
   // Greedy pack: keep appending blocks until we'd exceed MAX_TG_MESSAGE_CHARS.
-  // First message starts with the header + section title.
   const messages: string[] = []
   let current = header + sectionHeader
 
   for (let i = 0; i < items.length; i++) {
-    const block = formatEmailBlock(items[i], i + 1)
-    const sep = i === 0 ? '' : divider
+    const block = formatEmailBlock(items[i], d.agentEmail, d.leadEmail)
+    const sep = i === 0 ? '\n' : '\n\n'
     if (current.length + sep.length + block.length > MAX_TG_MESSAGE_CHARS) {
       messages.push(current.trimEnd())
-      current = `<i>(thread continued, part ${messages.length + 1})</i>\n\n` + block
+      current = `<i>(thread continued)</i>\n\n` + block
     } else {
       current += sep + block
     }

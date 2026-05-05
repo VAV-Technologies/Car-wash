@@ -72,6 +72,7 @@ function rowToDraftInput(
     draftId: draft.id,
     leadName: lead?.first_name ?? null,
     leadEmail: draft.to_email || lead?.lead_email || '',
+    agentEmail: draft.from_email || null,
     companyName: lead?.company_name ?? null,
     campaignName: lead?.campaign_name ?? null,
     replyCount: lead?.reply_count ?? 0,
@@ -80,6 +81,7 @@ function rowToDraftInput(
     language: draft.language,
     inboundText: draft.inbound_text,
     draftHtml: draft.draft_html,
+    threadSnapshot: (draft as any).thread_snapshot ?? null,
   }
 }
 
