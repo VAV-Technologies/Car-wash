@@ -3,8 +3,10 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 import { createBooking } from '@/lib/admin/bookings'
 import { SERVICE_TYPES } from '@/lib/admin/constants'
 import type { ServiceType } from '@/lib/admin/types'
+import { AREAS } from '@/lib/booking-form-constants'
 
 const VALID_SERVICES = SERVICE_TYPES.map(s => s.value)
+const VALID_AREAS = AREAS as readonly string[]
 const DETAILING_SERVICES: ServiceType[] = ['interior_detail', 'exterior_detail', 'window_detail', 'tire_rims', 'full_detail']
 
 function cleanPhone(phone: string): string {
@@ -14,34 +16,53 @@ function cleanPhone(phone: string): string {
   return p
 }
 
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/
+const PHONE_RE = /^[\d+\-()\s]+$/
+const isStr = (v: unknown): v is string => typeof v === 'string'
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { name, phone, service_type, car_model, plate_number, address, date, time, add_wash } = body
+    let body: any
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ ok: false, error: 'Body tidak valid (JSON parse error)' }, { status: 400 })
+    }
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ ok: false, error: 'Body harus berupa object JSON' }, { status: 400 })
+    }
+    const { name, phone, service_type, car_model, plate_number, area, address, date, time, add_wash } = body
 
     // ── Server-side validation ────────────────────────────────────
     const errors: Record<string, string> = {}
-    if (!name || name.trim().length < 2) errors.name = 'Nama wajib diisi (min 2 karakter)'
-    if (!phone || phone.trim().length < 8) errors.phone = 'Nomor HP wajib diisi'
-    if (!service_type || !VALID_SERVICES.includes(service_type)) errors.service_type = 'Pilih layanan'
-    if (!car_model || car_model.trim().length < 2) errors.car_model = 'Model mobil wajib diisi'
-    if (!plate_number || plate_number.trim().length < 3) errors.plate_number = 'Plat nomor wajib diisi'
-    if (!address || address.trim().length < 5) errors.address = 'Alamat wajib diisi (min 5 karakter)'
-    if (!date) errors.date = 'Pilih tanggal'
-    if (!time) errors.time = 'Pilih jam'
+    if (!isStr(name) || name.trim().length < 2) errors.name = 'Nama wajib diisi (min 2 karakter)'
+    if (!isStr(phone) || phone.trim().length < 8) errors.phone = 'Nomor HP wajib diisi'
+    else if (phone.length > 20) errors.phone = 'Nomor HP terlalu panjang'
+    else if (!PHONE_RE.test(phone)) errors.phone = 'Nomor HP hanya boleh berisi angka'
+    if (!isStr(service_type) || !VALID_SERVICES.includes(service_type)) errors.service_type = 'Pilih layanan'
+    if (!isStr(car_model) || car_model.trim().length < 2) errors.car_model = 'Model mobil wajib diisi'
+    if (!isStr(plate_number) || plate_number.trim().length < 3) errors.plate_number = 'Plat nomor wajib diisi'
+    if (area !== undefined && area !== null && area !== '' && (!isStr(area) || !VALID_AREAS.includes(area))) errors.area = 'Pilih area dari daftar'
+    if (!isStr(address) || address.trim().length < 5) errors.address = 'Alamat wajib diisi (min 5 karakter)'
+    if (!isStr(date) || !DATE_RE.test(date)) errors.date = 'Pilih tanggal'
+    if (!isStr(time) || !TIME_RE.test(time)) errors.time = 'Pilih jam'
 
-    // Validate date is not Monday (closed) and not in the past
-    if (date) {
+    // Validate date is parseable, not Monday, not in the past
+    if (!errors.date) {
       const d = new Date(date + 'T00:00:00+07:00')
-      if (d.getDay() === 1) errors.date = 'Senin libur, pilih hari lain'
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      if (d < today) errors.date = 'Tidak bisa booking tanggal yang sudah lewat'
+      if (isNaN(d.getTime())) errors.date = 'Tanggal tidak valid'
+      else if (d.getDay() === 1) errors.date = 'Senin libur, pilih hari lain'
+      else {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        if (d < today) errors.date = 'Tidak bisa booking tanggal yang sudah lewat'
+      }
     }
 
-    // Validate time is within business hours (10:00-18:00)
-    if (time) {
-      const hour = parseInt(time.split(':')[0])
+    // Validate time is within business hours (10:00-17:00 — last slot starts 17:00)
+    if (!errors.time) {
+      const hour = parseInt(time.split(':')[0], 10)
       if (hour < 10 || hour > 17) errors.time = 'Jam kerja 10:00-18:00'
     }
 
@@ -68,7 +89,8 @@ export async function POST(req: NextRequest) {
           car_model: car_model.trim(),
           plate_number: plate_number.trim().toUpperCase(),
           address: address.trim(),
-        })
+          ...(area ? { area } : {}),
+        } as any)
         .eq('id', customer.id)
     } else {
       const { data: newCustomer, error } = await supabase
@@ -79,9 +101,10 @@ export async function POST(req: NextRequest) {
           car_model: car_model.trim(),
           plate_number: plate_number.trim().toUpperCase(),
           address: address.trim(),
+          ...(area ? { area } : {}),
           segment: 'new',
-          acquisition_source: 'form',
-        })
+          acquisition_source: 'website',
+        } as any)
         .select('id')
         .single()
 
